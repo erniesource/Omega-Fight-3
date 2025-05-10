@@ -326,3 +326,61 @@ class Firework extends Projectile {
         return false;
     }
 }
+
+class Spammer extends Projectile {
+    public static BufferedImage image;
+
+    // Damage constants
+    public static final double DMG = 1.5 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);;
+    public static final double DURABILITY = 1;
+    public static final double KB = 4;
+
+    // Size constants
+    public static final Coord SIZE = new Coord(22, 18);
+
+    // Movement constants
+    public static final double VELOCITY = 19; 
+    public static final int LIFE = 20;
+
+    // Shot orientation constants
+    public static final double SPREAD = Math.PI / 9;
+
+    // Misc constants
+    public static final int SKILL_PT_GAIN = 1;
+    public static final int SCREENSHAKE = 0;
+
+    public Spammer(Omegaman player, Coord coord, Coord size, double velocity, double dir, double damage, double knockback, double durability, int frameCounter) {
+        super(player, coord, size, size, velocity, dir, damage, knockback, durability, frameCounter);
+    }
+
+    public void draw(Graphics2D g2) {
+        g2.rotate(dir, coord.x, coord.y);
+        g2.drawImage(image, (int) (coord.x - size.x / 2), (int) (coord.y - size.y / 2), (int) size.x, (int) size.y, null);
+        g2.rotate(-dir, coord.x, coord.y);
+    }
+
+    public void process() {
+        super.process();
+        for (Omegaman enemy: OmegaFight3.omegaman) {
+            if (enemy != character) {
+                if (enemy.checkHitbox(coord, hitBoxSize) && enemy.invCounter == Omegaman.VULNERABLE) {
+                    enemy.hurt(damage, knockback, coord, SCREENSHAKE);
+                    die();
+                    ((Omegaman) character).skillPts = Math.min(((Omegaman) character).skillPts + SKILL_PT_GAIN, Omegaman.MAX_SKILL_PTS);
+                }
+                else if (coord.x < 0 || coord.x > OmegaFight3.SCREEN_SIZE.x || coord.y < 0 || coord.y > OmegaFight3.SCREEN_SIZE.y) {
+                    die();
+                }
+                else {
+                    for (Projectile proj: enemy.projectiles) {
+                        if (proj.checkHitbox(coord, hitBoxSize) && proj.hitBoxActive) {
+                            if (shouldDieTo(proj.durability)) die();
+                            if (proj.shouldDieTo(durability)) proj.die();
+                        }
+                    }
+                }
+            }
+            // Also check boss hitbox
+        }
+    }
+}
