@@ -321,7 +321,7 @@ public class Omegaman extends Char {
                 chargeSize = new Coord(Missile.MAX_SIZE.x * sizeMultiplier, Missile.MAX_SIZE.y * sizeMultiplier);
                 g2.rotate(OmegaFight3.signToRadians(spriteSign), chargeCoord.x, chargeCoord.y);
                 g2.drawImage(Missile.images[playerNo], (int) (chargeCoord.x - chargeSize.x / 2), (int) (chargeCoord.y - chargeSize.y / 2), (int) chargeSize.x, (int) chargeSize.y, null);
-                g2.rotate(OmegaFight3.signToRadians(spriteSign), chargeCoord.x, chargeCoord.y);
+                g2.rotate(-OmegaFight3.signToRadians(spriteSign), chargeCoord.x, chargeCoord.y);
             }
         }
     }
