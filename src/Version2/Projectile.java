@@ -331,7 +331,7 @@ class Spammer extends Projectile {
     public static BufferedImage image;
 
     // Damage constants
-    public static final double DMG = 1.5 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);;
+    public static final double DMG = 1.3 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);;
     public static final double DURABILITY = 1;
     public static final double KB = 4;
 
