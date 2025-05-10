@@ -401,9 +401,9 @@ class Missile extends Projectile {
     public static final double EXPLOSION_SIZE_MULTIPLIER = 3;
 
     // Velocity constants
-    public static final double VELOCITY = 15;
-    public static final int LIFE = 45; // slower velocity, longer life
-    public static final double TURN_SPEED = Math.PI / 90; // Let computer do math for at most 90 degrees
+    public static final double VELOCITY = 10;
+    public static final int LIFE = 70; // slower velocity, longer life
+    public static final double TURN_SPEED = Math.PI * (90.0 / LIFE / 180.0); // Let computer do math for at most 90 degrees
 
     // Misc constants
     public static final double MINIMUM_STAT_PERCENTAGE = 0.5;
@@ -443,12 +443,12 @@ class Missile extends Projectile {
             // Homing
             // Loop thru all boss parts (replace Omegaman with Boss class and OmegaFight.omegaman with OmegaFight.boss)
             Omegaman target = null;
-            double closestDistance = Double.MAX_VALUE;
+            double closestDist = Double.MAX_VALUE;
             for (Omegaman enemy : OmegaFight3.omegaman) {
                 if (enemy != character) {
-                    double distance = Math.hypot(enemy.coord.x - coord.x, enemy.coord.y - coord.y);
-                    if (distance < closestDistance) {
-                        closestDistance = distance;
+                    double dist = Math.hypot(enemy.coord.x - coord.x, enemy.coord.y - coord.y);
+                    if (dist < closestDist) {
+                        closestDist = dist;
                         target = enemy;
                     }
                 }
