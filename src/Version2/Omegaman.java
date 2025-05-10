@@ -521,8 +521,8 @@ public class Omegaman extends Char {
             // Speed calculations FIX THIS DO MATH
             knockback *= (percent / Math.pow(10, PERCENT_NUM_DECIMALS) / 100 + 1);
             Coord dist = new Coord(coord.x - enemyCoord.x, coord.y - KB_COORD_Y_OFFSET - enemyCoord.y);
-            velocity.x += (dist.x) / Math.sqrt(Math.pow(dist.x, 2) + Math.pow(dist.y, 2)) * knockback;
-            velocity.y += (dist.y) / Math.sqrt(Math.pow(dist.x, 2) + Math.pow(dist.y, 2)) * knockback;
+            velocity.x += dist.x / Math.hypot(dist.x, dist.y) * knockback;
+            velocity.y += dist.y / Math.hypot(dist.x, dist.y) * knockback;
             stunCounter = (int) knockback;
 
             if (enemyCoord.x != coord.x) {

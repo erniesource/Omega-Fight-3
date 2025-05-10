@@ -402,8 +402,8 @@ class Missile extends Projectile {
 
     // Velocity constants
     public static final double VELOCITY = 15;
-    public static final int LIFE = 45;
-    public static final double TURN_SPEED = Math.PI / 90;
+    public static final int LIFE = 45; // slower velocity, longer life
+    public static final double TURN_SPEED = Math.PI / 90; // Let computer do math for at most 90 degrees
 
     // Misc constants
     public static final double MINIMUM_STAT_PERCENTAGE = 0.5;
@@ -441,12 +441,26 @@ class Missile extends Projectile {
             super.process();
 
             // Homing
-            // Replace OmegaFight3.omegaman[(((Omegaman) character).playerNo + 1) % 2] with boss variable
-            double targetDir = Math.atan2(OmegaFight3.omegaman[(((Omegaman) character).playerNo + 1) % 2].coord.y - coord.y, OmegaFight3.omegaman[(((Omegaman) character).playerNo + 1) % 2].coord.x - coord.x);
-            double angleDifference = targetDir - dir;
-            angleDifference = Math.atan2(Math.sin(angleDifference), Math.cos(angleDifference));
-            if (Math.abs(angleDifference) <= TURN_SPEED) dir = targetDir;
-            else dir += Math.signum(angleDifference) * TURN_SPEED;
+            // Loop thru all boss parts (replace Omegaman with Boss class and OmegaFight.omegaman with OmegaFight.boss)
+            Omegaman target = null;
+            double closestDistance = Double.MAX_VALUE;
+            for (Omegaman enemy : OmegaFight3.omegaman) {
+                if (enemy != character) {
+                    double distance = Math.hypot(enemy.coord.x - coord.x, enemy.coord.y - coord.y);
+                    if (distance < closestDistance) {
+                        closestDistance = distance;
+                        target = enemy;
+                    }
+                }
+            }
+
+            if (target != null) {
+                double targetDir = Math.atan2(target.coord.y - coord.y, target.coord.x - coord.x);
+                double angleDif = targetDir - dir;
+                angleDif = Math.atan2(Math.sin(angleDif), Math.cos(angleDif));
+                if (Math.abs(angleDif) <= TURN_SPEED) dir = targetDir;
+                else dir += Math.signum(angleDif) * TURN_SPEED;
+            }
 
             for (Omegaman enemy: OmegaFight3.omegaman) {
                 if (enemy != character) {
