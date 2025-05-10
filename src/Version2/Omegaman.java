@@ -301,16 +301,27 @@ public class Omegaman extends Char {
         }
     }
 
-    public void drawCharge(Graphics g) {
+    public void drawCharge(Graphics2D g2) {
         if (shootCharge > BASIC_SHOOT_TIME_LIMIT) {
             double sizeMultiplier;
+            Coord chargeCoord = new Coord(coord.x + size.x / 2 * spriteSign, coord.y + (onPlatform == -1? JUMP_PROJ_Y_OFFSET: IDLE_PROJ_Y_OFFSET));
+            Coord chargeSize;
             if (loadout[chargingWeapon] == BULLET_WEAPON_NO) {
                 sizeMultiplier = OmegaFight3.lerp(Rocket.MINIMUM_SIZE_PERCENTAGE, 1, getPercentCharged(BULLET_WEAPON_NO));
-                g.drawImage(Rocket.images[playerNo], (int) (coord.x + size.x / 2 * spriteSign - Rocket.MAX_SIZE.x * sizeMultiplier / 2), (int) (coord.y + (onPlatform == -1? JUMP_PROJ_Y_OFFSET: IDLE_PROJ_Y_OFFSET) - Rocket.MAX_SIZE.y * sizeMultiplier / 2), (int) (Rocket.MAX_SIZE.x * sizeMultiplier), (int) (Rocket.MAX_SIZE.y * sizeMultiplier), null);
+                chargeSize = new Coord(Rocket.MAX_SIZE.x * sizeMultiplier, Rocket.MAX_SIZE.y * sizeMultiplier);
+                g2.drawImage(Rocket.images[playerNo], (int) (chargeCoord.x - chargeSize.x / 2), (int) (chargeCoord.y - chargeSize.y / 2), (int) chargeSize.x, (int) chargeSize.y, null);
             }
             else if (loadout[chargingWeapon] == SHOTGUN_WEAPON_NO) {
                 sizeMultiplier = OmegaFight3.lerp(Firework.MINIMUM_SIZE_PERCENTAGE, 1, getPercentCharged(SHOTGUN_WEAPON_NO));
-                g.drawImage(Firework.chargingImages[playerNo], (int) (coord.x + size.x / 2 * spriteSign - Firework.MAX_CHARGE_SIZE.x * sizeMultiplier / 2), (int) (coord.y + (onPlatform == -1? JUMP_PROJ_Y_OFFSET: IDLE_PROJ_Y_OFFSET) - Firework.MAX_CHARGE_SIZE.y * sizeMultiplier / 2), (int) (Firework.MAX_CHARGE_SIZE.x * sizeMultiplier), (int) (Firework.MAX_CHARGE_SIZE.y * sizeMultiplier), null);
+                chargeSize = new Coord(Firework.MAX_CHARGE_SIZE.x * sizeMultiplier, Firework.MAX_CHARGE_SIZE.y * sizeMultiplier);
+                g2.drawImage(Firework.chargingImages[playerNo], (int) (chargeCoord.x - chargeSize.x / 2), (int) (chargeCoord.y - chargeSize.y / 2), (int) chargeSize.x, (int) chargeSize.y, null);
+            }
+            else if (loadout[chargingWeapon] == SPAMMER_WEAPON_NO) {
+                sizeMultiplier = OmegaFight3.lerp(Missile.MINIMUM_SIZE_PERCENTAGE, 1, getPercentCharged(SPAMMER_WEAPON_NO));
+                chargeSize = new Coord(Missile.MAX_SIZE.x * sizeMultiplier, Missile.MAX_SIZE.y * sizeMultiplier);
+                g2.rotate(OmegaFight3.signToRadians(spriteSign), chargeCoord.x, chargeCoord.y);
+                g2.drawImage(Missile.images[playerNo], (int) (chargeCoord.x - chargeSize.x / 2), (int) (chargeCoord.y - chargeSize.y / 2), (int) chargeSize.x, (int) chargeSize.y, null);
+                g2.rotate(OmegaFight3.signToRadians(spriteSign), chargeCoord.x, chargeCoord.y);
             }
         }
     }

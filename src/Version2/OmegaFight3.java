@@ -150,7 +150,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                     omega.checkState();
                     omega.countInv();
                     omega.draw(g);
-                    omega.drawCharge(g);
+                    omega.drawCharge(g2);
                     omega.regenSkillPts();
                     omega.shakePercent();
                     omega.drawPercent(g);

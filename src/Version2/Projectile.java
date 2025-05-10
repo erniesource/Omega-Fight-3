@@ -402,8 +402,8 @@ class Missile extends Projectile {
 
     // Velocity constants
     public static final double VELOCITY = 10;
-    public static final int LIFE = 70; // slower velocity, longer life
-    public static final double TURN_SPEED = Math.PI * (90.0 / LIFE / 180.0); // Let computer do math for at most 90 degrees
+    public static final int LIFE = 70;
+    public static final double TURN_SPEED = Math.PI * (90.0 / LIFE / 180.0);
 
     // Misc constants
     public static final double MINIMUM_STAT_PERCENTAGE = 0.5;
