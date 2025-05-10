@@ -279,6 +279,10 @@ public class Omegaman extends Char {
                                         projectiles.add(new Firework(this, newProjCoord.copy(), new Coord(Firework.MAX_SIZE.x * percentCharged, Firework.MAX_SIZE.y * percentCharged), Firework.VELOCITY * percentCharged, Math.PI * 2 / Firework.NUM_SHOTS * j, Firework.DMG * percentCharged, Firework.KB * percentCharged, Firework.DURABILITY, (int) (Firework.LIFE * percentCharged)));
                                     }
                                 }
+                                else if (loadout[i] == SPAMMER_WEAPON_NO) {
+                                    percentCharged = OmegaFight3.lerp(Missile.MINIMUM_SIZE_PERCENTAGE, 1, getPercentCharged(SPAMMER_WEAPON_NO));
+                                    projectiles.add(new Missile(this, newProjCoord, new Coord(Missile.MAX_SIZE.x * percentCharged, Missile.MAX_SIZE.y * percentCharged), Missile.VELOCITY * percentCharged, OmegaFight3.signToRadians(spriteSign), Missile.DMG * percentCharged, Missile.KB * percentCharged, Missile.DURABILITY, (int) (Missile.LIFE * percentCharged)));
+                                }
 
                                 // Update stats
                                 skillPts -= ONES_PER_SKILL_PT;
@@ -312,7 +316,7 @@ public class Omegaman extends Char {
     }
 
     private double getPercentCharged(int weaponNo) {
-        return (double) Math.min(shootCharge - BASIC_SHOOT_TIME_LIMIT, CHARGE_TIME[loadout[weaponNo]]) / (CHARGE_TIME[loadout[weaponNo]]);
+        return (double) Math.min(shootCharge - BASIC_SHOOT_TIME_LIMIT, CHARGE_TIME[weaponNo]) / (CHARGE_TIME[weaponNo]);
     }
 
     public void moveAerial(boolean upPressed) {
@@ -521,7 +525,10 @@ public class Omegaman extends Char {
             velocity.y += (dist.y) / Math.sqrt(Math.pow(dist.x, 2) + Math.pow(dist.y, 2)) * knockback;
             stunCounter = (int) knockback;
 
-            if (enemyCoord.x != coord.x) spriteSign = (int) ((enemyCoord.x - coord.x) / Math.abs(enemyCoord.x - coord.x));
+            if (enemyCoord.x != coord.x) {
+                spriteSign = (int) Math.signum(enemyCoord.x - coord.x);
+                if (spriteSign == 0) spriteSign = RIGHT_SIGN;
+            }
         }
     }
 

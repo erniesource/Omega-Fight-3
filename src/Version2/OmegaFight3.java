@@ -94,6 +94,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
             Rocket.images[i] = ImageIO.read(new File("player projectiles/" + i + "rocket.png"));
             Firework.images[i] = ImageIO.read(new File("player projectiles/" + i + "firework.png"));
             Firework.chargingImages[i] = ImageIO.read(new File("player projectiles/" + i + "fireworkCharge.png"));
+            Missile.images[i] = ImageIO.read(new File("player projectiles/" + i + "missile.png"));
         }
         for (int i = 0; i != Rocket.NUM_EXPLOSION_IMAGES; i++) {
             Projectile.explosionImages[i] = ImageIO.read(new File("explosions/explosion" + i + ".png"));

@@ -25,7 +25,6 @@ abstract public class Projectile {
 
     // Explosion variables
     public static final int EXPLOSION_FRAME_HZ = 4;
-    public static final double EXPLOSION_SIZE_MULTIPLIER = 4;
     public static final int NUM_EXPLOSION_IMAGES = 8;
     public static final int EXPLOSION_TIME = EXPLOSION_FRAME_HZ * NUM_EXPLOSION_IMAGES;
     public static BufferedImage[] explosionImages = new BufferedImage[NUM_EXPLOSION_IMAGES];
@@ -131,9 +130,10 @@ class Rocket extends Projectile {
     public static final Coord MAX_SIZE = new Coord(50, 50);
 
     // Damage constants
-    public static final double DMG = 10 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
+    public static final double DMG = 15 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
     public static final double DURABILITY = INFINITE_DURABILITY;
     public static final double KB = 20;
+    public static final double EXPLOSION_SIZE_MULTIPLIER = 4;
 
     // Velocity constants
     public static final double VELOCITY = 15;
@@ -343,7 +343,7 @@ class Spammer extends Projectile {
     public static final int LIFE = 20;
 
     // Shot orientation constants
-    public static final double SPREAD = Math.PI / 9;
+    public static final double SPREAD = Math.PI / 6;
 
     // Misc constants
     public static final int SKILL_PT_GAIN = 1;
@@ -382,5 +382,100 @@ class Spammer extends Projectile {
             }
             // Also check boss hitbox
         }
+    }
+}
+
+class Missile extends Projectile {
+    public BufferedImage image;
+    public int state; // 0: Travelling, 1: Exploding
+
+    // Size constants
+    public static final double HITBOX_TO_SIZE_RATIO = 1.5;
+    public static final double MINIMUM_SIZE_PERCENTAGE = 0.2;
+    public static final Coord MAX_SIZE = new Coord(60, 60);
+
+    // Damage constants
+    public static final double DMG = 12 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
+    public static final double DURABILITY = INFINITE_DURABILITY;
+    public static final double KB = 16;
+    public static final double EXPLOSION_SIZE_MULTIPLIER = 3;
+
+    // Velocity constants
+    public static final double VELOCITY = 15;
+    public static final int LIFE = 45;
+    public static final double TURN_SPEED = Math.PI / 90;
+
+    // Misc constants
+    public static final double MINIMUM_STAT_PERCENTAGE = 0.5;
+    public static final double MAX_RECOIL = 8;
+    public static final int MAX_SCREENSHAKE = 15;
+
+    public static BufferedImage[] images = new BufferedImage[Omegaman.NUM_PLAYERS];
+
+    public Missile(Omegaman player, Coord coord, Coord size, double velocity, double dir, double damage, double knockback, double durability, int frameCounter) {
+        super(player, coord, size, new Coord(size.x * HITBOX_TO_SIZE_RATIO, size.y * HITBOX_TO_SIZE_RATIO), velocity, dir, damage, knockback, durability, frameCounter);
+        image = images[player.playerNo];
+    }
+
+    public void die() {
+        if (state == 0) {
+            state = 1;
+            hitBoxActive = false;
+            frameCounter = EXPLOSION_TIME;
+            size.x *= EXPLOSION_SIZE_MULTIPLIER;
+            size.y *= EXPLOSION_SIZE_MULTIPLIER;
+        }
+    }
+
+    public void draw(Graphics2D g2) {
+        if (state == 1) g2.drawImage(explosionImages[(EXPLOSION_TIME - frameCounter - 1) / EXPLOSION_FRAME_HZ], (int) (coord.x - size.x / 2), (int) (coord.y - size.y / 2), (int) size.x, (int) size.y, null);
+        else {
+            g2.rotate(dir, coord.x, coord.y);
+            g2.drawImage(image, (int) (coord.x - size.x / 2), (int) (coord.y - size.y / 2), (int) size.x, (int) size.y, null);
+            g2.rotate(-dir, coord.x, coord.y);
+        }
+    }
+
+    public void process() {
+        if (state == 0) {
+            super.process();
+
+            // Homing
+            // Replace OmegaFight3.omegaman[(((Omegaman) character).playerNo + 1) % 2] with boss variable
+            double targetDir = Math.atan2(OmegaFight3.omegaman[(((Omegaman) character).playerNo + 1) % 2].coord.y - coord.y, OmegaFight3.omegaman[(((Omegaman) character).playerNo + 1) % 2].coord.x - coord.x);
+            double angleDifference = targetDir - dir;
+            angleDifference = Math.atan2(Math.sin(angleDifference), Math.cos(angleDifference));
+            if (Math.abs(angleDifference) <= TURN_SPEED) dir = targetDir;
+            else dir += Math.signum(angleDifference) * TURN_SPEED;
+
+            for (Omegaman enemy: OmegaFight3.omegaman) {
+                if (enemy != character) {
+                    if (enemy.checkHitbox(coord, hitBoxSize) && enemy.invCounter == Omegaman.VULNERABLE) {
+                        enemy.hurt(damage, knockback, coord, (int) (MAX_SCREENSHAKE * (size.x / MAX_SIZE.x)));
+                        die();
+                    }
+                    else if (coord.x < 0 || coord.x > OmegaFight3.SCREEN_SIZE.x || coord.y < 0 || coord.y > OmegaFight3.SCREEN_SIZE.y) {
+                        die();
+                    }
+                    else {
+                        for (Projectile proj: enemy.projectiles) {
+                            if (proj.checkHitbox(coord, hitBoxSize) && proj.hitBoxActive) {
+                                die();
+                                if (proj.shouldDieTo(durability)) proj.die();
+                            }
+                        }
+                    }
+                }
+                // Also check boss hitbox
+            }
+        }
+        else {
+            frameCounter--;
+            if (frameCounter == 0) super.die();
+        }
+    }
+
+    public boolean shouldDieTo(double enemyDurability) {
+        return true;
     }
 }
