@@ -388,6 +388,7 @@ class Spammer extends Projectile {
 class Missile extends Projectile {
     public BufferedImage image;
     public int state; // 0: Travelling, 1: Exploding
+    public int sign;
 
     // Size constants
     public static final double HITBOX_TO_SIZE_RATIO = 1.5;
@@ -412,9 +413,10 @@ class Missile extends Projectile {
 
     public static BufferedImage[] images = new BufferedImage[Omegaman.NUM_PLAYERS];
 
-    public Missile(Omegaman player, Coord coord, Coord size, double velocity, double dir, double damage, double knockback, double durability, int frameCounter) {
+    public Missile(Omegaman player, Coord coord, Coord size, double velocity, double dir, double damage, double knockback, double durability, int frameCounter, int sign) {
         super(player, coord, size, new Coord(size.x * HITBOX_TO_SIZE_RATIO, size.y * HITBOX_TO_SIZE_RATIO), velocity, dir, damage, knockback, durability, frameCounter);
         image = images[player.playerNo];
+        this.sign = sign;
     }
 
     public void die() {
@@ -431,7 +433,7 @@ class Missile extends Projectile {
         if (state == 1) g2.drawImage(explosionImages[(EXPLOSION_TIME - frameCounter - 1) / EXPLOSION_FRAME_HZ], (int) (coord.x - size.x / 2), (int) (coord.y - size.y / 2), (int) size.x, (int) size.y, null);
         else {
             g2.rotate(dir, coord.x, coord.y);
-            g2.drawImage(image, (int) (coord.x - size.x / 2), (int) (coord.y - size.y / 2), (int) size.x, (int) size.y, null);
+            g2.drawImage(image, (int) (coord.x - size.x / 2), (int) (coord.y - size.y / 2 + size.y * ((sign - 1) / -2)), (int) size.x, (int) size.y * sign, null);
             g2.rotate(-dir, coord.x, coord.y);
         }
     }

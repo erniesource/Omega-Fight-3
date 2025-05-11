@@ -281,7 +281,7 @@ public class Omegaman extends Char {
                                 }
                                 else if (loadout[i] == SPAMMER_WEAPON_NO) {
                                     percentCharged = OmegaFight3.lerp(Missile.MINIMUM_SIZE_PERCENTAGE, 1, getPercentCharged(SPAMMER_WEAPON_NO));
-                                    projectiles.add(new Missile(this, newProjCoord, new Coord(Missile.MAX_SIZE.x * percentCharged, Missile.MAX_SIZE.y * percentCharged), Missile.VELOCITY * percentCharged, OmegaFight3.signToRadians(spriteSign), Missile.DMG * percentCharged, Missile.KB * percentCharged, Missile.DURABILITY, (int) (Missile.LIFE * percentCharged)));
+                                    projectiles.add(new Missile(this, newProjCoord, new Coord(Missile.MAX_SIZE.x * percentCharged, Missile.MAX_SIZE.y * percentCharged), Missile.VELOCITY * percentCharged, OmegaFight3.signToRadians(spriteSign), Missile.DMG * percentCharged, Missile.KB * percentCharged, Missile.DURABILITY, (int) (Missile.LIFE * percentCharged), spriteSign));
                                 }
 
                                 // Update stats
@@ -301,7 +301,7 @@ public class Omegaman extends Char {
         }
     }
 
-    public void drawCharge(Graphics2D g2) {
+    public void drawCharge(Graphics g) {
         if (shootCharge > BASIC_SHOOT_TIME_LIMIT) {
             double sizeMultiplier;
             Coord chargeCoord = new Coord(coord.x + size.x / 2 * spriteSign, coord.y + (onPlatform == -1? JUMP_PROJ_Y_OFFSET: IDLE_PROJ_Y_OFFSET));
@@ -309,19 +309,17 @@ public class Omegaman extends Char {
             if (loadout[chargingWeapon] == BULLET_WEAPON_NO) {
                 sizeMultiplier = OmegaFight3.lerp(Rocket.MINIMUM_SIZE_PERCENTAGE, 1, getPercentCharged(BULLET_WEAPON_NO));
                 chargeSize = new Coord(Rocket.MAX_SIZE.x * sizeMultiplier, Rocket.MAX_SIZE.y * sizeMultiplier);
-                g2.drawImage(Rocket.images[playerNo], (int) (chargeCoord.x - chargeSize.x / 2), (int) (chargeCoord.y - chargeSize.y / 2), (int) chargeSize.x, (int) chargeSize.y, null);
+                g.drawImage(Rocket.images[playerNo], (int) (chargeCoord.x - chargeSize.x / 2), (int) (chargeCoord.y - chargeSize.y / 2), (int) chargeSize.x, (int) chargeSize.y, null);
             }
             else if (loadout[chargingWeapon] == SHOTGUN_WEAPON_NO) {
                 sizeMultiplier = OmegaFight3.lerp(Firework.MINIMUM_SIZE_PERCENTAGE, 1, getPercentCharged(SHOTGUN_WEAPON_NO));
                 chargeSize = new Coord(Firework.MAX_CHARGE_SIZE.x * sizeMultiplier, Firework.MAX_CHARGE_SIZE.y * sizeMultiplier);
-                g2.drawImage(Firework.chargingImages[playerNo], (int) (chargeCoord.x - chargeSize.x / 2), (int) (chargeCoord.y - chargeSize.y / 2), (int) chargeSize.x, (int) chargeSize.y, null);
+                g.drawImage(Firework.chargingImages[playerNo], (int) (chargeCoord.x - chargeSize.x / 2), (int) (chargeCoord.y - chargeSize.y / 2), (int) chargeSize.x, (int) chargeSize.y, null);
             }
             else if (loadout[chargingWeapon] == SPAMMER_WEAPON_NO) {
                 sizeMultiplier = OmegaFight3.lerp(Missile.MINIMUM_SIZE_PERCENTAGE, 1, getPercentCharged(SPAMMER_WEAPON_NO));
                 chargeSize = new Coord(Missile.MAX_SIZE.x * sizeMultiplier, Missile.MAX_SIZE.y * sizeMultiplier);
-                g2.rotate(OmegaFight3.signToRadians(spriteSign), chargeCoord.x, chargeCoord.y);
-                g2.drawImage(Missile.images[playerNo], (int) (chargeCoord.x - chargeSize.x / 2), (int) (chargeCoord.y - chargeSize.y / 2), (int) chargeSize.x, (int) chargeSize.y, null);
-                g2.rotate(-OmegaFight3.signToRadians(spriteSign), chargeCoord.x, chargeCoord.y);
+                g.drawImage(Missile.images[playerNo], (int) (chargeCoord.x - chargeSize.x / 2 + chargeSize.x * ((spriteSign - 1) / -2)), (int) (chargeCoord.y - chargeSize.y / 2), (int) chargeSize.x * spriteSign, (int) chargeSize.y, null);
             }
         }
     }
@@ -559,11 +557,12 @@ public class Omegaman extends Char {
                 spriteNo = JUMP_SPRITE;
                 onPlatform = -1;
                 velocity.y = Math.min(velocity.y, maxVelocity.y);
+                if (jumpState < 2) jumpState = 3;
             }
             else {
                 spriteNo = IDLE_SPRITE;
                 onPlatform = platformNo;
-                jumpState %= 2;
+                jumpState = 1;
             }
         }
     }
