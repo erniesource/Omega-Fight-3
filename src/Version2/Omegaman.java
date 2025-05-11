@@ -64,13 +64,14 @@ public class Omegaman extends Char {
 
     // Shooting Constants
     public static final int BASIC_SHOOT_TIME_LIMIT = 20;
-    public static final int NUM_WEAPONS = 2;
+    public static final int LOADOUT_NUM_WEAPONS = 2;
     public static final int BULLET_WEAPON_NO = 0;
     public static final int SHOTGUN_WEAPON_NO = 1;
-    public static final int[] BASIC_SHOT_HEAT = {10, 30};
-    public static final int[] CHARGED_SHOT_HEAT = {20, 60};
+    public static final int SPAMMER_WEAPON_NO = 2;
+    public static final int[] BASIC_SHOT_HEAT = {10, 30, 5};
+    public static final int[] CHARGED_SHOT_HEAT = {20, 60, 50};
     public static final int MAX_SHOOT_CHARGE = 300;
-    public static final int[] CHARGE_TIME = {50, 90};
+    public static final int[] CHARGE_TIME = {50, 90, 80};
     public static final int NOT_CHARGING = -1;
 
     // Projectile Offsets
@@ -240,11 +241,11 @@ public class Omegaman extends Char {
     public void controlShoot(HashSet<Integer> pressedKey) {
         if (heatCounter != 0) heatCounter--;
         else {
-            for (int i = 0; i != Omegaman.NUM_WEAPONS; i++) {
+            for (int i = 0; i != LOADOUT_NUM_WEAPONS; i++) {
                 if ((chargingWeapon == NOT_CHARGING) || chargingWeapon == i) {
                     if (!pressedKey.contains(shtKeys[i]) || shootCharge == MAX_SHOOT_CHARGE) {
                         if (shootCharge != 0) {
-                            Coord newProjCoord = new Coord(coord.x + (size.x / 2 - PROJ_SPAWN_X_OFFSET) * spriteSign, coord.y + (onPlatform == -1? Omegaman.JUMP_PROJ_Y_OFFSET : Omegaman.IDLE_PROJ_Y_OFFSET));
+                            Coord newProjCoord = new Coord(coord.x + (size.x / 2 - PROJ_SPAWN_X_OFFSET) * spriteSign, coord.y + (onPlatform == -1? JUMP_PROJ_Y_OFFSET : IDLE_PROJ_Y_OFFSET));
                             
                             // Fire basic
                             if (shootCharge <= BASIC_SHOOT_TIME_LIMIT || skillPts < ONES_PER_SKILL_PT) {
@@ -255,8 +256,11 @@ public class Omegaman extends Char {
                                         projectiles.add(new Shotgun(this, newProjCoord.copy(), Shotgun.SIZE, Shotgun.VELOCITY, OmegaFight3.signToRadians(spriteSign) - Shotgun.SPREAD + j * (Shotgun.SPREAD * 2 / (Shotgun.NUM_SHOTS - 1)), Shotgun.DMG, Shotgun.KB, Shotgun.DURABILITY, Shotgun.LIFE));
                                     }
                                 }
+                                else if (loadout[i] == SPAMMER_WEAPON_NO) {
+                                    projectiles.add(new Spammer(this, newProjCoord, Spammer.SIZE, Spammer.VELOCITY, OmegaFight3.signToRadians(spriteSign) - Spammer.SPREAD + Math.random() * Spammer.SPREAD * 2, Spammer.DMG, Spammer.KB, Spammer.DURABILITY, Spammer.LIFE));
+                                }
 
-                                heatCounter = BASIC_SHOT_HEAT[i];
+                                heatCounter = BASIC_SHOT_HEAT[loadout[i]];
                             }
 
                             // Fire charged
@@ -275,10 +279,14 @@ public class Omegaman extends Char {
                                         projectiles.add(new Firework(this, newProjCoord.copy(), new Coord(Firework.MAX_SIZE.x * percentCharged, Firework.MAX_SIZE.y * percentCharged), Firework.VELOCITY * percentCharged, Math.PI * 2 / Firework.NUM_SHOTS * j, Firework.DMG * percentCharged, Firework.KB * percentCharged, Firework.DURABILITY, (int) (Firework.LIFE * percentCharged)));
                                     }
                                 }
+                                else if (loadout[i] == SPAMMER_WEAPON_NO) {
+                                    percentCharged = OmegaFight3.lerp(Missile.MINIMUM_SIZE_PERCENTAGE, 1, getPercentCharged(SPAMMER_WEAPON_NO));
+                                    projectiles.add(new Missile(this, newProjCoord, new Coord(Missile.MAX_SIZE.x * percentCharged, Missile.MAX_SIZE.y * percentCharged), Missile.VELOCITY * percentCharged, OmegaFight3.signToRadians(spriteSign), Missile.DMG * percentCharged, Missile.KB * percentCharged, Missile.DURABILITY, (int) (Missile.LIFE * percentCharged), spriteSign));
+                                }
 
                                 // Update stats
                                 skillPts -= ONES_PER_SKILL_PT;
-                                heatCounter = CHARGED_SHOT_HEAT[i];
+                                heatCounter = CHARGED_SHOT_HEAT[loadout[i]];
                             }
                             shootCharge = 0;
                             chargingWeapon = NOT_CHARGING;
@@ -296,19 +304,28 @@ public class Omegaman extends Char {
     public void drawCharge(Graphics g) {
         if (shootCharge > BASIC_SHOOT_TIME_LIMIT) {
             double sizeMultiplier;
+            Coord chargeCoord = new Coord(coord.x + size.x / 2 * spriteSign, coord.y + (onPlatform == -1? JUMP_PROJ_Y_OFFSET: IDLE_PROJ_Y_OFFSET));
+            Coord chargeSize;
             if (loadout[chargingWeapon] == BULLET_WEAPON_NO) {
                 sizeMultiplier = OmegaFight3.lerp(Rocket.MINIMUM_SIZE_PERCENTAGE, 1, getPercentCharged(BULLET_WEAPON_NO));
-                g.drawImage(Rocket.images[playerNo], (int) (coord.x + size.x / 2 * spriteSign - Rocket.MAX_SIZE.x * sizeMultiplier / 2), (int) (coord.y + (onPlatform == -1? Omegaman.JUMP_PROJ_Y_OFFSET: Omegaman.IDLE_PROJ_Y_OFFSET) - Rocket.MAX_SIZE.y * sizeMultiplier / 2), (int) (Rocket.MAX_SIZE.x * sizeMultiplier), (int) (Rocket.MAX_SIZE.y * sizeMultiplier), null);
+                chargeSize = new Coord(Rocket.MAX_SIZE.x * sizeMultiplier, Rocket.MAX_SIZE.y * sizeMultiplier);
+                g.drawImage(Rocket.images[playerNo], (int) (chargeCoord.x - chargeSize.x / 2), (int) (chargeCoord.y - chargeSize.y / 2), (int) chargeSize.x, (int) chargeSize.y, null);
             }
             else if (loadout[chargingWeapon] == SHOTGUN_WEAPON_NO) {
                 sizeMultiplier = OmegaFight3.lerp(Firework.MINIMUM_SIZE_PERCENTAGE, 1, getPercentCharged(SHOTGUN_WEAPON_NO));
-                g.drawImage(Firework.chargingImages[playerNo], (int) (coord.x + size.x / 2 * spriteSign - Firework.MAX_CHARGE_SIZE.x * sizeMultiplier / 2), (int) (coord.y + (onPlatform == -1? Omegaman.JUMP_PROJ_Y_OFFSET: Omegaman.IDLE_PROJ_Y_OFFSET) - Firework.MAX_CHARGE_SIZE.y * sizeMultiplier / 2), (int) (Firework.MAX_CHARGE_SIZE.x * sizeMultiplier), (int) (Firework.MAX_CHARGE_SIZE.y * sizeMultiplier), null);
+                chargeSize = new Coord(Firework.MAX_CHARGE_SIZE.x * sizeMultiplier, Firework.MAX_CHARGE_SIZE.y * sizeMultiplier);
+                g.drawImage(Firework.chargingImages[playerNo], (int) (chargeCoord.x - chargeSize.x / 2), (int) (chargeCoord.y - chargeSize.y / 2), (int) chargeSize.x, (int) chargeSize.y, null);
+            }
+            else if (loadout[chargingWeapon] == SPAMMER_WEAPON_NO) {
+                sizeMultiplier = OmegaFight3.lerp(Missile.MINIMUM_SIZE_PERCENTAGE, 1, getPercentCharged(SPAMMER_WEAPON_NO));
+                chargeSize = new Coord(Missile.MAX_SIZE.x * sizeMultiplier, Missile.MAX_SIZE.y * sizeMultiplier);
+                g.drawImage(Missile.images[playerNo], (int) (chargeCoord.x - chargeSize.x / 2 + chargeSize.x * ((spriteSign - 1) / -2)), (int) (chargeCoord.y - chargeSize.y / 2), (int) chargeSize.x * spriteSign, (int) chargeSize.y, null);
             }
         }
     }
 
     private double getPercentCharged(int weaponNo) {
-        return (double) Math.min(shootCharge - BASIC_SHOOT_TIME_LIMIT, CHARGE_TIME[loadout[weaponNo]]) / (CHARGE_TIME[loadout[weaponNo]]);
+        return (double) Math.min(shootCharge - BASIC_SHOOT_TIME_LIMIT, CHARGE_TIME[weaponNo]) / (CHARGE_TIME[weaponNo]);
     }
 
     public void moveAerial(boolean upPressed) {
@@ -513,11 +530,14 @@ public class Omegaman extends Char {
             // Speed calculations FIX THIS DO MATH
             knockback *= (percent / Math.pow(10, PERCENT_NUM_DECIMALS) / 100 + 1);
             Coord dist = new Coord(coord.x - enemyCoord.x, coord.y - KB_COORD_Y_OFFSET - enemyCoord.y);
-            velocity.x += (dist.x) / Math.sqrt(Math.pow(dist.x, 2) + Math.pow(dist.y, 2)) * knockback;
-            velocity.y += (dist.y) / Math.sqrt(Math.pow(dist.x, 2) + Math.pow(dist.y, 2)) * knockback;
+            velocity.x += dist.x / Math.hypot(dist.x, dist.y) * knockback;
+            velocity.y += dist.y / Math.hypot(dist.x, dist.y) * knockback;
             stunCounter = (int) knockback;
 
-            if (enemyCoord.x != coord.x) spriteSign = (int) ((enemyCoord.x - coord.x) / Math.abs(enemyCoord.x - coord.x));
+            if (enemyCoord.x != coord.x) {
+                spriteSign = (int) Math.signum(enemyCoord.x - coord.x);
+                if (spriteSign == 0) spriteSign = RIGHT_SIGN;
+            }
         }
     }
 
@@ -537,11 +557,12 @@ public class Omegaman extends Char {
                 spriteNo = JUMP_SPRITE;
                 onPlatform = -1;
                 velocity.y = Math.min(velocity.y, maxVelocity.y);
+                if (jumpState < 2) jumpState = 3;
             }
             else {
                 spriteNo = IDLE_SPRITE;
                 onPlatform = platformNo;
-                jumpState %= 2;
+                jumpState = 1;
             }
         }
     }
