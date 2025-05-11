@@ -6,8 +6,8 @@ import javax.swing.*;
 import java.io.*;
 import java.awt.event.*;
 import java.util.*;
-// Ernest Todo: machinegun, missile
-// Ernest Long term Todo: sniper, laser, boomerang, bouncer, spike, splitter, ultimate, dash
+// Ernest Todo: sniper, laser
+// Ernest Long term Todo: boomerang, bouncer, spike, splitter, ultimate, dash
 
 public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionListener, KeyListener, Runnable {
     // Game States
@@ -144,7 +144,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                         omega.controlShoot(pressedKey);
                         omega.moveAerial(pressedKey.contains(omega.upKey));
                     }
-                    else omega.knockback(); // Do blinking
+                    else omega.knockback();
 
                     omega.move();
                     omega.checkState();
