@@ -87,6 +87,7 @@ public class Omegaman extends Char {
     // KB Constants
     public static final int NOT_STUNNED = 0;
     public static final int KB_COORD_Y_OFFSET = 50;
+    public static final double KB_GRAVITY = 1.25;
 
     // HUD Constants
     public static final int PERCENT_DISPLAY_Y_COORD = 790;
@@ -190,7 +191,7 @@ public class Omegaman extends Char {
                 animateRun();
 
                 // Change to correct direction
-                if (spriteSign == 1) spriteSign = -1;
+                if (spriteSign == RIGHT_SIGN) spriteSign = LEFT_SIGN;
             }
         }
 
@@ -203,7 +204,7 @@ public class Omegaman extends Char {
             animateRun();
 
             // Change to correct direction
-            if (spriteSign == -1) spriteSign = 1;
+            if (spriteSign == LEFT_SIGN) spriteSign = RIGHT_SIGN;
         }
 
         // Idle
@@ -544,7 +545,7 @@ public class Omegaman extends Char {
     public void knockback() {
         decelerate();
         
-        velocity.y++; // MAKE WORK WHILE RESPAWN MAKE RESPAWN INVINCIBLE
+        velocity.y += KB_GRAVITY;
         int platformNo = checkPlatforms();
         if (platformNo != AIRBORNE) {
             coord.y = getPlatformY(platformNo);
@@ -555,7 +556,7 @@ public class Omegaman extends Char {
         if (stunCounter == 0) {
             if (platformNo == AIRBORNE) {
                 spriteNo = JUMP_SPRITE;
-                onPlatform = -1;
+                onPlatform = AIRBORNE;
                 velocity.y = Math.min(velocity.y, maxVelocity.y);
                 if (jumpState < 2) jumpState = 3;
             }
