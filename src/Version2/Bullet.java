@@ -436,12 +436,12 @@ class Sniper extends Projectile {
     public static BufferedImage image;
 
     // Damage constants
-    public static final double DMG = 2 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
+    public static final double DMG = 5 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
     public static final double DURABILITY = 3;
     public static final double KB = 5;
 
     // Size constants
-    public static final Coord SIZE = new Coord(22, 18); // Change this
+    public static final Coord SIZE = new Coord(41, 14); // Change this
 
     // Movement constants
     public static final double VELOCITY = 15; 
@@ -462,7 +462,7 @@ class Sniper extends Projectile {
 
     public void process() {
         super.process();
-        velocity += ACCELERATION * Math.cos(dir);
+        velocity += ACCELERATION;
         for (Omegaman enemy: OmegaFight3.omegaman) {
             if (enemy != character) {
                 if (enemy.checkHitbox(coord, hitBoxSize) && enemy.invCounter == Omegaman.VULNERABLE) {
