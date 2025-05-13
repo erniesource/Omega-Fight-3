@@ -7,7 +7,7 @@ public class Bullet extends Projectile {
     public static BufferedImage image;
     
     // Damage constants
-    public static final double DMG = 2 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);;
+    public static final double DMG = 2 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
     public static final double DURABILITY = 2;
     public static final double KB = 5;
 
@@ -141,7 +141,7 @@ class Shotgun extends Projectile {
     public static BufferedImage image;
 
     // Damage constants
-    public static final double DMG = 2 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);;
+    public static final double DMG = 2 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
     public static final double DURABILITY = 1;
     public static final double KB = 4;
 
@@ -267,7 +267,7 @@ class Spammer extends Projectile {
     public static BufferedImage image;
 
     // Damage constants
-    public static final double DMG = 1.3 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);;
+    public static final double DMG = 1.3 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
     public static final double DURABILITY = 1;
     public static final double KB = 4;
 
@@ -429,5 +429,60 @@ class Missile extends Projectile {
 
     public boolean shouldDieTo(double enemyDurability) {
         return true;
+    }
+}
+
+class Sniper extends Projectile {
+    public static BufferedImage image;
+
+    // Damage constants
+    public static final double DMG = 2 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
+    public static final double DURABILITY = 3;
+    public static final double KB = 5;
+
+    // Size constants
+    public static final Coord SIZE = new Coord(22, 18); // Change this
+
+    // Movement constants
+    public static final double VELOCITY = 15; 
+    public static final int LIFE = 30;
+    public static final double ACCELERATION = 1;
+
+    // Misc constants
+    public static final int SKILL_PT_GAIN = 10;
+    public static final int SCREENSHAKE = 0;
+
+    public Sniper(Omegaman player, Coord coord, Coord size, double velocity, double dir, double damage, double knockback, double durability, int frameCounter) {
+        super(player, coord, size, size, velocity, dir, damage, knockback, durability, frameCounter);
+    }
+
+    public void draw(Graphics2D g2) {
+        g2.drawImage(image, (int) (coord.x - size.x / 2 + size.x * (Math.cos(dir) - 1) / -2), (int) (coord.y - size.y / 2), (int) (size.x * Math.cos(dir)), (int) size.y, null);
+    }
+
+    public void process() {
+        super.process();
+        velocity += ACCELERATION * Math.cos(dir);
+        for (Omegaman enemy: OmegaFight3.omegaman) {
+            if (enemy != character) {
+                if (enemy.checkHitbox(coord, hitBoxSize) && enemy.invCounter == Omegaman.VULNERABLE) {
+                    enemy.hurt(damage * velocity / VELOCITY, knockback * velocity / VELOCITY, coord, SCREENSHAKE);
+                    die();
+                    ((Omegaman) character).skillPts = Math.min(((Omegaman) character).skillPts + SKILL_PT_GAIN, Omegaman.MAX_SKILL_PTS);
+                }
+                else if (coord.x < 0 || coord.x > OmegaFight3.SCREEN_SIZE.x || coord.y < 0 || coord.y > OmegaFight3.SCREEN_SIZE.y) {
+                    die();
+                }
+                else {
+                    for (Projectile proj: enemy.projectiles) {
+                        if (proj.checkHitbox(coord, hitBoxSize) && proj.hitBoxActive) {
+                            if (shouldDieTo(proj.durability)) die();
+                            if (proj.shouldDieTo(durability)) proj.die();
+                        }
+                    }
+                }
+            }
+            // Also check boss hitbox
+        }
     }
 }
