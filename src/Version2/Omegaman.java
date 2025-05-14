@@ -258,11 +258,12 @@ public class Omegaman extends Char {
                                         projectiles.add(new Shotgun(this, newProjCoord.copy(), Shotgun.SIZE, Shotgun.VELOCITY, OmegaFight3.signToRadians(spriteSign) - Shotgun.SPREAD + j * (Shotgun.SPREAD * 2 / (Shotgun.NUM_SHOTS - 1)), Shotgun.DMG, Shotgun.KB, Shotgun.DURABILITY, Shotgun.LIFE));
                                     }
                                 }
-                                else if (loadout[i] == SPAMMER_WEAPON_NO) {
-                                    projectiles.add(new Spammer(this, newProjCoord, Spammer.SIZE, Spammer.VELOCITY, OmegaFight3.signToRadians(spriteSign) - Spammer.SPREAD + Math.random() * Spammer.SPREAD * 2, Spammer.DMG, Spammer.KB, Spammer.DURABILITY, Spammer.LIFE));
-                                }
+                                else if (loadout[i] == SPAMMER_WEAPON_NO) projectiles.add(new Spammer(this, newProjCoord, Spammer.SIZE, Spammer.VELOCITY, OmegaFight3.signToRadians(spriteSign) - Spammer.SPREAD + Math.random() * Spammer.SPREAD * 2, Spammer.DMG, Spammer.KB, Spammer.DURABILITY, Spammer.LIFE));
                                 else if (loadout[i] == SNIPER_WEAPON_NO) {
                                     projectiles.add(new Sniper(this, newProjCoord, Sniper.SIZE, Sniper.VELOCITY, OmegaFight3.signToRadians(spriteSign), Sniper.DMG, Sniper.KB, Sniper.DURABILITY, Sniper.LIFE));
+                                    
+                                    // Recoil
+                                    recoil(Sniper.RECOIL);
                                 }
 
                                 heatCounter = BASIC_SHOT_HEAT[loadout[i]];
@@ -276,7 +277,7 @@ public class Omegaman extends Char {
                                     projectiles.add(new Rocket(this, newProjCoord, new Coord(Rocket.MAX_SIZE.x * percentCharged, Rocket.MAX_SIZE.y * percentCharged), Rocket.VELOCITY * percentCharged, OmegaFight3.signToRadians(spriteSign), Rocket.DMG * percentCharged, Rocket.KB * percentCharged, Rocket.DURABILITY, (int) (Rocket.LIFE * percentCharged)));
                                 
                                     // Recoil
-                                    recoil(Rocket.MAX_RECOIL * percentCharged);
+                                    recoil(Rocket.RECOIL * percentCharged);
                                 }
                                 else if (loadout[i] == SHOTGUN_WEAPON_NO) {
                                     percentCharged = OmegaFight3.lerp(Rocket.MINIMUM_SIZE_PERCENTAGE, 1, getPercentCharged(SHOTGUN_WEAPON_NO));
@@ -289,6 +290,7 @@ public class Omegaman extends Char {
                                     projectiles.add(new Missile(this, newProjCoord, new Coord(Missile.MAX_SIZE.x * percentCharged, Missile.MAX_SIZE.y * percentCharged), Missile.VELOCITY * percentCharged, OmegaFight3.signToRadians(spriteSign), Missile.DMG * percentCharged, Missile.KB * percentCharged, Missile.DURABILITY, (int) (Missile.LIFE * percentCharged), spriteSign));
                                     
                                     // Recoil do this
+                                    recoil(Missile.RECOIL * percentCharged);
                                 }
 
                                 // Update stats

@@ -77,7 +77,7 @@ class Rocket extends Projectile {
 
     // Misc constants
     public static final double MINIMUM_STAT_PERCENTAGE = 0.5;
-    public static final double MAX_RECOIL = 8;
+    public static final double RECOIL = 8;
     public static final int MAX_SCREENSHAKE = 15;
 
     public static BufferedImage[] images = new BufferedImage[Omegaman.NUM_PLAYERS];
@@ -344,7 +344,7 @@ class Missile extends Projectile {
 
     // Misc constants
     public static final double MINIMUM_STAT_PERCENTAGE = 0.5;
-    public static final double MAX_RECOIL = 8;
+    public static final double RECOIL = 8;
     public static final int MAX_SCREENSHAKE = 15;
 
     public static BufferedImage[] images = new BufferedImage[Omegaman.NUM_PLAYERS];
@@ -451,6 +451,7 @@ class Sniper extends Projectile {
     // Misc constants
     public static final int SKILL_PT_GAIN = 10;
     public static final int SCREENSHAKE = 0;
+    public static final double RECOIL = 4;
 
     public Sniper(Omegaman player, Coord coord, Coord size, double velocity, double dir, double damage, double knockback, double durability, int frameCounter) {
         super(player, coord, size, size, velocity, dir, damage, knockback, durability, frameCounter);
