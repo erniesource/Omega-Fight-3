@@ -524,30 +524,32 @@ public class Omegaman extends Char {
         else if (spriteSign == RIGHT_SIGN) velocity.x = Math.max(-maxVelocity.x, velocity.x - amount);
     }
 
-    public void hurt(double damage, double knockback, Coord enemyCoord, int screenShake) {
+    public void hurt(double damage) {
         percentShakeCounter = PERCENT_SHAKE_TIME;
         percent += damage;
+    }
 
-        if (knockback != 0) {
-            int platformNo = checkPlatforms();
-            if (platformNo != AIRBORNE) coord.y = getPlatformY(platformNo);
+    public void hurt(double damage, double knockback, Coord enemyCoord, int screenShake) {
+        hurt(damage);
 
-            spriteNo = HURT_SPRITE;
-            
-            resetStats(GENERAL_STAT_RESET);
-            OmegaFight3.screenShakeCounter += screenShake;
+        int platformNo = checkPlatforms();
+        if (platformNo != AIRBORNE) coord.y = getPlatformY(platformNo);
 
-            // Speed calculations FIX THIS DO MATH
-            knockback *= (percent / Math.pow(10, PERCENT_NUM_DECIMALS) / 100 + 1);
-            Coord dist = new Coord(coord.x - enemyCoord.x, coord.y - KB_COORD_Y_OFFSET - enemyCoord.y);
-            velocity.x += dist.x / Math.hypot(dist.x, dist.y) * knockback;
-            velocity.y += dist.y / Math.hypot(dist.x, dist.y) * knockback;
-            stunCounter = (int) knockback;
+        spriteNo = HURT_SPRITE;
+        
+        resetStats(GENERAL_STAT_RESET);
+        OmegaFight3.screenShakeCounter += screenShake;
 
-            if (enemyCoord.x != coord.x) {
-                spriteSign = (int) Math.signum(enemyCoord.x - coord.x);
-                if (spriteSign == 0) spriteSign = RIGHT_SIGN;
-            }
+        // Speed calculations FIX THIS DO MATH
+        knockback *= (percent / Math.pow(10, PERCENT_NUM_DECIMALS) / 100 + 1);
+        Coord dist = new Coord(coord.x - enemyCoord.x, coord.y - KB_COORD_Y_OFFSET - enemyCoord.y);
+        velocity.x += dist.x / Math.hypot(dist.x, dist.y) * knockback;
+        velocity.y += dist.y / Math.hypot(dist.x, dist.y) * knockback;
+        stunCounter = (int) knockback;
+
+        if (enemyCoord.x != coord.x) {
+            spriteSign = (int) Math.signum(enemyCoord.x - coord.x);
+            if (spriteSign == 0) spriteSign = RIGHT_SIGN;
         }
     }
 
@@ -558,7 +560,11 @@ public class Omegaman extends Char {
         int platformNo = checkPlatforms();
         if (platformNo != AIRBORNE) {
             coord.y = getPlatformY(platformNo);
-            velocity.y = 0;
+            if (velocity.y >= 10) {
+                hurt(velocity.y);
+                velocity.y *= -1;
+            }
+            else velocity.y = 0;
         }
 
         stunCounter--;

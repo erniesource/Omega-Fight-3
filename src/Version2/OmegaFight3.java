@@ -84,7 +84,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
 
         // Player
         omegaman[0] = new Omegaman(0, new Coord(stage[stageNo].spawnCoords[0].x, stage[stageNo].spawnCoords[0].y), stage[stageNo].spawnSpriteSign[0], stage[stageNo].spawnPlatformNo[0], new int[] {KeyEvent.VK_A, KeyEvent.VK_D, KeyEvent.VK_W, KeyEvent.VK_S}, new int[] {KeyEvent.VK_C, KeyEvent.VK_V}, new int[] {0, 1});
-        omegaman[1] = new Omegaman(1, new Coord(stage[stageNo].spawnCoords[1].x, stage[stageNo].spawnCoords[1].y), stage[stageNo].spawnSpriteSign[1], stage[stageNo].spawnPlatformNo[1], new int[] {KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_UP, KeyEvent.VK_DOWN}, new int[] {KeyEvent.VK_NUMPAD1, KeyEvent.VK_NUMPAD2}, new int[] {2, 3});
+        omegaman[1] = new Omegaman(1, new Coord(stage[stageNo].spawnCoords[1].x, stage[stageNo].spawnCoords[1].y), stage[stageNo].spawnSpriteSign[1], stage[stageNo].spawnPlatformNo[1], new int[] {KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_UP, KeyEvent.VK_DOWN}, new int[] {KeyEvent.VK_NUMPAD1, KeyEvent.VK_NUMPAD2}, new int[] {1, 2});
 
         // Weapon image importing
         Bullet.image = ImageIO.read(new File("player projectiles/bullet.png"));

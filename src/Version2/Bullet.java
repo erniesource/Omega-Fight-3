@@ -42,12 +42,10 @@ public class Bullet extends Projectile {
                 else if (coord.x < 0 || coord.x > OmegaFight3.SCREEN_SIZE.x || coord.y < 0 || coord.y > OmegaFight3.SCREEN_SIZE.y) {
                     die();
                 }
-                else {
-                    for (Projectile proj: enemy.projectiles) {
-                        if (proj.checkHitbox(coord, hitBoxSize) && proj.hitBoxActive) {
-                            if (shouldDieTo(proj.durability)) die();
-                            if (proj.shouldDieTo(durability)) proj.die();
-                        }
+                for (Projectile proj: enemy.projectiles) {
+                    if (proj.checkHitbox(coord, hitBoxSize) && proj.hitBoxActive) {
+                        if (shouldDieTo(proj.durability)) die();
+                        if (proj.shouldDieTo(durability)) proj.die();
                     }
                 }
             }
@@ -114,12 +112,10 @@ class Rocket extends Projectile {
                     else if (coord.x < 0 || coord.x > OmegaFight3.SCREEN_SIZE.x || coord.y < 0 || coord.y > OmegaFight3.SCREEN_SIZE.y) {
                         die();
                     }
-                    else {
-                        for (Projectile proj: enemy.projectiles) {
-                            if (proj.checkHitbox(coord, hitBoxSize) && proj.hitBoxActive) {
-                                die();
-                                if (proj.shouldDieTo(durability)) proj.die();
-                            }
+                    for (Projectile proj: enemy.projectiles) {
+                        if (proj.checkHitbox(coord, hitBoxSize) && proj.hitBoxActive) {
+                            die();
+                            if (proj.shouldDieTo(durability)) proj.die();
                         }
                     }
                 }
@@ -182,12 +178,10 @@ class Shotgun extends Projectile {
                 else if (coord.x < 0 || coord.x > OmegaFight3.SCREEN_SIZE.x || coord.y < 0 || coord.y > OmegaFight3.SCREEN_SIZE.y) {
                     die();
                 }
-                else {
-                    for (Projectile proj: enemy.projectiles) {
-                        if (proj.checkHitbox(coord, hitBoxSize) && proj.hitBoxActive) {
-                            if (shouldDieTo(proj.durability)) die();
-                            if (proj.shouldDieTo(durability)) proj.die();
-                        }
+                for (Projectile proj: enemy.projectiles) {
+                    if (proj.checkHitbox(coord, hitBoxSize) && proj.hitBoxActive) {
+                        if (shouldDieTo(proj.durability)) die();
+                        if (proj.shouldDieTo(durability)) proj.die();
                     }
                 }
             }
@@ -245,12 +239,10 @@ class Firework extends Projectile {
                 else if (coord.x < 0 || coord.x > OmegaFight3.SCREEN_SIZE.x || coord.y < 0 || coord.y > OmegaFight3.SCREEN_SIZE.y) {
                     die();
                 }
-                else {
-                    for (Projectile proj: enemy.projectiles) {
-                        if (proj.checkHitbox(coord, hitBoxSize) && proj.hitBoxActive) {
-                            if (shouldDieTo(proj.durability)) die();
-                            if (proj.shouldDieTo(durability)) proj.die();
-                        }
+                for (Projectile proj: enemy.projectiles) {
+                    if (proj.checkHitbox(coord, hitBoxSize) && proj.hitBoxActive) {
+                        if (shouldDieTo(proj.durability)) die();
+                        if (proj.shouldDieTo(durability)) proj.die();
                     }
                 }
             }
@@ -279,7 +271,7 @@ class Spammer extends Projectile {
     public static final int LIFE = 20;
 
     // Shot orientation constants
-    public static final double SPREAD = Math.PI / 6;
+    public static final double SPREAD = Math.PI / 9;
 
     // Misc constants
     public static final int SKILL_PT_GAIN = 1;
@@ -307,12 +299,10 @@ class Spammer extends Projectile {
                 else if (coord.x < 0 || coord.x > OmegaFight3.SCREEN_SIZE.x || coord.y < 0 || coord.y > OmegaFight3.SCREEN_SIZE.y) {
                     die();
                 }
-                else {
-                    for (Projectile proj: enemy.projectiles) {
-                        if (proj.checkHitbox(coord, hitBoxSize) && proj.hitBoxActive) {
-                            if (shouldDieTo(proj.durability)) die();
-                            if (proj.shouldDieTo(durability)) proj.die();
-                        }
+                for (Projectile proj: enemy.projectiles) {
+                    if (proj.checkHitbox(coord, hitBoxSize) && proj.hitBoxActive) {
+                        if (shouldDieTo(proj.durability)) die();
+                        if (proj.shouldDieTo(durability)) proj.die();
                     }
                 }
             }
@@ -409,12 +399,10 @@ class Missile extends Projectile {
                     else if (coord.x < 0 || coord.x > OmegaFight3.SCREEN_SIZE.x || coord.y < 0 || coord.y > OmegaFight3.SCREEN_SIZE.y) {
                         die();
                     }
-                    else {
-                        for (Projectile proj: enemy.projectiles) {
-                            if (proj.checkHitbox(coord, hitBoxSize) && proj.hitBoxActive) {
-                                die();
-                                if (proj.shouldDieTo(durability)) proj.die();
-                            }
+                    for (Projectile proj: enemy.projectiles) {
+                        if (proj.checkHitbox(coord, hitBoxSize) && proj.hitBoxActive) {
+                            die();
+                            if (proj.shouldDieTo(durability)) proj.die();
                         }
                     }
                 }
@@ -474,16 +462,64 @@ class Sniper extends Projectile {
                 else if (coord.x < 0 || coord.x > OmegaFight3.SCREEN_SIZE.x || coord.y < 0 || coord.y > OmegaFight3.SCREEN_SIZE.y) {
                     die();
                 }
-                else {
-                    for (Projectile proj: enemy.projectiles) {
-                        if (proj.checkHitbox(coord, hitBoxSize) && proj.hitBoxActive) {
-                            if (shouldDieTo(proj.durability)) die();
-                            if (proj.shouldDieTo(durability)) proj.die();
-                        }
+                for (Projectile proj: enemy.projectiles) {
+                    if (proj.checkHitbox(coord, hitBoxSize) && proj.hitBoxActive) {
+                        if (shouldDieTo(proj.durability)) die();
+                        if (proj.shouldDieTo(durability)) proj.die();
                     }
                 }
             }
             // Also check boss hitbox
         }
+    }
+}
+
+class Laser extends Projectile {
+    public static BufferedImage image;
+
+    // Size constants
+    public static final double MINIMUM_SIZE_PERCENTAGE = 0.2;
+    public static final Coord MAX_SIZE = new Coord(60, 60); // Change this size.x only affected by charging
+
+    // Damage constants
+    public static final double DMG = 2 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
+    public static final double DURABILITY = INFINITE_DURABILITY;
+    public static final double KB = 16;
+
+    // Velocity constants
+    public static final int LIFE = 20; // Not affected by charging
+
+    // Misc constants
+    public static final double MINIMUM_STAT_PERCENTAGE = 0.5;
+    public static final double RECOIL = 8;
+    public static final int SCREENSHAKE = 0;
+
+    public Laser(Omegaman player, Coord coord, Coord size, double dir, double damage, double knockback, double durability, int frameCounter, int sign) {
+        super(player, coord, size, size, 0, dir, damage, knockback, durability, frameCounter);
+    }
+
+    public void draw(Graphics2D g2) {
+        // Yeap... prolly need final variable for size of spiky ball relative to laser
+    }
+
+    public void process() {
+        super.process();
+        for (Omegaman enemy: OmegaFight3.omegaman) {
+            if (enemy != character) {
+                if (enemy.checkHitbox(coord, hitBoxSize) && enemy.invCounter == Omegaman.VULNERABLE) {
+                    enemy.hurt(damage, knockback, coord, SCREENSHAKE);
+                }
+                for (Projectile proj: enemy.projectiles) {
+                    if (proj.checkHitbox(coord, hitBoxSize) && proj.hitBoxActive) {
+                        if (proj.shouldDieTo(durability)) proj.die();
+                    }
+                }
+            }
+            // Also check boss hitbox
+        }
+    }
+
+    public boolean shouldDieTo(double enemyDurability) {
+        return false;
     }
 }
