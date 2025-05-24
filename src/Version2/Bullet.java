@@ -59,9 +59,9 @@ class Rocket extends Projectile {
     public int state; // 0: Travelling, 1: Exploding
 
     // Size constants
-    public static final double HITBOX_TO_SIZE_RATIO = 2.5;
+    public static final double HITBOX_TO_SIZE = 2.5;
     public static final double MINIMUM_SIZE_PERCENTAGE = 0.2;
-    public static final Coord MAX_SIZE = new Coord(50, 50);
+    public static final Coord SIZE = new Coord(50, 50);
 
     // Damage constants
     public static final double DMG = 15 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
@@ -76,12 +76,12 @@ class Rocket extends Projectile {
     // Misc constants
     public static final double MINIMUM_STAT_PERCENTAGE = 0.5;
     public static final double RECOIL = 8;
-    public static final int MAX_SCREENSHAKE = 15;
+    public static final int SCREENSHAKE = 15;
 
     public static BufferedImage[] images = new BufferedImage[Omegaman.NUM_PLAYERS];
 
     public Rocket(Omegaman player, Coord coord, Coord size, double velocity, double dir, double damage, double knockback, double durability, int frameCounter) {
-        super(player, coord, size, new Coord(size.x * HITBOX_TO_SIZE_RATIO, size.y * HITBOX_TO_SIZE_RATIO), velocity, dir, damage, knockback, durability, frameCounter);
+        super(player, coord, size, size.scaledBy(HITBOX_TO_SIZE), velocity, dir, damage, knockback, durability, frameCounter);
         image = images[player.playerNo];
     }
 
@@ -106,7 +106,7 @@ class Rocket extends Projectile {
             for (Omegaman enemy: OmegaFight3.omegaman) {
                 if (enemy != character) {
                     if (enemy.checkHitbox(coord, hitBoxSize) && enemy.invCounter == Omegaman.VULNERABLE) {
-                        enemy.hurt(damage, knockback, coord, (int) (MAX_SCREENSHAKE * (size.x / MAX_SIZE.x)));
+                        enemy.hurt(damage, knockback, coord, (int) (SCREENSHAKE * (size.x / SIZE.x)));
                         die();
                     }
                     else if (coord.x < 0 || coord.x > OmegaFight3.SCREEN_SIZE.x || coord.y < 0 || coord.y > OmegaFight3.SCREEN_SIZE.y) {
@@ -196,8 +196,7 @@ class Firework extends Projectile {
 
     // Size constants
     public static final double MINIMUM_SIZE_PERCENTAGE = 0.2;
-    public static final Coord MAX_SIZE = new Coord(48, 40);
-    public static final Coord MAX_CHARGE_SIZE = new Coord(60, 60);
+    public static final Coord SIZE = new Coord(50, 50);
 
     // Damage constants
     public static final double DMG = 3 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
@@ -241,7 +240,6 @@ class Firework extends Projectile {
                 }
                 for (Projectile proj: enemy.projectiles) {
                     if (proj.checkHitbox(coord, hitBoxSize) && proj.hitBoxActive) {
-                        if (shouldDieTo(proj.durability)) die();
                         if (proj.shouldDieTo(durability)) proj.die();
                     }
                 }
@@ -317,9 +315,9 @@ class Missile extends Projectile {
     public int sign;
 
     // Size constants
-    public static final double HITBOX_TO_SIZE_RATIO = 1.5;
+    public static final double HITBOX_TO_SIZE = 1.5;
     public static final double MINIMUM_SIZE_PERCENTAGE = 0.2;
-    public static final Coord MAX_SIZE = new Coord(60, 60);
+    public static final Coord SIZE = new Coord(60, 60);
 
     // Damage constants
     public static final double DMG = 12 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
@@ -335,12 +333,12 @@ class Missile extends Projectile {
     // Misc constants
     public static final double MINIMUM_STAT_PERCENTAGE = 0.5;
     public static final double RECOIL = 8;
-    public static final int MAX_SCREENSHAKE = 15;
+    public static final int SCREENSHAKE = 15;
 
     public static BufferedImage[] images = new BufferedImage[Omegaman.NUM_PLAYERS];
 
     public Missile(Omegaman player, Coord coord, Coord size, double velocity, double dir, double damage, double knockback, double durability, int frameCounter, int sign) {
-        super(player, coord, size, new Coord(size.x * HITBOX_TO_SIZE_RATIO, size.y * HITBOX_TO_SIZE_RATIO), velocity, dir, damage, knockback, durability, frameCounter);
+        super(player, coord, size, size.scaledBy(HITBOX_TO_SIZE), velocity, dir, damage, knockback, durability, frameCounter);
         image = images[player.playerNo];
         this.sign = sign;
     }
@@ -393,7 +391,7 @@ class Missile extends Projectile {
             for (Omegaman enemy: OmegaFight3.omegaman) {
                 if (enemy != character) {
                     if (enemy.checkHitbox(coord, hitBoxSize) && enemy.invCounter == Omegaman.VULNERABLE) {
-                        enemy.hurt(damage, knockback, coord, (int) (MAX_SCREENSHAKE * (size.x / MAX_SIZE.x)));
+                        enemy.hurt(damage, knockback, coord, (int) (SCREENSHAKE * (size.x / SIZE.x)));
                         die();
                     }
                     else if (coord.x < 0 || coord.x > OmegaFight3.SCREEN_SIZE.x || coord.y < 0 || coord.y > OmegaFight3.SCREEN_SIZE.y) {
@@ -429,7 +427,7 @@ class Sniper extends Projectile {
     public static final double KB = 5;
 
     // Size constants
-    public static final Coord SIZE = new Coord(41, 14); // Change this
+    public static final Coord SIZE = new Coord(41, 14);
 
     // Movement constants
     public static final double VELOCITY = 15; 
@@ -446,7 +444,7 @@ class Sniper extends Projectile {
     }
 
     public void draw(Graphics2D g2) {
-        g2.drawImage(image, (int) (coord.x - size.x / 2 + size.x * (Math.cos(dir) - 1) / -2), (int) (coord.y - size.y / 2), (int) (size.x * Math.cos(dir)), (int) size.y, null);
+        g2.drawImage(image, (int) (coord.x - size.x / 2 * Math.cos(dir)), (int) (coord.y - size.y / 2), (int) (size.x * Math.cos(dir)), (int) size.y, null);
     }
 
     public void process() {
@@ -475,31 +473,38 @@ class Sniper extends Projectile {
 }
 
 class Laser extends Projectile {
-    public static BufferedImage image;
+    public static BufferedImage ball;
+    public static BufferedImage beam;
 
     // Size constants
     public static final double MINIMUM_SIZE_PERCENTAGE = 0.2;
-    public static final Coord MAX_SIZE = new Coord(60, 60); // Change this size.x only affected by charging
+    public static final double SIZE_Y = 80; // x-size not impacted by charge, must be calculated
+    public static final Coord BEAM_SIZE_Y_TO_BALL_SIZE = new Coord(50 / SIZE_Y, 50 / SIZE_Y);
 
     // Damage constants
-    public static final double DMG = 2 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
+    public static final double DMG = 1 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
     public static final double DURABILITY = INFINITE_DURABILITY;
-    public static final double KB = 16;
+    public static final double KB = 2;
 
     // Velocity constants
     public static final int LIFE = 20; // Not affected by charging
 
+    // Animation constants
+    public static final int SCREENSHAKE = 0;
+    public static final double FADE_LEN = 0.2;
+    public static final double SHRINK_AMT = 0.2;
+
     // Misc constants
     public static final double MINIMUM_STAT_PERCENTAGE = 0.5;
-    public static final double RECOIL = 8;
-    public static final int SCREENSHAKE = 0;
+    public static final double RECOIL = 16;
 
-    public Laser(Omegaman player, Coord coord, Coord size, double dir, double damage, double knockback, double durability, int frameCounter, int sign) {
-        super(player, coord, size, size, 0, dir, damage, knockback, durability, frameCounter);
+    public Laser(Omegaman player, Coord coord, Coord size, double dir, double damage, double knockback, double durability, int frameCounter) {
+        super(player, coord, size, size, 0, dir, damage, knockback, durability, frameCounter); // change hitbox?
     }
 
     public void draw(Graphics2D g2) {
-        // Yeap... prolly need final variable for size of spiky ball relative to laser
+        g2.drawImage(beam, (int) (coord.x - size.x / 2 * Math.cos(dir)), (int) (coord.y - size.y / 2), (int) (size.x * Math.cos(dir)), (int) size.y, null); // animate laser
+        g2.drawImage(ball, (int) (coord.x - (size.x / 2 + size.y * BEAM_SIZE_Y_TO_BALL_SIZE.x / 2) * Math.cos(dir)), (int) (coord.y - size.y * BEAM_SIZE_Y_TO_BALL_SIZE.y / 2), (int) (size.y * BEAM_SIZE_Y_TO_BALL_SIZE.x * Math.cos(dir)), (int) (size.y * BEAM_SIZE_Y_TO_BALL_SIZE.y), null);
     }
 
     public void process() {

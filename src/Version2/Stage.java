@@ -63,4 +63,8 @@ class Coord {
     public Coord copy() {
         return new Coord(x, y);
     }
+
+    public Coord scaledBy(double multiplier) {
+        return new Coord(x * multiplier, y * multiplier);
+    }
 }

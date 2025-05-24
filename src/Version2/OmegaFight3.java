@@ -83,14 +83,16 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         new Coord[] {new Coord(700, 550), new Coord(1260, 550)}, new int[] {Omegaman.RIGHT_SIGN, Omegaman.RIGHT_SIGN}, new int[] {0, 0});
 
         // Player
-        omegaman[0] = new Omegaman(0, new Coord(stage[stageNo].spawnCoords[0].x, stage[stageNo].spawnCoords[0].y), stage[stageNo].spawnSpriteSign[0], stage[stageNo].spawnPlatformNo[0], new int[] {KeyEvent.VK_A, KeyEvent.VK_D, KeyEvent.VK_W, KeyEvent.VK_S}, new int[] {KeyEvent.VK_C, KeyEvent.VK_V}, new int[] {0, 1});
-        omegaman[1] = new Omegaman(1, new Coord(stage[stageNo].spawnCoords[1].x, stage[stageNo].spawnCoords[1].y), stage[stageNo].spawnSpriteSign[1], stage[stageNo].spawnPlatformNo[1], new int[] {KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_UP, KeyEvent.VK_DOWN}, new int[] {KeyEvent.VK_NUMPAD1, KeyEvent.VK_NUMPAD2}, new int[] {1, 2});
+        omegaman[0] = new Omegaman(0, stage[stageNo].spawnCoords[0].copy(), stage[stageNo].spawnSpriteSign[0], stage[stageNo].spawnPlatformNo[0], new int[] {KeyEvent.VK_A, KeyEvent.VK_D, KeyEvent.VK_W, KeyEvent.VK_S}, new int[] {KeyEvent.VK_C, KeyEvent.VK_V}, new int[] {0, 1});
+        omegaman[1] = new Omegaman(1, stage[stageNo].spawnCoords[1].copy(), stage[stageNo].spawnSpriteSign[1], stage[stageNo].spawnPlatformNo[1], new int[] {KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_UP, KeyEvent.VK_DOWN}, new int[] {KeyEvent.VK_NUMPAD1, KeyEvent.VK_NUMPAD2}, new int[] {2, 3});
 
         // Weapon image importing
         Bullet.image = ImageIO.read(new File("player projectiles/bullet.png"));
         Shotgun.image = ImageIO.read(new File("player projectiles/shotgun.png"));
         Spammer.image = ImageIO.read(new File("player projectiles/spammer.png"));
         Sniper.image = ImageIO.read(new File("player projectiles/sniper.png"));
+        Laser.ball = ImageIO.read(new File("player projectiles/ball.png"));
+        Laser.beam = ImageIO.read(new File("player projectiles/beam.png"));
         for (int i = 0; i != Omegaman.NUM_PLAYERS; i++) {
             Rocket.images[i] = ImageIO.read(new File("player projectiles/" + i + "rocket.png"));
             Firework.images[i] = ImageIO.read(new File("player projectiles/" + i + "firework.png"));
