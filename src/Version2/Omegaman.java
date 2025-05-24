@@ -90,6 +90,8 @@ public class Omegaman extends Char {
     public static final int NOT_STUNNED = 0;
     public static final int KB_COORD_Y_OFFSET = 50;
     public static final double KB_GRAVITY = 1.25;
+    public static final double BOUNCE_MIN_VEL_Y = 20;
+    public static final double STUN_REDUCTION = 0.9;
 
     // HUD Constants
     public static final int PERCENT_DISPLAY_Y_COORD = 790;
@@ -365,7 +367,7 @@ public class Omegaman extends Char {
             }
 
             // Acceleration with speed limit
-            if (upPressed && velocity.y < 0) velocity.y = Math.min(maxVelocity.y, velocity.y + 0.5 + Math.abs(velocity.y) / maxVelocity.y);
+            if (upPressed && velocity.y < 0) velocity.y = Math.min(maxVelocity.y, velocity.y + 0.5 - velocity.y / maxVelocity.y);
             else velocity.y = Math.min(maxVelocity.y, velocity.y + accel.y);
 
             // Platform Collision
@@ -542,7 +544,7 @@ public class Omegaman extends Char {
         percent += damage;
     }
 
-    public void hurt(double damage, double knockback, Coord enemyCoord, int screenShake) {
+    public void hurt(double damage, double knockback, Coord enemyCoord, double dir, double kbSpread, int screenShake) {
         hurt(damage);
 
         int platformNo = checkPlatforms();
@@ -553,15 +555,23 @@ public class Omegaman extends Char {
         resetStats(GENERAL_STAT_RESET);
         OmegaFight3.screenShakeCounter += screenShake;
 
-        // Speed calculations FIX THIS DO MATH
+        // Speed calculations
         knockback *= (percent / Math.pow(10, PERCENT_NUM_DECIMALS) / 100 + 1);
-        Coord dist = new Coord(coord.x - enemyCoord.x, coord.y - KB_COORD_Y_OFFSET - enemyCoord.y);
-        velocity.x += dist.x / Math.hypot(dist.x, dist.y) * knockback;
-        velocity.y += dist.y / Math.hypot(dist.x, dist.y) * knockback;
-        stunCounter = (int) knockback;
+        double angle = Math.atan2(coord.y - KB_COORD_Y_OFFSET - enemyCoord.y, coord.x - enemyCoord.x);
+        double minAngle = dir - kbSpread;
+        double dMinAngle = OmegaFight3.normalizeAngle(minAngle - angle);
+        double maxAngle = dir + kbSpread;
+        double dMaxAngle = OmegaFight3.normalizeAngle(maxAngle - angle);
+        if (dMinAngle > 0 || dMaxAngle < 0) {
+            if (Math.abs(dMinAngle) < Math.abs(dMaxAngle)) angle = minAngle;
+            else angle = maxAngle;
+        }
+        velocity.x += Math.cos(angle) * knockback;
+        velocity.y += Math.sin(angle) * knockback;
+        stunCounter = (int) Math.pow(knockback, STUN_REDUCTION);
 
         if (enemyCoord.x != coord.x) {
-            spriteSign = (int) Math.signum(enemyCoord.x - coord.x);
+            spriteSign = (int) -Math.signum(Math.cos(angle));
             if (spriteSign == 0) spriteSign = RIGHT_SIGN;
         }
     }
@@ -573,7 +583,7 @@ public class Omegaman extends Char {
         int platformNo = checkPlatforms();
         if (platformNo != AIRBORNE) {
             coord.y = getPlatformY(platformNo);
-            if (velocity.y >= 10) {
+            if (velocity.y >= BOUNCE_MIN_VEL_Y) {
                 hurt(velocity.y);
                 velocity.y *= -1;
             }

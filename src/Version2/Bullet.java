@@ -10,6 +10,7 @@ public class Bullet extends Projectile {
     public static final double DMG = 2 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
     public static final double DURABILITY = 2;
     public static final double KB = 5;
+    public static final double KB_SPREAD = Math.PI / 2;
 
     // Size constants
     public static final Coord SIZE = new Coord(25, 18);
@@ -35,7 +36,7 @@ public class Bullet extends Projectile {
         for (Omegaman enemy: OmegaFight3.omegaman) {
             if (enemy != character) {
                 if (enemy.checkHitbox(coord, hitBoxSize) && enemy.invCounter == Omegaman.VULNERABLE) {
-                    enemy.hurt(damage, knockback, coord, SCREENSHAKE);
+                    enemy.hurt(damage, knockback, coord, dir, KB_SPREAD, SCREENSHAKE);
                     die();
                     ((Omegaman) character).skillPts = Math.min(((Omegaman) character).skillPts + SKILL_PT_GAIN, Omegaman.MAX_SKILL_PTS);
                 }
@@ -67,6 +68,7 @@ class Rocket extends Projectile {
     public static final double DMG = 15 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
     public static final double DURABILITY = INFINITE_DURABILITY;
     public static final double KB = 20;
+    public static final double KB_SPREAD = Math.PI / 2;
     public static final double EXPLOSION_SIZE_MULTIPLIER = 4;
 
     // Velocity constants
@@ -106,7 +108,7 @@ class Rocket extends Projectile {
             for (Omegaman enemy: OmegaFight3.omegaman) {
                 if (enemy != character) {
                     if (enemy.checkHitbox(coord, hitBoxSize) && enemy.invCounter == Omegaman.VULNERABLE) {
-                        enemy.hurt(damage, knockback, coord, (int) (SCREENSHAKE * (size.x / SIZE.x)));
+                        enemy.hurt(damage, knockback, coord, dir, KB_SPREAD, (int) (SCREENSHAKE * (size.x / SIZE.x)));
                         die();
                     }
                     else if (coord.x < 0 || coord.x > OmegaFight3.SCREEN_SIZE.x || coord.y < 0 || coord.y > OmegaFight3.SCREEN_SIZE.y) {
@@ -140,6 +142,7 @@ class Shotgun extends Projectile {
     public static final double DMG = 2 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
     public static final double DURABILITY = 1;
     public static final double KB = 4;
+    public static final double KB_SPREAD = Math.PI / 2;
 
     // Size constants
     public static final Coord SIZE = new Coord(24, 20);
@@ -171,7 +174,7 @@ class Shotgun extends Projectile {
         for (Omegaman enemy: OmegaFight3.omegaman) {
             if (enemy != character) {
                 if (enemy.checkHitbox(coord, hitBoxSize) && enemy.invCounter == Omegaman.VULNERABLE) {
-                    enemy.hurt(damage, knockback, coord, SCREENSHAKE);
+                    enemy.hurt(damage, knockback, coord, dir, KB_SPREAD, SCREENSHAKE);
                     die();
                     ((Omegaman) character).skillPts = Math.min(((Omegaman) character).skillPts + SKILL_PT_GAIN, Omegaman.MAX_SKILL_PTS);
                 }
@@ -202,6 +205,7 @@ class Firework extends Projectile {
     public static final double DMG = 3 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
     public static final double DURABILITY = INFINITE_DURABILITY;
     public static final double KB = 3;
+    public static final double KB_SPREAD = Math.PI / 2;
 
     // Velocity constants
     public static final double VELOCITY = 15;
@@ -231,7 +235,7 @@ class Firework extends Projectile {
         for (Omegaman enemy: OmegaFight3.omegaman) {
             if (enemy != character) {
                 if (enemy.checkHitbox(coord, hitBoxSize) && enemy.invCounter == Omegaman.VULNERABLE) {
-                    enemy.hurt(damage, knockback, coord, SCREENSHAKE);
+                    enemy.hurt(damage, knockback, coord, dir, KB_SPREAD, SCREENSHAKE);
                     die();
                     ((Omegaman) character).skillPts = Math.min(((Omegaman) character).skillPts + 1, Omegaman.MAX_SKILL_PTS);
                 }
@@ -260,6 +264,7 @@ class Spammer extends Projectile {
     public static final double DMG = 1.3 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
     public static final double DURABILITY = 1;
     public static final double KB = 4;
+    public static final double KB_SPREAD = Math.PI / 2;
 
     // Size constants
     public static final Coord SIZE = new Coord(22, 18);
@@ -290,7 +295,7 @@ class Spammer extends Projectile {
         for (Omegaman enemy: OmegaFight3.omegaman) {
             if (enemy != character) {
                 if (enemy.checkHitbox(coord, hitBoxSize) && enemy.invCounter == Omegaman.VULNERABLE) {
-                    enemy.hurt(damage, knockback, coord, SCREENSHAKE);
+                    enemy.hurt(damage, knockback, coord, dir, KB_SPREAD, SCREENSHAKE);
                     die();
                     ((Omegaman) character).skillPts = Math.min(((Omegaman) character).skillPts + SKILL_PT_GAIN, Omegaman.MAX_SKILL_PTS);
                 }
@@ -323,6 +328,7 @@ class Missile extends Projectile {
     public static final double DMG = 12 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
     public static final double DURABILITY = INFINITE_DURABILITY;
     public static final double KB = 16;
+    public static final double KB_SPREAD = Math.PI / 2;
     public static final double EXPLOSION_SIZE_MULTIPLIER = 3;
 
     // Velocity constants
@@ -391,7 +397,7 @@ class Missile extends Projectile {
             for (Omegaman enemy: OmegaFight3.omegaman) {
                 if (enemy != character) {
                     if (enemy.checkHitbox(coord, hitBoxSize) && enemy.invCounter == Omegaman.VULNERABLE) {
-                        enemy.hurt(damage, knockback, coord, (int) (SCREENSHAKE * (size.x / SIZE.x)));
+                        enemy.hurt(damage, knockback, coord, dir, KB_SPREAD, (int) (SCREENSHAKE * (size.x / SIZE.x)));
                         die();
                     }
                     else if (coord.x < 0 || coord.x > OmegaFight3.SCREEN_SIZE.x || coord.y < 0 || coord.y > OmegaFight3.SCREEN_SIZE.y) {
@@ -425,6 +431,7 @@ class Sniper extends Projectile {
     public static final double DMG = 5 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
     public static final double DURABILITY = 3;
     public static final double KB = 5;
+    public static final double KB_SPREAD = Math.PI / 2;
 
     // Size constants
     public static final Coord SIZE = new Coord(41, 14);
@@ -453,7 +460,7 @@ class Sniper extends Projectile {
         for (Omegaman enemy: OmegaFight3.omegaman) {
             if (enemy != character) {
                 if (enemy.checkHitbox(coord, hitBoxSize) && enemy.invCounter == Omegaman.VULNERABLE) {
-                    enemy.hurt(damage * velocity / VELOCITY, knockback * velocity / VELOCITY, coord, SCREENSHAKE);
+                    enemy.hurt(damage * velocity / VELOCITY, knockback * velocity / VELOCITY, coord, dir, KB_SPREAD, SCREENSHAKE);
                     die();
                     ((Omegaman) character).skillPts = Math.min(((Omegaman) character).skillPts + SKILL_PT_GAIN, Omegaman.MAX_SKILL_PTS);
                 }
@@ -484,26 +491,32 @@ class Laser extends Projectile {
     // Damage constants
     public static final double DMG = 1 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
     public static final double DURABILITY = INFINITE_DURABILITY;
-    public static final double KB = 2;
+    public static final double KB = 5;
+    public static final double KB_DIR = Math.PI * 1.5;
+    public static final double KB_SPREAD = Math.PI / 9;
 
     // Velocity constants
     public static final int LIFE = 20; // Not affected by charging
 
     // Animation constants
     public static final int SCREENSHAKE = 0;
-    public static final double FADE_LEN = 0.2;
-    public static final double SHRINK_AMT = 0.2;
+    public static final int RESIZE_LEN = 4;
+    public static final double SIZE_Y_TO_PULSE_SIZE_Y = 1.1;
+    public static final int PULSE_HZ = 2;
 
     // Misc constants
     public static final double MINIMUM_STAT_PERCENTAGE = 0.5;
     public static final double RECOIL = 16;
 
     public Laser(Omegaman player, Coord coord, Coord size, double dir, double damage, double knockback, double durability, int frameCounter) {
-        super(player, coord, size, size, 0, dir, damage, knockback, durability, frameCounter); // change hitbox?
+        super(player, coord, size, size, 0, dir, damage, knockback, durability, frameCounter);
+        hitBoxActive = false;
     }
 
     public void draw(Graphics2D g2) {
-        g2.drawImage(beam, (int) (coord.x - size.x / 2 * Math.cos(dir)), (int) (coord.y - size.y / 2), (int) (size.x * Math.cos(dir)), (int) size.y, null); // animate laser
+        double sizeY = size.y * Math.min(Math.min(frameCounter, LIFE - frameCounter), RESIZE_LEN) / RESIZE_LEN;
+        if (frameCounter % (PULSE_HZ * 2) < PULSE_HZ) sizeY *= SIZE_Y_TO_PULSE_SIZE_Y;
+        g2.drawImage(beam, (int) (coord.x - size.x / 2 * Math.cos(dir)), (int) (coord.y - sizeY / 2), (int) (size.x * Math.cos(dir)), (int) sizeY, null);
         g2.drawImage(ball, (int) (coord.x - (size.x / 2 + size.y * BEAM_SIZE_Y_TO_BALL_SIZE.x / 2) * Math.cos(dir)), (int) (coord.y - size.y * BEAM_SIZE_Y_TO_BALL_SIZE.y / 2), (int) (size.y * BEAM_SIZE_Y_TO_BALL_SIZE.x * Math.cos(dir)), (int) (size.y * BEAM_SIZE_Y_TO_BALL_SIZE.y), null);
     }
 
@@ -512,7 +525,7 @@ class Laser extends Projectile {
         for (Omegaman enemy: OmegaFight3.omegaman) {
             if (enemy != character) {
                 if (enemy.checkHitbox(coord, hitBoxSize) && enemy.invCounter == Omegaman.VULNERABLE) {
-                    enemy.hurt(damage, knockback, coord, SCREENSHAKE);
+                    enemy.hurt(damage, knockback, coord, KB_DIR, KB_SPREAD, SCREENSHAKE);
                 }
                 for (Projectile proj: enemy.projectiles) {
                     if (proj.checkHitbox(coord, hitBoxSize) && proj.hitBoxActive) {

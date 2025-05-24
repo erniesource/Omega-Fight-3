@@ -40,6 +40,6 @@ abstract class Char {
         return Math.abs(enemyCoord.x - coord.x) <= (enemySize.x + size.x) / 2 - OmegaFight3.HITBOX_LEEWAY && Math.abs(enemyCoord.y - coord.y) <= (enemySize.y + size.y) / 2 - OmegaFight3.HITBOX_LEEWAY;  
     }
 
-    abstract public void hurt(double damage, double knockback, Coord enemyCoord, int screenShake);
+    abstract public void hurt(double damage);
     abstract public void draw(Graphics g);
 }

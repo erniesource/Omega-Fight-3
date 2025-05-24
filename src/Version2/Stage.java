@@ -67,4 +67,8 @@ class Coord {
     public Coord scaledBy(double multiplier) {
         return new Coord(x * multiplier, y * multiplier);
     }
+
+    public String toString() {
+        return "(" + x + ", " + y + ")";
+    }
 }

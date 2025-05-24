@@ -190,9 +190,15 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         return orig + (goal - orig) * alpha;
     }
 
-    // public static double clamp(double value, double min, double max) {
-    //     return Math.max(min, Math.min(max, value));
-    // }
+    public static double clamp(double value, double min, double max) {
+        return Math.max(min, Math.min(max, value));
+    }
+
+    public static double normalizeAngle(double angle) {
+        angle = ((angle + Math.PI) % (2 * Math.PI));
+        if (angle < 0) angle += 2 * Math.PI;
+        return angle - Math.PI;
+    }
 
     public static double signToRadians(int sign) {
         return Math.PI * (1 - (sign + 1) / 2);
