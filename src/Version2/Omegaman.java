@@ -280,31 +280,35 @@ public class Omegaman extends Char {
                             else {
                                 double percentCharged = 0;
                                 if (loadout[i] == BULLET_WEAPON_NO) {
-                                    percentCharged = OmegaFight3.lerp(Rocket.MINIMUM_SIZE_PERCENTAGE, 1, getPercentCharged(BULLET_WEAPON_NO));
+                                    percentCharged = OmegaFight3.lerp(Rocket.MIN_SIZE_PERCENT, 1, getPercentCharged(BULLET_WEAPON_NO));
                                     projectiles.add(new Rocket(this, newProjCoord, Rocket.SIZE.scaledBy(percentCharged), Rocket.VELOCITY * percentCharged, OmegaFight3.signToRadians(spriteSign), Rocket.DMG * percentCharged, Rocket.KB * percentCharged, Rocket.DURABILITY, (int) (Rocket.LIFE * percentCharged)));
                                 
                                     // Recoil
                                     recoil(Rocket.RECOIL * percentCharged);
                                 }
                                 else if (loadout[i] == SHOTGUN_WEAPON_NO) {
-                                    percentCharged = OmegaFight3.lerp(Rocket.MINIMUM_SIZE_PERCENTAGE, 1, getPercentCharged(SHOTGUN_WEAPON_NO));
+                                    percentCharged = OmegaFight3.lerp(Rocket.MIN_SIZE_PERCENT, 1, getPercentCharged(SHOTGUN_WEAPON_NO));
                                     for (int j = 0; j != Firework.NUM_SHOTS; j++) {
                                         projectiles.add(new Firework(this, newProjCoord.copy(), Firework.SIZE.scaledBy(percentCharged), Firework.VELOCITY * percentCharged, Math.PI * 2 / Firework.NUM_SHOTS * j, Firework.DMG * percentCharged, Firework.KB * percentCharged, Firework.DURABILITY, (int) (Firework.LIFE * percentCharged)));
                                     }
                                 }
                                 else if (loadout[i] == SPAMMER_WEAPON_NO) {
-                                    percentCharged = OmegaFight3.lerp(Missile.MINIMUM_SIZE_PERCENTAGE, 1, getPercentCharged(SPAMMER_WEAPON_NO));
+                                    percentCharged = OmegaFight3.lerp(Missile.MIN_SIZE_PERCENT, 1, getPercentCharged(SPAMMER_WEAPON_NO));
                                     projectiles.add(new Missile(this, newProjCoord, Missile.SIZE.scaledBy(percentCharged), Missile.VELOCITY * percentCharged, OmegaFight3.signToRadians(spriteSign), Missile.DMG * percentCharged, Missile.KB * percentCharged, Missile.DURABILITY, (int) (Missile.LIFE * percentCharged), spriteSign));
                                     
                                     // Recoil
                                     recoil(Missile.RECOIL * percentCharged);
                                 }
                                 else if (loadout[i] == SNIPER_WEAPON_NO) {
-                                    percentCharged = OmegaFight3.lerp(Laser.MINIMUM_SIZE_PERCENTAGE, 1, getPercentCharged(SNIPER_WEAPON_NO));
+                                    percentCharged = OmegaFight3.lerp(Laser.MIN_SIZE_PERCENT, 1, getPercentCharged(SNIPER_WEAPON_NO));
                                     projectiles.add(new Laser(this, new Coord((newProjCoord.x + OmegaFight3.SCREEN_SIZE.x * (spriteSign + 1) / 2) / 2, newProjCoord.y), new Coord(Math.abs(newProjCoord.x - OmegaFight3.SCREEN_SIZE.x * (spriteSign + 1) / 2), Laser.SIZE_Y * percentCharged), OmegaFight3.signToRadians(spriteSign), Laser.DMG * percentCharged, Laser.KB * percentCharged, Laser.DURABILITY, Laser.LIFE));
 
                                     // Recoil
                                     recoil(Laser.RECOIL * percentCharged);
+                                }
+                                else if (loadout[i] == BOOMER_WEAPON_NO) {
+                                    percentCharged = OmegaFight3.lerp(Bouncer.MIN_SIZE_PERCENT, 1, getPercentCharged(BOOMER_WEAPON_NO));
+                                    projectiles.add(new Bouncer(this, newProjCoord, Bouncer.SIZE.scaledBy(percentCharged), Bouncer.VELOCITY * percentCharged, OmegaFight3.signToRadians(spriteSign), Bouncer.DMG * percentCharged, Bouncer.KB * percentCharged, Bouncer.DURABILITY, (int) (Bouncer.LIFE * percentCharged)));
                                 }
 
                                 // Update stats
@@ -330,24 +334,29 @@ public class Omegaman extends Char {
             Coord chargeCoord = new Coord(coord.x + size.x / 2 * spriteSign, coord.y + (onPlatform == -1? JUMP_PROJ_Y_OFFSET: IDLE_PROJ_Y_OFFSET));
             Coord chargeSize;
             if (loadout[chargingWeapon] == BULLET_WEAPON_NO) {
-                sizeMultiplier = OmegaFight3.lerp(Rocket.MINIMUM_SIZE_PERCENTAGE, 1, getPercentCharged(BULLET_WEAPON_NO));
+                sizeMultiplier = OmegaFight3.lerp(Rocket.MIN_SIZE_PERCENT, 1, getPercentCharged(BULLET_WEAPON_NO));
                 chargeSize = Rocket.SIZE.scaledBy(sizeMultiplier);
                 g.drawImage(Rocket.images[playerNo], (int) (chargeCoord.x - chargeSize.x / 2), (int) (chargeCoord.y - chargeSize.y / 2), (int) chargeSize.x, (int) chargeSize.y, null);
             }
             else if (loadout[chargingWeapon] == SHOTGUN_WEAPON_NO) {
-                sizeMultiplier = OmegaFight3.lerp(Firework.MINIMUM_SIZE_PERCENTAGE, 1, getPercentCharged(SHOTGUN_WEAPON_NO));
+                sizeMultiplier = OmegaFight3.lerp(Firework.MIN_SIZE_PERCENT, 1, getPercentCharged(SHOTGUN_WEAPON_NO));
                 chargeSize = Firework.SIZE.scaledBy(sizeMultiplier);
                 g.drawImage(Firework.chargingImages[playerNo], (int) (chargeCoord.x - chargeSize.x / 2), (int) (chargeCoord.y - chargeSize.y / 2), (int) chargeSize.x, (int) chargeSize.y, null);
             }
             else if (loadout[chargingWeapon] == SPAMMER_WEAPON_NO) {
-                sizeMultiplier = OmegaFight3.lerp(Missile.MINIMUM_SIZE_PERCENTAGE, 1, getPercentCharged(SPAMMER_WEAPON_NO));
+                sizeMultiplier = OmegaFight3.lerp(Missile.MIN_SIZE_PERCENT, 1, getPercentCharged(SPAMMER_WEAPON_NO));
                 chargeSize = Missile.SIZE.scaledBy(sizeMultiplier);
                 g.drawImage(Missile.images[playerNo], (int) (chargeCoord.x - chargeSize.x / 2 * spriteSign), (int) (chargeCoord.y - chargeSize.y / 2), (int) chargeSize.x * spriteSign, (int) chargeSize.y, null);
             }
             else if (loadout[chargingWeapon] == SNIPER_WEAPON_NO) {
-                sizeMultiplier = OmegaFight3.lerp(Laser.MINIMUM_SIZE_PERCENTAGE, 1, getPercentCharged(SNIPER_WEAPON_NO));
+                sizeMultiplier = OmegaFight3.lerp(Laser.MIN_SIZE_PERCENT, 1, getPercentCharged(SNIPER_WEAPON_NO));
                 chargeSize = (new Coord(Laser.SIZE_Y * Laser.BEAM_SIZE_Y_TO_BALL_SIZE.x, Laser.SIZE_Y * Laser.BEAM_SIZE_Y_TO_BALL_SIZE.y)).scaledBy(sizeMultiplier);
                 g.drawImage(Laser.ball, (int) (chargeCoord.x - chargeSize.x / 2 * spriteSign), (int) (chargeCoord.y - chargeSize.y / 2), (int) chargeSize.x * spriteSign, (int) chargeSize.y, null);
+            }
+            else if (loadout[chargingWeapon] == BOOMER_WEAPON_NO) {
+                sizeMultiplier = OmegaFight3.lerp(Bouncer.MIN_SIZE_PERCENT, 1, getPercentCharged(BOOMER_WEAPON_NO));
+                chargeSize = Bouncer.SIZE.scaledBy(sizeMultiplier);
+                g.drawImage(Bouncer.images[playerNo], (int) (chargeCoord.x - chargeSize.x / 2), (int) (chargeCoord.y - chargeSize.y / 2), (int) chargeSize.x, (int) chargeSize.y, null);
             }
         }
     }
