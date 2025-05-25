@@ -581,7 +581,7 @@ class Boomer extends Projectile {
             if (enemy != character) {
                 if (enemy.checkHitbox(coord, hitBoxSize) && enemy.invCounter == Omegaman.VULNERABLE) {
                     int multiplier = velocity < 0? 2: 1;
-                    enemy.hurt(damage * multiplier, knockback * multiplier, coord, dir * Math.signum(velocity), KB_SPREAD, SCREENSHAKE);
+                    enemy.hurt(damage * multiplier, knockback * multiplier, coord, dir + multiplier / 2 * Math.PI, KB_SPREAD, SCREENSHAKE);
                     die();
                     ((Omegaman) character).skillPts = Math.min(((Omegaman) character).skillPts + SKILL_PT_GAIN * multiplier, Omegaman.MAX_SKILL_PTS);
                 }
