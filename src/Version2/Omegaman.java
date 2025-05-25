@@ -64,16 +64,17 @@ public class Omegaman extends Char {
     public static final int COYOTE_TIME = 5;
 
     // Shooting Constants
-    public static final int BASIC_SHOOT_TIME_LIMIT = 20;
-    public static final int LOADOUT_NUM_WEAPONS = 2;
     public static final int BULLET_WEAPON_NO = 0;
     public static final int SHOTGUN_WEAPON_NO = 1;
     public static final int SPAMMER_WEAPON_NO = 2;
     public static final int SNIPER_WEAPON_NO = 3;
-    public static final int[] BASIC_SHOT_HEAT = {10, 30, 5, 60};
-    public static final int[] CHARGED_SHOT_HEAT = {20, 60, 50, 80};
+    public static final int BOOMER_WEAPON_NO = 4;
+    public static final int[] BASIC_SHOT_HEAT = {10, 30, 5, 60, 10};
+    public static final int[] CHARGED_SHOT_HEAT = {20, 60, 50, 80, 100};
+    public static final int[] CHARGE_TIME = {50, 90, 80, 100, 120};
+    public static final int BASIC_SHOOT_TIME_LIMIT = 20;
+    public static final int LOADOUT_NUM_WEAPONS = 2;
     public static final int MAX_SHOOT_CHARGE = 300;
-    public static final int[] CHARGE_TIME = {50, 90, 80, 100};
     public static final int NOT_CHARGING = -1;
 
     // Projectile Offsets
@@ -267,6 +268,9 @@ public class Omegaman extends Char {
                                     
                                     // Recoil
                                     recoil(Sniper.RECOIL);
+                                }
+                                else if (loadout[i] == BOOMER_WEAPON_NO) {
+                                    projectiles.add(new Boomer(this, newProjCoord, Boomer.SIZE, Boomer.VELOCITY, OmegaFight3.signToRadians(spriteSign), Boomer.DMG, Boomer.KB, Boomer.DURABILITY, Boomer.LIFE));
                                 }
 
                                 heatCounter = BASIC_SHOT_HEAT[loadout[i]];

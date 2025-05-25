@@ -59,6 +59,8 @@ class Rocket extends Projectile {
     public BufferedImage image;
     public int state; // 0: Travelling, 1: Exploding
 
+    public static BufferedImage[] images = new BufferedImage[Omegaman.NUM_PLAYERS];
+
     // Size constants
     public static final double HITBOX_TO_SIZE = 2.5;
     public static final double MINIMUM_SIZE_PERCENTAGE = 0.2;
@@ -79,8 +81,6 @@ class Rocket extends Projectile {
     public static final double MINIMUM_STAT_PERCENTAGE = 0.5;
     public static final double RECOIL = 8;
     public static final int SCREENSHAKE = 15;
-
-    public static BufferedImage[] images = new BufferedImage[Omegaman.NUM_PLAYERS];
 
     public Rocket(Omegaman player, Coord coord, Coord size, double velocity, double dir, double damage, double knockback, double durability, int frameCounter) {
         super(player, coord, size, size.scaledBy(HITBOX_TO_SIZE), velocity, dir, damage, knockback, durability, frameCounter);
@@ -197,6 +197,9 @@ class Firework extends Projectile {
     public BufferedImage image;
     public int state; // 0: Travelling, 1: Exploding
 
+    public static BufferedImage[] images = new BufferedImage[Omegaman.NUM_PLAYERS];
+    public static BufferedImage[] chargingImages = new BufferedImage[Omegaman.NUM_PLAYERS];
+
     // Size constants
     public static final double MINIMUM_SIZE_PERCENTAGE = 0.2;
     public static final Coord SIZE = new Coord(50, 50);
@@ -215,9 +218,6 @@ class Firework extends Projectile {
     public static final double MINIMUM_STAT_PERCENTAGE = 0.5;
     public static final int NUM_SHOTS = 8;
     public static final int SCREENSHAKE = 0;
-
-    public static BufferedImage[] images = new BufferedImage[Omegaman.NUM_PLAYERS];
-    public static BufferedImage[] chargingImages = new BufferedImage[Omegaman.NUM_PLAYERS];
 
     public Firework(Omegaman player, Coord coord, Coord size, double velocity, double dir, double damage, double knockback, double durability, int frameCounter) {
         super(player, coord, size, size, velocity, dir, damage, knockback, durability, frameCounter);
@@ -319,6 +319,8 @@ class Missile extends Projectile {
     public int state; // 0: Travelling, 1: Exploding
     public int sign;
 
+    public static BufferedImage[] images = new BufferedImage[Omegaman.NUM_PLAYERS];
+
     // Size constants
     public static final double HITBOX_TO_SIZE = 1.5;
     public static final double MINIMUM_SIZE_PERCENTAGE = 0.2;
@@ -340,8 +342,6 @@ class Missile extends Projectile {
     public static final double MINIMUM_STAT_PERCENTAGE = 0.5;
     public static final double RECOIL = 8;
     public static final int SCREENSHAKE = 15;
-
-    public static BufferedImage[] images = new BufferedImage[Omegaman.NUM_PLAYERS];
 
     public Missile(Omegaman player, Coord coord, Coord size, double velocity, double dir, double damage, double knockback, double durability, int frameCounter, int sign) {
         super(player, coord, size, size.scaledBy(HITBOX_TO_SIZE), velocity, dir, damage, knockback, durability, frameCounter);
@@ -439,7 +439,7 @@ class Sniper extends Projectile {
     // Movement constants
     public static final double VELOCITY = 15; 
     public static final int LIFE = 30;
-    public static final double ACCELERATION = 1;
+    public static final double ACCEL = 1;
 
     // Misc constants
     public static final int SKILL_PT_GAIN = 10;
@@ -456,7 +456,7 @@ class Sniper extends Projectile {
 
     public void process() {
         super.process();
-        velocity += ACCELERATION;
+        velocity += ACCEL;
         for (Omegaman enemy: OmegaFight3.omegaman) {
             if (enemy != character) {
                 if (enemy.checkHitbox(coord, hitBoxSize) && enemy.invCounter == Omegaman.VULNERABLE) {
@@ -539,5 +539,63 @@ class Laser extends Projectile {
 
     public boolean shouldDieTo(double enemyDurability) {
         return false;
+    }
+}
+
+class Boomer extends Projectile {
+    public static BufferedImage image;
+
+    public static BufferedImage[] images = new BufferedImage[Omegaman.NUM_PLAYERS];
+    
+    // Damage constants
+    public static final double DMG = 2 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
+    public static final double DURABILITY = 2;
+    public static final double KB = 5;
+    public static final double KB_SPREAD = Math.PI / 2;
+
+    // Size constants
+    public static final Coord SIZE = new Coord(30, 15);
+
+    // Movement constants
+    public static final double VELOCITY = 20;
+    public static final double ACCEL = -2;
+    public static final int LIFE = 36;
+
+    // Misc constants
+    public static final int SKILL_PT_GAIN = 6;
+    public static final int SCREENSHAKE = 0;
+
+    public Boomer(Omegaman player, Coord coord, Coord size, double velocity, double dir, double damage, double knockback, double durability, int frameCounter) {
+        super(player, coord, size, size, velocity, dir, damage, knockback, durability, frameCounter);
+        image = images[player.playerNo];
+    }
+
+    public void draw(Graphics2D g2) {
+        g2.drawImage(image, (int) (coord.x - size.x / 2), (int) (coord.y - size.y / 2), (int) size.x, (int) size.y, null);
+    }
+
+    public void process() {
+        super.process();
+        velocity += ACCEL;
+        for (Omegaman enemy: OmegaFight3.omegaman) {
+            if (enemy != character) {
+                if (enemy.checkHitbox(coord, hitBoxSize) && enemy.invCounter == Omegaman.VULNERABLE) {
+                    int multiplier = velocity < 0? 2: 1;
+                    enemy.hurt(damage * multiplier, knockback * multiplier, coord, dir * Math.signum(velocity), KB_SPREAD, SCREENSHAKE);
+                    die();
+                    ((Omegaman) character).skillPts = Math.min(((Omegaman) character).skillPts + SKILL_PT_GAIN * multiplier, Omegaman.MAX_SKILL_PTS);
+                }
+                else if (coord.x < 0 || coord.x > OmegaFight3.SCREEN_SIZE.x || coord.y < 0 || coord.y > OmegaFight3.SCREEN_SIZE.y) {
+                    die();
+                }
+                for (Projectile proj: enemy.projectiles) {
+                    if (proj.checkHitbox(coord, hitBoxSize) && proj.hitBoxActive) {
+                        if (shouldDieTo(proj.durability)) die();
+                        if (proj.shouldDieTo(durability)) proj.die();
+                    }
+                }
+            }
+            // Also check boss hitbox
+        }
     }
 }
