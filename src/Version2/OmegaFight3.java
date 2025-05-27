@@ -6,8 +6,8 @@ import javax.swing.*;
 import java.io.*;
 import java.awt.event.*;
 import java.util.*;
-// Ernest Todo: boomerang, bouncer
-// Ernest Long term Todo: spike, splitter, menus, ultimate, dash
+// Ernest Todo: spike, splitter
+// Ernest Long term Todo: menus, ultimate, dash
 
 public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionListener, KeyListener, Runnable {
     // Game States
@@ -83,7 +83,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         new Coord[] {new Coord(700, 550), new Coord(1260, 550)}, new int[] {Omegaman.RIGHT_SIGN, Omegaman.RIGHT_SIGN}, new int[] {0, 0});
 
         // Player
-        omegaman[0] = new Omegaman(0, stage[stageNo].spawnCoords[0].copy(), stage[stageNo].spawnSpriteSign[0], stage[stageNo].spawnPlatformNo[0], new int[] {KeyEvent.VK_A, KeyEvent.VK_D, KeyEvent.VK_W, KeyEvent.VK_S}, new int[] {KeyEvent.VK_C, KeyEvent.VK_V}, new int[] {4, 1});
+        omegaman[0] = new Omegaman(0, stage[stageNo].spawnCoords[0].copy(), stage[stageNo].spawnSpriteSign[0], stage[stageNo].spawnPlatformNo[0], new int[] {KeyEvent.VK_A, KeyEvent.VK_D, KeyEvent.VK_W, KeyEvent.VK_S}, new int[] {KeyEvent.VK_C, KeyEvent.VK_V}, new int[] {4, 5});
         omegaman[1] = new Omegaman(1, stage[stageNo].spawnCoords[1].copy(), stage[stageNo].spawnSpriteSign[1], stage[stageNo].spawnPlatformNo[1], new int[] {KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_UP, KeyEvent.VK_DOWN}, new int[] {KeyEvent.VK_NUMPAD1, KeyEvent.VK_NUMPAD2}, new int[] {2, 3});
 
         // Weapon image importing
@@ -93,6 +93,8 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         Sniper.image = ImageIO.read(new File("player projectiles/sniper.png"));
         Laser.ball = ImageIO.read(new File("player projectiles/ball.png"));
         Laser.beam = ImageIO.read(new File("player projectiles/beam.png"));
+        Spike.image = ImageIO.read(new File("player projectiles/spike.png"));
+        Thorn.image = ImageIO.read(new File("player projectiles/thorn.png"));
         for (int i = 0; i != Omegaman.NUM_PLAYERS; i++) {
             Rocket.images[i] = ImageIO.read(new File("player projectiles/" + i + "rocket.png"));
             Firework.images[i] = ImageIO.read(new File("player projectiles/" + i + "firework.png"));
@@ -100,6 +102,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
             Missile.images[i] = ImageIO.read(new File("player projectiles/" + i + "missile.png"));
             Boomer.images[i] = ImageIO.read(new File("player projectiles/" + i + "boomer.png"));
             Bouncer.images[i] = ImageIO.read(new File("player projectiles/" + i + "bouncer.png"));
+            Splitter.images[i] = ImageIO.read(new File("player projectiles/" + i + "splitter.png"));
         }
         for (int i = 0; i != Rocket.NUM_EXPLOSION_IMAGES; i++) {
             Projectile.explosionImages[i] = ImageIO.read(new File("explosions/explosion" + i + ".png"));
@@ -140,6 +143,9 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         }
         else if(gameState == 2){
             stage[stageNo].drawStage(g);
+            for (Omegaman omega: omegaman) {
+                omega.addNewProjectiles();
+            }
             for (Omegaman omega: omegaman) {
                 omega.drawHUD(g);
                 if (omega.state == Omegaman.ALIVE_STATE) {

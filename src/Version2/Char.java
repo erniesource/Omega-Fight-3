@@ -10,6 +10,7 @@ abstract class Char {
     public int frameCounter; // Framecounter for running player
     public Coord size;
     public int state;
+    public HashSet<Projectile> newProjectiles = new HashSet<>();
     public HashSet<Projectile> projectiles = new HashSet<>();
     public HashSet<Projectile> deadProjectiles = new HashSet<>();
 
@@ -20,6 +21,13 @@ abstract class Char {
         this.frameCounter = frameCounter;
         this.size = size;
         this.state = state;
+    }
+
+    public void addNewProjectiles() {
+        for (Projectile proj: newProjectiles) {
+            projectiles.add(proj);
+        }
+        newProjectiles.clear();
     }
 
     public void processProjectiles(Graphics2D g2) {

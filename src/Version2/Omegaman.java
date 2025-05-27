@@ -69,9 +69,10 @@ public class Omegaman extends Char {
     public static final int SPAMMER_WEAPON_NO = 2;
     public static final int SNIPER_WEAPON_NO = 3;
     public static final int BOOMER_WEAPON_NO = 4;
-    public static final int[] BASIC_SHOT_HEAT = {10, 30, 5, 60, 10};
-    public static final int[] CHARGED_SHOT_HEAT = {20, 60, 50, 80, 100};
-    public static final int[] CHARGE_TIME = {50, 90, 80, 100, 120};
+    public static final int SPIKE_WEAPON_NO = 5;
+    public static final int[] BASIC_SHOT_HEAT = {10, 30, 5, 60, 10, 30};
+    public static final int[] CHARGED_SHOT_HEAT = {20, 60, 50, 80, 100, 60};
+    public static final int[] CHARGE_TIME = {50, 90, 80, 100, 120, 60};
     public static final int BASIC_SHOOT_TIME_LIMIT = 20;
     public static final int LOADOUT_NUM_WEAPONS = 2;
     public static final int MAX_SHOOT_CHARGE = 300;
@@ -262,7 +263,9 @@ public class Omegaman extends Char {
                                         projectiles.add(new Shotgun(this, newProjCoord.copy(), Shotgun.SIZE, Shotgun.VELOCITY, OmegaFight3.signToRadians(spriteSign) - Shotgun.SPREAD + j * (Shotgun.SPREAD * 2 / (Shotgun.NUM_SHOTS - 1)), Shotgun.DMG, Shotgun.KB, Shotgun.DURABILITY, Shotgun.LIFE));
                                     }
                                 }
-                                else if (loadout[i] == SPAMMER_WEAPON_NO) projectiles.add(new Spammer(this, newProjCoord, Spammer.SIZE, Spammer.VELOCITY, OmegaFight3.signToRadians(spriteSign) - Spammer.SPREAD + Math.random() * Spammer.SPREAD * 2, Spammer.DMG, Spammer.KB, Spammer.DURABILITY, Spammer.LIFE));
+                                else if (loadout[i] == SPAMMER_WEAPON_NO) {
+                                    projectiles.add(new Spammer(this, newProjCoord, Spammer.SIZE, Spammer.VELOCITY, OmegaFight3.signToRadians(spriteSign) - Spammer.SPREAD + Math.random() * Spammer.SPREAD * 2, Spammer.DMG, Spammer.KB, Spammer.DURABILITY, Spammer.LIFE));
+                                }
                                 else if (loadout[i] == SNIPER_WEAPON_NO) {
                                     projectiles.add(new Sniper(this, newProjCoord, Sniper.SIZE, Sniper.VELOCITY, OmegaFight3.signToRadians(spriteSign), Sniper.DMG, Sniper.KB, Sniper.DURABILITY, Sniper.LIFE));
                                     
@@ -271,6 +274,9 @@ public class Omegaman extends Char {
                                 }
                                 else if (loadout[i] == BOOMER_WEAPON_NO) {
                                     projectiles.add(new Boomer(this, newProjCoord, Boomer.SIZE, Boomer.VELOCITY, OmegaFight3.signToRadians(spriteSign), Boomer.DMG, Boomer.KB, Boomer.DURABILITY, Boomer.LIFE));
+                                }
+                                else if (loadout[i] == SPIKE_WEAPON_NO) {
+                                    projectiles.add(new Spike(this, newProjCoord, Spike.SIZE, Spike.VELOCITY, OmegaFight3.signToRadians(spriteSign), Spike.DMG, Spike.KB, Spike.DURABILITY, Spike.LIFE));
                                 }
 
                                 heatCounter = BASIC_SHOT_HEAT[loadout[i]];
@@ -310,6 +316,10 @@ public class Omegaman extends Char {
                                     percentCharged = OmegaFight3.lerp(Bouncer.MIN_SIZE_PERCENT, 1, getPercentCharged(BOOMER_WEAPON_NO));
                                     projectiles.add(new Bouncer(this, newProjCoord, Bouncer.SIZE.scaledBy(percentCharged), Bouncer.VELOCITY * percentCharged, OmegaFight3.signToRadians(spriteSign), Bouncer.DMG * percentCharged, Bouncer.KB * percentCharged, Bouncer.DURABILITY, (int) (Bouncer.LIFE * percentCharged)));
                                 }
+                                else if (loadout[i] == SPIKE_WEAPON_NO) {
+                                    percentCharged = OmegaFight3.lerp(Splitter.MIN_SIZE_PERCENT, 1, getPercentCharged(SPIKE_WEAPON_NO));
+                                    projectiles.add(new Splitter(this, newProjCoord, Splitter.SIZE.scaledBy(percentCharged), Splitter.VELOCITY * percentCharged, OmegaFight3.signToRadians(spriteSign), Splitter.DMG, Splitter.KB, Splitter.DURABILITY, (int) (Splitter.LIFE * percentCharged)));
+                                }
 
                                 // Update stats
                                 skillPts -= (percentCharged < 0.5? ONES_PER_SKILL_PT / 2: ONES_PER_SKILL_PT);
@@ -330,33 +340,31 @@ public class Omegaman extends Char {
 
     public void drawCharge(Graphics g) {
         if (shootCharge > BASIC_SHOOT_TIME_LIMIT) {
-            double sizeMultiplier;
             Coord chargeCoord = new Coord(coord.x + size.x / 2 * spriteSign, coord.y + (onPlatform == -1? JUMP_PROJ_Y_OFFSET: IDLE_PROJ_Y_OFFSET));
             Coord chargeSize;
             if (loadout[chargingWeapon] == BULLET_WEAPON_NO) {
-                sizeMultiplier = OmegaFight3.lerp(Rocket.MIN_SIZE_PERCENT, 1, getPercentCharged(BULLET_WEAPON_NO));
-                chargeSize = Rocket.SIZE.scaledBy(sizeMultiplier);
+                chargeSize = Rocket.SIZE.scaledBy(OmegaFight3.lerp(Rocket.MIN_SIZE_PERCENT, 1, getPercentCharged(BULLET_WEAPON_NO)));
                 g.drawImage(Rocket.images[playerNo], (int) (chargeCoord.x - chargeSize.x / 2), (int) (chargeCoord.y - chargeSize.y / 2), (int) chargeSize.x, (int) chargeSize.y, null);
             }
             else if (loadout[chargingWeapon] == SHOTGUN_WEAPON_NO) {
-                sizeMultiplier = OmegaFight3.lerp(Firework.MIN_SIZE_PERCENT, 1, getPercentCharged(SHOTGUN_WEAPON_NO));
-                chargeSize = Firework.SIZE.scaledBy(sizeMultiplier);
+                chargeSize = Firework.SIZE.scaledBy(OmegaFight3.lerp(Firework.MIN_SIZE_PERCENT, 1, getPercentCharged(SHOTGUN_WEAPON_NO)));
                 g.drawImage(Firework.chargingImages[playerNo], (int) (chargeCoord.x - chargeSize.x / 2), (int) (chargeCoord.y - chargeSize.y / 2), (int) chargeSize.x, (int) chargeSize.y, null);
             }
             else if (loadout[chargingWeapon] == SPAMMER_WEAPON_NO) {
-                sizeMultiplier = OmegaFight3.lerp(Missile.MIN_SIZE_PERCENT, 1, getPercentCharged(SPAMMER_WEAPON_NO));
-                chargeSize = Missile.SIZE.scaledBy(sizeMultiplier);
+                chargeSize = Missile.SIZE.scaledBy(OmegaFight3.lerp(Missile.MIN_SIZE_PERCENT, 1, getPercentCharged(SPAMMER_WEAPON_NO)));
                 g.drawImage(Missile.images[playerNo], (int) (chargeCoord.x - chargeSize.x / 2 * spriteSign), (int) (chargeCoord.y - chargeSize.y / 2), (int) chargeSize.x * spriteSign, (int) chargeSize.y, null);
             }
             else if (loadout[chargingWeapon] == SNIPER_WEAPON_NO) {
-                sizeMultiplier = OmegaFight3.lerp(Laser.MIN_SIZE_PERCENT, 1, getPercentCharged(SNIPER_WEAPON_NO));
-                chargeSize = (new Coord(Laser.SIZE_Y * Laser.BEAM_SIZE_Y_TO_BALL_SIZE.x, Laser.SIZE_Y * Laser.BEAM_SIZE_Y_TO_BALL_SIZE.y)).scaledBy(sizeMultiplier);
+                chargeSize = (new Coord(Laser.SIZE_Y * Laser.BEAM_SIZE_Y_TO_BALL_SIZE.x, Laser.SIZE_Y * Laser.BEAM_SIZE_Y_TO_BALL_SIZE.y)).scaledBy(OmegaFight3.lerp(Laser.MIN_SIZE_PERCENT, 1, getPercentCharged(SNIPER_WEAPON_NO)));
                 g.drawImage(Laser.ball, (int) (chargeCoord.x - chargeSize.x / 2 * spriteSign), (int) (chargeCoord.y - chargeSize.y / 2), (int) chargeSize.x * spriteSign, (int) chargeSize.y, null);
             }
             else if (loadout[chargingWeapon] == BOOMER_WEAPON_NO) {
-                sizeMultiplier = OmegaFight3.lerp(Bouncer.MIN_SIZE_PERCENT, 1, getPercentCharged(BOOMER_WEAPON_NO));
-                chargeSize = Bouncer.SIZE.scaledBy(sizeMultiplier);
+                chargeSize = Bouncer.SIZE.scaledBy(OmegaFight3.lerp(Bouncer.MIN_SIZE_PERCENT, 1, getPercentCharged(BOOMER_WEAPON_NO)));
                 g.drawImage(Bouncer.images[playerNo], (int) (chargeCoord.x - chargeSize.x / 2), (int) (chargeCoord.y - chargeSize.y / 2), (int) chargeSize.x, (int) chargeSize.y, null);
+            }
+            else if (loadout[chargingWeapon] == SPIKE_WEAPON_NO) {
+                chargeSize = Splitter.SIZE.scaledBy(OmegaFight3.lerp(Splitter.MIN_SIZE_PERCENT, 1, getPercentCharged(SPIKE_WEAPON_NO)));
+                g.drawImage(Splitter.images[playerNo], (int) (chargeCoord.x - chargeSize.x / 2 * spriteSign), (int) (chargeCoord.y - chargeSize.y / 2), (int) chargeSize.x * spriteSign, (int) chargeSize.y, null);
             }
         }
     }
