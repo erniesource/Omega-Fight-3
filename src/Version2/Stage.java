@@ -53,6 +53,8 @@ class Coord {
     public double x;
     public double y;
 
+    public static final Coord PT = new Coord();
+
     public Coord() {}
 
     public Coord(double x, double y) {

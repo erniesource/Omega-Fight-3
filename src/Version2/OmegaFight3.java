@@ -5,8 +5,9 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.io.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
 import java.util.*;
-// Ernest Todo: spike, splitter
+// Ernest Todo: 
 // Ernest Long term Todo: menus, ultimate, dash
 
 public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionListener, KeyListener, Runnable {
@@ -14,34 +15,37 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     // The following are just examples of a game state legend
     // -1 <- Studio Animation
     // 0 <- Home Screen
-    // 1 <- Credit/Tutorial Screen
+    // 1 <- Choose your fight screen
     // 2 <- In-Game Screen
     // 3 <- Player win Screen
-    public static int gameState = 2;
+    // 4 <- Credit/Tutorial Screen
+    public static int gameState = 1;
 
     // Players
     public static Omegaman[] omegaman = new Omegaman[Omegaman.NUM_PLAYERS];
 
     // Mouse/Keyboard Events
-    public static int mouseX;
-    public static int mouseY;
+    public static Coord mouse = new Coord();
     public static boolean clicked;
+    public static HashSet<Integer> pressedKey = new HashSet<>();
 
     // Stage statistics
     public static int stageNo = 0;
     public static Stage[] stage = new Stage[2];
 
+    // Buttons
+    public static Button[] chooseButtons = new Button[1]; // [14] Skip 1 for 3rd stage for now
+
+    // Menus
+    public static BufferedImage chooseMenu;
+    public static BufferedImage buttonImg;
+
     // General game statistics
     public static int screenShakeCounter = 0;
-
-    // Keyboard statistics
-    public static HashSet<Integer> pressedKey = new HashSet<>();
 
     // Screen Settings
     public static final Coord SCREEN_SIZE = new Coord(1920, 960);
     public static final int FPS = 60;
-
-    // Visual Effects
     public static final int SCREEN_SHAKE_HZ = 2;
 
     // Offset + Leeway
@@ -49,6 +53,36 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
 
     // Color Settings
     public static final int MAX_RGB_VAL = 255;
+
+    // Gamestates
+    public static final int STUDIO_ANIM_GS = -1;
+    public static final int HOME_GS = 0;
+    public static final int CHOOSE_FIGHT_GS = 1;
+    public static final int GAME_GS = 2;
+    public static final int WIN_GS = 3;
+    public static final int SLIDESHOW_GS = 4;
+
+    // Button Numbers
+
+    // Choose your fight menu
+    public static final int CHOOSE_BACK_BTNO = 0;
+    public static final int BATTLEFIELD_BTNO = 1;
+    public static final int FINAL_DEST_BTNO = 2;
+    // Leave num for another stage?
+    public static final int CLASSIC_BTNO = 4;
+    public static final int SHOTGUN_BTNO = 5;
+    public static final int SPAMMER_BTNO = 6;
+    public static final int SNIPER_BTNO = 7;
+    public static final int BOOMER_BTNO = 8;
+    public static final int SPIKE_BTNO = 9;
+    public static final int READY_BTNO = 10;
+    public static final int P0_W0_BTNO = 11;
+    public static final int P0_W1_BTNO = 12;
+    public static final int P1_W0_BTNO = 13;
+    public static final int P1_W1_BTNO = 14;
+
+    public static final Font BUTTON_FONT = new Font("Consolas", Font.BOLD, 40); 
+    public static final Coord BUTTON_SIZE = new Coord(400, 50);
 
     // Timer Settings
     public void run() {
@@ -86,6 +120,13 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         omegaman[0] = new Omegaman(0, stage[stageNo].spawnCoords[0].copy(), stage[stageNo].spawnSpriteSign[0], stage[stageNo].spawnPlatformNo[0], new int[] {KeyEvent.VK_A, KeyEvent.VK_D, KeyEvent.VK_W, KeyEvent.VK_S}, new int[] {KeyEvent.VK_C, KeyEvent.VK_V}, new int[] {4, 5});
         omegaman[1] = new Omegaman(1, stage[stageNo].spawnCoords[1].copy(), stage[stageNo].spawnSpriteSign[1], stage[stageNo].spawnPlatformNo[1], new int[] {KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_UP, KeyEvent.VK_DOWN}, new int[] {KeyEvent.VK_NUMPAD1, KeyEvent.VK_NUMPAD2}, new int[] {2, 3});
 
+        // Menu image importing
+        chooseMenu = ImageIO.read(new File("menus/choose.jpg"));
+        buttonImg = ImageIO.read(new File("menus/button.jpg"));
+
+        // Buttons
+        chooseButtons[CHOOSE_BACK_BTNO] = new Button(buttonImg, BUTTON_FONT, new Coord(225, 37.5), BUTTON_SIZE, "BACK", CHOOSE_BACK_BTNO, true, true);
+        
         // Weapon image importing
         Bullet.image = ImageIO.read(new File("player projectiles/bullet.png"));
         Shotgun.image = ImageIO.read(new File("player projectiles/shotgun.png"));
@@ -135,13 +176,15 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         if (gameState == -1) {
 
         }
-        else if(gameState == 0){
+        else if(gameState == 0) {
             
         }
-        else if(gameState == 1){
-         
+        else if(gameState == 1) {
+            g.drawImage(chooseMenu, 0, 0, (int) SCREEN_SIZE.x, (int) SCREEN_SIZE.y, null);
+            processButtons(chooseButtons);
+            drawButtons(chooseButtons, g);
         }
-        else if(gameState == 2){
+        else if(gameState == 2) {
             stage[stageNo].drawStage(g);
             for (Omegaman omega: omegaman) {
                 omega.addNewProjectiles();
@@ -188,8 +231,11 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                 }
             }
         }
-        else if(gameState == 3){
+        else if(gameState == 3) {
          
+        }
+        else if (gameState == 4) {
+
         }
 
     }
@@ -216,6 +262,30 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         return (int) (Math.random() + 0.5) * 2 - 1;
     }
 
+    public static boolean intersects(Coord coord1, Coord size1, Coord coord2, Coord size2, double leeway) {
+        return Math.abs(coord1.x - coord2.x) < (size1.x + size2.x) / 2 - leeway && Math.abs(coord1.y - coord2.y) < (size1.y + size2.y) / 2 - leeway; 
+    }
+
+    // Static method for processing current menu buttons THINk ABT THis
+    public static void processButtons(Button[] buttons) {
+        for (Button button: buttons) {
+            if (button.process()) {
+                // change button pressed
+                break;
+            }
+        }
+    }
+
+    public static void drawButtons(Button[] buttons, Graphics g) {
+        for (Button button: buttons) {
+            button.draw(g);
+        }
+    }
+
+    public static void actionPerformed() {
+        // Check button pressed with button num and do stuff CHECK ALL STATES here????
+    }
+
     // Mouse and Keyboard Methods
     public void mouseClicked(MouseEvent e) {}
     public void mousePressed(MouseEvent e) {
@@ -227,12 +297,12 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public void mouseEntered(MouseEvent e) {}
     public void mouseExited(MouseEvent e) {}
     public void mouseDragged(MouseEvent e) {
-        mouseX = e.getX();
-        mouseY = e.getY();
+        mouse.x = e.getX();
+        mouse.y = e.getY();
     }
     public void mouseMoved(MouseEvent e) {
-        mouseX = e.getX();
-        mouseY = e.getY();
+        mouse.x = e.getX();
+        mouse.y = e.getY();
     }
 
     public void keyTyped(KeyEvent e) {}

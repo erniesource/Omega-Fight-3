@@ -38,13 +38,13 @@ public class Bullet extends Projectile {
         }
         for (Omegaman enemy: OmegaFight3.omegaman) {
             if (enemy != character) {
-                if (enemy.checkHitbox(coord, hitBoxSize) && enemy.invCounter == Omegaman.VULNERABLE) {
+                if (OmegaFight3.intersects(coord, hitBoxSize, enemy.coord, enemy.size, OmegaFight3.HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
                     enemy.hurt(damage, knockback, coord, dir, KB_SPREAD, SCREENSHAKE);
                     die();
                     ((Omegaman) character).skillPts = Math.min(((Omegaman) character).skillPts + SKILL_PT_GAIN, Omegaman.MAX_SKILL_PTS);
                 }
                 for (Projectile proj: enemy.projectiles) {
-                    if (proj.checkHitbox(coord, hitBoxSize) && proj.hitBoxActive) {
+                    if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, OmegaFight3.HITBOX_LEEWAY) && proj.hitBoxActive) {
                         if (shouldDieTo(proj.durability)) die();
                         if (proj.shouldDieTo(durability)) proj.die();
                     }
@@ -110,12 +110,12 @@ class Rocket extends Projectile {
             }
             for (Omegaman enemy: OmegaFight3.omegaman) {
                 if (enemy != character) {
-                    if (enemy.checkHitbox(coord, hitBoxSize) && enemy.invCounter == Omegaman.VULNERABLE) {
+                    if (OmegaFight3.intersects(coord, hitBoxSize, enemy.coord, enemy.size, OmegaFight3.HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
                         enemy.hurt(damage, knockback, coord, dir, KB_SPREAD, (int) (SCREENSHAKE * (size.x / SIZE.x)));
                         die();
                     }
                     for (Projectile proj: enemy.projectiles) {
-                        if (proj.checkHitbox(coord, hitBoxSize) && proj.hitBoxActive) {
+                        if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, OmegaFight3.HITBOX_LEEWAY) && proj.hitBoxActive) {
                             die();
                             if (proj.shouldDieTo(durability)) proj.die();
                         }
@@ -176,13 +176,13 @@ class Shotgun extends Projectile {
         }
         for (Omegaman enemy: OmegaFight3.omegaman) {
             if (enemy != character) {
-                if (enemy.checkHitbox(coord, hitBoxSize) && enemy.invCounter == Omegaman.VULNERABLE) {
+                if (OmegaFight3.intersects(coord, hitBoxSize, enemy.coord, enemy.size, OmegaFight3.HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
                     enemy.hurt(damage, knockback, coord, dir, KB_SPREAD, SCREENSHAKE);
                     die();
                     ((Omegaman) character).skillPts = Math.min(((Omegaman) character).skillPts + SKILL_PT_GAIN, Omegaman.MAX_SKILL_PTS);
                 }
                 for (Projectile proj: enemy.projectiles) {
-                    if (proj.checkHitbox(coord, hitBoxSize) && proj.hitBoxActive) {
+                    if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, OmegaFight3.HITBOX_LEEWAY) && proj.hitBoxActive) {
                         if (shouldDieTo(proj.durability)) die();
                         if (proj.shouldDieTo(durability)) proj.die();
                     }
@@ -236,13 +236,13 @@ class Firework extends Projectile {
         }
         for (Omegaman enemy: OmegaFight3.omegaman) {
             if (enemy != character) {
-                if (enemy.checkHitbox(coord, hitBoxSize) && enemy.invCounter == Omegaman.VULNERABLE) {
+                if (OmegaFight3.intersects(coord, hitBoxSize, enemy.coord, enemy.size, OmegaFight3.HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
                     enemy.hurt(damage, knockback, coord, dir, KB_SPREAD, SCREENSHAKE);
                     die();
                     ((Omegaman) character).skillPts = Math.min(((Omegaman) character).skillPts + 1, Omegaman.MAX_SKILL_PTS);
                 }
                 for (Projectile proj: enemy.projectiles) {
-                    if (proj.checkHitbox(coord, hitBoxSize) && proj.hitBoxActive) {
+                    if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, OmegaFight3.HITBOX_LEEWAY) && proj.hitBoxActive) {
                         if (proj.shouldDieTo(durability)) proj.die();
                     }
                 }
@@ -296,13 +296,13 @@ class Spammer extends Projectile {
         }
         for (Omegaman enemy: OmegaFight3.omegaman) {
             if (enemy != character) {
-                if (enemy.checkHitbox(coord, hitBoxSize) && enemy.invCounter == Omegaman.VULNERABLE) {
+                if (OmegaFight3.intersects(coord, hitBoxSize, enemy.coord, enemy.size, OmegaFight3.HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
                     enemy.hurt(damage, knockback, coord, dir, KB_SPREAD, SCREENSHAKE);
                     die();
                     ((Omegaman) character).skillPts = Math.min(((Omegaman) character).skillPts + SKILL_PT_GAIN, Omegaman.MAX_SKILL_PTS);
                 }
                 for (Projectile proj: enemy.projectiles) {
-                    if (proj.checkHitbox(coord, hitBoxSize) && proj.hitBoxActive) {
+                    if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, OmegaFight3.HITBOX_LEEWAY) && proj.hitBoxActive) {
                         if (shouldDieTo(proj.durability)) die();
                         if (proj.shouldDieTo(durability)) proj.die();
                     }
@@ -398,12 +398,12 @@ class Missile extends Projectile {
             }
             for (Omegaman enemy: OmegaFight3.omegaman) {
                 if (enemy != character) {
-                    if (enemy.checkHitbox(coord, hitBoxSize) && enemy.invCounter == Omegaman.VULNERABLE) {
+                    if (OmegaFight3.intersects(coord, hitBoxSize, enemy.coord, enemy.size, OmegaFight3.HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
                         enemy.hurt(damage, knockback, coord, dir, KB_SPREAD, (int) (SCREENSHAKE * (size.x / SIZE.x)));
                         die();
                     }
                     for (Projectile proj: enemy.projectiles) {
-                        if (proj.checkHitbox(coord, hitBoxSize) && proj.hitBoxActive) {
+                        if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, OmegaFight3.HITBOX_LEEWAY) && proj.hitBoxActive) {
                             die();
                             if (proj.shouldDieTo(durability)) proj.die();
                         }
@@ -461,13 +461,13 @@ class Sniper extends Projectile {
         }
         for (Omegaman enemy: OmegaFight3.omegaman) {
             if (enemy != character) {
-                if (enemy.checkHitbox(coord, hitBoxSize) && enemy.invCounter == Omegaman.VULNERABLE) {
+                if (OmegaFight3.intersects(coord, hitBoxSize, enemy.coord, enemy.size, OmegaFight3.HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
                     enemy.hurt(damage * velocity / VELOCITY, knockback * velocity / VELOCITY, coord, dir, KB_SPREAD, SCREENSHAKE);
                     die();
                     ((Omegaman) character).skillPts = Math.min(((Omegaman) character).skillPts + SKILL_PT_GAIN, Omegaman.MAX_SKILL_PTS);
                 }
                 for (Projectile proj: enemy.projectiles) {
-                    if (proj.checkHitbox(coord, hitBoxSize) && proj.hitBoxActive) {
+                    if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, OmegaFight3.HITBOX_LEEWAY) && proj.hitBoxActive) {
                         if (shouldDieTo(proj.durability)) die();
                         if (proj.shouldDieTo(durability)) proj.die();
                     }
@@ -524,11 +524,11 @@ class Laser extends Projectile {
         super.process();
         for (Omegaman enemy: OmegaFight3.omegaman) {
             if (enemy != character) {
-                if (enemy.checkHitbox(coord, hitBoxSize) && enemy.invCounter == Omegaman.VULNERABLE) {
+                if (OmegaFight3.intersects(coord, hitBoxSize, enemy.coord, enemy.size, OmegaFight3.HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
                     enemy.hurt(damage, knockback, coord, BASE_KB_DIR + KB_DIR_TILT * Math.cos(dir), KB_SPREAD, SCREENSHAKE);
                 }
                 for (Projectile proj: enemy.projectiles) {
-                    if (proj.checkHitbox(coord, hitBoxSize) && proj.hitBoxActive) {
+                    if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, OmegaFight3.HITBOX_LEEWAY) && proj.hitBoxActive) {
                         if (proj.shouldDieTo(durability)) proj.die();
                     }
                 }
@@ -582,14 +582,14 @@ class Boomer extends Projectile {
         }
         for (Omegaman enemy: OmegaFight3.omegaman) {
             if (enemy != character) {
-                if (enemy.checkHitbox(coord, hitBoxSize) && enemy.invCounter == Omegaman.VULNERABLE) {
+                if (OmegaFight3.intersects(coord, hitBoxSize, enemy.coord, enemy.size, OmegaFight3.HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
                     int multiplier = velocity < 0? 2: 1;
                     enemy.hurt(damage * multiplier, knockback * multiplier, coord, dir + multiplier / 2 * Math.PI, KB_SPREAD, SCREENSHAKE);
                     die();
                     ((Omegaman) character).skillPts = Math.min(((Omegaman) character).skillPts + SKILL_PT_GAIN * multiplier, Omegaman.MAX_SKILL_PTS);
                 }
                 for (Projectile proj: enemy.projectiles) {
-                    if (proj.checkHitbox(coord, hitBoxSize) && proj.hitBoxActive) {
+                    if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, OmegaFight3.HITBOX_LEEWAY) && proj.hitBoxActive) {
                         if (shouldDieTo(proj.durability)) die();
                         if (proj.shouldDieTo(durability)) proj.die();
                     }
@@ -646,12 +646,12 @@ class Bouncer extends Projectile {
         }
         for (Omegaman enemy: OmegaFight3.omegaman) {
             if (enemy != character) {
-                if (enemy.checkHitbox(coord, hitBoxSize) && enemy.invCounter == Omegaman.VULNERABLE) {
+                if (OmegaFight3.intersects(coord, hitBoxSize, enemy.coord, enemy.size, OmegaFight3.HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
                     enemy.hurt(damage, knockback, coord, dir, KB_SPREAD, SCREENSHAKE);
                     ((Omegaman) character).skillPts = Math.min(((Omegaman) character).skillPts + 1, Omegaman.MAX_SKILL_PTS);
                 }
                 for (Projectile proj: enemy.projectiles) {
-                    if (proj.checkHitbox(coord, hitBoxSize) && proj.hitBoxActive) {
+                    if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, OmegaFight3.HITBOX_LEEWAY) && proj.hitBoxActive) {
                         if (proj.shouldDieTo(durability)) proj.die();
                     }
                 }
@@ -710,11 +710,11 @@ class Spike extends Projectile {
         }
         for (Omegaman enemy: OmegaFight3.omegaman) {
             if (enemy != character) {
-                if (enemy.checkHitbox(coord, hitBoxSize) && enemy.invCounter == Omegaman.VULNERABLE) {
+                if (OmegaFight3.intersects(coord, hitBoxSize, enemy.coord, enemy.size, OmegaFight3.HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
                     die();
                 }
                 for (Projectile proj: enemy.projectiles) {
-                    if (proj.checkHitbox(coord, hitBoxSize) && proj.hitBoxActive) {
+                    if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, OmegaFight3.HITBOX_LEEWAY) && proj.hitBoxActive) {
                         die();
                         if (proj.shouldDieTo(durability)) proj.die();
                     }
@@ -779,13 +779,13 @@ class Thorn extends Projectile {
         }
         for (Omegaman enemy: OmegaFight3.omegaman) {
             if (enemy != character) {
-                if (enemy.checkHitbox(coord, hitBoxSize) && enemy.invCounter == Omegaman.VULNERABLE) {
+                if (OmegaFight3.intersects(coord, hitBoxSize, enemy.coord, enemy.size, OmegaFight3.HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
                     enemy.hurt(damage, knockback, coord, dir, KB_SPREAD, SCREENSHAKE);
                     die();
                     ((Omegaman) character).skillPts = Math.min(((Omegaman) character).skillPts + SKILL_PT_GAIN, Omegaman.MAX_SKILL_PTS);
                 }
                 for (Projectile proj: enemy.projectiles) {
-                    if (proj.checkHitbox(coord, hitBoxSize) && proj.hitBoxActive) {
+                    if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, OmegaFight3.HITBOX_LEEWAY) && proj.hitBoxActive) {
                         if (shouldDieTo(proj.durability)) die();
                         if (proj.shouldDieTo(durability)) proj.die();
                     }
@@ -844,12 +844,12 @@ class Splitter extends Projectile {
         }
         for (Omegaman enemy: OmegaFight3.omegaman) {
             if (enemy != character) {
-                if (enemy.checkHitbox(coord, hitBoxSize) && enemy.invCounter == Omegaman.VULNERABLE) {
+                if (OmegaFight3.intersects(coord, hitBoxSize, enemy.coord, enemy.size, OmegaFight3.HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
                     enemy.hurt(damage, knockback, coord, dir, KB_SPREAD, SCREENSHAKE);
                     ((Omegaman) character).skillPts = Math.min(((Omegaman) character).skillPts + 1, Omegaman.MAX_SKILL_PTS);
                 }
                 for (Projectile proj: enemy.projectiles) {
-                    if (proj.checkHitbox(coord, hitBoxSize) && proj.hitBoxActive) {
+                    if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, OmegaFight3.HITBOX_LEEWAY) && proj.hitBoxActive) {
                         if (proj.shouldDieTo(durability)) proj.die();
                     }
                 }

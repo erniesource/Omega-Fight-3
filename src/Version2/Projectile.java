@@ -44,10 +44,6 @@ abstract public class Projectile {
         this.frameCounter = frameCounter;
     }
 
-    public boolean checkHitbox(Coord enemyCoord, Coord enemyHitBoxSize) {
-        return Math.abs(enemyCoord.x - coord.x) <= (enemyHitBoxSize.x + hitBoxSize.x) / 2 - OmegaFight3.HITBOX_LEEWAY && Math.abs(enemyCoord.y - coord.y) <= (enemyHitBoxSize.y + hitBoxSize.y) / 2 - OmegaFight3.HITBOX_LEEWAY;  
-    }
-
     public void die() {
         ((Omegaman) character).deadProjectiles.add(this);
     }
