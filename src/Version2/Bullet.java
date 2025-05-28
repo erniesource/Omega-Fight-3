@@ -20,6 +20,7 @@ public class Bullet extends Projectile {
     public static final int LIFE = 25;
 
     // Misc constants
+    public static final int BUTTONO = 4;
     public static final int SKILL_PT_GAIN = 4;
     public static final int SCREENSHAKE = 0;
 
@@ -156,6 +157,7 @@ class Shotgun extends Projectile {
     public static final double SPREAD = Math.PI / 6;
 
     // Misc constants
+    public static final int BUTTONO = 5;
     public static final int SKILL_PT_GAIN = 1;
     public static final int SCREENSHAKE = 0;
 
@@ -276,6 +278,7 @@ class Spammer extends Projectile {
     public static final double SPREAD = Math.PI / 9;
 
     // Misc constants
+    public static final int BUTTONO = 6;
     public static final int SKILL_PT_GAIN = 1;
     public static final int SCREENSHAKE = 0;
 
@@ -441,6 +444,7 @@ class Sniper extends Projectile {
     public static final double ACCEL = 1;
 
     // Misc constants
+    public static final int BUTTONO = 7;
     public static final int SKILL_PT_GAIN = 10;
     public static final int SCREENSHAKE = 0;
     public static final double RECOIL = 4;
@@ -562,6 +566,7 @@ class Boomer extends Projectile {
     public static final int LIFE = 36;
 
     // Misc constants
+    public static final int BUTTONO = 8;
     public static final int SKILL_PT_GAIN = 6;
     public static final int SCREENSHAKE = 0;
 
@@ -675,6 +680,8 @@ class Spike extends Projectile {
     public static final double DURABILITY = 1;
     public static final double KB = 0;
     public static final double KB_SPREAD = 0;
+    public static final int NUM_THORNS = 6;
+    public static final boolean CURVED_BABY_PROJS = true;
 
     // Size constants
     public static final Coord SIZE = new Coord(50, 50);
@@ -687,10 +694,9 @@ class Spike extends Projectile {
     public static final double ROTATION_MAX = Math.PI * 2 / 3;
 
     // Misc constants
+    public static final int BUTTONO = 9;
     public static final int SKILL_PT_GAIN = 0;
     public static final int SCREENSHAKE = 0;
-    public static final int NUM_THORNS = 6;
-    public static final boolean CURVED_BABY_PROJS = true;
 
     public Spike(Omegaman player, Coord coord, Coord size, double velocity, double dir, double damage, double knockback, double durability, int frameCounter) {
         super(player, coord, size, size, velocity, dir, damage, knockback, durability, frameCounter);
@@ -813,6 +819,7 @@ class Splitter extends Projectile {
     public static final int NUM_SPLITS = 3;
     public static final int PROJS_PER_SPLIT = 4;
     public static final double SPLIT_PROJS_START_ANGLE = Math.PI / 4;
+    public static final boolean CURVED_BABY_PROJS = false;
 
     // Velocity constants
     public static final double VELOCITY = 15;
@@ -821,7 +828,6 @@ class Splitter extends Projectile {
     // Misc constants
     public static final double MINIMUM_STAT_PERCENTAGE = 0.5;
     public static final int SCREENSHAKE = 0;
-    public static final boolean CURVED_BABY_PROJS = false;
 
     public Splitter(Omegaman player, Coord coord, Coord size, double velocity, double dir, double damage, double knockback, double durability, int frameCounter) {
         super(player, coord, size, size, velocity, dir, damage, knockback, durability, frameCounter);

@@ -27,6 +27,7 @@ public class Omegaman extends Char {
     public int heatCounter;
     public int chargingWeapon = -1;
     public int[] loadout;
+    public int[] loadoutButtono;
     public Deque<Integer> stalenessQ = new LinkedList<>(); // To be used
 
     // Skill point statistics
@@ -149,7 +150,7 @@ public class Omegaman extends Char {
     public BufferedImage percentDisplay;
     public BufferedImage[] surge = new BufferedImage[NUM_SURGE_IMAGES];
 
-    public Omegaman(int playerNo, Coord coord, int spriteSign, int onPlatform, int[] controls, int[] shtKeys, int[] loadout) throws IOException {
+    public Omegaman(int playerNo, Coord coord, int spriteSign, int onPlatform, int[] controls, int[] shtKeys, int[] loadout, int[] loadoutButtono) throws IOException {
         // Initialize character variables
         super(coord, IDLE_SPRITE, spriteSign, 0, new Coord(100, 100), ALIVE_STATE);
 
@@ -158,6 +159,7 @@ public class Omegaman extends Char {
         this.onPlatform = onPlatform;
         this.loadout = loadout;
         this.shtKeys = shtKeys;
+        this.loadoutButtono = loadoutButtono;
 
         // Assign control keys
         lftKey = controls[0];

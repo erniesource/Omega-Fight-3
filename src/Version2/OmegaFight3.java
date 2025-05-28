@@ -23,6 +23,10 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
 
     // Players
     public static Omegaman[] omegaman = new Omegaman[Omegaman.NUM_PLAYERS];
+    public static int[][] loadouts = {{-1, -1}, {-1, -1}};
+    public static int[][] controls = {{KeyEvent.VK_A, KeyEvent.VK_D, KeyEvent.VK_W, KeyEvent.VK_S}, {KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_UP, KeyEvent.VK_DOWN}};
+    public static int[][] shtKeys = {{KeyEvent.VK_C, KeyEvent.VK_V}, {KeyEvent.VK_NUMPAD1, KeyEvent.VK_NUMPAD2}};
+    public static int[][] loadoutButtono = {{11, 12}, {13, 14}};
 
     // Mouse/Keyboard Events
     public static Coord mouse = new Coord();
@@ -36,7 +40,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     // Buttons
     public static Button[] chooseButtons = new Button[1]; // [14] Skip 1 for 3rd stage for now
 
-    // Menus
+    // Menu images
     public static BufferedImage chooseMenu;
     public static BufferedImage buttonImg;
 
@@ -47,6 +51,18 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static final Coord SCREEN_SIZE = new Coord(1920, 960);
     public static final int FPS = 60;
     public static final int SCREEN_SHAKE_HZ = 2;
+
+    // Stage constants
+    public static final int NO_OF_STAGES = 2;
+    public static final int FINAL_DEST_NO = 0;
+    public static final int BATTLEFIELD_NO = 1;
+    public static final String[] STAGE_NAME = {"battlefield", "final destination"};
+    public static final Platform[][] PLATFORMS = {{new Platform(395, 1525, 610, true), new Platform(535, 820, 435, false), new Platform(1095, 1385, 435, false)},
+    {new Platform(245, 1675, 550, true)}};
+    public static final Coord[][] SPAWN_COORDS = {{new Coord(700, 435), new Coord(1260, 435)},
+    {new Coord(700, 550), new Coord(1260, 550)}};
+    public static final int[][] SPAWN_SIGN = {{Omegaman.RIGHT_SIGN, Omegaman.RIGHT_SIGN}, {Omegaman.RIGHT_SIGN, Omegaman.RIGHT_SIGN}};
+    public static final int[][] SPAWN_PLATFORM_NO = {{1, 2}, {0, 0}};
 
     // Offset + Leeway
     public static final double HITBOX_LEEWAY = 5;
@@ -63,23 +79,12 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static final int SLIDESHOW_GS = 4;
 
     // Button Numbers
-
     // Choose your fight menu
     public static final int CHOOSE_BACK_BTNO = 0;
     public static final int BATTLEFIELD_BTNO = 1;
     public static final int FINAL_DEST_BTNO = 2;
     // Leave num for another stage?
-    public static final int CLASSIC_BTNO = 4;
-    public static final int SHOTGUN_BTNO = 5;
-    public static final int SPAMMER_BTNO = 6;
-    public static final int SNIPER_BTNO = 7;
-    public static final int BOOMER_BTNO = 8;
-    public static final int SPIKE_BTNO = 9;
     public static final int READY_BTNO = 10;
-    public static final int P0_W0_BTNO = 11;
-    public static final int P0_W1_BTNO = 12;
-    public static final int P1_W0_BTNO = 13;
-    public static final int P1_W1_BTNO = 14;
 
     public static final Font BUTTON_FONT = new Font("Consolas", Font.BOLD, 40); 
     public static final Coord BUTTON_SIZE = new Coord(400, 50);
@@ -111,14 +116,14 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     // Creating Game Window
     public static void main(String[] args) throws IOException {
         // Stages
-        stage[0] = new Stage("battlefield", new Platform[] {new Platform(395, 1525, 610, true), new Platform(535, 820, 435, false), new Platform(1095, 1385, 435, false)},
-        new Coord[] {new Coord(700, 435), new Coord(1260, 435)}, new int[] {Omegaman.RIGHT_SIGN, Omegaman.RIGHT_SIGN}, new int[] {1, 2});
-        stage[1] = new Stage("final destination", new Platform[] {new Platform(245, 1675, 550, true)},
-        new Coord[] {new Coord(700, 550), new Coord(1260, 550)}, new int[] {Omegaman.RIGHT_SIGN, Omegaman.RIGHT_SIGN}, new int[] {0, 0});
-
+        for (int i = 0; i != NO_OF_STAGES; i++) {
+            stage[i] = new Stage(STAGE_NAME[i], PLATFORMS[i], SPAWN_COORDS[i], SPAWN_SIGN[i], SPAWN_PLATFORM_NO[i]);
+        }
+        
         // Player
-        omegaman[0] = new Omegaman(0, stage[stageNo].spawnCoords[0].copy(), stage[stageNo].spawnSpriteSign[0], stage[stageNo].spawnPlatformNo[0], new int[] {KeyEvent.VK_A, KeyEvent.VK_D, KeyEvent.VK_W, KeyEvent.VK_S}, new int[] {KeyEvent.VK_C, KeyEvent.VK_V}, new int[] {4, 5});
-        omegaman[1] = new Omegaman(1, stage[stageNo].spawnCoords[1].copy(), stage[stageNo].spawnSpriteSign[1], stage[stageNo].spawnPlatformNo[1], new int[] {KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_UP, KeyEvent.VK_DOWN}, new int[] {KeyEvent.VK_NUMPAD1, KeyEvent.VK_NUMPAD2}, new int[] {2, 3});
+        for (int i = 0; i != Omegaman.NUM_PLAYERS; i++) {
+            omegaman[i] = new Omegaman(i, stage[stageNo].spawnCoords[i].copy(), stage[stageNo].spawnSpriteSign[i], stage[stageNo].spawnPlatformNo[i], controls[i], shtKeys[i], loadouts[i], loadoutButtono[i]);
+        }
 
         // Menu image importing
         chooseMenu = ImageIO.read(new File("menus/choose.jpg"));
