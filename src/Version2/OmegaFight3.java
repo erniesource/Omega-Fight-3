@@ -35,10 +35,12 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
 
     // Stage statistics
     public static int stageNo = 0;
-    public static Stage[] stage = new Stage[2];
+    public static Stage[] stage = new Stage[Stage.NO_OF_STAGES];
+    public static int stageFlashCounter = 0;
 
     // Buttons
-    public static Button[] chooseButtons = new Button[1]; // [14] Skip 1 for 3rd stage for now
+    public static HashMap<Integer, Button> chooseButtons = new HashMap<>(); // [14] Skip 1 for 3rd stage for now
+    public static int buttonPressed = -1;
 
     // Menu images
     public static BufferedImage chooseMenu;
@@ -47,15 +49,16 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     // General game statistics
     public static int screenShakeCounter = 0;
 
+    // Misc
+    public static BufferedImage placeHolder;
+
     // Screen Settings
     public static final Coord SCREEN_SIZE = new Coord(1920, 960);
     public static final int FPS = 60;
     public static final int SCREEN_SHAKE_HZ = 2;
+    public static final int SPACING = 25;
 
     // Stage constants
-    public static final int NO_OF_STAGES = 2;
-    public static final int FINAL_DEST_NO = 0;
-    public static final int BATTLEFIELD_NO = 1;
     public static final String[] STAGE_NAME = {"battlefield", "final destination"};
     public static final Platform[][] PLATFORMS = {{new Platform(395, 1525, 610, true), new Platform(535, 820, 435, false), new Platform(1095, 1385, 435, false)},
     {new Platform(245, 1675, 550, true)}};
@@ -63,11 +66,12 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     {new Coord(700, 550), new Coord(1260, 550)}};
     public static final int[][] SPAWN_SIGN = {{Omegaman.RIGHT_SIGN, Omegaman.RIGHT_SIGN}, {Omegaman.RIGHT_SIGN, Omegaman.RIGHT_SIGN}};
     public static final int[][] SPAWN_PLATFORM_NO = {{1, 2}, {0, 0}};
+    public static final int[] STAGE_BUTTONO = {1, 2};
+    public static final int STAGE_FLASH_HZ = 10;
+    public static final int FLASH_SIZE = 10;
 
-    // Offset + Leeway
+    // Misc
     public static final double HITBOX_LEEWAY = 5;
-
-    // Color Settings
     public static final int MAX_RGB_VAL = 255;
 
     // Gamestates
@@ -78,16 +82,21 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static final int WIN_GS = 3;
     public static final int SLIDESHOW_GS = 4;
 
-    // Button Numbers
+    // Button Numbers (Next avail: 15)
     // Choose your fight menu
-    public static final int CHOOSE_BACK_BTNO = 0;
-    public static final int BATTLEFIELD_BTNO = 1;
-    public static final int FINAL_DEST_BTNO = 2;
-    // Leave num for another stage?
-    public static final int READY_BTNO = 10;
+    public static final int CHOOSE_BACK_BUTTONO = 0;
+    public static final int READY_BUTTONO = 10;
 
+    // Button constants
     public static final Font BUTTON_FONT = new Font("Consolas", Font.BOLD, 40); 
+    public static final Font STAGE_FONT = new Font("Consolas", Font.BOLD, 25);
     public static final Coord BUTTON_SIZE = new Coord(400, 50);
+
+    // Mouse and Keyboard constants
+    public static final int NO_BUTTON_HIT = -1;
+
+    // Color constants
+    public static final Color PURPLE = new Color(186, 122, 255);
 
     // Timer Settings
     public void run() {
@@ -116,8 +125,8 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     // Creating Game Window
     public static void main(String[] args) throws IOException {
         // Stages
-        for (int i = 0; i != NO_OF_STAGES; i++) {
-            stage[i] = new Stage(STAGE_NAME[i], PLATFORMS[i], SPAWN_COORDS[i], SPAWN_SIGN[i], SPAWN_PLATFORM_NO[i]);
+        for (int i = 0; i != Stage.NO_OF_STAGES; i++) {
+            stage[i] = new Stage(STAGE_NAME[i], PLATFORMS[i], SPAWN_COORDS[i], SPAWN_SIGN[i], SPAWN_PLATFORM_NO[i], STAGE_BUTTONO[i]);
         }
         
         // Player
@@ -125,12 +134,18 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
             omegaman[i] = new Omegaman(i, stage[stageNo].spawnCoords[i].copy(), stage[stageNo].spawnSpriteSign[i], stage[stageNo].spawnPlatformNo[i], controls[i], shtKeys[i], loadouts[i], loadoutButtono[i]);
         }
 
+        // Misc image imoprting
+        placeHolder = ImageIO.read(new File("misc/placeholder.jpg"));
+
         // Menu image importing
         chooseMenu = ImageIO.read(new File("menus/choose.jpg"));
         buttonImg = ImageIO.read(new File("menus/button.jpg"));
 
         // Buttons
-        chooseButtons[CHOOSE_BACK_BTNO] = new Button(buttonImg, BUTTON_FONT, new Coord(225, 37.5), BUTTON_SIZE, "BACK", CHOOSE_BACK_BTNO, true, true);
+        chooseButtons.put(CHOOSE_BACK_BUTTONO, new Button(buttonImg, BUTTON_FONT, new Coord(SPACING + 400 / 2, SPACING + SPACING / 2), BUTTON_SIZE, "BACK", CHOOSE_BACK_BUTTONO, Button.SHADOW, true, true));
+        chooseButtons.put(stage[Stage.BATTLEFIELD_NO].buttono, new Button(stage[Stage.BATTLEFIELD_NO].image, STAGE_FONT, new Coord(SPACING + 510 / 2, (100 + 500) / 2), new Coord(510, 255), stage[Stage.BATTLEFIELD_NO].stageName.toUpperCase(), stage[Stage.BATTLEFIELD_NO].buttono, Button.HIGHLIGHT, true, true)); // CHange size email Ms. Kim
+        chooseButtons.put(stage[Stage.FINAL_DEST_NO].buttono, new Button(stage[Stage.FINAL_DEST_NO].image, STAGE_FONT, new Coord(SPACING * 2 + 510 * (1.0 / 2 + 1), (100 + 500) / 2), new Coord(510, 255), stage[Stage.FINAL_DEST_NO].stageName.toUpperCase(), stage[Stage.FINAL_DEST_NO].buttono, Button.HIGHLIGHT, true, true));
+        chooseButtons.put(3, new Button(placeHolder, STAGE_FONT, new Coord(SPACING * 3 + 510 * (1.0 / 2 + 2), (100 + 500) / 2), new Coord(510, 255), "COMING IN 5-10 BUSINESS DAYS", 3, Button.HIGHLIGHT, true, false));
         
         // Weapon image importing
         Bullet.image = ImageIO.read(new File("player projectiles/bullet.png"));
@@ -178,18 +193,29 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
             }
             g.translate((int) Stage.coord.x, (int) Stage.coord.y);
         }
-        if (gameState == -1) {
+        if (gameState == STUDIO_ANIM_GS) {
 
         }
-        else if(gameState == 0) {
+        else if(gameState == HOME_GS) {
             
         }
-        else if(gameState == 1) {
+        else if(gameState == CHOOSE_FIGHT_GS) {
             g.drawImage(chooseMenu, 0, 0, (int) SCREEN_SIZE.x, (int) SCREEN_SIZE.y, null);
-            processButtons(chooseButtons);
-            drawButtons(chooseButtons, g);
+            actionPerformed();
+            processButtons(chooseButtons.values());
+
+            // Flashing of selected stage
+            stageFlashCounter = (stageFlashCounter + 1) % (STAGE_FLASH_HZ * 2);
+            if (stageFlashCounter < STAGE_FLASH_HZ) g.setColor(PURPLE);
+            else g.setColor(Color.YELLOW);
+            Button stageButton = chooseButtons.get(stage[stageNo].buttono);
+            Coord stageButtonSize = stageButton.size[stageButton.state];
+            g.fillRect((int) (stageButton.coord.x - stageButtonSize.x / 2 - FLASH_SIZE), (int) (stageButton.coord.y - stageButtonSize.y / 2 - FLASH_SIZE),
+            (int) (stageButtonSize.x + FLASH_SIZE * 2), (int) (stageButtonSize.y + FLASH_SIZE * 2));
+            drawButtons(chooseButtons.values(), g);
+            // Each wepon has their own icon
         }
-        else if(gameState == 2) {
+        else if(gameState == GAME_GS) {
             stage[stageNo].drawStage(g);
             for (Omegaman omega: omegaman) {
                 omega.addNewProjectiles();
@@ -236,10 +262,10 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                 }
             }
         }
-        else if(gameState == 3) {
+        else if(gameState == WIN_GS) {
          
         }
-        else if (gameState == 4) {
+        else if (gameState == SLIDESHOW_GS) {
 
         }
 
@@ -272,16 +298,18 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     }
 
     // Static method for processing current menu buttons THINk ABT THis
-    public static void processButtons(Button[] buttons) {
+    public static void processButtons(Collection<Button> buttons) {
+        boolean hitButton = false;
         for (Button button: buttons) {
             if (button.process()) {
-                // change button pressed
-                break;
+                buttonPressed = button.num;
+                hitButton = true;
             }
         }
+        if (!hitButton) buttonPressed = NO_BUTTON_HIT;
     }
 
-    public static void drawButtons(Button[] buttons, Graphics g) {
+    public static void drawButtons(Collection<Button> buttons, Graphics g) {
         for (Button button: buttons) {
             button.draw(g);
         }
@@ -289,12 +317,28 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
 
     public static void actionPerformed() {
         // Check button pressed with button num and do stuff CHECK ALL STATES here????
+        if (buttonPressed != NO_BUTTON_HIT && !clicked) {
+            if (gameState == CHOOSE_FIGHT_GS) {
+                if (buttonPressed == CHOOSE_BACK_BUTTONO) {
+                    gameState = HOME_GS;
+                    // transition counter to fade
+                }
+                else if (buttonPressed == stage[Stage.BATTLEFIELD_NO].buttono) {
+                    stageNo = Stage.BATTLEFIELD_NO;
+                }
+                else if (buttonPressed == stage[Stage.FINAL_DEST_NO].buttono) {
+                    stageNo = Stage.FINAL_DEST_NO;
+                }
+            }
+            buttonPressed = NO_BUTTON_HIT;
+        }
     }
 
     // Mouse and Keyboard Methods
     public void mouseClicked(MouseEvent e) {}
     public void mousePressed(MouseEvent e) {
         clicked = true;
+        // System.out.println(mouse);
     }
     public void mouseReleased(MouseEvent e) {
         clicked = false;

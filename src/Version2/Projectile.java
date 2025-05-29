@@ -28,7 +28,7 @@ abstract public class Projectile {
     public static final int NUM_EXPLOSION_IMAGES = 8;
     public static final int EXPLOSION_TIME = EXPLOSION_FRAME_HZ * NUM_EXPLOSION_IMAGES;
     public static BufferedImage[] explosionImages = new BufferedImage[NUM_EXPLOSION_IMAGES];
-
+    public static final int NUM_OF_WEAPONS = 6;
     public static final double INFINITE_DURABILITY = 100;
 
     public Projectile(Char character, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double durability, int frameCounter) {
