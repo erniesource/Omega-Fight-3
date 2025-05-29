@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 
 public class Bullet extends Projectile {
     public static BufferedImage image;
+    public static BufferedImage icon;
     
     // Damage constants
     public static final double DMG = 2 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
@@ -26,6 +27,10 @@ public class Bullet extends Projectile {
 
     public Bullet(Omegaman player, Coord coord, Coord size, double velocity, double dir, double damage, double knockback, double durability, int frameCounter) {
         super(player, coord, size, size, velocity, dir, damage, knockback, durability, frameCounter);
+    }
+
+    public Bullet(Omegaman player, Coord coord, double dir) {
+        this(player, coord, SIZE, VELOCITY, dir, DMG, KB, DURABILITY, LIFE);
     }
 
     public void draw(Graphics2D g2) {
@@ -138,6 +143,7 @@ class Rocket extends Projectile {
 
 class Shotgun extends Projectile {
     public static BufferedImage image;
+    public static BufferedImage icon;
 
     // Damage constants
     public static final double DMG = 2 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
@@ -160,6 +166,10 @@ class Shotgun extends Projectile {
     public static final int BUTTONO = 5;
     public static final int SKILL_PT_GAIN = 1;
     public static final int SCREENSHAKE = 0;
+
+    public Shotgun(Omegaman player, Coord coord, double dir) {
+        this(player, coord, SIZE, VELOCITY, dir, DMG, KB, DURABILITY, LIFE);
+    }
 
     public Shotgun(Omegaman player, Coord coord, Coord size, double velocity, double dir, double damage, double knockback, double durability, int frameCounter) {
         super(player, coord, size, size, velocity, dir, damage, knockback, durability, frameCounter);
@@ -260,6 +270,7 @@ class Firework extends Projectile {
 
 class Spammer extends Projectile {
     public static BufferedImage image;
+    public static BufferedImage icon;
 
     // Damage constants
     public static final double DMG = 1.3 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
@@ -281,6 +292,10 @@ class Spammer extends Projectile {
     public static final int BUTTONO = 6;
     public static final int SKILL_PT_GAIN = 1;
     public static final int SCREENSHAKE = 0;
+
+    public Spammer(Omegaman player, Coord coord, double dir) {
+        this(player, coord, SIZE, VELOCITY, dir, DMG, KB, DURABILITY, LIFE);
+    }
 
     public Spammer(Omegaman player, Coord coord, Coord size, double velocity, double dir, double damage, double knockback, double durability, int frameCounter) {
         super(player, coord, size, size, velocity, dir, damage, knockback, durability, frameCounter);
@@ -428,6 +443,7 @@ class Missile extends Projectile {
 
 class Sniper extends Projectile {
     public static BufferedImage image;
+    public static BufferedImage icon;
 
     // Damage constants
     public static final double DMG = 5 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
@@ -448,6 +464,10 @@ class Sniper extends Projectile {
     public static final int SKILL_PT_GAIN = 10;
     public static final int SCREENSHAKE = 0;
     public static final double RECOIL = 4;
+
+    public Sniper(Omegaman player, Coord coord, double dir) {
+        this(player, coord, SIZE, VELOCITY, dir, DMG, KB, DURABILITY, LIFE);
+    }
 
     public Sniper(Omegaman player, Coord coord, Coord size, double velocity, double dir, double damage, double knockback, double durability, int frameCounter) {
         super(player, coord, size, size, velocity, dir, damage, knockback, durability, frameCounter);
@@ -549,6 +569,7 @@ class Laser extends Projectile {
 class Boomer extends Projectile {
     public BufferedImage image;
 
+    public static BufferedImage icon;
     public static BufferedImage[] images = new BufferedImage[Omegaman.NUM_PLAYERS];
     
     // Damage constants
@@ -569,6 +590,10 @@ class Boomer extends Projectile {
     public static final int BUTTONO = 8;
     public static final int SKILL_PT_GAIN = 6;
     public static final int SCREENSHAKE = 0;
+
+    public Boomer(Omegaman player, Coord coord, double dir) {
+        this(player, coord, SIZE, VELOCITY, dir, DMG, KB, DURABILITY, LIFE);
+    }
 
     public Boomer(Omegaman player, Coord coord, Coord size, double velocity, double dir, double damage, double knockback, double durability, int frameCounter) {
         super(player, coord, size, size, velocity, dir, damage, knockback, durability, frameCounter);
@@ -674,6 +699,7 @@ class Spike extends Projectile {
     public double rotation;
 
     public static BufferedImage image;
+    public static BufferedImage icon;
     
     // Damage constants
     public static final double DMG = 0;
@@ -697,6 +723,10 @@ class Spike extends Projectile {
     public static final int BUTTONO = 9;
     public static final int SKILL_PT_GAIN = 0;
     public static final int SCREENSHAKE = 0;
+
+    public Spike(Omegaman player, Coord coord, double dir) {
+        this(player, coord, SIZE, VELOCITY, dir, DMG, KB, DURABILITY, LIFE);
+    }
 
     public Spike(Omegaman player, Coord coord, Coord size, double velocity, double dir, double damage, double knockback, double durability, int frameCounter) {
         super(player, coord, size, size, velocity, dir, damage, knockback, durability, frameCounter);

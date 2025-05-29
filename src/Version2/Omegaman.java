@@ -258,27 +258,27 @@ public class Omegaman extends Char {
                             
                             // Fire basic
                             if (shootCharge <= BASIC_SHOOT_TIME_LIMIT || skillPts < ONES_PER_SKILL_PT) {
-                                if (loadout[i] == BULLET_WEAPON_NO) projectiles.add(new Bullet(this, newProjCoord, Bullet.SIZE, Bullet.VELOCITY, OmegaFight3.signToRadians(spriteSign), Bullet.DMG, Bullet.KB, Bullet.DURABILITY, Bullet.LIFE));
+                                if (loadout[i] == BULLET_WEAPON_NO) projectiles.add(new Bullet(this, newProjCoord, OmegaFight3.signToRadians(spriteSign)));
                                 else if (loadout[i] == SHOTGUN_WEAPON_NO) {
                                     // Shotgun
                                     for (int j = 0; j != Shotgun.NUM_SHOTS; j++) {
-                                        projectiles.add(new Shotgun(this, newProjCoord.copy(), Shotgun.SIZE, Shotgun.VELOCITY, OmegaFight3.signToRadians(spriteSign) - Shotgun.SPREAD + j * (Shotgun.SPREAD * 2 / (Shotgun.NUM_SHOTS - 1)), Shotgun.DMG, Shotgun.KB, Shotgun.DURABILITY, Shotgun.LIFE));
+                                        projectiles.add(new Shotgun(this, newProjCoord.copy(), OmegaFight3.signToRadians(spriteSign) - Shotgun.SPREAD + j * (Shotgun.SPREAD * 2 / (Shotgun.NUM_SHOTS - 1))));
                                     }
                                 }
                                 else if (loadout[i] == SPAMMER_WEAPON_NO) {
-                                    projectiles.add(new Spammer(this, newProjCoord, Spammer.SIZE, Spammer.VELOCITY, OmegaFight3.signToRadians(spriteSign) - Spammer.SPREAD + Math.random() * Spammer.SPREAD * 2, Spammer.DMG, Spammer.KB, Spammer.DURABILITY, Spammer.LIFE));
+                                    projectiles.add(new Spammer(this, newProjCoord, OmegaFight3.signToRadians(spriteSign) - Spammer.SPREAD + Math.random() * Spammer.SPREAD * 2));
                                 }
                                 else if (loadout[i] == SNIPER_WEAPON_NO) {
-                                    projectiles.add(new Sniper(this, newProjCoord, Sniper.SIZE, Sniper.VELOCITY, OmegaFight3.signToRadians(spriteSign), Sniper.DMG, Sniper.KB, Sniper.DURABILITY, Sniper.LIFE));
+                                    projectiles.add(new Sniper(this, newProjCoord, OmegaFight3.signToRadians(spriteSign)));
                                     
                                     // Recoil
                                     recoil(Sniper.RECOIL);
                                 }
                                 else if (loadout[i] == BOOMER_WEAPON_NO) {
-                                    projectiles.add(new Boomer(this, newProjCoord, Boomer.SIZE, Boomer.VELOCITY, OmegaFight3.signToRadians(spriteSign), Boomer.DMG, Boomer.KB, Boomer.DURABILITY, Boomer.LIFE));
+                                    projectiles.add(new Boomer(this, newProjCoord, OmegaFight3.signToRadians(spriteSign)));
                                 }
                                 else if (loadout[i] == SPIKE_WEAPON_NO) {
-                                    projectiles.add(new Spike(this, newProjCoord, Spike.SIZE, Spike.VELOCITY, OmegaFight3.signToRadians(spriteSign), Spike.DMG, Spike.KB, Spike.DURABILITY, Spike.LIFE));
+                                    projectiles.add(new Spike(this, newProjCoord, OmegaFight3.signToRadians(spriteSign)));
                                 }
 
                                 heatCounter = BASIC_SHOT_HEAT[loadout[i]];

@@ -7,8 +7,8 @@ import java.io.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.util.*;
-// Ernest Todo: 
-// Ernest Long term Todo: menus, ultimate, dash
+// Ernest Todo: menus, bosses
+// Ernest Long term Todo: ultimate, dash
 
 public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionListener, KeyListener, Runnable {
     // Game States
@@ -41,16 +41,36 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     // Buttons
     public static HashMap<Integer, Button> chooseButtons = new HashMap<>(); // [14] Skip 1 for 3rd stage for now
     public static int buttonPressed = -1;
+    public static Button selectedIcon;
+    public static HashMap<Integer, Integer> buttonoToWeaponNo = new HashMap<>();
+    public static HashMap<Integer, BufferedImage> weaponNoToIcon = new HashMap<>();
+    public static int iconFlashCounter = 0;
+    public static int readyCounter = -1;
 
     // Menu images
     public static BufferedImage chooseMenu;
     public static BufferedImage buttonImg;
+    public static BufferedImage addWeaponIcon;
+    public static BufferedImage readyBar;
+
+    // Menu stats
+    public static int transitionCounter = -1;
+    public static int transitiono = 0;
 
     // General game statistics
     public static int screenShakeCounter = 0;
 
     // Misc
     public static BufferedImage placeHolder;
+
+    // Menu Constants
+    public static int NOT_READY = -1;
+    public static int READY_ANIM_LEN = 10;
+    public static int BLACK_BAR_TOP = 100;
+    public static int BLACK_BAR_BOTTOM = 500;
+    public static int DIVIDER_RIGHT_X = 1645;
+    public static int LOADOUT_ICON_Y = 700;
+    public static Coord READY_BAR_SIZE = new Coord(1920, 240);
 
     // Screen Settings
     public static final Coord SCREEN_SIZE = new Coord(1920, 960);
@@ -67,7 +87,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static final int[][] SPAWN_SIGN = {{Omegaman.RIGHT_SIGN, Omegaman.RIGHT_SIGN}, {Omegaman.RIGHT_SIGN, Omegaman.RIGHT_SIGN}};
     public static final int[][] SPAWN_PLATFORM_NO = {{1, 2}, {0, 0}};
     public static final int[] STAGE_BUTTONO = {1, 2};
-    public static final int STAGE_FLASH_HZ = 10;
+    public static final int FLASH_HZ = 10;
     public static final int FLASH_SIZE = 10;
 
     // Misc
@@ -83,6 +103,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static final int SLIDESHOW_GS = 4;
 
     // Button Numbers (Next avail: 15)
+    public static final int NO_BUTTON_HIT = -1;
     // Choose your fight menu
     public static final int CHOOSE_BACK_BUTTONO = 0;
     public static final int READY_BUTTONO = 10;
@@ -91,9 +112,15 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static final Font BUTTON_FONT = new Font("Consolas", Font.BOLD, 40); 
     public static final Font STAGE_FONT = new Font("Consolas", Font.BOLD, 25);
     public static final Coord BUTTON_SIZE = new Coord(400, 50);
+    public static final Coord STAGE_BUTTON_SIZE = new Coord(510, 255);
+    public static final Coord WEAPON_ICON_SIZE = new Coord(100, 100);
 
-    // Mouse and Keyboard constants
-    public static final int NO_BUTTON_HIT = -1;
+    // Transition constants
+    public static final int FADE_IN = 0;
+    public static final int READY_FADE = 1;
+    public static final int FADE_IN_LEN = 10;
+    public static final int NO_TRANSITION = -1;
+    public static final int READY_FADE_LEN = 30;
 
     // Color constants
     public static final Color PURPLE = new Color(186, 122, 255);
@@ -124,37 +151,29 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
 
     // Creating Game Window
     public static void main(String[] args) throws IOException {
-        // Stages
-        for (int i = 0; i != Stage.NO_OF_STAGES; i++) {
-            stage[i] = new Stage(STAGE_NAME[i], PLATFORMS[i], SPAWN_COORDS[i], SPAWN_SIGN[i], SPAWN_PLATFORM_NO[i], STAGE_BUTTONO[i]);
-        }
-        
-        // Player
-        for (int i = 0; i != Omegaman.NUM_PLAYERS; i++) {
-            omegaman[i] = new Omegaman(i, stage[stageNo].spawnCoords[i].copy(), stage[stageNo].spawnSpriteSign[i], stage[stageNo].spawnPlatformNo[i], controls[i], shtKeys[i], loadouts[i], loadoutButtono[i]);
-        }
-
         // Misc image imoprting
         placeHolder = ImageIO.read(new File("misc/placeholder.jpg"));
 
         // Menu image importing
         chooseMenu = ImageIO.read(new File("menus/choose.jpg"));
         buttonImg = ImageIO.read(new File("menus/button.jpg"));
-
-        // Buttons
-        chooseButtons.put(CHOOSE_BACK_BUTTONO, new Button(buttonImg, BUTTON_FONT, new Coord(SPACING + 400 / 2, SPACING + SPACING / 2), BUTTON_SIZE, "BACK", CHOOSE_BACK_BUTTONO, Button.SHADOW, true, true));
-        chooseButtons.put(stage[Stage.BATTLEFIELD_NO].buttono, new Button(stage[Stage.BATTLEFIELD_NO].image, STAGE_FONT, new Coord(SPACING + 510 / 2, (100 + 500) / 2), new Coord(510, 255), stage[Stage.BATTLEFIELD_NO].stageName.toUpperCase(), stage[Stage.BATTLEFIELD_NO].buttono, Button.HIGHLIGHT, true, true)); // CHange size email Ms. Kim
-        chooseButtons.put(stage[Stage.FINAL_DEST_NO].buttono, new Button(stage[Stage.FINAL_DEST_NO].image, STAGE_FONT, new Coord(SPACING * 2 + 510 * (1.0 / 2 + 1), (100 + 500) / 2), new Coord(510, 255), stage[Stage.FINAL_DEST_NO].stageName.toUpperCase(), stage[Stage.FINAL_DEST_NO].buttono, Button.HIGHLIGHT, true, true));
-        chooseButtons.put(3, new Button(placeHolder, STAGE_FONT, new Coord(SPACING * 3 + 510 * (1.0 / 2 + 2), (100 + 500) / 2), new Coord(510, 255), "COMING IN 5-10 BUSINESS DAYS", 3, Button.HIGHLIGHT, true, false));
+        readyBar = ImageIO.read(new File("menus/ready.jpg"));
         
         // Weapon image importing
+        addWeaponIcon = ImageIO.read(new File("menus/no weapon.png"));
         Bullet.image = ImageIO.read(new File("player projectiles/bullet.png"));
+        Bullet.icon = ImageIO.read(new File("menus/bullet icon.png"));
         Shotgun.image = ImageIO.read(new File("player projectiles/shotgun.png"));
+        Shotgun.icon = ImageIO.read(new File("menus/shotgun icon.png"));
         Spammer.image = ImageIO.read(new File("player projectiles/spammer.png"));
+        Spammer.icon = ImageIO.read(new File("menus/spammer icon.png"));
         Sniper.image = ImageIO.read(new File("player projectiles/sniper.png"));
+        Sniper.icon = ImageIO.read(new File("menus/sniper icon.png"));
         Laser.ball = ImageIO.read(new File("player projectiles/ball.png"));
         Laser.beam = ImageIO.read(new File("player projectiles/beam.png"));
+        Boomer.icon = ImageIO.read(new File("menus/boomer icon.png"));
         Spike.image = ImageIO.read(new File("player projectiles/spike.png"));
+        Spike.icon = ImageIO.read(new File("menus/spike icon.png"));
         Thorn.image = ImageIO.read(new File("player projectiles/thorn.png"));
         for (int i = 0; i != Omegaman.NUM_PLAYERS; i++) {
             Rocket.images[i] = ImageIO.read(new File("player projectiles/" + i + "rocket.png"));
@@ -168,6 +187,43 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         for (int i = 0; i != Rocket.NUM_EXPLOSION_IMAGES; i++) {
             Projectile.explosionImages[i] = ImageIO.read(new File("explosions/explosion" + i + ".png"));
         }
+
+        // Stages
+        for (int i = 0; i != Stage.NO_OF_STAGES; i++) {
+            stage[i] = new Stage(STAGE_NAME[i], PLATFORMS[i], SPAWN_COORDS[i], SPAWN_SIGN[i], SPAWN_PLATFORM_NO[i], STAGE_BUTTONO[i]);
+        }
+
+        // Buttons
+        // Choose your fight menu buttons
+        chooseButtons.put(CHOOSE_BACK_BUTTONO, new Button(buttonImg, BUTTON_FONT, new Coord(SPACING + 400 / 2, SPACING + SPACING / 2), BUTTON_SIZE.copy(), "BACK", CHOOSE_BACK_BUTTONO, Button.SHADOW));
+        chooseButtons.put(stage[Stage.BATTLEFIELD_NO].buttono, new Button(stage[Stage.BATTLEFIELD_NO].image, STAGE_FONT, new Coord(SPACING + STAGE_BUTTON_SIZE.x / 2, (BLACK_BAR_TOP + BLACK_BAR_BOTTOM) / 2), STAGE_BUTTON_SIZE.copy(), stage[Stage.BATTLEFIELD_NO].stageName.toUpperCase(), stage[Stage.BATTLEFIELD_NO].buttono, Button.HIGHLIGHT)); // CHange size email Ms. Kim
+        chooseButtons.put(stage[Stage.FINAL_DEST_NO].buttono, new Button(stage[Stage.FINAL_DEST_NO].image, STAGE_FONT, new Coord(SPACING * 2 + STAGE_BUTTON_SIZE.x * (1.0 / 2 + 1), (BLACK_BAR_TOP + BLACK_BAR_BOTTOM) / 2), STAGE_BUTTON_SIZE.copy(), stage[Stage.FINAL_DEST_NO].stageName.toUpperCase(), stage[Stage.FINAL_DEST_NO].buttono, Button.HIGHLIGHT));
+        chooseButtons.put(3, new Button(placeHolder, STAGE_FONT, new Coord(SPACING * 3 + STAGE_BUTTON_SIZE.x * (1.0 / 2 + 2), (BLACK_BAR_TOP + BLACK_BAR_BOTTOM) / 2), STAGE_BUTTON_SIZE.copy(), "COMING IN 5-10 BUSINESS DAYS", 3, Button.HIGHLIGHT, true, false));
+        chooseButtons.put(Bullet.BUTTONO, new Button(Bullet.icon, new Coord(DIVIDER_RIGHT_X + SPACING + WEAPON_ICON_SIZE.x / 2, BLACK_BAR_TOP + SPACING + WEAPON_ICON_SIZE.y / 2), WEAPON_ICON_SIZE.copy(), Bullet.BUTTONO));
+        chooseButtons.put(Shotgun.BUTTONO, new Button(Shotgun.icon, new Coord(DIVIDER_RIGHT_X + SPACING * 2 + WEAPON_ICON_SIZE.x * (1.0 / 2 + 1), BLACK_BAR_TOP + SPACING + WEAPON_ICON_SIZE.y / 2), WEAPON_ICON_SIZE.copy(), Shotgun.BUTTONO));
+        chooseButtons.put(Spammer.BUTTONO, new Button(Spammer.icon, new Coord(DIVIDER_RIGHT_X + SPACING + WEAPON_ICON_SIZE.x / 2, BLACK_BAR_TOP + SPACING * 2 + WEAPON_ICON_SIZE.y * (1.0 / 2 + 1)), WEAPON_ICON_SIZE.copy(), Spammer.BUTTONO));
+        chooseButtons.put(Sniper.BUTTONO, new Button(Sniper.icon, new Coord(DIVIDER_RIGHT_X + SPACING * 2 + WEAPON_ICON_SIZE.x * (1.0 / 2 + 1), BLACK_BAR_TOP + SPACING * 2 + WEAPON_ICON_SIZE.y * (1.0 / 2 + 1)), WEAPON_ICON_SIZE.copy(), Sniper.BUTTONO));
+        chooseButtons.put(Boomer.BUTTONO, new Button(Boomer.icon, new Coord(DIVIDER_RIGHT_X + SPACING + WEAPON_ICON_SIZE.x / 2, BLACK_BAR_TOP + SPACING * 3 + WEAPON_ICON_SIZE.y * (1.0 / 2 + 2)), WEAPON_ICON_SIZE.copy(), Boomer.BUTTONO));
+        chooseButtons.put(Spike.BUTTONO, new Button(Spike.icon, new Coord(DIVIDER_RIGHT_X + SPACING * 2 + WEAPON_ICON_SIZE.x * (1.0 / 2 + 1), BLACK_BAR_TOP + SPACING * 3 + WEAPON_ICON_SIZE.y * (1.0 / 2 + 2)), WEAPON_ICON_SIZE.copy(), Spike.BUTTONO));
+        chooseButtons.put(loadoutButtono[0][0], new Button(addWeaponIcon, new Coord(610 + WEAPON_ICON_SIZE.x / 2, LOADOUT_ICON_Y + WEAPON_ICON_SIZE.y / 2), WEAPON_ICON_SIZE.copy(), loadoutButtono[0][0]));
+        chooseButtons.put(loadoutButtono[0][1], new Button(addWeaponIcon, new Coord(610 + SPACING + WEAPON_ICON_SIZE.x * (1.0 / 2 + 1), LOADOUT_ICON_Y + WEAPON_ICON_SIZE.y / 2), WEAPON_ICON_SIZE.copy(), loadoutButtono[0][1]));
+        chooseButtons.put(loadoutButtono[1][0], new Button(addWeaponIcon, new Coord(1490 + WEAPON_ICON_SIZE.x / 2, LOADOUT_ICON_Y + WEAPON_ICON_SIZE.y / 2), WEAPON_ICON_SIZE.copy(), loadoutButtono[1][0]));
+        chooseButtons.put(loadoutButtono[1][1], new Button(addWeaponIcon, new Coord(1490 + SPACING + WEAPON_ICON_SIZE.x * (1.0 / 2 + 1), LOADOUT_ICON_Y + WEAPON_ICON_SIZE.y / 2), WEAPON_ICON_SIZE.copy(), loadoutButtono[1][1]));
+        chooseButtons.put(READY_BUTTONO, new Button(readyBar, new Coord(0, SCREEN_SIZE.y / 2), READY_BAR_SIZE, READY_BUTTONO, false, false));
+
+        buttonoToWeaponNo.put(Bullet.BUTTONO, Omegaman.BULLET_WEAPON_NO);
+        buttonoToWeaponNo.put(Shotgun.BUTTONO, Omegaman.SHOTGUN_WEAPON_NO);
+        buttonoToWeaponNo.put(Spammer.BUTTONO, Omegaman.SPAMMER_WEAPON_NO);
+        buttonoToWeaponNo.put(Sniper.BUTTONO, Omegaman.SNIPER_WEAPON_NO);
+        buttonoToWeaponNo.put(Boomer.BUTTONO, Omegaman.BOOMER_WEAPON_NO);
+        buttonoToWeaponNo.put(Spike.BUTTONO, Omegaman.SPIKE_WEAPON_NO);
+
+        weaponNoToIcon.put(Omegaman.BULLET_WEAPON_NO, Bullet.icon);
+        weaponNoToIcon.put(Omegaman.SHOTGUN_WEAPON_NO, Shotgun.icon);
+        weaponNoToIcon.put(Omegaman.SPAMMER_WEAPON_NO, Spammer.icon);
+        weaponNoToIcon.put(Omegaman.SNIPER_WEAPON_NO, Sniper.icon);
+        weaponNoToIcon.put(Omegaman.BOOMER_WEAPON_NO, Boomer.icon);
+        weaponNoToIcon.put(Omegaman.SPIKE_WEAPON_NO, Spike.icon);
         
         // JFrame and JPanel
         JFrame frame = new JFrame("Omega Fight 3");
@@ -201,19 +257,59 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         }
         else if(gameState == CHOOSE_FIGHT_GS) {
             g.drawImage(chooseMenu, 0, 0, (int) SCREEN_SIZE.x, (int) SCREEN_SIZE.y, null);
-            actionPerformed();
-            processButtons(chooseButtons.values());
 
             // Flashing of selected stage
-            stageFlashCounter = (stageFlashCounter + 1) % (STAGE_FLASH_HZ * 2);
-            if (stageFlashCounter < STAGE_FLASH_HZ) g.setColor(PURPLE);
+            stageFlashCounter = (stageFlashCounter + 1) % (FLASH_HZ * 2);
+            if (stageFlashCounter < FLASH_HZ) g.setColor(PURPLE);
             else g.setColor(Color.YELLOW);
             Button stageButton = chooseButtons.get(stage[stageNo].buttono);
             Coord stageButtonSize = stageButton.size[stageButton.state];
             g.fillRect((int) (stageButton.coord.x - stageButtonSize.x / 2 - FLASH_SIZE), (int) (stageButton.coord.y - stageButtonSize.y / 2 - FLASH_SIZE),
             (int) (stageButtonSize.x + FLASH_SIZE * 2), (int) (stageButtonSize.y + FLASH_SIZE * 2));
+
+            // Each weapon has their own icon
+            if (selectedIcon != null) {
+                iconFlashCounter = (iconFlashCounter + 1) % (FLASH_HZ * 2);
+                if (iconFlashCounter < FLASH_HZ) g.setColor(PURPLE);
+                else g.setColor(Color.YELLOW);
+                Coord selectedIconSize = selectedIcon.size[selectedIcon.state];
+                g.fillOval((int) (selectedIcon.coord.x - selectedIconSize.x / 2 - FLASH_SIZE), (int) (selectedIcon.coord.y - selectedIconSize.y / 2 - FLASH_SIZE),
+                (int) (selectedIconSize.x + FLASH_SIZE * 2), (int) (selectedIconSize.y + FLASH_SIZE * 2));
+            }
+
             drawButtons(chooseButtons.values(), g);
-            // Each wepon has their own icon
+
+            if (transitionCounter != NO_TRANSITION) {
+                transition(g);
+            }
+            else {
+                actionPerformed();
+                processButtons(chooseButtons.values());
+
+                Button readyButton = chooseButtons.get(READY_BUTTONO); 
+                if (readyCounter == NOT_READY) {
+                    if (isReady()) {
+                        readyCounter = 0;
+                        // Set ready button to visible
+                        readyButton.canSee = true;
+                        readyButton.coord.x = -READY_BAR_SIZE.x / 2;
+                    }
+                }
+                else if (readyCounter != READY_ANIM_LEN) {
+                    readyCounter++;
+                    readyButton.coord.x = lerp(-READY_BAR_SIZE.x / 2, READY_BAR_SIZE.x / 2, (double) readyCounter / READY_ANIM_LEN);
+                    if (readyCounter == READY_ANIM_LEN) {
+                        readyButton.canUse = true;
+                    }
+                }
+                else {
+                    if (!isReady()) {
+                        readyCounter = NOT_READY;
+                        readyButton.canSee = false;
+                        readyButton.canUse = false;
+                    }
+                }
+            }
         }
         else if(gameState == GAME_GS) {
             stage[stageNo].drawStage(g);
@@ -315,6 +411,111 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         }
     }
 
+    public static void transition(Graphics g) {
+        transitionCounter--;
+        if (transitiono == FADE_IN) {
+            fade(transitionCounter / FADE_IN_LEN, g);
+        }
+        if (transitiono == READY_FADE) {
+            fade(1 - (double) transitionCounter / READY_FADE_LEN, g);
+            if (transitionCounter == 0) {
+                gameState = GAME_GS;
+                // SEtup up ready fight and fighters
+                // Player
+                for (int i = 0; i != Omegaman.NUM_PLAYERS; i++) {
+                    try {
+                        omegaman[i] = new Omegaman(i, stage[stageNo].spawnCoords[i].copy(), stage[stageNo].spawnSpriteSign[i], stage[stageNo].spawnPlatformNo[i], controls[i], shtKeys[i], loadouts[i], loadoutButtono[i]);
+                    }
+                    catch (IOException e) {}
+                }
+            }
+        }
+    }
+
+    public static void fade(double amt, Graphics g) {
+        g.setColor(new Color(0, 0, 0, (int) (MAX_RGB_VAL * amt)));
+        g.fillRect(0, 0, (int) SCREEN_SIZE.x, (int) SCREEN_SIZE.y);
+    }
+
+    public static boolean isReady() {
+        for (int[] loadout : loadouts) {
+            for (int weapon : loadout) {
+                if (weapon == -1) return false;
+            }
+        }
+        return true;
+    }
+
+    public static void selectWeapon(Button weaponButton) {
+        if ((weaponButton.image == selectedIcon.image && weaponButton.image != addWeaponIcon) || weaponButton == selectedIcon) {
+            selectedIcon = null;
+            return;
+        }
+
+        for (int i = 0; i < loadouts.length; i++) {
+            for (int j = 0; j < loadouts[i].length; j++) {
+                if (selectedIcon.num == loadoutButtono[i][j]) {
+                    int weaponNo = buttonoToWeaponNo.get(weaponButton.num);
+                    // Check if weapon is already in any loadout
+                    for (int[] loadout : loadouts) {
+                        for (int selectedWeapon : loadout) {
+                            if (selectedWeapon == weaponNo) {
+                            loadouts[i][j] = -1;
+                            selectedIcon.image = addWeaponIcon;
+                            selectedIcon = null;
+                            return;
+                            }
+                        }
+                    }
+                    loadouts[i][j] = weaponNo;
+                    selectedIcon.image = weaponButton.image;
+                    selectedIcon = null;
+                    return;
+                }
+            }
+        }
+
+        selectedIcon = weaponButton;
+    }
+
+    public static void selectLoadout(Button loadoutButton, int playerNo, int loadoutSlot) {
+        if (loadoutButton.image == selectedIcon.image) {
+            selectedIcon = null;
+            return;
+        }
+
+        for (int i = 0; i < loadouts.length; i++) {
+            for (int j = 0; j < loadouts[i].length; j++) {
+                // Swap
+                if (selectedIcon.num == loadoutButtono[i][j]) {
+                    int temp0 = loadouts[playerNo][loadoutSlot];
+                    loadouts[playerNo][loadoutSlot] = loadouts[i][j];
+                    loadouts[i][j] = temp0;
+                    BufferedImage temp1 = selectedIcon.image;
+                    selectedIcon.image = loadoutButton.image;
+                    loadoutButton.image = temp1;
+                    selectedIcon = null;
+                    return;
+                }
+            }
+        }
+
+        int weaponNo = buttonoToWeaponNo.get(selectedIcon.num);
+        for (int[] loadout : loadouts) {
+            for (int selectedWeapon : loadout) {
+                if (selectedWeapon == weaponNo) {
+                    loadouts[playerNo][loadoutSlot] = -1;
+                    loadoutButton.image = addWeaponIcon;
+                    selectedIcon = null;
+                    return;
+                }
+            }
+        }
+        loadouts[playerNo][loadoutSlot] = weaponNo;
+        loadoutButton.image = weaponNoToIcon.get(weaponNo);
+        selectedIcon = null;
+    }
+
     public static void actionPerformed() {
         // Check button pressed with button num and do stuff CHECK ALL STATES here????
         if (buttonPressed != NO_BUTTON_HIT && !clicked) {
@@ -322,12 +523,43 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                 if (buttonPressed == CHOOSE_BACK_BUTTONO) {
                     gameState = HOME_GS;
                     // transition counter to fade
+                    transitionCounter = FADE_IN_LEN;
+                    transitiono = FADE_IN;
                 }
                 else if (buttonPressed == stage[Stage.BATTLEFIELD_NO].buttono) {
                     stageNo = Stage.BATTLEFIELD_NO;
                 }
                 else if (buttonPressed == stage[Stage.FINAL_DEST_NO].buttono) {
                     stageNo = Stage.FINAL_DEST_NO;
+                }
+                else if (buttonPressed == READY_BUTTONO) {
+                    transitiono = READY_FADE;
+                    transitionCounter = READY_FADE_LEN;
+                }
+                else {
+                    for (int buttono: buttonoToWeaponNo.keySet()) {
+                        if (buttonPressed == buttono) {
+                            if (selectedIcon != null) {
+                                selectWeapon(chooseButtons.get(buttono));
+                            }
+                            else {
+                                selectedIcon = chooseButtons.get(buttono);
+                            }
+                        }
+                    }
+                    for (int i = 0; i != loadouts.length; i++) {
+                        for (int j = 0; j != loadouts[i].length; j++) {
+                            int loadoutBtn = loadoutButtono[i][j];
+                            if (buttonPressed == loadoutBtn) {
+                                if (selectedIcon != null) {
+                                    selectLoadout(chooseButtons.get(loadoutBtn), i, j);
+                                    break;
+                                } else {
+                                    selectedIcon = chooseButtons.get(loadoutBtn);
+                                }
+                            }
+                        }
+                    }
                 }
             }
             buttonPressed = NO_BUTTON_HIT;

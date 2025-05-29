@@ -9,11 +9,11 @@ public class Button {
     public Coord coord;
     public Coord[] size = new Coord[3];
     public String text;
-    public int state = 0; // 0: Pressed, 1: Not Pressed, 2: Hovered
+    public int state = 1; // 0: Pressed, 1: Not Pressed, 2: Hovered
     public int num;
     public int style;
-    public boolean canSee;
-    public boolean canUse;
+    public boolean canSee = true;
+    public boolean canUse = true;
 
     public static final double DIFF_IN_SIZE_OF_STATES = 0.05;
     public static final int PRESSED = 0;
@@ -25,22 +25,35 @@ public class Button {
     public static final double LEEWAY = 0;
     public static final double SHADOW_OFFSET = 0.05;
 
-    public Button(BufferedImage image, Font font, Coord coord, Coord size, String text, int num, int style, boolean canSee, boolean canUse) {
-        this(image, coord, size, num, style, canSee, canUse);
+    public Button(BufferedImage image, Font font, Coord coord, Coord size, String text, int num, int style) {
+        this(image, coord, size, num);
         this.font[PRESSED] = new Font(font.getName(), font.getStyle(), (int) (font.getSize() * (1 - DIFF_IN_SIZE_OF_STATES)));
         this.font[NOPRESSED] = font;
         this.font[HOVERED] = new Font(font.getName(), font.getStyle(), (int) (font.getSize() * (1 + DIFF_IN_SIZE_OF_STATES)));
         this.text = text;
+        this.style = style;
+    }
+    
+    public Button(BufferedImage image, Font font, Coord coord, Coord size, String text, int num, int style, boolean canSee, boolean canUse) {
+        this(image, coord, size, num, canSee, canUse);
+        this.font[PRESSED] = new Font(font.getName(), font.getStyle(), (int) (font.getSize() * (1 - DIFF_IN_SIZE_OF_STATES)));
+        this.font[NOPRESSED] = font;
+        this.font[HOVERED] = new Font(font.getName(), font.getStyle(), (int) (font.getSize() * (1 + DIFF_IN_SIZE_OF_STATES)));
+        this.text = text;
+        this.style = style;
     }
 
-    public Button(BufferedImage image, Coord coord, Coord size, int num, int style, boolean canSee, boolean canUse) {
+    public Button(BufferedImage image, Coord coord, Coord size, int num) {
         this.image = image;
         this.coord = coord;
         this.size[PRESSED] = size.scaledBy(1 - DIFF_IN_SIZE_OF_STATES);
         this.size[NOPRESSED] = size;
         this.size[HOVERED] = size.scaledBy(1 + DIFF_IN_SIZE_OF_STATES);
         this.num = num;
-        this.style = style;
+    }
+
+    public Button(BufferedImage image, Coord coord, Coord size, int num, boolean canSee, boolean canUse) {
+        this(image, coord, size, num);
         this.canSee = canSee;
         this.canUse = canUse;
     }
