@@ -28,6 +28,9 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static int[][] shtKeys = {{KeyEvent.VK_C, KeyEvent.VK_V}, {KeyEvent.VK_NUMPAD1, KeyEvent.VK_NUMPAD2}};
     public static int[][] loadoutButtono = {{11, 12}, {13, 14}};
 
+    // Boss
+    public static ArrayList<Boss> bosses = new ArrayList<>();
+
     // Mouse/Keyboard Events
     public static Coord mouse = new Coord();
     public static boolean clicked;
@@ -79,13 +82,17 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static final int SCREEN_SHAKE_HZ = 2;
     public static final int SPACING = 25;
 
+    // Direction Constants
+    public static final int LEFT_SIGN = -1;
+    public static final int RIGHT_SIGN = 1;
+
     // Stage constants
     public static final String[] STAGE_NAME = {"battlefield", "final destination"};
     public static final Platform[][] PLATFORMS = {{new Platform(395, 1525, 610, true), new Platform(535, 820, 435, false), new Platform(1095, 1385, 435, false)},
     {new Platform(245, 1675, 550, true)}};
     public static final Coord[][] SPAWN_COORDS = {{new Coord(700, 435), new Coord(1260, 435)},
     {new Coord(700, 550), new Coord(1260, 550)}};
-    public static final int[][] SPAWN_SIGN = {{Omegaman.RIGHT_SIGN, Omegaman.RIGHT_SIGN}, {Omegaman.RIGHT_SIGN, Omegaman.RIGHT_SIGN}};
+    public static final int[][] SPAWN_SIGN = {{RIGHT_SIGN, RIGHT_SIGN}, {RIGHT_SIGN, RIGHT_SIGN}};
     public static final int[][] SPAWN_PLATFORM_NO = {{1, 2}, {0, 0}};
     public static final int[] STAGE_BUTTONO = {1, 2};
     public static final int FLASH_HZ = 10;
@@ -200,6 +207,11 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         }
         for (int i = 0; i != Rocket.NUM_EXPLOSION_IMAGES; i++) {
             Projectile.explosionImages[i] = ImageIO.read(new File("explosions/explosion" + i + ".png"));
+        }
+
+        // Boss image importing
+        for (int i = 0; i != Doctor.NO_IDLE_SPRITES; i++) {
+            Doctor.sprite[Doctor.IDLE_SPRITE_START + i] = ImageIO.read(new File("doctor/idle" + i + ".png"));
         }
 
         // Stages
@@ -351,6 +363,10 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                 }
             }
 
+            for (Boss boss: bosses) {
+                boss.draw(g);
+            }
+
             if ((transitiono != NO_TRANSITION && transitiono != COUNTDOWN) || (transitiono == COUNTDOWN && transitionCounter >= FIGHT_TEXT_LEN)) {
                 transition();
                 drawTransition(g);
@@ -361,7 +377,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                     drawTransition(g);
                 }
                 for (Omegaman omega: omegaman) {
-                    omega.addNewProjectiles();
+                    omega.addbabyProjectiles();
                 }
                 for (Omegaman omega: omegaman) {
                     omega.processProjectiles(g2);
@@ -396,6 +412,12 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                         }
                     }
                 }
+
+                for (Boss boss: bosses) {
+                    boss.process();
+                }
+
+                // Check for loss
             }
         }
         else if(gameState == WIN_GS) {
@@ -467,6 +489,10 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                     }
                     catch (IOException e) {}
                 }
+
+                if (stageNo == Stage.BATTLEFIELD_NO) {
+                    bosses.add(new Doctor(1));
+                }
                 transitionCounter = COUNTDOWN_LEN;
                 transitiono = COUNTDOWN;
             }
@@ -537,10 +563,10 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                     for (int[] loadout : loadouts) {
                         for (int selectedWeapon : loadout) {
                             if (selectedWeapon == weaponNo) {
-                            loadouts[i][j] = -1;
-                            selectedIcon.image = addWeaponIcon;
-                            selectedIcon = null;
-                            return;
+                                loadouts[i][j] = -1;
+                                selectedIcon.image = addWeaponIcon;
+                                selectedIcon = null;
+                                return;
                             }
                         }
                     }

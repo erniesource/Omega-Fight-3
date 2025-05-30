@@ -24,13 +24,14 @@ public class Bullet extends Projectile {
     public static final int BUTTONO = 4;
     public static final int SKILL_PT_GAIN = 4;
     public static final int SCREENSHAKE = 0;
+    public static final boolean CAN_HIT_PROJ = true;
 
-    public Bullet(Omegaman player, Coord coord, Coord size, double velocity, double dir, double damage, double knockback, double durability, int frameCounter) {
-        super(player, coord, size, size, velocity, dir, damage, knockback, durability, frameCounter);
+    public Bullet(Omegaman player, Coord coord, Coord size, double velocity, double dir, double damage, double knockback, double durability, int frameCounter, boolean canHitProj) {
+        super(player, coord, size, size, velocity, dir, damage, knockback, durability, frameCounter, canHitProj);
     }
 
     public Bullet(Omegaman player, Coord coord, double dir) {
-        this(player, coord, SIZE, VELOCITY, dir, DMG, KB, DURABILITY, LIFE);
+        this(player, coord, SIZE, VELOCITY, dir, DMG, KB, DURABILITY, LIFE, CAN_HIT_PROJ);
     }
 
     public void draw(Graphics2D g2) {
@@ -50,13 +51,26 @@ public class Bullet extends Projectile {
                     ((Omegaman) character).skillPts = Math.min(((Omegaman) character).skillPts + SKILL_PT_GAIN, Omegaman.MAX_SKILL_PTS);
                 }
                 for (Projectile proj: enemy.projectiles) {
-                    if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, OmegaFight3.HITBOX_LEEWAY) && proj.hitBoxActive) {
+                    if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, OmegaFight3.HITBOX_LEEWAY) && proj.hitBoxActive && proj.canHitProj) {
                         if (shouldDieTo(proj.durability)) die();
                         if (proj.shouldDieTo(durability)) proj.die();
                     }
                 }
             }
-            // Also check boss hitbox
+        }
+
+        for (Boss boss: OmegaFight3.bosses) {
+            if (OmegaFight3.intersects(coord, hitBoxSize, boss.coord, boss.size, Boss.BOSS_HITBOX_LEEWAY)) {
+                boss.hurt(damage);
+                die();
+                ((Omegaman) character).skillPts = Math.min(((Omegaman) character).skillPts + SKILL_PT_GAIN, Omegaman.MAX_SKILL_PTS);
+            }
+            for (Projectile proj: boss.projectiles) {
+                if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, Boss.BOSS_HITBOX_LEEWAY) && proj.hitBoxActive && proj.canHitProj) {
+                    if (shouldDieTo(proj.durability)) die();
+                    if (proj.shouldDieTo(durability)) proj.die();
+                }
+            }
         }
     }
 }
@@ -87,9 +101,10 @@ class Rocket extends Projectile {
     public static final double MINIMUM_STAT_PERCENTAGE = 0.5;
     public static final double RECOIL = 8;
     public static final int SCREENSHAKE = 15;
+    public static final boolean CAN_HIT_PROJ = true;
 
-    public Rocket(Omegaman player, Coord coord, Coord size, double velocity, double dir, double damage, double knockback, double durability, int frameCounter) {
-        super(player, coord, size, size.scaledBy(HITBOX_TO_SIZE), velocity, dir, damage, knockback, durability, frameCounter);
+    public Rocket(Omegaman player, Coord coord, Coord size, double velocity, double dir, double damage, double knockback, double durability, int frameCounter, boolean canHitProj) {
+        super(player, coord, size, size.scaledBy(HITBOX_TO_SIZE), velocity, dir, damage, knockback, durability, frameCounter, canHitProj);
         image = images[player.playerNo];
     }
 
@@ -121,13 +136,25 @@ class Rocket extends Projectile {
                         die();
                     }
                     for (Projectile proj: enemy.projectiles) {
-                        if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, OmegaFight3.HITBOX_LEEWAY) && proj.hitBoxActive) {
+                        if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, OmegaFight3.HITBOX_LEEWAY) && proj.hitBoxActive && proj.canHitProj) {
                             die();
                             if (proj.shouldDieTo(durability)) proj.die();
                         }
                     }
                 }
-                // Also check boss hitbox
+            }
+            
+            for (Boss boss: OmegaFight3.bosses) {
+                if (OmegaFight3.intersects(coord, hitBoxSize, boss.coord, boss.size, Boss.BOSS_HITBOX_LEEWAY)) {
+                    boss.hurt(damage);
+                    die();
+                }
+                for (Projectile proj: boss.projectiles) {
+                    if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, Boss.BOSS_HITBOX_LEEWAY) && proj.hitBoxActive && proj.canHitProj) {
+                        die();
+                        if (proj.shouldDieTo(durability)) proj.die();
+                    }
+                }
             }
         }
         else {
@@ -166,13 +193,14 @@ class Shotgun extends Projectile {
     public static final int BUTTONO = 5;
     public static final int SKILL_PT_GAIN = 1;
     public static final int SCREENSHAKE = 0;
+    public static final boolean CAN_HIT_PROJ = false;
 
     public Shotgun(Omegaman player, Coord coord, double dir) {
-        this(player, coord, SIZE, VELOCITY, dir, DMG, KB, DURABILITY, LIFE);
+        this(player, coord, SIZE, VELOCITY, dir, DMG, KB, DURABILITY, LIFE, CAN_HIT_PROJ);
     }
 
-    public Shotgun(Omegaman player, Coord coord, Coord size, double velocity, double dir, double damage, double knockback, double durability, int frameCounter) {
-        super(player, coord, size, size, velocity, dir, damage, knockback, durability, frameCounter);
+    public Shotgun(Omegaman player, Coord coord, Coord size, double velocity, double dir, double damage, double knockback, double durability, int frameCounter, boolean canHitProj) {
+        super(player, coord, size, size, velocity, dir, damage, knockback, durability, frameCounter, canHitProj);
     }
 
     public void draw(Graphics2D g2) {
@@ -193,14 +221,14 @@ class Shotgun extends Projectile {
                     die();
                     ((Omegaman) character).skillPts = Math.min(((Omegaman) character).skillPts + SKILL_PT_GAIN, Omegaman.MAX_SKILL_PTS);
                 }
-                for (Projectile proj: enemy.projectiles) {
-                    if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, OmegaFight3.HITBOX_LEEWAY) && proj.hitBoxActive) {
-                        if (shouldDieTo(proj.durability)) die();
-                        if (proj.shouldDieTo(durability)) proj.die();
-                    }
-                }
             }
-            // Also check boss hitbox
+        }
+        for (Boss boss: OmegaFight3.bosses) {
+            if (OmegaFight3.intersects(coord, hitBoxSize, boss.coord, boss.size, Boss.BOSS_HITBOX_LEEWAY)) {
+                boss.hurt(damage);
+                die();
+                ((Omegaman) character).skillPts = Math.min(((Omegaman) character).skillPts + SKILL_PT_GAIN, Omegaman.MAX_SKILL_PTS);
+            }
         }
     }
 }
@@ -229,9 +257,10 @@ class Firework extends Projectile {
     public static final double MINIMUM_STAT_PERCENTAGE = 0.5;
     public static final int NUM_SHOTS = 8;
     public static final int SCREENSHAKE = 0;
+    public static final boolean CAN_HIT_PROJ = true;
 
-    public Firework(Omegaman player, Coord coord, Coord size, double velocity, double dir, double damage, double knockback, double durability, int frameCounter) {
-        super(player, coord, size, size, velocity, dir, damage, knockback, durability, frameCounter);
+    public Firework(Omegaman player, Coord coord, Coord size, double velocity, double dir, double damage, double knockback, double durability, int frameCounter, boolean canHitProj) {
+        super(player, coord, size, size, velocity, dir, damage, knockback, durability, frameCounter, canHitProj);
         image = images[player.playerNo];
     }
 
@@ -254,12 +283,23 @@ class Firework extends Projectile {
                     ((Omegaman) character).skillPts = Math.min(((Omegaman) character).skillPts + 1, Omegaman.MAX_SKILL_PTS);
                 }
                 for (Projectile proj: enemy.projectiles) {
-                    if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, OmegaFight3.HITBOX_LEEWAY) && proj.hitBoxActive) {
+                    if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, OmegaFight3.HITBOX_LEEWAY) && proj.hitBoxActive && proj.canHitProj) {
                         if (proj.shouldDieTo(durability)) proj.die();
                     }
                 }
             }
-            // Also check boss hitbox
+        }
+
+        for (Boss boss: OmegaFight3.bosses) {
+            if (OmegaFight3.intersects(coord, hitBoxSize, boss.coord, boss.size, Boss.BOSS_HITBOX_LEEWAY)) {
+                boss.hurt(damage);
+                die();
+            }
+            for (Projectile proj: boss.projectiles) {
+                if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, Boss.BOSS_HITBOX_LEEWAY) && proj.hitBoxActive && proj.canHitProj) {
+                    if (proj.shouldDieTo(durability)) proj.die();
+                }
+            }
         }
     }
 
@@ -292,13 +332,14 @@ class Spammer extends Projectile {
     public static final int BUTTONO = 6;
     public static final int SKILL_PT_GAIN = 1;
     public static final int SCREENSHAKE = 0;
+    public static final boolean CAN_HIT_PROJ = false;
 
     public Spammer(Omegaman player, Coord coord, double dir) {
-        this(player, coord, SIZE, VELOCITY, dir, DMG, KB, DURABILITY, LIFE);
+        this(player, coord, SIZE, VELOCITY, dir, DMG, KB, DURABILITY, LIFE, CAN_HIT_PROJ);
     }
 
-    public Spammer(Omegaman player, Coord coord, Coord size, double velocity, double dir, double damage, double knockback, double durability, int frameCounter) {
-        super(player, coord, size, size, velocity, dir, damage, knockback, durability, frameCounter);
+    public Spammer(Omegaman player, Coord coord, Coord size, double velocity, double dir, double damage, double knockback, double durability, int frameCounter, boolean canHitProj) {
+        super(player, coord, size, size, velocity, dir, damage, knockback, durability, frameCounter, canHitProj);
     }
 
     public void draw(Graphics2D g2) {
@@ -319,14 +360,14 @@ class Spammer extends Projectile {
                     die();
                     ((Omegaman) character).skillPts = Math.min(((Omegaman) character).skillPts + SKILL_PT_GAIN, Omegaman.MAX_SKILL_PTS);
                 }
-                for (Projectile proj: enemy.projectiles) {
-                    if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, OmegaFight3.HITBOX_LEEWAY) && proj.hitBoxActive) {
-                        if (shouldDieTo(proj.durability)) die();
-                        if (proj.shouldDieTo(durability)) proj.die();
-                    }
-                }
             }
-            // Also check boss hitbox
+        }
+        for (Boss boss: OmegaFight3.bosses) {
+            if (OmegaFight3.intersects(coord, hitBoxSize, boss.coord, boss.size, Boss.BOSS_HITBOX_LEEWAY)) {
+                boss.hurt(damage);
+                die();
+                ((Omegaman) character).skillPts = Math.min(((Omegaman) character).skillPts + SKILL_PT_GAIN, Omegaman.MAX_SKILL_PTS);
+            }
         }
     }
 }
@@ -359,9 +400,10 @@ class Missile extends Projectile {
     public static final double MINIMUM_STAT_PERCENTAGE = 0.5;
     public static final double RECOIL = 8;
     public static final int SCREENSHAKE = 15;
+    public static final boolean CAN_HIT_PROJ = true;
 
-    public Missile(Omegaman player, Coord coord, Coord size, double velocity, double dir, double damage, double knockback, double durability, int frameCounter, int sign) {
-        super(player, coord, size, size.scaledBy(HITBOX_TO_SIZE), velocity, dir, damage, knockback, durability, frameCounter);
+    public Missile(Omegaman player, Coord coord, Coord size, double velocity, double dir, double damage, double knockback, double durability, int frameCounter, int sign, boolean canHitProj) {
+        super(player, coord, size, size.scaledBy(HITBOX_TO_SIZE), velocity, dir, damage, knockback, durability, frameCounter, canHitProj);
         image = images[player.playerNo];
         this.sign = sign;
     }
@@ -391,7 +433,7 @@ class Missile extends Projectile {
 
             // Homing
             // Loop thru all boss parts (replace Omegaman with Boss class and OmegaFight.omegaman with OmegaFight.boss)
-            Omegaman target = null;
+            Char target = null;
             double closestDist = Double.MAX_VALUE;
             for (Omegaman enemy : OmegaFight3.omegaman) {
                 if (enemy != character) {
@@ -400,6 +442,13 @@ class Missile extends Projectile {
                         closestDist = dist;
                         target = enemy;
                     }
+                }
+            }
+            for (Boss boss : OmegaFight3.bosses) {
+                double dist = Math.hypot(boss.coord.x - coord.x, boss.coord.y - coord.y);
+                if (dist < closestDist) {
+                    closestDist = dist;
+                    target = boss;
                 }
             }
 
@@ -421,13 +470,24 @@ class Missile extends Projectile {
                         die();
                     }
                     for (Projectile proj: enemy.projectiles) {
-                        if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, OmegaFight3.HITBOX_LEEWAY) && proj.hitBoxActive) {
+                        if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, OmegaFight3.HITBOX_LEEWAY) && proj.hitBoxActive && proj.canHitProj) {
                             die();
                             if (proj.shouldDieTo(durability)) proj.die();
                         }
                     }
                 }
-                // Also check boss hitbox
+                for (Boss boss: OmegaFight3.bosses) {
+                    if (OmegaFight3.intersects(coord, hitBoxSize, boss.coord, boss.size, Boss.BOSS_HITBOX_LEEWAY)) {
+                        boss.hurt(damage);
+                        die();
+                    }
+                    for (Projectile proj: boss.projectiles) {
+                        if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, Boss.BOSS_HITBOX_LEEWAY) && proj.hitBoxActive && proj.canHitProj) {
+                            die();
+                            if (proj.shouldDieTo(durability)) proj.die();
+                        }
+                    }
+                }
             }
         }
         else {
@@ -446,9 +506,9 @@ class Sniper extends Projectile {
     public static BufferedImage icon;
 
     // Damage constants
-    public static final double DMG = 5 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
+    public static final double DMG = 2.5 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
     public static final double DURABILITY = 3;
-    public static final double KB = 5;
+    public static final double KB = 2.5;
     public static final double KB_SPREAD = Math.PI / 2;
 
     // Size constants
@@ -464,13 +524,14 @@ class Sniper extends Projectile {
     public static final int SKILL_PT_GAIN = 10;
     public static final int SCREENSHAKE = 0;
     public static final double RECOIL = 4;
+    public static final boolean CAN_HIT_PROJ = true;
 
     public Sniper(Omegaman player, Coord coord, double dir) {
-        this(player, coord, SIZE, VELOCITY, dir, DMG, KB, DURABILITY, LIFE);
+        this(player, coord, SIZE, VELOCITY, dir, DMG, KB, DURABILITY, LIFE, CAN_HIT_PROJ);
     }
 
-    public Sniper(Omegaman player, Coord coord, Coord size, double velocity, double dir, double damage, double knockback, double durability, int frameCounter) {
-        super(player, coord, size, size, velocity, dir, damage, knockback, durability, frameCounter);
+    public Sniper(Omegaman player, Coord coord, Coord size, double velocity, double dir, double damage, double knockback, double durability, int frameCounter, boolean canHitProj) {
+        super(player, coord, size, size, velocity, dir, damage, knockback, durability, frameCounter, canHitProj);
     }
 
     public void draw(Graphics2D g2) {
@@ -491,13 +552,25 @@ class Sniper extends Projectile {
                     ((Omegaman) character).skillPts = Math.min(((Omegaman) character).skillPts + SKILL_PT_GAIN, Omegaman.MAX_SKILL_PTS);
                 }
                 for (Projectile proj: enemy.projectiles) {
-                    if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, OmegaFight3.HITBOX_LEEWAY) && proj.hitBoxActive) {
+                    if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, OmegaFight3.HITBOX_LEEWAY) && proj.hitBoxActive && proj.canHitProj) {
                         if (shouldDieTo(proj.durability)) die();
                         if (proj.shouldDieTo(durability)) proj.die();
                     }
                 }
             }
-            // Also check boss hitbox
+        }
+        for (Boss boss: OmegaFight3.bosses) {
+            if (OmegaFight3.intersects(coord, hitBoxSize, boss.coord, boss.size, Boss.BOSS_HITBOX_LEEWAY)) {
+                boss.hurt(damage * velocity / VELOCITY);
+                die();
+                ((Omegaman) character).skillPts = Math.min(((Omegaman) character).skillPts + SKILL_PT_GAIN, Omegaman.MAX_SKILL_PTS);
+            }
+            for (Projectile proj: boss.projectiles) {
+                if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, Boss.BOSS_HITBOX_LEEWAY) && proj.hitBoxActive && proj.canHitProj) {
+                    if (shouldDieTo(proj.durability)) die();
+                    if (proj.shouldDieTo(durability)) proj.die();
+                }
+            }
         }
     }
 }
@@ -531,9 +604,10 @@ class Laser extends Projectile {
     // Misc constants
     public static final double MINIMUM_STAT_PERCENTAGE = 0.5;
     public static final double RECOIL = 16;
+    public static final boolean CAN_HIT_PROJ = false;
 
-    public Laser(Omegaman player, Coord coord, Coord size, double dir, double damage, double knockback, double durability, int frameCounter) {
-        super(player, coord, size, size, 0, dir, damage, knockback, durability, frameCounter);
+    public Laser(Omegaman player, Coord coord, Coord size, double dir, double damage, double knockback, double durability, int frameCounter, boolean canHitProj) {
+        super(player, coord, size, size, 0, dir, damage, knockback, durability, frameCounter, canHitProj);
         hitBoxActive = false;
     }
 
@@ -551,13 +625,12 @@ class Laser extends Projectile {
                 if (OmegaFight3.intersects(coord, hitBoxSize, enemy.coord, enemy.size, OmegaFight3.HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
                     enemy.hurt(damage, knockback, coord, BASE_KB_DIR + KB_DIR_TILT * Math.cos(dir), KB_SPREAD, SCREENSHAKE);
                 }
-                for (Projectile proj: enemy.projectiles) {
-                    if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, OmegaFight3.HITBOX_LEEWAY) && proj.hitBoxActive) {
-                        if (proj.shouldDieTo(durability)) proj.die();
-                    }
-                }
             }
-            // Also check boss hitbox
+        }
+        for (Boss boss: OmegaFight3.bosses) {
+            if (OmegaFight3.intersects(coord, hitBoxSize, boss.coord, boss.size, Boss.BOSS_HITBOX_LEEWAY)) {
+                boss.hurt(damage);
+            }
         }
     }
 
@@ -590,13 +663,14 @@ class Boomer extends Projectile {
     public static final int BUTTONO = 8;
     public static final int SKILL_PT_GAIN = 6;
     public static final int SCREENSHAKE = 0;
+    public static final boolean CAN_HIT_PROJ = false;
 
     public Boomer(Omegaman player, Coord coord, double dir) {
-        this(player, coord, SIZE, VELOCITY, dir, DMG, KB, DURABILITY, LIFE);
+        this(player, coord, SIZE, VELOCITY, dir, DMG, KB, DURABILITY, LIFE, CAN_HIT_PROJ);
     }
 
-    public Boomer(Omegaman player, Coord coord, Coord size, double velocity, double dir, double damage, double knockback, double durability, int frameCounter) {
-        super(player, coord, size, size, velocity, dir, damage, knockback, durability, frameCounter);
+    public Boomer(Omegaman player, Coord coord, Coord size, double velocity, double dir, double damage, double knockback, double durability, int frameCounter, boolean canHitProj) {
+        super(player, coord, size, size, velocity, dir, damage, knockback, durability, frameCounter, canHitProj);
         image = images[player.playerNo];
     }
 
@@ -618,14 +692,14 @@ class Boomer extends Projectile {
                     die();
                     ((Omegaman) character).skillPts = Math.min(((Omegaman) character).skillPts + SKILL_PT_GAIN * multiplier, Omegaman.MAX_SKILL_PTS);
                 }
-                for (Projectile proj: enemy.projectiles) {
-                    if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, OmegaFight3.HITBOX_LEEWAY) && proj.hitBoxActive) {
-                        if (shouldDieTo(proj.durability)) die();
-                        if (proj.shouldDieTo(durability)) proj.die();
-                    }
-                }
             }
-            // Also check boss hitbox
+        }
+        for (Boss boss: OmegaFight3.bosses) {
+            if (OmegaFight3.intersects(coord, hitBoxSize, boss.coord, boss.size, Boss.BOSS_HITBOX_LEEWAY)) {
+                int multiplier = velocity < 0? 2: 1;
+                boss.hurt(damage * multiplier);
+                die();
+            }
         }
     }
 }
@@ -656,9 +730,10 @@ class Bouncer extends Projectile {
     // Misc constants
     public static final double MINIMUM_STAT_PERCENTAGE = 0.5;
     public static final int SCREENSHAKE = 0;
+    public static final boolean CAN_HIT_PROJ = true;
 
-    public Bouncer(Omegaman player, Coord coord, Coord size, double velocity, double dir, double damage, double knockback, double durability, int frameCounter) {
-        super(player, coord, size, size, velocity, dir, damage, knockback, durability, frameCounter);
+    public Bouncer(Omegaman player, Coord coord, Coord size, double velocity, double dir, double damage, double knockback, double durability, int frameCounter, boolean canHitProj) {
+        super(player, coord, size, size, velocity, dir, damage, knockback, durability, frameCounter, canHitProj);
         image = images[player.playerNo];
     }
 
@@ -681,12 +756,16 @@ class Bouncer extends Projectile {
                     ((Omegaman) character).skillPts = Math.min(((Omegaman) character).skillPts + 1, Omegaman.MAX_SKILL_PTS);
                 }
                 for (Projectile proj: enemy.projectiles) {
-                    if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, OmegaFight3.HITBOX_LEEWAY) && proj.hitBoxActive) {
+                    if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, OmegaFight3.HITBOX_LEEWAY) && proj.hitBoxActive && proj.canHitProj) {
                         if (proj.shouldDieTo(durability)) proj.die();
                     }
                 }
             }
-            // Also check boss hitbox
+        }
+        for (Boss boss: OmegaFight3.bosses) {
+            if (OmegaFight3.intersects(coord, hitBoxSize, boss.coord, boss.size, Boss.BOSS_HITBOX_LEEWAY)) {
+                boss.hurt(damage);
+            }
         }
     }
 
@@ -697,6 +776,7 @@ class Bouncer extends Projectile {
 
 class Spike extends Projectile {
     public double rotation;
+    public boolean dead;
 
     public static BufferedImage image;
     public static BufferedImage icon;
@@ -723,13 +803,14 @@ class Spike extends Projectile {
     public static final int BUTTONO = 9;
     public static final int SKILL_PT_GAIN = 0;
     public static final int SCREENSHAKE = 0;
+    public static final boolean CAN_HIT_PROJ = true;
 
     public Spike(Omegaman player, Coord coord, double dir) {
-        this(player, coord, SIZE, VELOCITY, dir, DMG, KB, DURABILITY, LIFE);
+        this(player, coord, SIZE, VELOCITY, dir, DMG, KB, DURABILITY, LIFE, CAN_HIT_PROJ);
     }
 
-    public Spike(Omegaman player, Coord coord, Coord size, double velocity, double dir, double damage, double knockback, double durability, int frameCounter) {
-        super(player, coord, size, size, velocity, dir, damage, knockback, durability, frameCounter);
+    public Spike(Omegaman player, Coord coord, Coord size, double velocity, double dir, double damage, double knockback, double durability, int frameCounter, boolean canHitProj) {
+        super(player, coord, size, size, velocity, dir, damage, knockback, durability, frameCounter, canHitProj);
     }
 
     public void draw(Graphics2D g2) {
@@ -750,20 +831,33 @@ class Spike extends Projectile {
                     die();
                 }
                 for (Projectile proj: enemy.projectiles) {
-                    if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, OmegaFight3.HITBOX_LEEWAY) && proj.hitBoxActive) {
+                    if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, OmegaFight3.HITBOX_LEEWAY) && proj.hitBoxActive && proj.canHitProj) {
                         die();
                         if (proj.shouldDieTo(durability)) proj.die();
                     }
                 }
             }
-            // Also check boss hitbox
+        }
+        for (Boss boss: OmegaFight3.bosses) {
+            if (OmegaFight3.intersects(coord, hitBoxSize, boss.coord, boss.size, Boss.BOSS_HITBOX_LEEWAY)) {
+                die();
+            }
+            for (Projectile proj: boss.projectiles) {
+                if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, Boss.BOSS_HITBOX_LEEWAY) && proj.hitBoxActive && proj.canHitProj) {
+                    die();
+                    if (proj.shouldDieTo(durability)) proj.die();
+                }
+            }
         }
     }
 
     public void die() {
-        super.die();
-        for (int i = 0; i != NUM_THORNS; i++) {
-            ((Omegaman) character).newProjectiles.add(new Thorn((Omegaman) character, coord.copy(), Thorn.SIZE, Thorn.VELOCITY, i * Math.PI * 2 / NUM_THORNS, Thorn.DMG, Thorn.KB, Thorn.DURABILITY, Thorn.LIFE, CURVED_BABY_PROJS));
+        if (!dead) {
+            dead = true;
+            super.die();
+            for (int i = 0; i != NUM_THORNS; i++) {
+                ((Omegaman) character).babyProjectiles.add(new Thorn((Omegaman) character, coord.copy(), Thorn.SIZE, Thorn.VELOCITY, i * Math.PI * 2 / NUM_THORNS, Thorn.DMG, Thorn.KB, Thorn.DURABILITY, Thorn.LIFE, CURVED_BABY_PROJS, Thorn.CAN_HIT_PROJ));
+            }
         }
     }
 
@@ -795,9 +889,10 @@ class Thorn extends Projectile {
     // Misc constants
     public static final int SKILL_PT_GAIN = 1;
     public static final int SCREENSHAKE = 0;
+    public static final boolean CAN_HIT_PROJ = false;
 
-    public Thorn(Omegaman player, Coord coord, Coord size, double velocity, double dir, double damage, double knockback, double durability, int frameCounter, boolean curved) {
-        super(player, coord, size, size, velocity, dir, damage, knockback, durability, frameCounter);
+    public Thorn(Omegaman player, Coord coord, Coord size, double velocity, double dir, double damage, double knockback, double durability, int frameCounter, boolean curved, boolean canHitProj) {
+        super(player, coord, size, size, velocity, dir, damage, knockback, durability, frameCounter, canHitProj);
         this.curved = curved;
     }
 
@@ -820,14 +915,14 @@ class Thorn extends Projectile {
                     die();
                     ((Omegaman) character).skillPts = Math.min(((Omegaman) character).skillPts + SKILL_PT_GAIN, Omegaman.MAX_SKILL_PTS);
                 }
-                for (Projectile proj: enemy.projectiles) {
-                    if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, OmegaFight3.HITBOX_LEEWAY) && proj.hitBoxActive) {
-                        if (shouldDieTo(proj.durability)) die();
-                        if (proj.shouldDieTo(durability)) proj.die();
-                    }
-                }
             }
-            // Also check boss hitbox
+        }
+        for (Boss boss: OmegaFight3.bosses) {
+            if (OmegaFight3.intersects(coord, hitBoxSize, boss.coord, boss.size, Boss.BOSS_HITBOX_LEEWAY)) {
+                boss.hurt(damage);
+                die();
+                ((Omegaman) character).skillPts = Math.min(((Omegaman) character).skillPts + SKILL_PT_GAIN, Omegaman.MAX_SKILL_PTS);
+            }
         }
     }
 }
@@ -858,9 +953,10 @@ class Splitter extends Projectile {
     // Misc constants
     public static final double MINIMUM_STAT_PERCENTAGE = 0.5;
     public static final int SCREENSHAKE = 0;
+    public static final boolean CAN_HIT_PROJ = true;
 
-    public Splitter(Omegaman player, Coord coord, Coord size, double velocity, double dir, double damage, double knockback, double durability, int frameCounter) {
-        super(player, coord, size, size, velocity, dir, damage, knockback, durability, frameCounter);
+    public Splitter(Omegaman player, Coord coord, Coord size, double velocity, double dir, double damage, double knockback, double durability, int frameCounter, boolean canHitProj) {
+        super(player, coord, size, size, velocity, dir, damage, knockback, durability, frameCounter, canHitProj);
         image = images[player.playerNo];
     }
 
@@ -872,7 +968,7 @@ class Splitter extends Projectile {
         super.process();
         if (frameCounter % (LIFE / NUM_SPLITS) == 0) {
             for (int i = 0; i != PROJS_PER_SPLIT; i++) {
-                ((Omegaman) character).newProjectiles.add(new Thorn((Omegaman) character, coord.copy(), Thorn.SIZE, Thorn.VELOCITY, SPLIT_PROJS_START_ANGLE + i * Math.PI * 2 / PROJS_PER_SPLIT, Thorn.DMG, Thorn.KB, Thorn.DURABILITY, (int) (Thorn.LIFE * ((double) frameCounter / LIFE + 1.0 / NUM_SPLITS)), CURVED_BABY_PROJS));
+                ((Omegaman) character).babyProjectiles.add(new Thorn((Omegaman) character, coord.copy(), Thorn.SIZE, Thorn.VELOCITY, SPLIT_PROJS_START_ANGLE + i * Math.PI * 2 / PROJS_PER_SPLIT, Thorn.DMG, Thorn.KB, Thorn.DURABILITY, (int) (Thorn.LIFE * ((double) frameCounter / LIFE + 1.0 / NUM_SPLITS)), CURVED_BABY_PROJS, Thorn.CAN_HIT_PROJ));
             }
         }
         if (coord.x < 0 || coord.x > OmegaFight3.SCREEN_SIZE.x || coord.y < 0 || coord.y > OmegaFight3.SCREEN_SIZE.y) {
@@ -882,15 +978,23 @@ class Splitter extends Projectile {
             if (enemy != character) {
                 if (OmegaFight3.intersects(coord, hitBoxSize, enemy.coord, enemy.size, OmegaFight3.HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
                     enemy.hurt(damage, knockback, coord, dir, KB_SPREAD, SCREENSHAKE);
-                    ((Omegaman) character).skillPts = Math.min(((Omegaman) character).skillPts + 1, Omegaman.MAX_SKILL_PTS);
                 }
                 for (Projectile proj: enemy.projectiles) {
-                    if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, OmegaFight3.HITBOX_LEEWAY) && proj.hitBoxActive) {
+                    if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, OmegaFight3.HITBOX_LEEWAY) && proj.hitBoxActive && proj.canHitProj) {
                         if (proj.shouldDieTo(durability)) proj.die();
                     }
                 }
             }
-            // Also check boss hitbox
+        }
+        for (Boss boss: OmegaFight3.bosses) {
+            if (OmegaFight3.intersects(coord, hitBoxSize, boss.coord, boss.size, Boss.BOSS_HITBOX_LEEWAY)) {
+                boss.hurt(damage);
+            }
+            for (Projectile proj: boss.projectiles) {
+                if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, Boss.BOSS_HITBOX_LEEWAY) && proj.hitBoxActive && proj.canHitProj) {
+                    if (proj.shouldDieTo(durability)) proj.die();
+                }
+            }
         }
     }
 

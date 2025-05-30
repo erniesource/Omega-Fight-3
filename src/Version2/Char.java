@@ -9,8 +9,9 @@ abstract class Char {
     public int spriteSign; // 1: Positive, -1: Negative
     public int frameCounter; // Framecounter for running player
     public Coord size;
+    public Coord velocity = new Coord();
     public int state;
-    public HashSet<Projectile> newProjectiles = new HashSet<>();
+    public HashSet<Projectile> babyProjectiles = new HashSet<>();
     public HashSet<Projectile> projectiles = new HashSet<>();
     public HashSet<Projectile> deadProjectiles = new HashSet<>();
 
@@ -23,11 +24,11 @@ abstract class Char {
         this.state = state;
     }
 
-    public void addNewProjectiles() {
-        for (Projectile proj: newProjectiles) {
+    public void addbabyProjectiles() {
+        for (Projectile proj: babyProjectiles) {
             projectiles.add(proj);
         }
-        newProjectiles.clear();
+        babyProjectiles.clear();
     }
 
     public void processProjectiles(Graphics2D g2) {
@@ -46,4 +47,26 @@ abstract class Char {
 
     abstract public void hurt(double damage);
     abstract public void draw(Graphics g);
+}
+
+abstract class Boss extends Char {
+    // Combat stats
+    public int transitionTo;
+    public double health;
+
+    public static final double BOSS_HITBOX_LEEWAY = 20;
+
+    public Boss(Coord coord, int spriteNo, int spriteSign, int frameCounter, Coord size, int state, double health) {
+        super(coord, spriteNo, spriteSign, frameCounter, size, state);
+        this.health = health;
+    }
+
+    public void process() {
+        coord.x += velocity.x;
+        coord.y += velocity.y;
+    }
+
+    public void hurt(double damage) {
+        health -= damage;
+    }
 }
