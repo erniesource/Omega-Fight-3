@@ -535,11 +535,11 @@ public class Omegaman extends Char {
         }
     }
 
-    public void diePercent(Graphics g) {
+    public void drawDiePercent(Graphics g) {
         drawStillPercent((int) OmegaFight3.lerp(PERCENT_DISPLAY_Y_COORD + (int) PERCENT_DISPLAY_SIZE_TO_PERCENT_COORD.y, OmegaFight3.SCREEN_SIZE.y + BIG_PERCENT_FONT.getSize(), (double) frameCounter / SURGE_TIME), g);
     }
 
-    public void respawnPercent(Graphics g) {
+    public void drawRespawnPercent(Graphics g) {
         drawStillPercent((int) OmegaFight3.lerp(PERCENT_DISPLAY_Y_COORD + (int) PERCENT_DISPLAY_SIZE_TO_PERCENT_COORD.y, OmegaFight3.SCREEN_SIZE.y + BIG_PERCENT_FONT.getSize(), velocity.y / RESPAWN_INITIAL_VELOCITY), g);
     }
 
