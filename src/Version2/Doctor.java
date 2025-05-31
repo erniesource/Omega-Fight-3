@@ -16,6 +16,8 @@ public class Doctor extends Boss {
 
     // State constants
     public static final int IDLE = 0;
+    public static final int SPIT = 1;
+    public static final int LAUGH = 2;
 
     // IDLE constants
     public static final Coord IDLE_SIZE = new Coord(280, 400);
@@ -33,6 +35,12 @@ public class Doctor extends Boss {
             if (frameCounter == 0) {
                 spriteNo = IDLE_SPRITE_START + (spriteNo - IDLE_SPRITE_START + 1) % NO_IDLE_SPRITES;
             }
+        }
+        else if (state == SPIT) {
+            
+        }
+        else if (state == LAUGH) {
+            
         }
     }
 
