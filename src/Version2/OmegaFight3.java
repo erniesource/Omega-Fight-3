@@ -46,7 +46,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static int buttonPressed = -1;
     public static Button selectedIcon;
     public static HashMap<Integer, Integer> buttonoToWeaponNo = new HashMap<>();
-    public static HashMap<Integer, BufferedImage> weaponNoToIcon = new HashMap<>();
+    public static BufferedImage[] icon = new BufferedImage[Projectile.NO_OF_PLAYER_PROJECTILES];
     public static int iconFlashCounter = 0;
     public static int readyCounter = -1;
 
@@ -183,18 +183,18 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         // Weapon image importing
         addWeaponIcon = ImageIO.read(new File("menus/no weapon.png"));
         Bullet.image = ImageIO.read(new File("player projectiles/bullet.png"));
-        Bullet.icon = ImageIO.read(new File("menus/bullet icon.png"));
+        icon[Omegaman.BULLET_WEAPON_NO] = ImageIO.read(new File("menus/bullet icon.png"));
         Shotgun.image = ImageIO.read(new File("player projectiles/shotgun.png"));
-        Shotgun.icon = ImageIO.read(new File("menus/shotgun icon.png"));
+        icon[Omegaman.SHOTGUN_WEAPON_NO] = ImageIO.read(new File("menus/shotgun icon.png"));
         Spammer.image = ImageIO.read(new File("player projectiles/spammer.png"));
-        Spammer.icon = ImageIO.read(new File("menus/spammer icon.png"));
+        icon[Omegaman.SPAMMER_WEAPON_NO] = ImageIO.read(new File("menus/spammer icon.png"));
         Sniper.image = ImageIO.read(new File("player projectiles/sniper.png"));
-        Sniper.icon = ImageIO.read(new File("menus/sniper icon.png"));
+        icon[Omegaman.SNIPER_WEAPON_NO] = ImageIO.read(new File("menus/sniper icon.png"));
         Laser.ball = ImageIO.read(new File("player projectiles/ball.png"));
         Laser.beam = ImageIO.read(new File("player projectiles/beam.png"));
-        Boomer.icon = ImageIO.read(new File("menus/boomer icon.png"));
+        icon[Omegaman.BOOMER_WEAPON_NO] = ImageIO.read(new File("menus/boomer icon.png"));
         Spike.image = ImageIO.read(new File("player projectiles/spike.png"));
-        Spike.icon = ImageIO.read(new File("menus/spike icon.png"));
+        icon[Omegaman.SPIKE_WEAPON_NO] = ImageIO.read(new File("menus/spike icon.png"));
         Thorn.image = ImageIO.read(new File("player projectiles/thorn.png"));
         for (int i = 0; i != Omegaman.NUM_PLAYERS; i++) {
             Rocket.images[i] = ImageIO.read(new File("player projectiles/" + i + "rocket.png"));
@@ -209,14 +209,20 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
             Projectile.explosionImages[i] = ImageIO.read(new File("explosions/explosion" + i + ".png"));
         }
 
-        // Boss image importing
-        for (int i = 0; i != Doctor.NO_IDLE_SPRITES; i++) {
-            Doctor.sprite[Doctor.IDLE_SPRITE_START + i] = ImageIO.read(new File("doctor/idle" + i + ".png"));
-        }
-
         // Stages
         for (int i = 0; i != Stage.NO_OF_STAGES; i++) {
             stage[i] = new Stage(STAGE_NAME[i], PLATFORMS[i], SPAWN_COORDS[i], SPAWN_SIGN[i], SPAWN_PLATFORM_NO[i], STAGE_BUTTONO[i]);
+        }
+
+        // Boss image importing
+        for (int i = 0; i != Doctor.STATE_NO_SPRITES[Doctor.IDLE]; i++) {
+            Doctor.sprite[Doctor.STATE_SPRITE_START[Doctor.IDLE] + i] = ImageIO.read(new File("doctor/idle" + i + ".png"));
+        }
+        for (int i = 0; i != Doctor.STATE_NO_SPRITES[Doctor.SPIT]; i++) {
+            Doctor.sprite[Doctor.STATE_SPRITE_START[Doctor.SPIT] + i] = ImageIO.read(new File("doctor/spit" + i + ".png"));
+        }
+        for (int i = 0; i != Doctor.STATE_NO_SPRITES[Doctor.LAUGH]; i++) {
+            Doctor.sprite[Doctor.STATE_SPRITE_START[Doctor.LAUGH] + i] = ImageIO.read(new File("doctor/laugh" + i + ".png"));
         }
 
         // Buttons
@@ -225,12 +231,12 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         chooseButtons.put(stage[Stage.BATTLEFIELD_NO].buttono, new Button(stage[Stage.BATTLEFIELD_NO].image, STAGE_FONT, new Coord(SPACING + STAGE_BUTTON_SIZE.x / 2, (BLACK_BAR_TOP + BLACK_BAR_BOTTOM) / 2), STAGE_BUTTON_SIZE.copy(), stage[Stage.BATTLEFIELD_NO].stageName.toUpperCase(), stage[Stage.BATTLEFIELD_NO].buttono, Button.HIGHLIGHT)); // CHange size email Ms. Kim
         chooseButtons.put(stage[Stage.FINAL_DEST_NO].buttono, new Button(stage[Stage.FINAL_DEST_NO].image, STAGE_FONT, new Coord(SPACING * 2 + STAGE_BUTTON_SIZE.x * (1.0 / 2 + 1), (BLACK_BAR_TOP + BLACK_BAR_BOTTOM) / 2), STAGE_BUTTON_SIZE.copy(), stage[Stage.FINAL_DEST_NO].stageName.toUpperCase(), stage[Stage.FINAL_DEST_NO].buttono, Button.HIGHLIGHT));
         chooseButtons.put(3, new Button(placeHolder, STAGE_FONT, new Coord(SPACING * 3 + STAGE_BUTTON_SIZE.x * (1.0 / 2 + 2), (BLACK_BAR_TOP + BLACK_BAR_BOTTOM) / 2), STAGE_BUTTON_SIZE.copy(), "COMING IN 5-10 BUSINESS DAYS", 3, Button.HIGHLIGHT, true, false));
-        chooseButtons.put(Bullet.BUTTONO, new Button(Bullet.icon, new Coord(DIVIDER_RIGHT_X + SPACING + WEAPON_ICON_SIZE.x / 2, BLACK_BAR_TOP + SPACING + WEAPON_ICON_SIZE.y / 2), WEAPON_ICON_SIZE.copy(), Bullet.BUTTONO));
-        chooseButtons.put(Shotgun.BUTTONO, new Button(Shotgun.icon, new Coord(DIVIDER_RIGHT_X + SPACING * 2 + WEAPON_ICON_SIZE.x * (1.0 / 2 + 1), BLACK_BAR_TOP + SPACING + WEAPON_ICON_SIZE.y / 2), WEAPON_ICON_SIZE.copy(), Shotgun.BUTTONO));
-        chooseButtons.put(Spammer.BUTTONO, new Button(Spammer.icon, new Coord(DIVIDER_RIGHT_X + SPACING + WEAPON_ICON_SIZE.x / 2, BLACK_BAR_TOP + SPACING * 2 + WEAPON_ICON_SIZE.y * (1.0 / 2 + 1)), WEAPON_ICON_SIZE.copy(), Spammer.BUTTONO));
-        chooseButtons.put(Sniper.BUTTONO, new Button(Sniper.icon, new Coord(DIVIDER_RIGHT_X + SPACING * 2 + WEAPON_ICON_SIZE.x * (1.0 / 2 + 1), BLACK_BAR_TOP + SPACING * 2 + WEAPON_ICON_SIZE.y * (1.0 / 2 + 1)), WEAPON_ICON_SIZE.copy(), Sniper.BUTTONO));
-        chooseButtons.put(Boomer.BUTTONO, new Button(Boomer.icon, new Coord(DIVIDER_RIGHT_X + SPACING + WEAPON_ICON_SIZE.x / 2, BLACK_BAR_TOP + SPACING * 3 + WEAPON_ICON_SIZE.y * (1.0 / 2 + 2)), WEAPON_ICON_SIZE.copy(), Boomer.BUTTONO));
-        chooseButtons.put(Spike.BUTTONO, new Button(Spike.icon, new Coord(DIVIDER_RIGHT_X + SPACING * 2 + WEAPON_ICON_SIZE.x * (1.0 / 2 + 1), BLACK_BAR_TOP + SPACING * 3 + WEAPON_ICON_SIZE.y * (1.0 / 2 + 2)), WEAPON_ICON_SIZE.copy(), Spike.BUTTONO));
+        chooseButtons.put(Bullet.BUTTONO, new Button(icon[Omegaman.BULLET_WEAPON_NO], new Coord(DIVIDER_RIGHT_X + SPACING + WEAPON_ICON_SIZE.x / 2, BLACK_BAR_TOP + SPACING + WEAPON_ICON_SIZE.y / 2), WEAPON_ICON_SIZE.copy(), Bullet.BUTTONO));
+        chooseButtons.put(Shotgun.BUTTONO, new Button(icon[Omegaman.SHOTGUN_WEAPON_NO], new Coord(DIVIDER_RIGHT_X + SPACING * 2 + WEAPON_ICON_SIZE.x * (1.0 / 2 + 1), BLACK_BAR_TOP + SPACING + WEAPON_ICON_SIZE.y / 2), WEAPON_ICON_SIZE.copy(), Shotgun.BUTTONO));
+        chooseButtons.put(Spammer.BUTTONO, new Button(icon[Omegaman.SPAMMER_WEAPON_NO], new Coord(DIVIDER_RIGHT_X + SPACING + WEAPON_ICON_SIZE.x / 2, BLACK_BAR_TOP + SPACING * 2 + WEAPON_ICON_SIZE.y * (1.0 / 2 + 1)), WEAPON_ICON_SIZE.copy(), Spammer.BUTTONO));
+        chooseButtons.put(Sniper.BUTTONO, new Button(icon[Omegaman.SNIPER_WEAPON_NO], new Coord(DIVIDER_RIGHT_X + SPACING * 2 + WEAPON_ICON_SIZE.x * (1.0 / 2 + 1), BLACK_BAR_TOP + SPACING * 2 + WEAPON_ICON_SIZE.y * (1.0 / 2 + 1)), WEAPON_ICON_SIZE.copy(), Sniper.BUTTONO));
+        chooseButtons.put(Boomer.BUTTONO, new Button(icon[Omegaman.BOOMER_WEAPON_NO], new Coord(DIVIDER_RIGHT_X + SPACING + WEAPON_ICON_SIZE.x / 2, BLACK_BAR_TOP + SPACING * 3 + WEAPON_ICON_SIZE.y * (1.0 / 2 + 2)), WEAPON_ICON_SIZE.copy(), Boomer.BUTTONO));
+        chooseButtons.put(Spike.BUTTONO, new Button(icon[Omegaman.SPIKE_WEAPON_NO], new Coord(DIVIDER_RIGHT_X + SPACING * 2 + WEAPON_ICON_SIZE.x * (1.0 / 2 + 1), BLACK_BAR_TOP + SPACING * 3 + WEAPON_ICON_SIZE.y * (1.0 / 2 + 2)), WEAPON_ICON_SIZE.copy(), Spike.BUTTONO));
         chooseButtons.put(loadoutButtono[0][0], new Button(addWeaponIcon, new Coord(610 + WEAPON_ICON_SIZE.x / 2, LOADOUT_ICON_Y + WEAPON_ICON_SIZE.y / 2), WEAPON_ICON_SIZE.copy(), loadoutButtono[0][0]));
         chooseButtons.put(loadoutButtono[0][1], new Button(addWeaponIcon, new Coord(610 + SPACING + WEAPON_ICON_SIZE.x * (1.0 / 2 + 1), LOADOUT_ICON_Y + WEAPON_ICON_SIZE.y / 2), WEAPON_ICON_SIZE.copy(), loadoutButtono[0][1]));
         chooseButtons.put(loadoutButtono[1][0], new Button(addWeaponIcon, new Coord(1490 + WEAPON_ICON_SIZE.x / 2, LOADOUT_ICON_Y + WEAPON_ICON_SIZE.y / 2), WEAPON_ICON_SIZE.copy(), loadoutButtono[1][0]));
@@ -243,13 +249,6 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         buttonoToWeaponNo.put(Sniper.BUTTONO, Omegaman.SNIPER_WEAPON_NO);
         buttonoToWeaponNo.put(Boomer.BUTTONO, Omegaman.BOOMER_WEAPON_NO);
         buttonoToWeaponNo.put(Spike.BUTTONO, Omegaman.SPIKE_WEAPON_NO);
-
-        weaponNoToIcon.put(Omegaman.BULLET_WEAPON_NO, Bullet.icon);
-        weaponNoToIcon.put(Omegaman.SHOTGUN_WEAPON_NO, Shotgun.icon);
-        weaponNoToIcon.put(Omegaman.SPAMMER_WEAPON_NO, Spammer.icon);
-        weaponNoToIcon.put(Omegaman.SNIPER_WEAPON_NO, Sniper.icon);
-        weaponNoToIcon.put(Omegaman.BOOMER_WEAPON_NO, Boomer.icon);
-        weaponNoToIcon.put(Omegaman.SPIKE_WEAPON_NO, Spike.icon);
         
         // JFrame and JPanel
         JFrame frame = new JFrame("Omega Fight 3");
@@ -414,7 +413,10 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                 }
 
                 for (Boss boss: bosses) {
-                    boss.process();
+                    if (boss.transitionTo != Boss.NO_TRANSITION) {
+                        boss.transition();
+                    }
+                    else boss.attack();
                 }
 
                 // Check for loss
@@ -615,7 +617,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
             }
         }
         loadouts[playerNo][loadoutSlot] = weaponNo;
-        loadoutButton.image = weaponNoToIcon.get(weaponNo);
+        loadoutButton.image = icon[weaponNo];
         selectedIcon = null;
     }
 

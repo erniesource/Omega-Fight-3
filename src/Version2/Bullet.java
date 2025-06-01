@@ -5,13 +5,12 @@ import java.awt.image.BufferedImage;
 
 public class Bullet extends Projectile {
     public static BufferedImage image;
-    public static BufferedImage icon;
     
     // Damage constants
     public static final double DMG = 2 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
     public static final double DURABILITY = 2;
     public static final double KB = 5;
-    public static final double KB_SPREAD = Math.PI / 2;
+    public static final double KB_SPREAD = Math.PI / 3;
 
     // Size constants
     public static final Coord SIZE = new Coord(25, 18);
@@ -90,7 +89,7 @@ class Rocket extends Projectile {
     public static final double DMG = 15 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
     public static final double DURABILITY = INFINITE_DURABILITY;
     public static final double KB = 20;
-    public static final double KB_SPREAD = Math.PI / 2;
+    public static final double KB_SPREAD = Math.PI / 3;
     public static final double EXPLOSION_SIZE_MULTIPLIER = 4;
 
     // Velocity constants
@@ -170,13 +169,12 @@ class Rocket extends Projectile {
 
 class Shotgun extends Projectile {
     public static BufferedImage image;
-    public static BufferedImage icon;
 
     // Damage constants
     public static final double DMG = 2 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
     public static final double DURABILITY = 1;
     public static final double KB = 4;
-    public static final double KB_SPREAD = Math.PI / 2;
+    public static final double KB_SPREAD = Math.PI / 3;
 
     // Size constants
     public static final Coord SIZE = new Coord(24, 20);
@@ -247,7 +245,7 @@ class Firework extends Projectile {
     public static final double DMG = 3 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
     public static final double DURABILITY = INFINITE_DURABILITY;
     public static final double KB = 3;
-    public static final double KB_SPREAD = Math.PI / 2;
+    public static final double KB_SPREAD = Math.PI / 3;
 
     // Velocity constants
     public static final double VELOCITY = 15;
@@ -310,13 +308,12 @@ class Firework extends Projectile {
 
 class Spammer extends Projectile {
     public static BufferedImage image;
-    public static BufferedImage icon;
 
     // Damage constants
     public static final double DMG = 1.3 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
     public static final double DURABILITY = 1;
     public static final double KB = 4;
-    public static final double KB_SPREAD = Math.PI / 2;
+    public static final double KB_SPREAD = Math.PI / 3;
 
     // Size constants
     public static final Coord SIZE = new Coord(22, 18);
@@ -388,7 +385,7 @@ class Missile extends Projectile {
     public static final double DMG = 12 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
     public static final double DURABILITY = INFINITE_DURABILITY;
     public static final double KB = 16;
-    public static final double KB_SPREAD = Math.PI / 2;
+    public static final double KB_SPREAD = Math.PI / 3;
     public static final double EXPLOSION_SIZE_MULTIPLIER = 3;
 
     // Velocity constants
@@ -503,13 +500,12 @@ class Missile extends Projectile {
 
 class Sniper extends Projectile {
     public static BufferedImage image;
-    public static BufferedImage icon;
 
     // Damage constants
     public static final double DMG = 2.5 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
     public static final double DURABILITY = 3;
     public static final double KB = 2.5;
-    public static final double KB_SPREAD = Math.PI / 2;
+    public static final double KB_SPREAD = Math.PI / 3;
 
     // Size constants
     public static final Coord SIZE = new Coord(41, 14);
@@ -642,14 +638,13 @@ class Laser extends Projectile {
 class Boomer extends Projectile {
     public BufferedImage image;
 
-    public static BufferedImage icon;
     public static BufferedImage[] images = new BufferedImage[Omegaman.NUM_PLAYERS];
     
     // Damage constants
     public static final double DMG = 2 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
     public static final double DURABILITY = 2;
     public static final double KB = 5;
-    public static final double KB_SPREAD = Math.PI / 2;
+    public static final double KB_SPREAD = Math.PI / 3;
 
     // Size constants
     public static final Coord SIZE = new Coord(30, 15);
@@ -715,10 +710,10 @@ class Bouncer extends Projectile {
     public static final Coord SIZE = new Coord(80, 80);
 
     // Damage constants
-    public static final double DMG = 0.5 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
+    public static final double DMG = 2 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
     public static final double DURABILITY = INFINITE_DURABILITY;
     public static final double KB = 3;
-    public static final double KB_SPREAD = Math.PI / 2;
+    public static final double KB_SPREAD = Math.PI / 3;
 
     // Velocity constants
     public static final double VELOCITY = 25;
@@ -779,7 +774,6 @@ class Spike extends Projectile {
     public boolean dead;
 
     public static BufferedImage image;
-    public static BufferedImage icon;
     
     // Damage constants
     public static final double DMG = 0;
@@ -875,7 +869,7 @@ class Thorn extends Projectile {
     public static final double DMG = 1.5 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
     public static final double DURABILITY = 1;
     public static final double KB = 4;
-    public static final double KB_SPREAD = Math.PI / 2;
+    public static final double KB_SPREAD = Math.PI / 3;
 
     // Size constants
     public static final Coord SIZE = new Coord(25, 20);
@@ -940,7 +934,7 @@ class Splitter extends Projectile {
     public static final double DMG = 0 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
     public static final double DURABILITY = INFINITE_DURABILITY;
     public static final double KB = 0;
-    public static final double KB_SPREAD = Math.PI / 2; // Add num splits and projs per split
+    public static final double KB_SPREAD = Math.PI / 3;
     public static final int NUM_SPLITS = 3;
     public static final int PROJS_PER_SPLIT = 4;
     public static final double SPLIT_PROJS_START_ANGLE = Math.PI / 4;

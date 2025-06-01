@@ -30,6 +30,9 @@ abstract public class Projectile {
     public static final int NUM_OF_WEAPONS = 6;
     public static final double INFINITE_DURABILITY = 100;
 
+    // Misc Variables
+    public static final int NO_OF_PLAYER_PROJECTILES = 6;
+
     public Projectile(Char character, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double durability, int frameCounter, boolean canHitProj) {
         this.character = character;
         this.coord = coord;

@@ -97,7 +97,7 @@ public class Omegaman extends Char {
     public static final double KB_GRAVITY = 1.25;
     public static final double BOUNCE_MIN_VEL_Y = 20;
     public static final double STUN_REDUCTION = 0.9;
-
+    
     // HUD Constants
     public static final int PERCENT_DISPLAY_Y_COORD = 790;
     public static final Coord PERCENT_DISPLAY_SIZE = new Coord(400, 150);

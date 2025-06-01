@@ -51,22 +51,24 @@ abstract class Char {
 
 abstract class Boss extends Char {
     // Combat stats
-    public int transitionTo;
+    public int transitionTo = -1;
     public double health;
 
     public static final double BOSS_HITBOX_LEEWAY = 20;
+    public static final int NO_TRANSITION = -1;
+
+    public static final int DEAD = -1;
+    public static final int IDLE = 0;
 
     public Boss(Coord coord, int spriteNo, int spriteSign, int frameCounter, Coord size, int state, double health) {
         super(coord, spriteNo, spriteSign, frameCounter, size, state);
         this.health = health;
     }
 
-    public void process() {
-        coord.x += velocity.x;
-        coord.y += velocity.y;
-    }
-
     public void hurt(double damage) {
         health -= damage;
     }
+
+    abstract public void transition();
+    abstract public void attack();
 }
