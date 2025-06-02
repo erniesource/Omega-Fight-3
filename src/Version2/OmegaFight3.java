@@ -180,7 +180,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
             countdownText[FIGHT_TEXT_START + i] = ImageIO.read(new File("menus/fight" + i + ".png"));
         }
         
-        // Weapon image importing
+        // Player Weapon image importing
         addWeaponIcon = ImageIO.read(new File("menus/no weapon.png"));
         Bullet.image = ImageIO.read(new File("player projectiles/bullet.png"));
         icon[Omegaman.BULLET_WEAPON_NO] = ImageIO.read(new File("menus/bullet icon.png"));
@@ -205,8 +205,29 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
             Bouncer.images[i] = ImageIO.read(new File("player projectiles/" + i + "bouncer.png"));
             Splitter.images[i] = ImageIO.read(new File("player projectiles/" + i + "splitter.png"));
         }
+
+        // Explosion image importing
         for (int i = 0; i != Rocket.NUM_EXPLOSION_IMAGES; i++) {
             Projectile.explosionImages[i] = ImageIO.read(new File("explosions/explosion" + i + ".png"));
+        }
+
+        // Doctor projectile image importing
+        Fastener.images[Fastener.NUT] = new BufferedImage[Fastener.NUM_SPRITES[Fastener.NUT]];
+        for (int i = 0; i != Fastener.NUM_SPRITES[Fastener.NUT]; i++) {
+            Fastener.images[Fastener.NUT][i] = ImageIO.read(new File("doctor projectiles/nut" + i + ".png"));
+        }
+        Fastener.images[Fastener.BOLT] = new BufferedImage[Fastener.NUM_SPRITES[Fastener.BOLT]];
+        for (int i = 0; i != Fastener.NUM_SPRITES[Fastener.BOLT]; i++) {
+            Fastener.images[Fastener.BOLT][i] = ImageIO.read(new File("doctor projectiles/bolt" + i + ".png"));
+        }
+        for (int i = 0; i != Energy.NO_OF_SPRITES; i++) {
+            Energy.images[i] = ImageIO.read(new File("doctor projectiles/energy" + i + ".png"));
+        }
+        for (int i = 0; i != Pincer.NO_OF_SPRITES; i++) {
+            Pincer.images[i] = ImageIO.read(new File("doctor projectiles/pincer" + i + ".png"));
+        }
+        for (int i = 0; i != Bombot.NO_OF_SPRITES; i++) {
+            Bombot.images[i] = ImageIO.read(new File("doctor projectiles/bombot" + i + ".png"));
         }
 
         // Stages
@@ -339,7 +360,19 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         }
         else if(gameState == GAME_GS) {
             stage[stageNo].drawStage(g);
+
+            for (Boss boss: bosses) {
+                boss.drawProjectiles(g2);
+            }
             
+            for (Omegaman omega: omegaman) {
+                omega.drawProjectiles(g2);
+            }
+
+            for (Boss boss: bosses) {
+                boss.draw(g);
+            }
+
             for (Omegaman omega: omegaman) {
                 omega.drawHUD(g);
                 if (omega.state == Omegaman.ALIVE_STATE) {
@@ -362,10 +395,6 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                 }
             }
 
-            for (Boss boss: bosses) {
-                boss.draw(g);
-            }
-
             if ((transitiono != NO_TRANSITION && transitiono != COUNTDOWN) || (transitiono == COUNTDOWN && transitionCounter >= FIGHT_TEXT_LEN)) {
                 transition();
                 drawTransition(g);
@@ -375,15 +404,26 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                     transition();
                     drawTransition(g);
                 }
+
                 for (Omegaman omega: omegaman) {
                     omega.addbabyProjectiles();
                 }
                 for (Omegaman omega: omegaman) {
-                    omega.processProjectiles(g2);
+                    omega.processProjectiles();
                 }
                 for (Omegaman omega: omegaman) {
                     omega.deleteDeadProjectiles();
                 }
+                for (Boss boss: bosses) {
+                    boss.addbabyProjectiles();
+                }
+                for (Boss boss: bosses) {
+                    boss.processProjectiles();
+                }
+                for (Boss boss: bosses) {
+                    boss.deleteDeadProjectiles();
+                }
+
                 for (Omegaman omega: omegaman) {
                     if (omega.state == Omegaman.ALIVE_STATE) {
                         if (omega.stunCounter == Omegaman.NOT_STUNNED) {
@@ -401,6 +441,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                         omega.shakePercent();
                     }
                 }
+                
                 for (Omegaman omega: omegaman) {
                     if (omega.state != Omegaman.ALIVE_STATE) {
                         omega.frameCounter++;
@@ -417,6 +458,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                         boss.transition();
                     }
                     else boss.attack();
+                    boss.backgroundAttack();
                 }
 
                 // Check for loss

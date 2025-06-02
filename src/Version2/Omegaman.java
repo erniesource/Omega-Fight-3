@@ -97,7 +97,7 @@ public class Omegaman extends Char {
     public static final double KB_GRAVITY = 1.25;
     public static final double BOUNCE_MIN_VEL_Y = 20;
     public static final double STUN_REDUCTION = 0.9;
-    
+
     // HUD Constants
     public static final int PERCENT_DISPLAY_Y_COORD = 790;
     public static final Coord PERCENT_DISPLAY_SIZE = new Coord(400, 150);
@@ -587,6 +587,7 @@ public class Omegaman extends Char {
             if (Math.abs(dMinAngle) < Math.abs(dMaxAngle)) angle = minAngle;
             else angle = maxAngle;
         }
+        velocity = velocity.scaledBy(0.25);
         velocity.x += Math.cos(angle) * knockback;
         velocity.y += Math.sin(angle) * knockback;
         stunCounter = (int) Math.pow(knockback, STUN_REDUCTION);

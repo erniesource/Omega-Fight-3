@@ -32,6 +32,7 @@ abstract public class Projectile {
 
     // Misc Variables
     public static final int NO_OF_PLAYER_PROJECTILES = 6;
+    public static final int INF_LIFE = 0;
 
     public Projectile(Char character, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double durability, int frameCounter, boolean canHitProj) {
         this.character = character;
@@ -48,7 +49,7 @@ abstract public class Projectile {
     }
 
     public void die() {
-        ((Omegaman) character).deadProjectiles.add(this);
+        character.deadProjectiles.add(this);
     }
 
     public void process() {

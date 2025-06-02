@@ -31,9 +31,14 @@ abstract class Char {
         babyProjectiles.clear();
     }
 
-    public void processProjectiles(Graphics2D g2) {
+    public void processProjectiles() {
         for (Projectile proj: projectiles) {
             proj.process();
+        }
+    }
+
+    public void drawProjectiles(Graphics2D g2) {
+        for (Projectile proj: projectiles) {
             proj.draw(g2);
         }
     }
@@ -53,6 +58,7 @@ abstract class Boss extends Char {
     // Combat stats
     public int transitionTo = -1;
     public double health;
+    public double difficulty;
 
     public static final double BOSS_HITBOX_LEEWAY = 20;
     public static final int NO_TRANSITION = -1;
@@ -60,9 +66,10 @@ abstract class Boss extends Char {
     public static final int DEAD = -1;
     public static final int IDLE = 0;
 
-    public Boss(Coord coord, int spriteNo, int spriteSign, int frameCounter, Coord size, int state, double health) {
+    public Boss(Coord coord, int spriteNo, int spriteSign, int frameCounter, Coord size, int state, double health, double difficulty) {
         super(coord, spriteNo, spriteSign, frameCounter, size, state);
-        this.health = health;
+        this.health = health * difficulty;
+        this.difficulty = difficulty;
     }
 
     public void hurt(double damage) {
@@ -71,4 +78,5 @@ abstract class Boss extends Char {
 
     abstract public void transition();
     abstract public void attack();
+    abstract public void backgroundAttack();
 }
