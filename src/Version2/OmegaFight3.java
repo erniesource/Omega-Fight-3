@@ -74,6 +74,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static final int BLACK_BAR_BOTTOM = 500;
     public static final int DIVIDER_RIGHT_X = 1645;
     public static final int LOADOUT_ICON_Y = 700;
+    public static final int NO_WEAPON = -1;
     public static final Coord READY_BAR_SIZE = new Coord(1920, 240);
 
     // Screen Settings
@@ -529,10 +530,15 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                 gameState = GAME_GS;
                 for (int i = 0; i != Omegaman.NUM_PLAYERS; i++) {
                     try {
-                        omegaman[i] = new Omegaman(i, stage[stageNo].spawnCoords[i].copy(), stage[stageNo].spawnSpriteSign[i], stage[stageNo].spawnPlatformNo[i], controls[i], shtKeys[i], loadouts[i], loadoutButtono[i]);
+                        omegaman[i] = new Omegaman(i, stage[stageNo].spawnCoords[i].copy(), stage[stageNo].spawnSpriteSign[i], stage[stageNo].spawnPlatformNo[i], controls[i], shtKeys[i], loadouts[i].clone(), loadoutButtono[i]);
                     }
                     catch (IOException e) {}
+                    for (int j = 0; j != omegaman[i].loadout.length; j++) {
+                        loadouts[i][j] = NO_WEAPON;
+                        chooseButtons.get(omegaman[i].loadoutButtono[j]).image = addWeaponIcon;
+                    }
                 }
+
 
                 if (stageNo == Stage.BATTLEFIELD_NO) {
                     bosses.add(new Doctor(1));
@@ -607,7 +613,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                     for (int[] loadout : loadouts) {
                         for (int selectedWeapon : loadout) {
                             if (selectedWeapon == weaponNo) {
-                                loadouts[i][j] = -1;
+                                loadouts[i][j] = NO_WEAPON;
                                 selectedIcon.image = addWeaponIcon;
                                 selectedIcon = null;
                                 return;
@@ -651,7 +657,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         for (int[] loadout : loadouts) {
             for (int selectedWeapon : loadout) {
                 if (selectedWeapon == weaponNo) {
-                    loadouts[playerNo][loadoutSlot] = -1;
+                    loadouts[playerNo][loadoutSlot] = NO_WEAPON;
                     loadoutButton.image = addWeaponIcon;
                     selectedIcon = null;
                     return;

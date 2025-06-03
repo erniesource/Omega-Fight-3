@@ -10,9 +10,9 @@ public class Fastener extends Projectile {
     public static BufferedImage[][] images = new BufferedImage[2][];
     
     // Damage constants
-    public static final double DMG = 7 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
+    public static final double DMG = 7.5 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
     public static final double DURABILITY = 2;
-    public static final double KB = 5;
+    public static final double KB = 10;
     public static final double KB_SPREAD = Math.PI / 3;
 
     // Size constants
@@ -69,10 +69,12 @@ public class Fastener extends Projectile {
                 enemy.hurt(damage, knockback, coord, dir, KB_SPREAD, SCREENSHAKE);
                 die();
             }
-            for (Projectile proj: enemy.projectiles) {
-                if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, OmegaFight3.HITBOX_LEEWAY) && proj.hitBoxActive && proj.canHitProj) {
-                    if (shouldDieTo(proj.durability)) die();
-                    if (proj.shouldDieTo(durability)) proj.die();
+            if (canHitProj) {
+                for (Projectile proj: enemy.projectiles) {
+                    if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, OmegaFight3.HITBOX_LEEWAY) && proj.hitBoxActive && proj.canHitProj) {
+                        if (shouldDieTo(proj.durability)) die();
+                        if (proj.shouldDieTo(durability)) proj.die();
+                    }
                 }
             }
         }
@@ -85,16 +87,16 @@ class Energy extends Projectile {
     public static BufferedImage[] images = new BufferedImage[2];
     
     // Damage constants
-    public static final double DMG = 5 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
+    public static final double DMG = 10 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
     public static final double DURABILITY = 2;
-    public static final double KB = 5;
+    public static final double KB = 10;
     public static final double KB_SPREAD = Math.PI / 3;
 
     // Size constants
     public static final Coord SIZE = new Coord(75, 55);
 
     // Movement constants
-    public static final double VELOCITY = 15;
+    public static final double VELOCITY = 4;
     public static final int LIFE = INF_LIFE;
     public static final double ROTATION_PER_SECOND = 2;
     public static final double ROTATION_SPEED = Math.PI * 2 / OmegaFight3.FPS * ROTATION_PER_SECOND;
@@ -133,12 +135,6 @@ class Energy extends Projectile {
                     enemy.hurt(damage, knockback, coord, dir, KB_SPREAD, SCREENSHAKE);
                     die();
                 }
-                for (Projectile proj: enemy.projectiles) {
-                    if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, OmegaFight3.HITBOX_LEEWAY) && proj.hitBoxActive && proj.canHitProj) {
-                        if (shouldDieTo(proj.durability)) die();
-                        if (proj.shouldDieTo(durability)) proj.die();
-                    }
-                }
             }
         }
     }
@@ -151,7 +147,7 @@ class Pincer extends Projectile {
     public static BufferedImage[] images = new BufferedImage[3];
     
     // Damage constants
-    public static final double DMG = 2 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
+    public static final double DMG = 10 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
     public static final double DURABILITY = 2;
     public static final double KB = 15;
     public static final double KB_SPREAD = Math.PI / 3;
@@ -160,13 +156,13 @@ class Pincer extends Projectile {
     public static final Coord SIZE = new Coord(90, 90);
 
     // Movement constants
-    public static final double VELOCITY = 15;
+    public static final double VELOCITY = 6;
     public static final int LIFE = INF_LIFE;
-    public static final int X_MOVEMENT_LEN = 10;
+    public static final int X_MOVEMENT_LEN = 40;
 
     // Misc constants
     public static final int SCREENSHAKE = 0;
-    public static final boolean CAN_HIT_PROJ = false;
+    public static final boolean CAN_HIT_PROJ = true;
     public static final int NO_OF_SPRITES = 3;
     public static final int SPRITE_CHANGE_HZ = 7;
 
@@ -214,6 +210,10 @@ class Pincer extends Projectile {
                     enemy.hurt(damage, knockback, coord, dir, KB_SPREAD, SCREENSHAKE);
                     die();
                 }
+            }
+        }
+        if (canHitProj) {
+            for (Omegaman enemy: OmegaFight3.omegaman) {
                 for (Projectile proj: enemy.projectiles) {
                     if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, OmegaFight3.HITBOX_LEEWAY) && proj.hitBoxActive && proj.canHitProj) {
                         if (shouldDieTo(proj.durability)) die();
@@ -235,20 +235,20 @@ class Bombot extends Projectile {
     public static final Coord SIZE = new Coord(150, 75);
 
     // Damage constants
-    public static final double DMG = 5 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
+    public static final double DMG = 15 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
     public static final double DURABILITY = INFINITE_DURABILITY;
-    public static final double KB = 20;
+    public static final double KB = 15;
     public static final double KB_SPREAD = Math.PI / 3;
     public static final Coord EXPLOSION_SIZE_MULTIPLIER = new Coord(2, 4);
 
     // Velocity constants
-    public static final double VELOCITY = 6;
-    public static final int LIFE = 100;
+    public static final double VELOCITY = 5;
+    public static final int LIFE = 180;
     public static final double TURN_SPEED = Math.PI * (180.0 / LIFE / 180.0);
 
     // Misc constants
     public static final int SCREENSHAKE = 15;
-    public static final boolean CAN_HIT_PROJ = false;
+    public static final boolean CAN_HIT_PROJ = true;
     public static final int NO_OF_SPRITES = 2;
     public static final int SPRITE_CHANGE_HZ = 10;
 
@@ -289,10 +289,12 @@ class Bombot extends Projectile {
             Char target = null;
             double closestDist = Double.MAX_VALUE;
             for (Omegaman enemy : OmegaFight3.omegaman) {
-                double dist = Math.hypot(enemy.coord.x - coord.x, enemy.coord.y - coord.y);
-                if (dist < closestDist) {
-                    closestDist = dist;
-                    target = enemy;
+                if (enemy.state == Omegaman.ALIVE_STATE) {
+                    double dist = Math.hypot(enemy.coord.x - coord.x, enemy.coord.y - coord.y);
+                    if (dist < closestDist) {
+                        closestDist = dist;
+                        target = enemy;
+                    }
                 }
             }
             
@@ -312,6 +314,14 @@ class Bombot extends Projectile {
                     if (OmegaFight3.intersects(coord, hitBoxSize, enemy.coord, enemy.size, OmegaFight3.HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
                         enemy.hurt(damage, knockback, coord, dir, KB_SPREAD, (int) (SCREENSHAKE * (size.x / SIZE.x)));
                         die();
+                    }
+                    if (canHitProj) {
+                        for (Projectile proj: enemy.projectiles) {
+                            if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, OmegaFight3.HITBOX_LEEWAY) && proj.hitBoxActive && proj.canHitProj) {
+                                die();
+                                if (proj.shouldDieTo(durability)) proj.die();
+                            }
+                        }
                     }
                 }
             }

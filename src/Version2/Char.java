@@ -59,9 +59,12 @@ abstract class Boss extends Char {
     public int transitionTo = -1;
     public double health;
     public double difficulty;
+    public boolean hurt;
+    public int hurtCounter = -1;
 
     public static final double BOSS_HITBOX_LEEWAY = 20;
     public static final int NO_TRANSITION = -1;
+    public static final int NOT_HURT = -1;
 
     public static final int DEAD = -1;
     public static final int IDLE = 0;
@@ -74,6 +77,7 @@ abstract class Boss extends Char {
 
     public void hurt(double damage) {
         health -= damage;
+        if (!hurt) hurt = true;
     }
 
     abstract public void transition();

@@ -5,11 +5,11 @@
         "lib/**/*.jar"
     ],
     "github.copilot.enable": {
-        "*": false,
+        "*": true,
         "plaintext": false,
         "markdown": false,
         "scminput": false,
         "cpp": false,
-        "java": false
+        "java": true
     }
 }
