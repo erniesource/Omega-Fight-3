@@ -519,7 +519,8 @@ class Missile extends Projectile {
                         }
                     }
                 }
-                for (Boss boss: OmegaFight3.bosses) {
+            }
+            for (Boss boss: OmegaFight3.bosses) {
                     if (OmegaFight3.intersects(coord, hitBoxSize, boss.coord, boss.size, Boss.BOSS_HITBOX_LEEWAY * Math.min(boss.size.x, boss.size.y))) {
                         boss.hurt(damage);
                         die();
@@ -533,7 +534,6 @@ class Missile extends Projectile {
                         }
                     }
                 }
-            }
         }
         else {
             frameCounter--;

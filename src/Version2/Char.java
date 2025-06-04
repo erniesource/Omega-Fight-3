@@ -1,6 +1,7 @@
 package Version2;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.*;
 
 abstract class Char {
@@ -55,6 +56,8 @@ abstract class Char {
 }
 
 abstract class Boss extends Char {
+    public static BufferedImage[] surge = new BufferedImage[5];
+
     // Combat stats
     public int transitionTo = -1;
     public double health;
@@ -65,6 +68,9 @@ abstract class Boss extends Char {
     public static final double BOSS_HITBOX_LEEWAY = 0.2;
     public static final int NO_TRANSITION = -1;
     public static final int NOT_HURT = -1;
+
+    // Die constants
+    public static final double DIE_ACCEL = 1;
 
     public static final int DEAD = 0;
     public static final int IDLE = 1;
@@ -78,6 +84,31 @@ abstract class Boss extends Char {
     public void hurt(double damage) {
         health -= damage;
         if (!hurt) hurt = true;
+        if (health <= 0) prepareToDie();
+    }
+
+    public void prepareToDie() {
+        state = DEAD;
+        frameCounter = 0;
+        velocity.y = 0;
+    }
+
+    public void fall() {
+        coord.y += velocity.y;
+        velocity.y += DIE_ACCEL;
+    }
+
+    public void surge() {
+        frameCounter++;
+        if (frameCounter == OmegaFight3.NUM_SURGE_IMAGES * OmegaFight3.SURGE_FRAME_HZ * OmegaFight3.SURGE_SPRITE_WIN_CHECK) {
+            // other players won if they haven't lost yet
+        }
+    }
+
+    public void drawSurge(Graphics g) {
+        if (frameCounter < OmegaFight3.SURGE_FRAME_HZ * OmegaFight3.NUM_SURGE_IMAGES) {
+            g.drawImage(surge[frameCounter / OmegaFight3.SURGE_FRAME_HZ], (int) (coord.x - OmegaFight3.SURGE_SIZE.x / 2), (int) (OmegaFight3.SCREEN_SIZE.y - OmegaFight3.SURGE_SIZE.y), null);
+        }
     }
 
     abstract public void transition();

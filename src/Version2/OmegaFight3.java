@@ -103,6 +103,14 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static final double HITBOX_LEEWAY = 5;
     public static final int MAX_RGB_VAL = 255;
 
+    // Surge constants
+    // Surge Constants
+    public static final int NUM_SURGE_IMAGES = 5;
+    public static final int SURGE_FRAME_HZ = 6;
+    public static final int SURGE_TIME = NUM_SURGE_IMAGES * SURGE_FRAME_HZ;
+    public static final Coord SURGE_SIZE = new Coord(741, 949);
+    public static final int SURGE_SPRITE_WIN_CHECK = 2;
+
     // Gamestates
     public static final int STUDIO_ANIM_GS = -1;
     public static final int HOME_GS = 0;
@@ -212,6 +220,11 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
             Projectile.explosionImages[i] = ImageIO.read(new File("explosions/explosion" + i + ".png"));
         }
 
+        // Boss surge image importing
+        for (int i = 0; i != NUM_SURGE_IMAGES; i++) {
+            Boss.surge[i] = ImageIO.read(new File("explosions/bsurge" + i + ".png"));
+        }
+
         // Doctor projectile image importing
         Fastener.images[Fastener.NUT] = new BufferedImage[Fastener.NUM_SPRITES[Fastener.NUT]];
         for (int i = 0; i != Fastener.NUM_SPRITES[Fastener.NUT]; i++) {
@@ -238,6 +251,12 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         for (int i = 0; i != Meteor.NO_OF_SPRITES; i++) {
             Meteor.images[i] = ImageIO.read(new File("dragon projectiles/meteor" + i + ".png"));
         }
+        for (int i = 0; i != Bubble.NO_OF_SPRITES; i++) {
+            Bubble.images[i] = ImageIO.read(new File("dragon projectiles/bubble" + i + ".png"));
+        }
+        for (int i = 0; i != Fire.NO_OF_SPRITES; i++) {
+            Fire.images[i] = ImageIO.read(new File("dragon projectiles/fire" + i + ".png"));
+        }
 
         // Stages
         for (int i = 0; i != Stage.NO_OF_STAGES; i++) {
@@ -245,8 +264,11 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         }
 
         // Doctor image importing
-        for (int i = 0; i != Doctor.STATE_NO_SPRITES[Doctor.IDLE]; i++) {
-            Doctor.sprite[Doctor.STATE_SPRITE_START[Doctor.IDLE] + i] = ImageIO.read(new File("doctor/idle" + i + ".png"));
+        for (int i = 0; i != Doctor.STATE_NO_SPRITES[Boss.DEAD]; i++) {
+            Doctor.sprite[Doctor.STATE_SPRITE_START[Boss.DEAD] + i] = ImageIO.read(new File("doctor/dead" + i + ".png"));
+        }
+        for (int i = 0; i != Doctor.STATE_NO_SPRITES[Boss.IDLE]; i++) {
+            Doctor.sprite[Doctor.STATE_SPRITE_START[Boss.IDLE] + i] = ImageIO.read(new File("doctor/idle" + i + ".png"));
         }
         for (int i = 0; i != Doctor.STATE_NO_SPRITES[Doctor.SPIT]; i++) {
             Doctor.sprite[Doctor.STATE_SPRITE_START[Doctor.SPIT] + i] = ImageIO.read(new File("doctor/spit" + i + ".png"));
@@ -256,8 +278,11 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         }
 
         // Dragon image importing
-        for (int i = 0; i != Dragon.STATE_NO_SPRITES[Dragon.IDLE]; i++) {
-            Dragon.sprite[Dragon.STATE_SPRITE_START[Dragon.IDLE] + i] = ImageIO.read(new File("dragon/idle" + i + ".png"));
+        for (int i = 0; i != Dragon.STATE_NO_SPRITES[Boss.DEAD]; i++) {
+            Dragon.sprite[Dragon.STATE_SPRITE_START[Boss.DEAD] + i] = ImageIO.read(new File("dragon/dead" + i + ".png"));
+        }
+        for (int i = 0; i != Dragon.STATE_NO_SPRITES[Boss.IDLE]; i++) {
+            Dragon.sprite[Dragon.STATE_SPRITE_START[Boss.IDLE] + i] = ImageIO.read(new File("dragon/idle" + i + ".png"));
         }
         for (int i = 0; i != Dragon.STATE_NO_SPRITES[Dragon.DIZZY]; i++) {
             Dragon.sprite[Dragon.STATE_SPRITE_START[Dragon.DIZZY] + i] = ImageIO.read(new File("dragon/dizzy" + i + ".png"));
@@ -382,7 +407,8 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
             stage[stageNo].drawStage(g);
 
             for (Boss boss: bosses) {
-                boss.draw(g);
+                if (boss.state != Boss.DEAD || boss.coord.y <= OmegaFight3.SCREEN_SIZE.y + boss.size.y / 2) boss.draw(g);
+                else boss.drawSurge(g);
             }
 
             for (Omegaman omega: omegaman) {
@@ -404,11 +430,11 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
             
             for (Omegaman omega: omegaman) {
                 if (omega.state != Omegaman.ALIVE_STATE) {
-                    if (omega.frameCounter < Omegaman.SURGE_TIME) {
+                    if (omega.frameCounter < SURGE_TIME) {
                         omega.drawDiePercent(g);
                         omega.drawSurge(g2);
                     }
-                    else if (omega.frameCounter >= Omegaman.SURGE_TIME + Omegaman.RESPAWN_PAUSE) {
+                    else if (omega.frameCounter >= SURGE_TIME + Omegaman.RESPAWN_PAUSE) {
                         omega.drawRespawnPercent(g);
                         omega.draw(g);
                     }
@@ -466,8 +492,9 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                 for (Omegaman omega: omegaman) {
                     if (omega.state != Omegaman.ALIVE_STATE) {
                         omega.frameCounter++;
-                        if (omega.frameCounter == Omegaman.SURGE_TIME) omega.prepareForRespawn();
-                        else if (omega.frameCounter >= Omegaman.SURGE_TIME + Omegaman.RESPAWN_PAUSE) {
+                        // Check for loss
+                        if (omega.frameCounter == SURGE_TIME) omega.prepareForRespawn();
+                        else if (omega.frameCounter >= SURGE_TIME + Omegaman.RESPAWN_PAUSE) {
                             omega.respawn(pressedKey.contains(omega.dwnKey));
                             omega.countInv();
                         }
@@ -475,11 +502,21 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                 }
 
                 for (Boss boss: bosses) {
-                    if (boss.transitionTo != Boss.NO_TRANSITION) {
-                        boss.transition();
+                    if (boss.state != Boss.DEAD) {
+                        if (boss.transitionTo != Boss.NO_TRANSITION) {
+                            boss.transition();
+                        }
+                        else boss.attack();
+                        boss.backgroundAttack();
                     }
-                    else boss.attack();
-                    boss.backgroundAttack();
+                    else {
+                        if (boss.coord.y <= OmegaFight3.SCREEN_SIZE.y + boss.size.y / 2) {
+                            boss.fall();
+                        }
+                        else {
+                            boss.surge();
+                        }
+                    }
                 }
 
                 // Check for loss

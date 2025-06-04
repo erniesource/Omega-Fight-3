@@ -5,7 +5,8 @@ import java.awt.image.BufferedImage;
 
 public class Dragon extends Boss{
     // Background attack variables
-    
+    public int bubbleCounter;
+    public int fireCounter;
 
     // Combat constants
     public static final double INITIAL_HEALTH = 500 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
@@ -32,7 +33,7 @@ public class Dragon extends Boss{
     // Dizzy Constants
     public static final int DIZZY_NUM_PROJS = 3;
     public static final int DIZZY_HZ = 15;
-    public static final int DIZZY_PAUSE = 120;
+    public static final int DIZZY_PAUSE = 80;
     public static final Coord COORD_TO_DIZZY_COORD = new Coord(STATE_SIZE[DIZZY].x / 8, -STATE_SIZE[DIZZY].y / 3);
 
     // Barf constants
@@ -40,13 +41,13 @@ public class Dragon extends Boss{
     public static final Coord COORD_TO_BARF_COORD = new Coord(STATE_SIZE[BARF].x * 7 / 25, -STATE_SIZE[BARF].y / 5);
 
     // Background attack constants
-    public static final double ORB_AMT_SCALING_TO_HEALTH = 0.3;
-    public static final int ORB_HZ = 600;
-    public static final int MIN_ORB_HZ = 300;
-    public static final double ORB_THRESHOLD = 0.7;
+    public static final double BUBBLE_AMT_SCALING_TO_HEALTH = 0.3;
+    public static final int BUBBLE_HZ = 240;
+    public static final int MIN_BUBBLE_HZ = 120;
+    public static final double BUBBLE_THRESHOLD = 0.7;
     public static final double FIRE_AMT_SCALING_TO_HEALTH = 0.25;
-    public static final int FIRE_HZ = 720;
-    public static final int MIN_FIRE_HZ = 360;
+    public static final int FIRE_HZ = 240;
+    public static final int MIN_FIRE_HZ = 120;
     public static final double FIRE_THRESHOLD = 0.4;
 
     // Images
@@ -114,7 +115,7 @@ public class Dragon extends Boss{
             }
         }
         if (frameCounter == 0) {
-            transitionTo = BARF;//(int) (Math.random() * (NO_OF_STATES - 1)) + 1;
+            transitionTo = (int) (Math.random() * (NO_OF_STATES - 1)) + 1;
             if (transitionTo == state) {
                 transitionTo = NO_TRANSITION;
                 frameCounter = STATE_TIME[state];
@@ -128,34 +129,26 @@ public class Dragon extends Boss{
     }
 
     public void backgroundAttack() {
-        // if (health < INITIAL_HEALTH * difficulty * PINCER_THRESHOLD) {
-        //     pincerCounter++;
-        //     if (pincerCounter >= Math.max(MIN_PINCER_HZ, PINCER_HZ * health / (INITIAL_HEALTH * difficulty * PINCER_THRESHOLD) / PINCER_AMT_SCALING_TO_HEALTH)) {
-        //         projectiles.add(new Pincer(this, new Coord((int) (Math.random() * 2) * OmegaFight3.SCREEN_SIZE.x, (int) (Math.random() * 2) * OmegaFight3.SCREEN_SIZE.y)));
-        //         pincerCounter = 0;
-        //     }
-        // }
-        // if (health < INITIAL_HEALTH * difficulty * BOMBOT_THRESHOLD) {
-        //     bombotCounter++;
-        //     if (bombotCounter >= Math.max(MIN_BOMBOT_HZ, BOMBOT_HZ * health / (INITIAL_HEALTH * difficulty * BOMBOT_THRESHOLD) / BOMBOT_AMT_SCALING_TO_HEALTH)) {
-        //         int spawn = (int) (Math.random() * BOMBOT_NUM_SPAWN_LOCS);
-        //         if (spawn == LEFT_SPAWN) {
-        //             projectiles.add(new Bombot(this, new Coord(0, OmegaFight3.SCREEN_SIZE.y * Math.random()), 0, OmegaFight3.RIGHT_SIGN));
-        //         }
-        //         else if (spawn == RIGHT_SPAWN) {
-        //             projectiles.add(new Bombot(this, new Coord(OmegaFight3.SCREEN_SIZE.x, OmegaFight3.SCREEN_SIZE.y * Math.random()), Math.PI, OmegaFight3.LEFT_SIGN));
-        //         }
-        //         bombotCounter = 0;
-        //     }
-        // }
+        if (health < INITIAL_HEALTH * difficulty * BUBBLE_THRESHOLD) {
+            bubbleCounter++;
+            if (bubbleCounter >= Math.max(MIN_BUBBLE_HZ, BUBBLE_HZ * health / (INITIAL_HEALTH * difficulty * BUBBLE_THRESHOLD) / BUBBLE_AMT_SCALING_TO_HEALTH)) {
+                projectiles.add(new Bubble(this, new Coord((int) (Math.random() * 2) * OmegaFight3.SCREEN_SIZE.x, OmegaFight3.SCREEN_SIZE.y - Bubble.SIZE.y / 2)));
+                bubbleCounter = 0;
+            }
+        }
+        if (health < INITIAL_HEALTH * difficulty * FIRE_THRESHOLD) {
+            fireCounter++;
+            if (fireCounter >= Math.max(MIN_FIRE_HZ, FIRE_HZ * health / (INITIAL_HEALTH * difficulty * FIRE_THRESHOLD) / FIRE_AMT_SCALING_TO_HEALTH)) {
+                projectiles.add(new Fire(this, new Coord(Math.random() * (OmegaFight3.SCREEN_SIZE.x - Fire.SIZE.x) + Fire.SIZE.x / 2, 0), Math.PI / 2));
+                fireCounter = 0;
+            }
+        }
     }
 
     public void draw(Graphics g) {
         if (!hurt || hurtCounter >= HURT_BLINK_HZ) {
-            if (health > 0) {
-                if (spriteSign == 1) g.drawImage(sprite[spriteNo], (int) (coord.x - size.x / 2), (int) (coord.y - size.y / 2), null);
-                else g.drawImage(sprite[spriteNo], (int) (coord.x - size.x / 2 + size.x), (int) (coord.y - size.y / 2), (int) -size.x, (int) size.y, null);
-            }
+            if (spriteSign == 1) g.drawImage(sprite[spriteNo], (int) (coord.x - size.x / 2), (int) (coord.y - size.y / 2), null);
+            else g.drawImage(sprite[spriteNo], (int) (coord.x - size.x / 2 + size.x), (int) (coord.y - size.y / 2), (int) -size.x, (int) size.y, null);
         }
         if (hurt) {
             hurtCounter = (hurtCounter + 1) % (HURT_BLINK_HZ * 2);
@@ -164,5 +157,23 @@ public class Dragon extends Boss{
         else {
             hurtCounter = Boss.NOT_HURT;
         }
+    }
+
+    public void fall() {
+        super.fall();
+        frameCounter = (frameCounter + 1) % STATE_SPRITE_CHANGE_HZ[DEAD];
+        if (frameCounter == 0) {
+            spriteNo = (spriteNo + 1) % STATE_NO_SPRITES[DEAD];
+        }
+        if (coord.y > OmegaFight3.SCREEN_SIZE.y + size.y / 2) {
+            frameCounter = 0;
+            spriteNo = 0;
+        }
+    }
+
+    public void prepareToDie() {
+        super.prepareToDie();
+        spriteNo = STATE_SPRITE_START[DEAD];
+        size = STATE_SIZE[DEAD];
     }
 }

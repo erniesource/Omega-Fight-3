@@ -5,8 +5,8 @@ import java.awt.image.BufferedImage;
 
 public class Doctor extends Boss {
     // Background attack variables
-    int pincerCounter;
-    int bombotCounter;
+    public int pincerCounter;
+    public int bombotCounter;
 
     // Combat constants
     public static final double INITIAL_HEALTH = 750 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
@@ -23,7 +23,7 @@ public class Doctor extends Boss {
     public static final int LAUGH = 3;
     public static final int NO_OF_STATES = 4;
     public static final int TRANSITION_TIME = OmegaFight3.FPS * 2;
-    public static final Coord[] STATE_SIZE = {new Coord(390, 430), new Coord(280, 400), new Coord(280, 440), new Coord(400, 525)};
+    public static final Coord[] STATE_SIZE = {new Coord(220, 420), new Coord(280, 400), new Coord(280, 440), new Coord(400, 525)};
     public static final int[] STATE_SPRITE_CHANGE_HZ = {10, 10, 7, 5};
     public static final Coord[] STATE_COORD = {null, new Coord(OmegaFight3.SCREEN_SIZE.x * 7 / 8, OmegaFight3.SCREEN_SIZE.y / 2),
         new Coord(OmegaFight3.SCREEN_SIZE.x * 7 / 8, OmegaFight3.stage[Stage.BATTLEFIELD_NO].platforms[1].y - (OmegaFight3.stage[Stage.BATTLEFIELD_NO].platforms[0].y - OmegaFight3.stage[Stage.BATTLEFIELD_NO].platforms[1].y)),
@@ -163,10 +163,8 @@ public class Doctor extends Boss {
 
     public void draw(Graphics g) {
         if (!hurt || hurtCounter >= HURT_BLINK_HZ) {
-            if (health > 0) {
-                if (spriteSign == 1) g.drawImage(sprite[spriteNo], (int) (coord.x - size.x / 2), (int) (coord.y - size.y / 2), null);
-                else g.drawImage(sprite[spriteNo], (int) (coord.x - size.x / 2 + size.x), (int) (coord.y - size.y / 2), (int) -size.x, (int) size.y, null);
-            }
+            if (spriteSign == 1) g.drawImage(sprite[spriteNo], (int) (coord.x - size.x / 2), (int) (coord.y - size.y / 2), null);
+            else g.drawImage(sprite[spriteNo], (int) (coord.x - size.x / 2 + size.x), (int) (coord.y - size.y / 2), (int) -size.x, (int) size.y, null);
         }
         if (hurt) {
             hurtCounter = (hurtCounter + 1) % (HURT_BLINK_HZ * 2);
@@ -175,5 +173,23 @@ public class Doctor extends Boss {
         else {
             hurtCounter = Boss.NOT_HURT;
         }
+    }
+
+    public void fall() {
+        super.fall();
+        frameCounter = (frameCounter + 1) % STATE_SPRITE_CHANGE_HZ[DEAD];
+        if (frameCounter == 0) {
+            spriteNo = (spriteNo + 1) % STATE_NO_SPRITES[DEAD];
+        }
+        if (coord.y > OmegaFight3.SCREEN_SIZE.y + size.y / 2) {
+            frameCounter = 0;
+            spriteNo = 0;
+        }
+    }
+
+    public void prepareToDie() {
+        super.prepareToDie();
+        spriteNo = STATE_SPRITE_START[DEAD];
+        size = STATE_SIZE[DEAD];
     }
 }

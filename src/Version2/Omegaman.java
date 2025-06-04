@@ -27,7 +27,7 @@ public class Omegaman extends Char {
     public int chargingWeapon = -1;
     public int[] loadout;
     public int[] loadoutButtono;
-    public Deque<Integer> stalenessQ = new LinkedList<>(); // To be used maybe
+    public Deque<Integer> smokeQ = new LinkedList<>(); // To be used maybe
 
     // Skill point statistics
     public int skillPts = ONES_PER_SKILL_PT * 3 / 2;
@@ -47,7 +47,7 @@ public class Omegaman extends Char {
     // Images
     public BufferedImage[] sprite = new BufferedImage[6];
     public BufferedImage percentDisplay;
-    public BufferedImage[] surge = new BufferedImage[NUM_SURGE_IMAGES];
+    public BufferedImage[] surge = new BufferedImage[OmegaFight3.NUM_SURGE_IMAGES];
 
     // Other stats
     public int playerNo;
@@ -95,11 +95,11 @@ public class Omegaman extends Char {
     public static final int NOT_STUNNED = 0;
     public static final int KB_COORD_Y_OFFSET = 50;
     public static final double KB_GRAVITY = 1.25;
-    public static final double BOUNCE_MIN_VEL_Y = 20;
+    public static final double BOUNCE_MIN_VEL_Y = 11;
     public static final double STUN_REDUCTION = 0.9;
 
     // Kamikaze constants
-    public static final double KAMIKAZE_DMG = 3 * Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
+    public static final double KAMIKAZE_DMG = 1 * Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
     public static final double KAMIKAZE_KB = 10;
     public static final int KAMIKAZE_SCREENSHAKE = 0;
     public static final double KAMIKAZE_DIST = 0.5;
@@ -135,12 +135,6 @@ public class Omegaman extends Char {
     // Stat reset constants
     public static final int DIED_STAT_RESET = 0;
     public static final int GENERAL_STAT_RESET = -1;
-
-    // Surge Constants
-    public static final int NUM_SURGE_IMAGES = 5;
-    public static final int SURGE_FRAME_HZ = 6;
-    public static final int SURGE_TIME = NUM_SURGE_IMAGES * SURGE_FRAME_HZ;
-    public static final Coord SURGE_SIZE = new Coord(741, 949);
 
     // Fonts and Colors
     public static final Font BIG_PERCENT_FONT = new Font("Impact", Font.PLAIN, (int) (PERCENT_DISPLAY_SIZE.y * 8 / 15));
@@ -183,7 +177,7 @@ public class Omegaman extends Char {
         sprite[HURT_SPRITE] = ImageIO.read(new File("player sprites/" + playerNo + "hurt.png"));
 
         // Load surge images
-        for (int i = 0; i != NUM_SURGE_IMAGES; i++) {
+        for (int i = 0; i != OmegaFight3.NUM_SURGE_IMAGES; i++) {
             surge[i] = ImageIO.read(new File("explosions/" + playerNo + "surge" + i + ".png"));
         }
     }
@@ -526,31 +520,31 @@ public class Omegaman extends Char {
 
     public void drawSurge(Graphics2D g2) {
         double rotation = Math.PI / 2 * (state - 1);
-        BufferedImage surgeImage = surge[frameCounter / SURGE_FRAME_HZ];
+        BufferedImage surgeImage = surge[frameCounter / OmegaFight3.SURGE_FRAME_HZ];
         if (state == DIED_BOTTOM) {
-            g2.rotate(rotation, coord.x, OmegaFight3.SCREEN_SIZE.y - SURGE_SIZE.y / 2);
-            g2.drawImage(surgeImage, (int) (coord.x - SURGE_SIZE.x / 2), (int) (OmegaFight3.SCREEN_SIZE.y - SURGE_SIZE.y), null);
-            g2.rotate(-rotation, coord.x, OmegaFight3.SCREEN_SIZE.y - SURGE_SIZE.y / 2);
+            g2.rotate(rotation, coord.x, OmegaFight3.SCREEN_SIZE.y - OmegaFight3.SURGE_SIZE.y / 2);
+            g2.drawImage(surgeImage, (int) (coord.x - OmegaFight3.SURGE_SIZE.x / 2), (int) (OmegaFight3.SCREEN_SIZE.y - OmegaFight3.SURGE_SIZE.y), null);
+            g2.rotate(-rotation, coord.x, OmegaFight3.SCREEN_SIZE.y - OmegaFight3.SURGE_SIZE.y / 2);
         }
         else if (state == DIED_LEFT) {
-            g2.rotate(rotation, SURGE_SIZE.y / 2, coord.y);
-            g2.drawImage(surgeImage, (int) ((SURGE_SIZE.y - SURGE_SIZE.x) / 2), (int) (coord.y - SURGE_SIZE.y / 2), null);
-            g2.rotate(-rotation, SURGE_SIZE.y / 2, coord.y);
+            g2.rotate(rotation, OmegaFight3.SURGE_SIZE.y / 2, coord.y);
+            g2.drawImage(surgeImage, (int) ((OmegaFight3.SURGE_SIZE.y - OmegaFight3.SURGE_SIZE.x) / 2), (int) (coord.y - OmegaFight3.SURGE_SIZE.y / 2), null);
+            g2.rotate(-rotation, OmegaFight3.SURGE_SIZE.y / 2, coord.y);
         }
         else if (state == DIED_TOP) {
-            g2.rotate(rotation, coord.x, SURGE_SIZE.y / 2);
-            g2.drawImage(surgeImage, (int) (coord.x - SURGE_SIZE.x / 2), 0, null);
-            g2.rotate(-rotation, coord.x, SURGE_SIZE.y / 2);
+            g2.rotate(rotation, coord.x, OmegaFight3.SURGE_SIZE.y / 2);
+            g2.drawImage(surgeImage, (int) (coord.x - OmegaFight3.SURGE_SIZE.x / 2), 0, null);
+            g2.rotate(-rotation, coord.x, OmegaFight3.SURGE_SIZE.y / 2);
         }
         else if (state == DIED_RIGHT) {
-            g2.rotate(rotation, OmegaFight3.SCREEN_SIZE.x - SURGE_SIZE.y / 2, coord.y);
-            g2.drawImage(surgeImage, (int) (OmegaFight3.SCREEN_SIZE.x - (SURGE_SIZE.x + SURGE_SIZE.y) / 2), (int) (coord.y - SURGE_SIZE.y / 2), null);
-            g2.rotate(-rotation, OmegaFight3.SCREEN_SIZE.x - SURGE_SIZE.y / 2, coord.y);
+            g2.rotate(rotation, OmegaFight3.SCREEN_SIZE.x - OmegaFight3.SURGE_SIZE.y / 2, coord.y);
+            g2.drawImage(surgeImage, (int) (OmegaFight3.SCREEN_SIZE.x - (OmegaFight3.SURGE_SIZE.x + OmegaFight3.SURGE_SIZE.y) / 2), (int) (coord.y - OmegaFight3.SURGE_SIZE.y / 2), null);
+            g2.rotate(-rotation, OmegaFight3.SCREEN_SIZE.x - OmegaFight3.SURGE_SIZE.y / 2, coord.y);
         }
     }
 
     public void drawDiePercent(Graphics g) {
-        drawStillPercent((int) OmegaFight3.lerp(PERCENT_DISPLAY_Y_COORD + (int) PERCENT_DISPLAY_SIZE_TO_PERCENT_COORD.y, OmegaFight3.SCREEN_SIZE.y + BIG_PERCENT_FONT.getSize(), (double) frameCounter / SURGE_TIME), g);
+        drawStillPercent((int) OmegaFight3.lerp(PERCENT_DISPLAY_Y_COORD + (int) PERCENT_DISPLAY_SIZE_TO_PERCENT_COORD.y, OmegaFight3.SCREEN_SIZE.y + BIG_PERCENT_FONT.getSize(), (double) frameCounter / OmegaFight3.SURGE_TIME), g);
     }
 
     public void drawRespawnPercent(Graphics g) {
@@ -562,7 +556,7 @@ public class Omegaman extends Char {
             velocity.y--;
             coord.y += velocity.y;
         }
-        else if (dwnPressed || frameCounter == SURGE_TIME + RESPAWN_PAUSE + RESPAWN_INITIAL_VELOCITY + RESPAWN_TIME_LIMIT) {
+        else if (dwnPressed || frameCounter == OmegaFight3.SURGE_TIME + RESPAWN_PAUSE + RESPAWN_INITIAL_VELOCITY + RESPAWN_TIME_LIMIT) {
             state = ALIVE_STATE;
             frameCounter = 0;
             spriteNo = JUMP_SPRITE;
