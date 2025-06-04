@@ -17,6 +17,7 @@ public class Fastener extends Projectile {
 
     // Size constants
     public static final Coord SIZE = new Coord(80, 75);
+    public static final double SIZE_TO_HITBOX = 0.75;
 
     // Movement constants
     public static final double VELOCITY = 25;
@@ -36,7 +37,7 @@ public class Fastener extends Projectile {
     public static final int SPRITE_CHANGE_HZ = 5;
 
     public Fastener(Boss boss, Coord coord, Coord size, double velocity, double dir, double damage, double knockback, double durability, int frameCounter, boolean canHitProj) {
-        super(boss, coord, size, size, velocity, dir, damage, knockback, durability, frameCounter, canHitProj);
+        super(boss, coord, size, size.scaledBy(SIZE_TO_HITBOX), velocity, dir, damage, knockback, durability, frameCounter, canHitProj); // DO SCALED BY STUFF FOR HITBOX SO IT DOESN't FEEL SO BAD
         fastenerVelocity = new Coord(velocity * Math.cos(dir), velocity * Math.sin(dir));
         type = (int) (Math.random() * NO_OF_TYPES);
     }
@@ -94,6 +95,7 @@ class Energy extends Projectile {
 
     // Size constants
     public static final Coord SIZE = new Coord(75, 55);
+    public static final double SIZE_TO_HITBOX = 0.7;
 
     // Movement constants
     public static final double VELOCITY = 4;
@@ -108,7 +110,7 @@ class Energy extends Projectile {
     public static final int SPRITE_CHANGE_HZ = 10;
 
     public Energy(Boss boss, Coord coord, Coord size, double velocity, double dir, double damage, double knockback, double durability, int frameCounter, boolean canHitProj) {
-        super(boss, coord, size, size, velocity, dir, damage, knockback, durability, frameCounter, canHitProj);
+        super(boss, coord, size, size.scaledBy(SIZE_TO_HITBOX), velocity, dir, damage, knockback, durability, frameCounter, canHitProj);
     }
 
     public Energy(Boss boss, Coord coord, double dir) {
@@ -130,10 +132,16 @@ class Energy extends Projectile {
             die();
         }
         for (Omegaman enemy: OmegaFight3.omegaman) {
-            if (enemy != character) {
-                if (OmegaFight3.intersects(coord, hitBoxSize, enemy.coord, enemy.size, OmegaFight3.HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
-                    enemy.hurt(damage, knockback, coord, dir, KB_SPREAD, SCREENSHAKE);
-                    die();
+            if (OmegaFight3.intersects(coord, hitBoxSize, enemy.coord, enemy.size, OmegaFight3.HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
+                enemy.hurt(damage, knockback, coord, dir, KB_SPREAD, SCREENSHAKE);
+                die();
+            }
+            if (canHitProj) {
+                for (Projectile proj: enemy.projectiles) {
+                    if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, OmegaFight3.HITBOX_LEEWAY) && proj.hitBoxActive && proj.canHitProj) {
+                        if (shouldDieTo(proj.durability)) die();
+                        if (proj.shouldDieTo(durability)) proj.die();
+                    }
                 }
             }
         }
@@ -153,7 +161,7 @@ class Pincer extends Projectile {
     public static final double KB_SPREAD = Math.PI / 3;
 
     // Size constants
-    public static final Coord SIZE = new Coord(90, 90);
+    public static final Coord SIZE = new Coord(80, 90);
 
     // Movement constants
     public static final double VELOCITY = 6;
@@ -205,15 +213,11 @@ class Pincer extends Projectile {
             die();
         }
         for (Omegaman enemy: OmegaFight3.omegaman) {
-            if (enemy != character) {
-                if (OmegaFight3.intersects(coord, hitBoxSize, enemy.coord, enemy.size, OmegaFight3.HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
-                    enemy.hurt(damage, knockback, coord, dir, KB_SPREAD, SCREENSHAKE);
-                    die();
-                }
+            if (OmegaFight3.intersects(coord, hitBoxSize, enemy.coord, enemy.size, OmegaFight3.HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
+                enemy.hurt(damage, knockback, coord, dir, KB_SPREAD, SCREENSHAKE);
+                die();
             }
-        }
-        if (canHitProj) {
-            for (Omegaman enemy: OmegaFight3.omegaman) {
+            if (canHitProj) {
                 for (Projectile proj: enemy.projectiles) {
                     if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, OmegaFight3.HITBOX_LEEWAY) && proj.hitBoxActive && proj.canHitProj) {
                         if (shouldDieTo(proj.durability)) die();
@@ -310,17 +314,15 @@ class Bombot extends Projectile {
                 die();
             }
             for (Omegaman enemy: OmegaFight3.omegaman) {
-                if (enemy != character) {
-                    if (OmegaFight3.intersects(coord, hitBoxSize, enemy.coord, enemy.size, OmegaFight3.HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
-                        enemy.hurt(damage, knockback, coord, dir, KB_SPREAD, (int) (SCREENSHAKE * (size.x / SIZE.x)));
-                        die();
-                    }
-                    if (canHitProj) {
-                        for (Projectile proj: enemy.projectiles) {
-                            if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, OmegaFight3.HITBOX_LEEWAY) && proj.hitBoxActive && proj.canHitProj) {
-                                die();
-                                if (proj.shouldDieTo(durability)) proj.die();
-                            }
+                if (OmegaFight3.intersects(coord, hitBoxSize, enemy.coord, enemy.size, OmegaFight3.HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
+                    enemy.hurt(damage, knockback, coord, dir, KB_SPREAD, (int) (SCREENSHAKE * (size.x / SIZE.x)));
+                    die();
+                }
+                if (canHitProj) {
+                    for (Projectile proj: enemy.projectiles) {
+                        if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, OmegaFight3.HITBOX_LEEWAY) && proj.hitBoxActive && proj.canHitProj) {
+                            die();
+                            if (proj.shouldDieTo(durability)) proj.die();
                         }
                     }
                 }

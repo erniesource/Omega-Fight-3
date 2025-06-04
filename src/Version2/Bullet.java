@@ -61,14 +61,14 @@ public class Bullet extends Projectile {
         }
 
         for (Boss boss: OmegaFight3.bosses) {
-            if (OmegaFight3.intersects(coord, hitBoxSize, boss.coord, boss.size, Boss.BOSS_HITBOX_LEEWAY)) {
+            if (OmegaFight3.intersects(coord, hitBoxSize, boss.coord, boss.size, Boss.BOSS_HITBOX_LEEWAY * Math.min(boss.size.x, boss.size.y))) {
                 boss.hurt(damage);
                 die();
                 ((Omegaman) character).skillPts = Math.min(((Omegaman) character).skillPts + SKILL_PT_GAIN, Omegaman.MAX_SKILL_PTS);
             }
             if (canHitProj) {
                 for (Projectile proj: boss.projectiles) {
-                    if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, Boss.BOSS_HITBOX_LEEWAY) && proj.hitBoxActive && proj.canHitProj) {
+                    if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, Boss.BOSS_HITBOX_LEEWAY * Math.min(boss.size.x, boss.size.y)) && proj.hitBoxActive && proj.canHitProj) {
                         if (shouldDieTo(proj.durability)) die();
                         if (proj.shouldDieTo(durability)) proj.die();
                     }
@@ -150,13 +150,13 @@ class Rocket extends Projectile {
             }
             
             for (Boss boss: OmegaFight3.bosses) {
-                if (OmegaFight3.intersects(coord, hitBoxSize, boss.coord, boss.size, Boss.BOSS_HITBOX_LEEWAY)) {
+                if (OmegaFight3.intersects(coord, hitBoxSize, boss.coord, boss.size, Boss.BOSS_HITBOX_LEEWAY * Math.min(boss.size.x, boss.size.y))) {
                     boss.hurt(damage);
                     die();
                 }
                 if (canHitProj) {
                     for (Projectile proj: boss.projectiles) {
-                        if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, Boss.BOSS_HITBOX_LEEWAY) && proj.hitBoxActive && proj.canHitProj) {
+                        if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, Boss.BOSS_HITBOX_LEEWAY * Math.min(boss.size.x, boss.size.y)) && proj.hitBoxActive && proj.canHitProj) {
                             die();
                             if (proj.shouldDieTo(durability)) proj.die();
                         }
@@ -238,14 +238,14 @@ class Shotgun extends Projectile {
             }
         }
         for (Boss boss: OmegaFight3.bosses) {
-            if (OmegaFight3.intersects(coord, hitBoxSize, boss.coord, boss.size, Boss.BOSS_HITBOX_LEEWAY)) {
+            if (OmegaFight3.intersects(coord, hitBoxSize, boss.coord, boss.size, Boss.BOSS_HITBOX_LEEWAY * Math.min(boss.size.x, boss.size.y))) {
                 boss.hurt(damage);
                 die();
                 ((Omegaman) character).skillPts = Math.min(((Omegaman) character).skillPts + SKILL_PT_GAIN, Omegaman.MAX_SKILL_PTS);
             }
             if (canHitProj) {
                 for (Projectile proj: boss.projectiles) {
-                    if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, Boss.BOSS_HITBOX_LEEWAY) && proj.hitBoxActive && proj.canHitProj) {
+                    if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, Boss.BOSS_HITBOX_LEEWAY * Math.min(boss.size.x, boss.size.y)) && proj.hitBoxActive && proj.canHitProj) {
                         if (shouldDieTo(proj.durability)) die();
                         if (proj.shouldDieTo(durability)) proj.die();
                     }
@@ -315,13 +315,13 @@ class Firework extends Projectile {
         }
 
         for (Boss boss: OmegaFight3.bosses) {
-            if (OmegaFight3.intersects(coord, hitBoxSize, boss.coord, boss.size, Boss.BOSS_HITBOX_LEEWAY)) {
+            if (OmegaFight3.intersects(coord, hitBoxSize, boss.coord, boss.size, Boss.BOSS_HITBOX_LEEWAY * Math.min(boss.size.x, boss.size.y))) {
                 boss.hurt(damage);
                 die();
             }
             if (canHitProj) {
                 for (Projectile proj: boss.projectiles) {
-                    if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, Boss.BOSS_HITBOX_LEEWAY) && proj.hitBoxActive && proj.canHitProj) {
+                    if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, Boss.BOSS_HITBOX_LEEWAY * Math.min(boss.size.x, boss.size.y)) && proj.hitBoxActive && proj.canHitProj) {
                         if (proj.shouldDieTo(durability)) proj.die();
                     }
                 }
@@ -396,14 +396,14 @@ class Spammer extends Projectile {
             }
         }
         for (Boss boss: OmegaFight3.bosses) {
-            if (OmegaFight3.intersects(coord, hitBoxSize, boss.coord, boss.size, Boss.BOSS_HITBOX_LEEWAY)) {
+            if (OmegaFight3.intersects(coord, hitBoxSize, boss.coord, boss.size, Boss.BOSS_HITBOX_LEEWAY * Math.min(boss.size.x, boss.size.y))) {
                 boss.hurt(damage);
                 die();
                 ((Omegaman) character).skillPts = Math.min(((Omegaman) character).skillPts + SKILL_PT_GAIN, Omegaman.MAX_SKILL_PTS);
             }
             if (canHitProj) {
                 for (Projectile proj: boss.projectiles) {
-                    if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, Boss.BOSS_HITBOX_LEEWAY) && proj.hitBoxActive && proj.canHitProj) {
+                    if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, Boss.BOSS_HITBOX_LEEWAY * Math.min(boss.size.x, boss.size.y)) && proj.hitBoxActive && proj.canHitProj) {
                         if (shouldDieTo(proj.durability)) die();
                         if (proj.shouldDieTo(durability)) proj.die();
                     }
@@ -520,13 +520,13 @@ class Missile extends Projectile {
                     }
                 }
                 for (Boss boss: OmegaFight3.bosses) {
-                    if (OmegaFight3.intersects(coord, hitBoxSize, boss.coord, boss.size, Boss.BOSS_HITBOX_LEEWAY)) {
+                    if (OmegaFight3.intersects(coord, hitBoxSize, boss.coord, boss.size, Boss.BOSS_HITBOX_LEEWAY * Math.min(boss.size.x, boss.size.y))) {
                         boss.hurt(damage);
                         die();
                     }
                     if (canHitProj) {
                         for (Projectile proj: boss.projectiles) {
-                            if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, Boss.BOSS_HITBOX_LEEWAY) && proj.hitBoxActive && proj.canHitProj) {
+                            if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, Boss.BOSS_HITBOX_LEEWAY * Math.min(boss.size.x, boss.size.y)) && proj.hitBoxActive && proj.canHitProj) {
                                 die();
                                 if (proj.shouldDieTo(durability)) proj.die();
                             }
@@ -606,14 +606,14 @@ class Sniper extends Projectile {
             }
         }
         for (Boss boss: OmegaFight3.bosses) {
-            if (OmegaFight3.intersects(coord, hitBoxSize, boss.coord, boss.size, Boss.BOSS_HITBOX_LEEWAY)) {
+            if (OmegaFight3.intersects(coord, hitBoxSize, boss.coord, boss.size, Boss.BOSS_HITBOX_LEEWAY * Math.min(boss.size.x, boss.size.y))) {
                 boss.hurt(damage * velocity / VELOCITY);
                 die();
                 ((Omegaman) character).skillPts = Math.min(((Omegaman) character).skillPts + SKILL_PT_GAIN, Omegaman.MAX_SKILL_PTS);
             }
             if (canHitProj) {
                 for (Projectile proj: boss.projectiles) {
-                    if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, Boss.BOSS_HITBOX_LEEWAY) && proj.hitBoxActive && proj.canHitProj) {
+                    if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, Boss.BOSS_HITBOX_LEEWAY * Math.min(boss.size.x, boss.size.y)) && proj.hitBoxActive && proj.canHitProj) {
                         if (shouldDieTo(proj.durability)) die();
                         if (proj.shouldDieTo(durability)) proj.die();
                     }
@@ -683,12 +683,12 @@ class Laser extends Projectile {
             }
         }
         for (Boss boss: OmegaFight3.bosses) {
-            if (OmegaFight3.intersects(coord, hitBoxSize, boss.coord, boss.size, Boss.BOSS_HITBOX_LEEWAY)) {
+            if (OmegaFight3.intersects(coord, hitBoxSize, boss.coord, boss.size, Boss.BOSS_HITBOX_LEEWAY * Math.min(boss.size.x, boss.size.y))) {
                 boss.hurt(damage);
             }
             if (canHitProj) {
                 for (Projectile proj: boss.projectiles) {
-                    if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, Boss.BOSS_HITBOX_LEEWAY) && proj.hitBoxActive && proj.canHitProj) {
+                    if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, Boss.BOSS_HITBOX_LEEWAY * Math.min(boss.size.x, boss.size.y)) && proj.hitBoxActive && proj.canHitProj) {
                         if (proj.shouldDieTo(durability)) proj.die();
                     }
                 }
@@ -764,14 +764,14 @@ class Boomer extends Projectile {
             }
         }
         for (Boss boss: OmegaFight3.bosses) {
-            if (OmegaFight3.intersects(coord, hitBoxSize, boss.coord, boss.size, Boss.BOSS_HITBOX_LEEWAY)) {
+            if (OmegaFight3.intersects(coord, hitBoxSize, boss.coord, boss.size, Boss.BOSS_HITBOX_LEEWAY * Math.min(boss.size.x, boss.size.y))) {
                 int multiplier = velocity < 0? 2: 1;
                 boss.hurt(damage * multiplier);
                 die();
             }
             if (canHitProj) {
                 for (Projectile proj: boss.projectiles) {
-                    if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, Boss.BOSS_HITBOX_LEEWAY) && proj.hitBoxActive && proj.canHitProj) {
+                    if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, Boss.BOSS_HITBOX_LEEWAY * Math.min(boss.size.x, boss.size.y)) && proj.hitBoxActive && proj.canHitProj) {
                         if (shouldDieTo(proj.durability)) die();
                         if (proj.shouldDieTo(durability)) proj.die();
                     }
@@ -842,12 +842,12 @@ class Bouncer extends Projectile {
             }
         }
         for (Boss boss: OmegaFight3.bosses) {
-            if (OmegaFight3.intersects(coord, hitBoxSize, boss.coord, boss.size, Boss.BOSS_HITBOX_LEEWAY)) {
+            if (OmegaFight3.intersects(coord, hitBoxSize, boss.coord, boss.size, Boss.BOSS_HITBOX_LEEWAY * Math.min(boss.size.x, boss.size.y))) {
                 boss.hurt(damage);
             }
             if (canHitProj) {
                 for (Projectile proj: boss.projectiles) {
-                    if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, Boss.BOSS_HITBOX_LEEWAY) && proj.hitBoxActive && proj.canHitProj) {
+                    if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, Boss.BOSS_HITBOX_LEEWAY * Math.min(boss.size.x, boss.size.y)) && proj.hitBoxActive && proj.canHitProj) {
                         if (proj.shouldDieTo(durability)) proj.die();
                     }
                 }
@@ -926,12 +926,12 @@ class Spike extends Projectile {
             }
         }
         for (Boss boss: OmegaFight3.bosses) {
-            if (OmegaFight3.intersects(coord, hitBoxSize, boss.coord, boss.size, Boss.BOSS_HITBOX_LEEWAY)) {
+            if (OmegaFight3.intersects(coord, hitBoxSize, boss.coord, boss.size, Boss.BOSS_HITBOX_LEEWAY * Math.min(boss.size.x, boss.size.y))) {
                 die();
             }
             if (canHitProj) {
                 for (Projectile proj: boss.projectiles) {
-                    if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, Boss.BOSS_HITBOX_LEEWAY) && proj.hitBoxActive && proj.canHitProj) {
+                    if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, Boss.BOSS_HITBOX_LEEWAY * Math.min(boss.size.x, boss.size.y)) && proj.hitBoxActive && proj.canHitProj) {
                         die();
                         if (proj.shouldDieTo(durability)) proj.die();
                     }
@@ -1015,14 +1015,14 @@ class Thorn extends Projectile {
             }
         }
         for (Boss boss: OmegaFight3.bosses) {
-            if (OmegaFight3.intersects(coord, hitBoxSize, boss.coord, boss.size, Boss.BOSS_HITBOX_LEEWAY)) {
+            if (OmegaFight3.intersects(coord, hitBoxSize, boss.coord, boss.size, Boss.BOSS_HITBOX_LEEWAY * Math.min(boss.size.x, boss.size.y))) {
                 boss.hurt(damage);
                 die();
                 ((Omegaman) character).skillPts = Math.min(((Omegaman) character).skillPts + SKILL_PT_GAIN, Omegaman.MAX_SKILL_PTS);
             }
             if (canHitProj) {
                 for (Projectile proj: boss.projectiles) {
-                    if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, Boss.BOSS_HITBOX_LEEWAY) && proj.hitBoxActive && proj.canHitProj) {
+                    if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, Boss.BOSS_HITBOX_LEEWAY * Math.min(boss.size.x, boss.size.y)) && proj.hitBoxActive && proj.canHitProj) {
                         if (shouldDieTo(proj.durability)) die();
                         if (proj.shouldDieTo(durability)) proj.die();
                     }
@@ -1042,7 +1042,7 @@ class Splitter extends Projectile {
     public static final Coord SIZE = new Coord(60, 50);
 
     // Damage constants
-    public static final double DMG = 0 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
+    public static final double DMG = 0;
     public static final double DURABILITY = INFINITE_DURABILITY;
     public static final double KB = 0;
     public static final double KB_SPREAD = Math.PI / 3;
@@ -1096,7 +1096,7 @@ class Splitter extends Projectile {
         for (Boss boss: OmegaFight3.bosses) {
             if (canHitProj) {
                 for (Projectile proj: boss.projectiles) {
-                    if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, Boss.BOSS_HITBOX_LEEWAY) && proj.hitBoxActive && proj.canHitProj) {
+                    if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, Boss.BOSS_HITBOX_LEEWAY * Math.min(boss.size.x, boss.size.y)) && proj.hitBoxActive && proj.canHitProj) {
                         if (proj.shouldDieTo(durability)) proj.die();
                     }
                 }

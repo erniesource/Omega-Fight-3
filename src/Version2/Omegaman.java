@@ -98,6 +98,12 @@ public class Omegaman extends Char {
     public static final double BOUNCE_MIN_VEL_Y = 20;
     public static final double STUN_REDUCTION = 0.9;
 
+    // Kamikaze constants
+    public static final double KAMIKAZE_DMG = 3 * Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
+    public static final double KAMIKAZE_KB = 10;
+    public static final int KAMIKAZE_SCREENSHAKE = 0;
+    public static final double KAMIKAZE_DIST = 0.5;
+
     // HUD Constants
     public static final int PERCENT_DISPLAY_Y_COORD = 790;
     public static final Coord PERCENT_DISPLAY_SIZE = new Coord(400, 150);
@@ -449,6 +455,16 @@ public class Omegaman extends Char {
         return AIRBORNE;
     }
 
+    public void checkBossHitbox() {
+        if (invCounter == VULNERABLE) {
+            for (Boss boss: OmegaFight3.bosses) {
+                if (OmegaFight3.intersects(coord, size, boss.coord, boss.size, Math.min(boss.size.x, boss.size.y) * KAMIKAZE_DIST)) {
+                    hurt(KAMIKAZE_DMG, KAMIKAZE_KB, boss.coord, KAMIKAZE_SCREENSHAKE);
+                }
+            }
+        }
+    }
+
     public void checkState() {
         // Bottom
         if (coord.y > OmegaFight3.SCREEN_SIZE.y + size.y / 2) {
@@ -565,7 +581,7 @@ public class Omegaman extends Char {
         percent += damage;
     }
 
-    public void hurt(double damage, double knockback, Coord enemyCoord, double dir, double kbSpread, int screenShake) {
+    public void hurtWithKb(double damage, double knockback, Coord enemyCoord, int screenShake) {
         hurt(damage);
 
         int platformNo = checkPlatforms();
@@ -575,9 +591,15 @@ public class Omegaman extends Char {
         
         resetStats(GENERAL_STAT_RESET);
         OmegaFight3.screenShakeCounter += screenShake;
+    }
+
+    public void hurt(double damage, double knockback, Coord enemyCoord, double dir, double kbSpread, int screenShake) {
+        hurtWithKb(damage, knockback, enemyCoord, screenShake);
 
         // Speed calculations
         knockback *= (percent / Math.pow(10, PERCENT_NUM_DECIMALS) / 100 + 1);
+        stunCounter = (int) Math.pow(knockback, STUN_REDUCTION);
+
         double angle = Math.atan2(coord.y - KB_COORD_Y_OFFSET - enemyCoord.y, coord.x - enemyCoord.x);
         double minAngle = dir - kbSpread;
         double dMinAngle = OmegaFight3.normalizeAngle(minAngle - angle);
@@ -590,7 +612,24 @@ public class Omegaman extends Char {
         velocity = velocity.scaledBy(0.25);
         velocity.x += Math.cos(angle) * knockback;
         velocity.y += Math.sin(angle) * knockback;
+
+        if (enemyCoord.x != coord.x) {
+            spriteSign = (int) -Math.signum(Math.cos(angle));
+            if (spriteSign == 0) spriteSign = OmegaFight3.RIGHT_SIGN;
+        }
+    }
+
+    public void hurt(double damage, double knockback, Coord enemyCoord, int screenShake) {
+        hurtWithKb(damage, knockback, enemyCoord, screenShake);
+
+        // Speed calculations
+        knockback *= (percent / Math.pow(10, PERCENT_NUM_DECIMALS) / 100 + 1);
         stunCounter = (int) Math.pow(knockback, STUN_REDUCTION);
+
+        double angle = Math.atan2(coord.y - KB_COORD_Y_OFFSET - enemyCoord.y, coord.x - enemyCoord.x);
+        velocity = velocity.scaledBy(0.25);
+        velocity.x += Math.cos(angle) * knockback;
+        velocity.y += Math.sin(angle) * knockback;
 
         if (enemyCoord.x != coord.x) {
             spriteSign = (int) -Math.signum(Math.cos(angle));

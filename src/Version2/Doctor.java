@@ -9,26 +9,26 @@ public class Doctor extends Boss {
     int bombotCounter;
 
     // Combat constants
-    public static final double INITIAL_HEALTH = 500 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
+    public static final double INITIAL_HEALTH = 750 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
     public static final int HURT_BLINK_HZ = 1;
 
     // Sprite constants
-    public static final int[] STATE_SPRITE_START = {0, 2, 5};
-    public static final int[] STATE_SPRITE_SIGN = {OmegaFight3.LEFT_SIGN, OmegaFight3.LEFT_SIGN, OmegaFight3.RIGHT_SIGN};
-    public static final int[] STATE_NO_SPRITES = {2, 3, 4};
-    public static final int NO_OF_SPRITES = 9;
+    public static final int[] STATE_SPRITE_START = {0, 2, 4, 7};
+    public static final int[] STATE_SPRITE_SIGN = {OmegaFight3.LEFT_SIGN, OmegaFight3.LEFT_SIGN, OmegaFight3.LEFT_SIGN, OmegaFight3.RIGHT_SIGN};
+    public static final int[] STATE_NO_SPRITES = {2, 2, 3, 4};
+    public static final int NO_OF_SPRITES = 11;
 
     // State constants
-    public static final int SPIT = 1;
-    public static final int LAUGH = 2;
-    public static final int NO_OF_STATES = 3;
+    public static final int SPIT = 2;
+    public static final int LAUGH = 3;
+    public static final int NO_OF_STATES = 4;
     public static final int TRANSITION_TIME = OmegaFight3.FPS * 2;
-    public static final Coord[] STATE_SIZE = {new Coord(280, 400), new Coord(280, 440), new Coord(400, 525)};
-    public static final int[] STATE_SPRITE_CHANGE_HZ = {10, 7, 5};
-    public static final Coord[] STATE_COORD = {new Coord(OmegaFight3.SCREEN_SIZE.x * 7 / 8, OmegaFight3.SCREEN_SIZE.y / 2),
+    public static final Coord[] STATE_SIZE = {new Coord(390, 430), new Coord(280, 400), new Coord(280, 440), new Coord(400, 525)};
+    public static final int[] STATE_SPRITE_CHANGE_HZ = {10, 10, 7, 5};
+    public static final Coord[] STATE_COORD = {null, new Coord(OmegaFight3.SCREEN_SIZE.x * 7 / 8, OmegaFight3.SCREEN_SIZE.y / 2),
         new Coord(OmegaFight3.SCREEN_SIZE.x * 7 / 8, OmegaFight3.stage[Stage.BATTLEFIELD_NO].platforms[1].y - (OmegaFight3.stage[Stage.BATTLEFIELD_NO].platforms[0].y - OmegaFight3.stage[Stage.BATTLEFIELD_NO].platforms[1].y)),
         new Coord(OmegaFight3.SCREEN_SIZE.x / 8, OmegaFight3.SCREEN_SIZE.y / 2)};
-    public static final int[] STATE_TIME = {60, 30, 300};
+    public static final int[] STATE_TIME = {20, 60, 30, 300};
 
     // Spit Constants
     public static final double SPIT_SPEED = 7;
@@ -125,10 +125,11 @@ public class Doctor extends Boss {
             }
         }
         if (frameCounter == 0) {
-            transitionTo = (int) (Math.random() * NO_OF_STATES);
+            transitionTo = (int) (Math.random() * (NO_OF_STATES - 1)) + 1;
             if (transitionTo == state) {
                 transitionTo = NO_TRANSITION;
                 frameCounter = STATE_TIME[state];
+                spriteNo = STATE_SPRITE_START[state];
             }
             else {
                 frameCounter = TRANSITION_TIME;

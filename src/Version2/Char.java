@@ -62,12 +62,12 @@ abstract class Boss extends Char {
     public boolean hurt;
     public int hurtCounter = -1;
 
-    public static final double BOSS_HITBOX_LEEWAY = 20;
+    public static final double BOSS_HITBOX_LEEWAY = 0.2;
     public static final int NO_TRANSITION = -1;
     public static final int NOT_HURT = -1;
 
-    public static final int DEAD = -1;
-    public static final int IDLE = 0;
+    public static final int DEAD = 0;
+    public static final int IDLE = 1;
 
     public Boss(Coord coord, int spriteNo, int spriteSign, int frameCounter, Coord size, int state, double health, double difficulty) {
         super(coord, spriteNo, spriteSign, frameCounter, size, state);

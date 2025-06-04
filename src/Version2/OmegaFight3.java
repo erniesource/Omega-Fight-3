@@ -8,7 +8,7 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.util.*;
 // Ernest Todo: menus, bosses
-// Ernest Long term Todo: ultimate, dash
+// Ernest Long term Todo: ultimate, dash, smoke
 
 public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionListener, KeyListener, Runnable {
     // Game States
@@ -231,12 +231,20 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
             Bombot.images[i] = ImageIO.read(new File("doctor projectiles/bombot" + i + ".png"));
         }
 
+        // Dragon projectile image importing
+        for (int i = 0; i != Ring.NO_OF_SPRITES; i++) {
+            Ring.images[i] = ImageIO.read(new File("dragon projectiles/ring" + i + ".png"));
+        }
+        for (int i = 0; i != Meteor.NO_OF_SPRITES; i++) {
+            Meteor.images[i] = ImageIO.read(new File("dragon projectiles/meteor" + i + ".png"));
+        }
+
         // Stages
         for (int i = 0; i != Stage.NO_OF_STAGES; i++) {
             stage[i] = new Stage(STAGE_NAME[i], PLATFORMS[i], SPAWN_COORDS[i], SPAWN_SIGN[i], SPAWN_PLATFORM_NO[i], STAGE_BUTTONO[i]);
         }
 
-        // Boss image importing
+        // Doctor image importing
         for (int i = 0; i != Doctor.STATE_NO_SPRITES[Doctor.IDLE]; i++) {
             Doctor.sprite[Doctor.STATE_SPRITE_START[Doctor.IDLE] + i] = ImageIO.read(new File("doctor/idle" + i + ".png"));
         }
@@ -245,6 +253,17 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         }
         for (int i = 0; i != Doctor.STATE_NO_SPRITES[Doctor.LAUGH]; i++) {
             Doctor.sprite[Doctor.STATE_SPRITE_START[Doctor.LAUGH] + i] = ImageIO.read(new File("doctor/laugh" + i + ".png"));
+        }
+
+        // Dragon image importing
+        for (int i = 0; i != Dragon.STATE_NO_SPRITES[Dragon.IDLE]; i++) {
+            Dragon.sprite[Dragon.STATE_SPRITE_START[Dragon.IDLE] + i] = ImageIO.read(new File("dragon/idle" + i + ".png"));
+        }
+        for (int i = 0; i != Dragon.STATE_NO_SPRITES[Dragon.DIZZY]; i++) {
+            Dragon.sprite[Dragon.STATE_SPRITE_START[Dragon.DIZZY] + i] = ImageIO.read(new File("dragon/dizzy" + i + ".png"));
+        }
+        for (int i = 0; i != Dragon.STATE_NO_SPRITES[Dragon.BARF]; i++) {
+            Dragon.sprite[Dragon.STATE_SPRITE_START[Dragon.BARF] + i] = ImageIO.read(new File("dragon/barf" + i + ".png"));
         }
 
         // Buttons
@@ -363,14 +382,6 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
             stage[stageNo].drawStage(g);
 
             for (Boss boss: bosses) {
-                boss.drawProjectiles(g2);
-            }
-            
-            for (Omegaman omega: omegaman) {
-                omega.drawProjectiles(g2);
-            }
-
-            for (Boss boss: bosses) {
                 boss.draw(g);
             }
 
@@ -381,6 +392,14 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                     omega.drawCharge(g);
                     omega.drawPercent(g);
                 }
+            }
+
+            for (Boss boss: bosses) {
+                boss.drawProjectiles(g2);
+            }
+            
+            for (Omegaman omega: omegaman) {
+                omega.drawProjectiles(g2);
             }
             
             for (Omegaman omega: omegaman) {
@@ -437,6 +456,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
 
                         omega.move();
                         omega.checkState();
+                        omega.checkBossHitbox();
                         omega.countInv();
                         omega.regenSkillPts();
                         omega.shakePercent();
@@ -542,6 +562,9 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
 
                 if (stageNo == Stage.BATTLEFIELD_NO) {
                     bosses.add(new Doctor(1));
+                }
+                else if (stageNo == Stage.FINAL_DEST_NO) {
+                    bosses.add(new Dragon(1));
                 }
                 transitionCounter = COUNTDOWN_LEN;
                 transitiono = COUNTDOWN;
