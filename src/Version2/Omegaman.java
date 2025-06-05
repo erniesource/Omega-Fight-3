@@ -135,6 +135,7 @@ public class Omegaman extends Char {
     // Stat reset constants
     public static final int DIED_STAT_RESET = 0;
     public static final int GENERAL_STAT_RESET = -1;
+    public static final int DIE_SCREENSHAKE = 30;
 
     // Fonts and Colors
     public static final Font BIG_PERCENT_FONT = new Font("Impact", Font.PLAIN, (int) (PERCENT_DISPLAY_SIZE.y * 8 / 15));
@@ -494,14 +495,14 @@ public class Omegaman extends Char {
         heatCounter = 0;
         runSign = 1;
         if (type == DIED_STAT_RESET) {
-            livesLeft--;
+            livesLeft--; // Only decrease lives if 
             jumpState = 3;
             spriteNo = IDLE_SPRITE;
             spriteSign = OmegaFight3.stage[OmegaFight3.stageNo].spawnSpriteSign[playerNo];
             velocity.x = 0;
             velocity.y= RESPAWN_INITIAL_VELOCITY;
             onPlatform = AIRBORNE;
-            OmegaFight3.screenShakeCounter += 30;
+            OmegaFight3.screenShakeCounter += DIE_SCREENSHAKE;
             percentShakeCounter = 0;
             skillPts = 0;
             skillPtCounter = 0;

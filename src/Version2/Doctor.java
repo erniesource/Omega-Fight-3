@@ -184,6 +184,7 @@ public class Doctor extends Boss {
         if (coord.y > OmegaFight3.SCREEN_SIZE.y + size.y / 2) {
             frameCounter = 0;
             spriteNo = 0;
+            OmegaFight3.screenShakeCounter += DIE_SCREENSHAKE;
         }
     }
 

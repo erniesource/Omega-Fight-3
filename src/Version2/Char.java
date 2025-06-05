@@ -71,6 +71,7 @@ abstract class Boss extends Char {
 
     // Die constants
     public static final double DIE_ACCEL = 1;
+    public static final int DIE_SCREENSHAKE = 60;
 
     public static final int DEAD = 0;
     public static final int IDLE = 1;
@@ -100,9 +101,6 @@ abstract class Boss extends Char {
 
     public void surge() {
         frameCounter++;
-        if (frameCounter == OmegaFight3.NUM_SURGE_IMAGES * OmegaFight3.SURGE_FRAME_HZ * OmegaFight3.SURGE_SPRITE_WIN_CHECK) {
-            // other players won if they haven't lost yet
-        }
     }
 
     public void drawSurge(Graphics g) {

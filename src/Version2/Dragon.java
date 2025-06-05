@@ -9,7 +9,7 @@ public class Dragon extends Boss{
     public int fireCounter;
 
     // Combat constants
-    public static final double INITIAL_HEALTH = 500 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
+    public static final double INITIAL_HEALTH = 10 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
     public static final int HURT_BLINK_HZ = 1;
 
     // Sprite constants
@@ -168,6 +168,7 @@ public class Dragon extends Boss{
         if (coord.y > OmegaFight3.SCREEN_SIZE.y + size.y / 2) {
             frameCounter = 0;
             spriteNo = 0;
+            OmegaFight3.screenShakeCounter += DIE_SCREENSHAKE;
         }
     }
 
