@@ -1,4 +1,4 @@
-package Version2;
+package Version3;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;

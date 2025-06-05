@@ -1,4 +1,4 @@
-package Version2;
+package Version3;
 
 import java.awt.*;
 import javax.imageio.ImageIO;
@@ -418,7 +418,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
             stage[stageNo].drawStage(g);
 
             for (Boss boss: bosses) {
-                if (boss.state != Boss.DEAD || boss.coord.y <= OmegaFight3.SCREEN_SIZE.y + boss.size.y / 2) boss.draw(g);
+                if (boss.state != Boss.DEAD || boss.coord.y <= SCREEN_SIZE.y + boss.size.y / 2) boss.draw(g);
                 else boss.drawSurge(g);
             }
 
@@ -524,7 +524,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                         boss.backgroundAttack();
                     }
                     else {
-                        if (boss.coord.y <= OmegaFight3.SCREEN_SIZE.y + boss.size.y / 2) {
+                        if (boss.coord.y <= SCREEN_SIZE.y + boss.size.y / 2) {
                             boss.fall();
                         }
                         else {
@@ -682,17 +682,17 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         else if (transitiono == GAME_OVER) {
             if (transitionCounter >= GAME_END_LEN - GAME_END_TEXT_TRANSITION_LEN) {
                 double progress = (double) (transitionCounter - (GAME_END_LEN - GAME_END_TEXT_TRANSITION_LEN)) / GAME_END_TEXT_TRANSITION_LEN;
-                g2.drawImage(gameOver[0], (int) OmegaFight3.lerp(SCREEN_SIZE.x / 2 - GAME_OVER_SIZE.x, -GAME_OVER_SIZE.x, progress), (int) (OmegaFight3.SCREEN_SIZE.y - GAME_OVER_SIZE.y) / 2, null);
-                g2.drawImage(gameOver[1], (int) OmegaFight3.lerp(SCREEN_SIZE.x / 2, SCREEN_SIZE.x, progress), (int) (OmegaFight3.SCREEN_SIZE.y - GAME_OVER_SIZE.y) / 2, null);
+                g2.drawImage(gameOver[0], (int) lerp(SCREEN_SIZE.x / 2 - GAME_OVER_SIZE.x, -GAME_OVER_SIZE.x, progress), (int) (SCREEN_SIZE.y - GAME_OVER_SIZE.y) / 2, null);
+                g2.drawImage(gameOver[1], (int) lerp(SCREEN_SIZE.x / 2, SCREEN_SIZE.x, progress), (int) (SCREEN_SIZE.y - GAME_OVER_SIZE.y) / 2, null);
             }
             else if (transitionCounter >= GAME_END_LEN - GAME_END_TEXT_TRANSITION_LEN - GAME_END_TEXT_LEN) {
-                g2.drawImage(gameOver[0], (int) (SCREEN_SIZE.x / 2 - GAME_OVER_SIZE.x), (int) (OmegaFight3.SCREEN_SIZE.y - GAME_OVER_SIZE.y) / 2, null);
-                g2.drawImage(gameOver[1], (int) (SCREEN_SIZE.x / 2), (int) (OmegaFight3.SCREEN_SIZE.y - GAME_OVER_SIZE.y) / 2, null);
+                g2.drawImage(gameOver[0], (int) (SCREEN_SIZE.x / 2 - GAME_OVER_SIZE.x), (int) (SCREEN_SIZE.y - GAME_OVER_SIZE.y) / 2, null);
+                g2.drawImage(gameOver[1], (int) (SCREEN_SIZE.x / 2), (int) (SCREEN_SIZE.y - GAME_OVER_SIZE.y) / 2, null);
             }
             else if (transitionCounter >= GAME_END_LEN - GAME_END_TEXT_TRANSITION_LEN * 2 - GAME_END_TEXT_LEN) {
                 setOpacity((double) (transitionCounter - (GAME_END_LEN - GAME_END_TEXT_TRANSITION_LEN * 2 - GAME_END_TEXT_LEN)) / GAME_END_TEXT_TRANSITION_LEN, g2);
-                g2.drawImage(gameOver[0], (int) (SCREEN_SIZE.x / 2 - GAME_OVER_SIZE.x), (int) (OmegaFight3.SCREEN_SIZE.y - GAME_OVER_SIZE.y) / 2, null);
-                g2.drawImage(gameOver[1], (int) (SCREEN_SIZE.x / 2), (int) (OmegaFight3.SCREEN_SIZE.y - GAME_OVER_SIZE.y) / 2, null);
+                g2.drawImage(gameOver[0], (int) (SCREEN_SIZE.x / 2 - GAME_OVER_SIZE.x), (int) (SCREEN_SIZE.y - GAME_OVER_SIZE.y) / 2, null);
+                g2.drawImage(gameOver[1], (int) (SCREEN_SIZE.x / 2), (int) (SCREEN_SIZE.y - GAME_OVER_SIZE.y) / 2, null);
                 setOpacity(1, g2);
             }
             else {
@@ -702,17 +702,17 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         else if (transitiono == GAME_SET) {
             if (transitionCounter >= GAME_END_LEN - GAME_END_TEXT_TRANSITION_LEN) {
                 double progress = (double) (transitionCounter - (GAME_END_LEN - GAME_END_TEXT_TRANSITION_LEN)) / GAME_END_TEXT_TRANSITION_LEN;
-                g2.drawImage(gameSet[0], (int) OmegaFight3.lerp(SCREEN_SIZE.x / 2 - GAME_SET_SIZE.x, -GAME_SET_SIZE.x, progress), (int) (OmegaFight3.SCREEN_SIZE.y - GAME_SET_SIZE.y) / 2, null);
-                g2.drawImage(gameSet[1], (int) OmegaFight3.lerp(SCREEN_SIZE.x / 2, SCREEN_SIZE.x, progress), (int) (OmegaFight3.SCREEN_SIZE.y - GAME_SET_SIZE.y) / 2, null);
+                g2.drawImage(gameSet[0], (int) lerp(SCREEN_SIZE.x / 2 - GAME_SET_SIZE.x, -GAME_SET_SIZE.x, progress), (int) (SCREEN_SIZE.y - GAME_SET_SIZE.y) / 2, null);
+                g2.drawImage(gameSet[1], (int) lerp(SCREEN_SIZE.x / 2, SCREEN_SIZE.x, progress), (int) (SCREEN_SIZE.y - GAME_SET_SIZE.y) / 2, null);
             }
             else if (transitionCounter >= GAME_END_LEN - GAME_END_TEXT_TRANSITION_LEN - GAME_END_TEXT_LEN) {
-                g2.drawImage(gameSet[0], (int) (SCREEN_SIZE.x / 2 - GAME_SET_SIZE.x), (int) (OmegaFight3.SCREEN_SIZE.y - GAME_SET_SIZE.y) / 2, null);
-                g2.drawImage(gameSet[1], (int) (SCREEN_SIZE.x / 2), (int) (OmegaFight3.SCREEN_SIZE.y - GAME_SET_SIZE.y) / 2, null);
+                g2.drawImage(gameSet[0], (int) (SCREEN_SIZE.x / 2 - GAME_SET_SIZE.x), (int) (SCREEN_SIZE.y - GAME_SET_SIZE.y) / 2, null);
+                g2.drawImage(gameSet[1], (int) (SCREEN_SIZE.x / 2), (int) (SCREEN_SIZE.y - GAME_SET_SIZE.y) / 2, null);
             }
             else if (transitionCounter >= GAME_END_LEN - GAME_END_TEXT_TRANSITION_LEN * 2 - GAME_END_TEXT_LEN) {
                 setOpacity((double) (transitionCounter - (GAME_END_LEN - GAME_END_TEXT_TRANSITION_LEN * 2 - GAME_END_TEXT_LEN)) / GAME_END_TEXT_TRANSITION_LEN, g2);
-                g2.drawImage(gameSet[0], (int) (SCREEN_SIZE.x / 2 - GAME_SET_SIZE.x), (int) (OmegaFight3.SCREEN_SIZE.y - GAME_SET_SIZE.y) / 2, null);
-                g2.drawImage(gameSet[1], (int) (SCREEN_SIZE.x / 2), (int) (OmegaFight3.SCREEN_SIZE.y - GAME_SET_SIZE.y) / 2, null);
+                g2.drawImage(gameSet[0], (int) (SCREEN_SIZE.x / 2 - GAME_SET_SIZE.x), (int) (SCREEN_SIZE.y - GAME_SET_SIZE.y) / 2, null);
+                g2.drawImage(gameSet[1], (int) (SCREEN_SIZE.x / 2), (int) (SCREEN_SIZE.y - GAME_SET_SIZE.y) / 2, null);
                 setOpacity(1, g2);
             }
             else {
