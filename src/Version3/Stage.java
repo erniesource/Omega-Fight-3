@@ -7,7 +7,7 @@ import javax.imageio.ImageIO;
 
 public class Stage {
     public BufferedImage image;
-    public Platform[] platforms;
+    public Platform[] platforms; // Make an arraylist?
     public Coord[] spawnCoords;
     public int[] spawnSpriteSign;
     public int[] spawnPlatformNo;
@@ -20,7 +20,7 @@ public class Stage {
     public static final int BATTLEFIELD_NO = 0;
     public static final int FINAL_DEST_NO = 1;
 
-    public Stage(String stageName, Platform[] platforms,Coord[] spawnCoords, int[] spawnSpriteSign, int[] spawnPlatformNo, int buttono) throws IOException {
+    public Stage(String stageName, Platform[] platforms, Coord[] spawnCoords, int[] spawnSpriteSign, int[] spawnPlatformNo, int buttono) throws IOException {
         image = ImageIO.read(new File("stages/" + stageName + ".jpg"));
         this.stageName = stageName;
         this.platforms = platforms;

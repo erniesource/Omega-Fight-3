@@ -49,6 +49,7 @@ public class Omegaman extends Char {
     public BufferedImage[] surge = new BufferedImage[OmegaFight3.NUM_SURGE_IMAGES];
 
     // Other stats
+    public double[] stats = new double[7];
     public int playerNo;
     
     // Sprite Constants
@@ -147,6 +148,16 @@ public class Omegaman extends Char {
     public static final int RESPAWN_INV_LEN = 60;
     public static final int VULNERABLE = 0;
 
+    // Stat constants
+    public static final int NO_OF_STATS = 7;
+    public static final int DIST_MOVED_NO = 0;
+    public static final int TIMES_JUMPED_NO = 1;
+    public static final int HIGHEST_PERCENT_NO = 2;
+    public static final int LIVES_LEFT_NO = 3;
+    public static final int SKILL_PTS_USED_NO = 4;
+    public static final int DMG_TO_OMEGAMAN = 5;
+    public static final int DMG_TO_BOSS = 6;
+
     public Omegaman(int playerNo, Coord coord, int spriteSign, int onPlatform, int[] controls, int[] shtKeys, int[] loadout, int[] loadoutButtono) throws IOException {
         // Initialize character variables
         super(coord, IDLE_SPRITE, spriteSign, 0, SIZE.copy(), ALIVE_STATE);
@@ -227,6 +238,7 @@ public class Omegaman extends Char {
             onPlatform = AIRBORNE;
             jumpCounter = 0;
             jumpState++;
+            stats[TIMES_JUMPED_NO]++;
         }
 
         // Dropping
@@ -322,6 +334,7 @@ public class Omegaman extends Char {
 
                                 // Update stats
                                 skillPts -= (percentCharged < 0.5? ONES_PER_SKILL_PT / 2: ONES_PER_SKILL_PT);
+                                stats[SKILL_PTS_USED_NO] += (percentCharged < 0.5? ONES_PER_SKILL_PT / 2: ONES_PER_SKILL_PT);
                                 heatCounter = CHARGED_SHOT_HEAT[loadout[i]];
                             }
                             shootCharge = 0;
@@ -414,6 +427,7 @@ public class Omegaman extends Char {
     public void move() {
         if (velocity.x != 0) coord.x += velocity.x;
         if (velocity.y != 0) coord.y += velocity.y;
+        stats[DIST_MOVED_NO] += Math.hypot(velocity.x, velocity.y);
     }
 
     public void animateRun() {
@@ -494,7 +508,7 @@ public class Omegaman extends Char {
         heatCounter = 0;
         runSign = 1;
         if (type == DIED_STAT_RESET) {
-            livesLeft--; // Only decrease lives if 
+            livesLeft--;
             jumpState = 3;
             spriteNo = IDLE_SPRITE;
             spriteSign = OmegaFight3.stage[OmegaFight3.stageNo].spawnSpriteSign[playerNo];
@@ -573,6 +587,7 @@ public class Omegaman extends Char {
     public void hurt(double damage) {
         percentShakeCounter = PERCENT_SHAKE_TIME;
         percent += damage;
+        stats[HIGHEST_PERCENT_NO] = Math.max(stats[HIGHEST_PERCENT_NO], percent);
     }
 
     public void hurtWithKb(double damage, double knockback, Coord enemyCoord, int screenShake) {
@@ -731,7 +746,7 @@ public class Omegaman extends Char {
         }
     }
 
-    public void drawHUD(Graphics g) {
+    public void drawHUD(Graphics g) { // DRAW LIVES ICONS
         g.drawImage(percentDisplay, percentDisplayX, PERCENT_DISPLAY_Y_COORD, null);
         
         // Full skill points

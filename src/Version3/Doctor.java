@@ -9,7 +9,7 @@ public class Doctor extends Boss {
     public int bombotCounter;
 
     // Combat constants
-    public static final double INITIAL_HEALTH = 750 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
+    public static final double INITIAL_HEALTH = 600 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
     public static final int HURT_BLINK_HZ = 1;
 
     // Sprite constants

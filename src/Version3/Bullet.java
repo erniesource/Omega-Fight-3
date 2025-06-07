@@ -48,6 +48,7 @@ public class Bullet extends Projectile { // Make process take in player array an
                     enemy.hurt(damage, knockback, coord, dir, KB_SPREAD, SCREENSHAKE);
                     die();
                     ((Omegaman) character).skillPts = Math.min(((Omegaman) character).skillPts + SKILL_PT_GAIN, Omegaman.MAX_SKILL_PTS);
+                    ((Omegaman) character).stats[Omegaman.DMG_TO_OMEGAMAN] += damage;
                 }
                 if (canHitProj) {
                     for (Projectile proj: enemy.projectiles) {
@@ -65,6 +66,7 @@ public class Bullet extends Projectile { // Make process take in player array an
                 boss.hurt(damage);
                 die();
                 ((Omegaman) character).skillPts = Math.min(((Omegaman) character).skillPts + SKILL_PT_GAIN, Omegaman.MAX_SKILL_PTS);
+                ((Omegaman) character).stats[Omegaman.DMG_TO_BOSS] += damage;
             }
             if (canHitProj) {
                 for (Projectile proj: boss.projectiles) {
@@ -137,6 +139,7 @@ class Rocket extends Projectile {
                     if (OmegaFight3.intersects(coord, hitBoxSize, enemy.coord, enemy.size, OmegaFight3.HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
                         enemy.hurt(damage, knockback, coord, dir, KB_SPREAD, (int) (SCREENSHAKE * (size.x / SIZE.x)));
                         die();
+                        ((Omegaman) character).stats[Omegaman.DMG_TO_OMEGAMAN] += damage;
                     }
                     if (canHitProj) {
                         for (Projectile proj: enemy.projectiles) {
@@ -153,6 +156,7 @@ class Rocket extends Projectile {
                 if (OmegaFight3.intersects(coord, hitBoxSize, boss.coord, boss.size, Boss.BOSS_HITBOX_LEEWAY * Math.min(boss.size.x, boss.size.y))) {
                     boss.hurt(damage);
                     die();
+                    ((Omegaman) character).stats[Omegaman.DMG_TO_BOSS] += damage;
                 }
                 if (canHitProj) {
                     for (Projectile proj: boss.projectiles) {
@@ -226,6 +230,7 @@ class Shotgun extends Projectile {
                     enemy.hurt(damage, knockback, coord, dir, KB_SPREAD, SCREENSHAKE);
                     die();
                     ((Omegaman) character).skillPts = Math.min(((Omegaman) character).skillPts + SKILL_PT_GAIN, Omegaman.MAX_SKILL_PTS);
+                    ((Omegaman) character).stats[Omegaman.DMG_TO_OMEGAMAN] += damage;
                 }
                 if (canHitProj) {
                     for (Projectile proj: enemy.projectiles) {
@@ -242,6 +247,7 @@ class Shotgun extends Projectile {
                 boss.hurt(damage);
                 die();
                 ((Omegaman) character).skillPts = Math.min(((Omegaman) character).skillPts + SKILL_PT_GAIN, Omegaman.MAX_SKILL_PTS);
+                ((Omegaman) character).stats[Omegaman.DMG_TO_BOSS] += damage;
             }
             if (canHitProj) {
                 for (Projectile proj: boss.projectiles) {
@@ -302,7 +308,7 @@ class Firework extends Projectile {
                 if (OmegaFight3.intersects(coord, hitBoxSize, enemy.coord, enemy.size, OmegaFight3.HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
                     enemy.hurt(damage, knockback, coord, dir, KB_SPREAD, SCREENSHAKE);
                     die();
-                    ((Omegaman) character).skillPts = Math.min(((Omegaman) character).skillPts + 1, Omegaman.MAX_SKILL_PTS);
+                    ((Omegaman) character).stats[Omegaman.DMG_TO_OMEGAMAN] += damage;
                 }
                 if (canHitProj) {
                     for (Projectile proj: enemy.projectiles) {
@@ -318,6 +324,7 @@ class Firework extends Projectile {
             if (OmegaFight3.intersects(coord, hitBoxSize, boss.coord, boss.size, Boss.BOSS_HITBOX_LEEWAY * Math.min(boss.size.x, boss.size.y))) {
                 boss.hurt(damage);
                 die();
+                ((Omegaman) character).stats[Omegaman.DMG_TO_BOSS] += damage;
             }
             if (canHitProj) {
                 for (Projectile proj: boss.projectiles) {
@@ -384,6 +391,7 @@ class Spammer extends Projectile {
                     enemy.hurt(damage, knockback, coord, dir, KB_SPREAD, SCREENSHAKE);
                     die();
                     ((Omegaman) character).skillPts = Math.min(((Omegaman) character).skillPts + SKILL_PT_GAIN, Omegaman.MAX_SKILL_PTS);
+                    ((Omegaman) character).stats[Omegaman.DMG_TO_OMEGAMAN] += damage;
                 }
                 if (canHitProj) {
                     for (Projectile proj: enemy.projectiles) {
@@ -400,6 +408,7 @@ class Spammer extends Projectile {
                 boss.hurt(damage);
                 die();
                 ((Omegaman) character).skillPts = Math.min(((Omegaman) character).skillPts + SKILL_PT_GAIN, Omegaman.MAX_SKILL_PTS);
+                ((Omegaman) character).stats[Omegaman.DMG_TO_BOSS] += damage;
             }
             if (canHitProj) {
                 for (Projectile proj: boss.projectiles) {
@@ -509,6 +518,7 @@ class Missile extends Projectile {
                     if (OmegaFight3.intersects(coord, hitBoxSize, enemy.coord, enemy.size, OmegaFight3.HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
                         enemy.hurt(damage, knockback, coord, dir, KB_SPREAD, (int) (SCREENSHAKE * (size.x / SIZE.x)));
                         die();
+                        ((Omegaman) character).stats[Omegaman.DMG_TO_OMEGAMAN] += damage;
                     }
                     if (canHitProj) {
                         for (Projectile proj: enemy.projectiles) {
@@ -524,6 +534,7 @@ class Missile extends Projectile {
                     if (OmegaFight3.intersects(coord, hitBoxSize, boss.coord, boss.size, Boss.BOSS_HITBOX_LEEWAY * Math.min(boss.size.x, boss.size.y))) {
                         boss.hurt(damage);
                         die();
+                        ((Omegaman) character).stats[Omegaman.DMG_TO_BOSS] += damage;
                     }
                     if (canHitProj) {
                         for (Projectile proj: boss.projectiles) {
@@ -594,6 +605,7 @@ class Sniper extends Projectile {
                     enemy.hurt(damage * velocity / VELOCITY, knockback * velocity / VELOCITY, coord, dir, KB_SPREAD, SCREENSHAKE);
                     die();
                     ((Omegaman) character).skillPts = Math.min(((Omegaman) character).skillPts + SKILL_PT_GAIN, Omegaman.MAX_SKILL_PTS);
+                    ((Omegaman) character).stats[Omegaman.DMG_TO_OMEGAMAN] += damage * velocity / VELOCITY;
                 }
                 if (canHitProj) {
                     for (Projectile proj: enemy.projectiles) {
@@ -610,6 +622,7 @@ class Sniper extends Projectile {
                 boss.hurt(damage * velocity / VELOCITY);
                 die();
                 ((Omegaman) character).skillPts = Math.min(((Omegaman) character).skillPts + SKILL_PT_GAIN, Omegaman.MAX_SKILL_PTS);
+                ((Omegaman) character).stats[Omegaman.DMG_TO_BOSS] += damage * velocity / VELOCITY;
             }
             if (canHitProj) {
                 for (Projectile proj: boss.projectiles) {
@@ -672,6 +685,7 @@ class Laser extends Projectile {
             if (enemy != character) {
                 if (OmegaFight3.intersects(coord, hitBoxSize, enemy.coord, enemy.size, OmegaFight3.HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
                     enemy.hurt(damage, knockback, coord, BASE_KB_DIR + KB_DIR_TILT * Math.cos(dir), KB_SPREAD, SCREENSHAKE);
+                    ((Omegaman) character).stats[Omegaman.DMG_TO_OMEGAMAN] += damage;
                 }
                 if (canHitProj) {
                     for (Projectile proj: enemy.projectiles) {
@@ -685,6 +699,7 @@ class Laser extends Projectile {
         for (Boss boss: OmegaFight3.bosses) {
             if (OmegaFight3.intersects(coord, hitBoxSize, boss.coord, boss.size, Boss.BOSS_HITBOX_LEEWAY * Math.min(boss.size.x, boss.size.y))) {
                 boss.hurt(damage);
+                ((Omegaman) character).stats[Omegaman.DMG_TO_BOSS] += damage;
             }
             if (canHitProj) {
                 for (Projectile proj: boss.projectiles) {
@@ -752,6 +767,7 @@ class Boomer extends Projectile {
                     enemy.hurt(damage * multiplier, knockback * multiplier, coord, dir + multiplier / 2 * Math.PI, KB_SPREAD, SCREENSHAKE);
                     die();
                     ((Omegaman) character).skillPts = Math.min(((Omegaman) character).skillPts + SKILL_PT_GAIN * multiplier, Omegaman.MAX_SKILL_PTS);
+                    ((Omegaman) character).stats[Omegaman.DMG_TO_OMEGAMAN] += damage * multiplier;
                 }
                 if (canHitProj) {
                     for (Projectile proj: enemy.projectiles) {
@@ -768,6 +784,8 @@ class Boomer extends Projectile {
                 int multiplier = velocity < 0? 2: 1;
                 boss.hurt(damage * multiplier);
                 die();
+                ((Omegaman) character).stats[Omegaman.DMG_TO_BOSS] += damage * multiplier;
+                ((Omegaman) character).skillPts = Math.min(((Omegaman) character).skillPts + SKILL_PT_GAIN * multiplier, Omegaman.MAX_SKILL_PTS);
             }
             if (canHitProj) {
                 for (Projectile proj: boss.projectiles) {
@@ -830,7 +848,7 @@ class Bouncer extends Projectile {
             if (enemy != character) {
                 if (OmegaFight3.intersects(coord, hitBoxSize, enemy.coord, enemy.size, OmegaFight3.HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
                     enemy.hurt(damage, knockback, coord, dir, KB_SPREAD, SCREENSHAKE);
-                    ((Omegaman) character).skillPts = Math.min(((Omegaman) character).skillPts + 1, Omegaman.MAX_SKILL_PTS);
+                    ((Omegaman) character).stats[Omegaman.DMG_TO_OMEGAMAN] += damage;
                 }
                 if (canHitProj) {
                     for (Projectile proj: enemy.projectiles) {
@@ -844,6 +862,7 @@ class Bouncer extends Projectile {
         for (Boss boss: OmegaFight3.bosses) {
             if (OmegaFight3.intersects(coord, hitBoxSize, boss.coord, boss.size, Boss.BOSS_HITBOX_LEEWAY * Math.min(boss.size.x, boss.size.y))) {
                 boss.hurt(damage);
+                ((Omegaman) character).stats[Omegaman.DMG_TO_BOSS] += damage;
             }
             if (canHitProj) {
                 for (Projectile proj: boss.projectiles) {
@@ -914,6 +933,7 @@ class Spike extends Projectile {
             if (enemy != character) {
                 if (OmegaFight3.intersects(coord, hitBoxSize, enemy.coord, enemy.size, OmegaFight3.HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
                     die();
+
                 }
                 if (canHitProj) {
                     for (Projectile proj: enemy.projectiles) {
@@ -1003,6 +1023,7 @@ class Thorn extends Projectile {
                     enemy.hurt(damage, knockback, coord, dir, KB_SPREAD, SCREENSHAKE);
                     die();
                     ((Omegaman) character).skillPts = Math.min(((Omegaman) character).skillPts + SKILL_PT_GAIN, Omegaman.MAX_SKILL_PTS);
+                    ((Omegaman) character).stats[Omegaman.DMG_TO_OMEGAMAN] += damage;
                 }
                 if (canHitProj) {
                     for (Projectile proj: enemy.projectiles) {
@@ -1019,6 +1040,7 @@ class Thorn extends Projectile {
                 boss.hurt(damage);
                 die();
                 ((Omegaman) character).skillPts = Math.min(((Omegaman) character).skillPts + SKILL_PT_GAIN, Omegaman.MAX_SKILL_PTS);
+                ((Omegaman) character).stats[Omegaman.DMG_TO_BOSS] += damage;
             }
             if (canHitProj) {
                 for (Projectile proj: boss.projectiles) {
@@ -1083,6 +1105,7 @@ class Splitter extends Projectile {
             if (enemy != character) {
                 if (OmegaFight3.intersects(coord, hitBoxSize, enemy.coord, enemy.size, OmegaFight3.HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
                     enemy.hurt(damage, knockback, coord, dir, KB_SPREAD, SCREENSHAKE);
+                    ((Omegaman) character).stats[Omegaman.DMG_TO_OMEGAMAN] += damage;
                 }
                 if (canHitProj) {
                     for (Projectile proj: enemy.projectiles) {
@@ -1094,6 +1117,10 @@ class Splitter extends Projectile {
             }
         }
         for (Boss boss: OmegaFight3.bosses) {
+            if (OmegaFight3.intersects(coord, hitBoxSize, boss.coord, boss.size, Boss.BOSS_HITBOX_LEEWAY * Math.min(boss.size.x, boss.size.y))) {
+                boss.hurt(damage);
+                ((Omegaman) character).stats[Omegaman.DMG_TO_BOSS] += damage;
+            }
             if (canHitProj) {
                 for (Projectile proj: boss.projectiles) {
                     if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, Boss.BOSS_HITBOX_LEEWAY * Math.min(boss.size.x, boss.size.y)) && proj.hitBoxActive && proj.canHitProj) {
