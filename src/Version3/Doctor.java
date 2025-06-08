@@ -4,10 +4,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public class Doctor extends Boss {
-    // Background attack variables
-    public int pincerCounter;
-    public int bombotCounter;
-
     // Combat constants
     public static final double INITIAL_HEALTH = 600 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
     public static final int HURT_BLINK_HZ = 1;
@@ -22,7 +18,7 @@ public class Doctor extends Boss {
     public static final int SPIT = 2;
     public static final int LAUGH = 3;
     public static final int NO_OF_STATES = 4;
-    public static final int TRANSITION_TIME = OmegaFight3.FPS * 2;
+    public static final int TRANSITION_TIME = 120;
     public static final Coord[] STATE_SIZE = {new Coord(220, 420), new Coord(280, 400), new Coord(280, 440), new Coord(400, 525)};
     public static final int[] STATE_SPRITE_CHANGE_HZ = {10, 10, 7, 5};
     public static final Coord[] STATE_COORD = {null, new Coord(OmegaFight3.SCREEN_SIZE.x * 7 / 8, OmegaFight3.SCREEN_SIZE.y / 2),
@@ -55,6 +51,10 @@ public class Doctor extends Boss {
     public static final int BOMBOT_NUM_SPAWN_LOCS = 2;
     public static final int LEFT_SPAWN = 0;
     public static final int RIGHT_SPAWN = 1;
+
+    // Background attack variables
+    public int pincerCounter;
+    public int bombotCounter;
 
     // Images
     public static BufferedImage[] sprite = new BufferedImage[NO_OF_SPRITES];

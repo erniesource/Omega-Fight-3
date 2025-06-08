@@ -4,6 +4,18 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 abstract public class Projectile {
+    // Explosion variables
+    public static final int EXPLOSION_FRAME_HZ = 4;
+    public static final int NUM_EXPLOSION_IMAGES = 8;
+    public static final int EXPLOSION_TIME = EXPLOSION_FRAME_HZ * NUM_EXPLOSION_IMAGES;
+    public static BufferedImage[] explosionImages = new BufferedImage[NUM_EXPLOSION_IMAGES];
+    public static final int NUM_OF_WEAPONS = 6;
+    public static final double INFINITE_DURABILITY = 100;
+
+    // Misc Variables
+    public static final int NO_OF_PLAYER_PROJECTILES = 6;
+    public static final int INF_LIFE = 0;
+    
     // General variables
     public Char character;
     public Coord coord;
@@ -21,18 +33,6 @@ abstract public class Projectile {
     public double damage;
     public double knockback;
     public double durability;
-
-    // Explosion variables
-    public static final int EXPLOSION_FRAME_HZ = 4;
-    public static final int NUM_EXPLOSION_IMAGES = 8;
-    public static final int EXPLOSION_TIME = EXPLOSION_FRAME_HZ * NUM_EXPLOSION_IMAGES;
-    public static BufferedImage[] explosionImages = new BufferedImage[NUM_EXPLOSION_IMAGES];
-    public static final int NUM_OF_WEAPONS = 6;
-    public static final double INFINITE_DURABILITY = 100;
-
-    // Misc Variables
-    public static final int NO_OF_PLAYER_PROJECTILES = 6;
-    public static final int INF_LIFE = 0;
 
     public Projectile(Char character, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double durability, int frameCounter, boolean canHitProj) {
         this.character = character;

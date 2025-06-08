@@ -4,10 +4,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public class Dragon extends Boss{
-    // Background attack variables
-    public int bubbleCounter;
-    public int fireCounter;
-
     // Combat constants
     public static final double INITIAL_HEALTH = 500 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
     public static final int HURT_BLINK_HZ = 1;
@@ -22,7 +18,7 @@ public class Dragon extends Boss{
     public static final int DIZZY = 2;
     public static final int BARF = 3;
     public static final int NO_OF_STATES = 4;
-    public static final int TRANSITION_TIME = OmegaFight3.FPS * 2;
+    public static final int TRANSITION_TIME = 120;
     public static final Coord[] STATE_SIZE = {new Coord(880, 700), new Coord(660, 835), new Coord(530, 900), new Coord(690, 850)};
     public static final int[] STATE_SPRITE_CHANGE_HZ = {5, 5, 5, 7};
     public static final Coord[] STATE_COORD = {null, new Coord(OmegaFight3.SCREEN_SIZE.x / 8, OmegaFight3.SCREEN_SIZE.y * 5 / 8),
@@ -49,6 +45,10 @@ public class Dragon extends Boss{
     public static final int FIRE_HZ = 240;
     public static final int MIN_FIRE_HZ = 120;
     public static final double FIRE_THRESHOLD = 0.4;
+
+    // Background attack variables
+    public int bubbleCounter;
+    public int fireCounter;
 
     // Images
     public static BufferedImage[] sprite = new BufferedImage[NO_OF_SPRITES];

@@ -4,8 +4,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public class Ring extends Projectile{
-    public static BufferedImage[] images = new BufferedImage[3];
-    
     // Damage constants
     public static final double DMG = 10 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
     public static final double DURABILITY = 2;
@@ -25,6 +23,8 @@ public class Ring extends Projectile{
     public static final boolean CAN_HIT_PROJ = true;
     public static final int NO_OF_SPRITES = 3;
     public static final int SPRITE_CHANGE_HZ = 7;
+
+    public static BufferedImage[] images = new BufferedImage[NO_OF_SPRITES];
 
     public Ring(Boss boss, Coord coord, Coord size, double velocity, double dir, double damage, double knockback, double durability, int frameCounter, boolean canHitProj) {
         super(boss, coord, size, size.scaledBy(SIZE_TO_HITBOX), velocity, dir, damage, knockback, durability, frameCounter, canHitProj);
@@ -65,10 +65,6 @@ public class Ring extends Projectile{
 }
 
 class Meteor extends Projectile {
-    public int sign;
-
-    public static BufferedImage[] images = new BufferedImage[3];
-
     // Damage constants
     public static final double DMG = 5 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
     public static final double DURABILITY = INFINITE_DURABILITY;
@@ -89,6 +85,10 @@ class Meteor extends Projectile {
     public static final boolean CAN_HIT_PROJ = false;
     public static final int NO_OF_SPRITES = 3;
     public static final int SPRITE_CHANGE_HZ = 7;
+
+    public int sign;
+
+    public static BufferedImage[] images = new BufferedImage[NO_OF_SPRITES];
 
     public Meteor(Boss boss, Coord coord, Coord size, double velocity, double dir, double damage, double knockback, double durability, int frameCounter, int sign, boolean canHitProj) {
         super(boss, coord, size, size.scaledBy(SIZE_TO_HITBOX), velocity, dir, damage, knockback, durability, frameCounter, canHitProj);
@@ -135,10 +135,6 @@ class Meteor extends Projectile {
 }
 
 class Bubble extends Projectile {
-    public Coord bubbleVelocity;
-
-    public static BufferedImage[] images = new BufferedImage[3];
-    
     // Damage constants
     public static final double DMG = 10 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
     public static final double DURABILITY = 2;
@@ -164,6 +160,10 @@ class Bubble extends Projectile {
     // Sprite constants
     public static final int NO_OF_SPRITES = 3;
     public static final int SPRITE_CHANGE_HZ = 7;
+
+    public Coord bubbleVelocity;
+
+    public static BufferedImage[] images = new BufferedImage[NO_OF_SPRITES];
 
     public Bubble(Boss boss, Coord coord, Coord size, double velocity, double damage, double knockback, double durability, int frameCounter, boolean canHitProj) {
         super(boss, coord, size, size.scaledBy(SIZE_TO_HITBOX), 0, (coord.x < OmegaFight3.SCREEN_SIZE.x / 2? 0: Math.PI), damage, knockback, durability, frameCounter, canHitProj);
@@ -208,10 +208,6 @@ class Bubble extends Projectile {
 }
 
 class Fire extends Projectile {
-    public double trueDir;
-
-    public static BufferedImage[] images = new BufferedImage[2];
-    
     // Damage constants
     public static final double DMG = 10 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
     public static final double DURABILITY = 2;
@@ -233,6 +229,10 @@ class Fire extends Projectile {
     // Sprite constants
     public static final int NO_OF_SPRITES = 2;
     public static final int SPRITE_CHANGE_HZ = 10;
+
+    public double trueDir;
+
+    public static BufferedImage[] images = new BufferedImage[NO_OF_SPRITES];
 
     public Fire(Boss boss, Coord coord, double velocity, double dir, double damage, double knockback, double durability, int frameCounter, boolean canHitProj) {
         super(boss, coord, new Coord(SIZE.x, 0), (new Coord(SIZE.x, 0)).scaledBy(SIZE_TO_HITBOX), velocity, OmegaFight3.normalizeAngle(dir) < 0? -Math.PI / 2: Math.PI / 2, damage, knockback, durability, frameCounter, canHitProj);

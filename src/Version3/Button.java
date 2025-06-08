@@ -6,27 +6,28 @@ import java.awt.image.BufferedImage;
 import java.util.*;
 
 public class Button {
-    public BufferedImage image;
-    public Font[] font = new Font[3];
-    public Coord coord;
-    public Coord[] size = new Coord[3];
-    public String text;
-    public int state = 1; // 0: Pressed, 1: Not Pressed, 2: Hovered
-    public int num;
-    public int style;
-    public boolean canSee = true;
-    public boolean canUse = true;
-
     public static final double DIFF_IN_SIZE_OF_STATES = 0.05;
     public static final int PRESSED = 0;
     public static final int NOPRESSED = 1;
     public static final int HOVERED = 2;
+    public static final int NUM_STATES = 3;
     public static final int SHADOW = 0;
     public static final int HIGHLIGHT = 1;
     public static final int HIGHLIGHT_X_BUFFER = 10;
     public static final double LEEWAY = 0;
     public static final double SHADOW_OFFSET = 0.05;
     public static final int NO_BUTTON_NUM = -1;
+
+    public BufferedImage image;
+    public Font[] font = new Font[NUM_STATES];
+    public Coord coord;
+    public Coord[] size = new Coord[NUM_STATES];
+    public String text;
+    public int state = NOPRESSED; // 0: Pressed, 1: Not Pressed, 2: Hovered
+    public int num;
+    public int style;
+    public boolean canSee = true;
+    public boolean canUse = true;
 
     public Button(BufferedImage image, Font font, Coord coord, Coord size, String text, int num, int style) {
         this(image, coord, size, num);
@@ -98,15 +99,15 @@ public class Button {
 }
 
 class TextBox extends Button {
+    public static final int CURSOR_HZ = 30;
+    public static final int CURSOR_SPACING = 0;
+    public static final int ALLOWED_DIST_FROM_EDGE = 10;
+
     public boolean typing;
     public boolean clickedOutside;
     public HashSet<Integer> prevPressedKeys;
     public int cursorCounter;
     public int allowedDistFromEdge;
-
-    public static final int CURSOR_HZ = 30;
-    public static final int CURSOR_SPACING = 0;
-    public static final int ALLOWED_DIST_FROM_EDGE = 10;
 
     public TextBox(BufferedImage image, Font font, Coord coord, Coord size, int style) {
         super(image, font, coord, size, "", NO_BUTTON_NUM, style);

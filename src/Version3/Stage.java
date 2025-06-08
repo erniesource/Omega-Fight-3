@@ -6,6 +6,10 @@ import java.io.*;
 import javax.imageio.ImageIO;
 
 public class Stage {
+    public static final int NO_OF_STAGES = 2;
+    public static final int BATTLEFIELD_NO = 0;
+    public static final int FINAL_DEST_NO = 1;
+    
     public BufferedImage image;
     public Platform[] platforms; // Make an arraylist?
     public Coord[] spawnCoords;
@@ -15,10 +19,6 @@ public class Stage {
     public String stageName;
     
     public static Coord coord = new Coord();
-
-    public static final int NO_OF_STAGES = 2;
-    public static final int BATTLEFIELD_NO = 0;
-    public static final int FINAL_DEST_NO = 1;
 
     public Stage(String stageName, Platform[] platforms, Coord[] spawnCoords, int[] spawnSpriteSign, int[] spawnPlatformNo, int buttono) throws IOException {
         image = ImageIO.read(new File("stages/" + stageName + ".jpg"));

@@ -11,96 +11,20 @@ import java.util.*;
 // Ernest Long term Todo: ultimate, dash, smoke
 
 public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionListener, KeyListener, Runnable {
-    // Game States
-    // -1 <- Studio Animation + Start menu
-    // 0 <- Home Screen
-    // 1 <- Choose your fight screen
-    // 2 <- In-Game Screen
-    // 3 <- Game End Screen
-    // 4 <- Credit/Tutorial Screen
-    // 5 <- Battle Log Screen
-    public static int gameState = 1;
-
-    // Players
-    public static Omegaman[] omegaman = new Omegaman[Omegaman.NUM_PLAYERS];
-    public static int[][] loadouts = {{-1, -1}, {-1, -1}};
-    public static int[][] controls = {{KeyEvent.VK_A, KeyEvent.VK_D, KeyEvent.VK_W, KeyEvent.VK_S}, {KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_UP, KeyEvent.VK_DOWN}};
-    public static int[][] shtKeys = {{KeyEvent.VK_C, KeyEvent.VK_V}, {KeyEvent.VK_NUMPAD1, KeyEvent.VK_NUMPAD2}};
-    public static int[][] loadoutButtono = {{11, 12}, {13, 14}};
-
-    // Boss
-    public static ArrayList<Boss> bosses = new ArrayList<>();
-
-    // Mouse/Keyboard Events
-    public static Coord mouse = new Coord();
-    public static boolean clicked;
-    public static HashSet<Integer> pressedKey = new HashSet<>();
-
-    // Stage statistics
-    public static int stageNo = 0;
-    public static Stage[] stage = new Stage[Stage.NO_OF_STAGES];
-    public static int stageFlashCounter = 0;
-
-    // Home menu buttons
-    public static HashMap<Integer, Button> homeButtons = new HashMap<>();
-
-    // Choose fight Buttons
-    public static HashMap<Integer, Button> chooseButtons = new HashMap<>();
-    public static int buttonPressed = -1;
-    public static Button selectedIcon;
-    public static HashMap<Integer, Integer> buttonoToWeaponNo = new HashMap<>();
-    public static BufferedImage[] icon = new BufferedImage[Projectile.NO_OF_PLAYER_PROJECTILES];
-    public static int iconFlashCounter = 0;
-    public static int readyCounter = -1;
-
-    // Game end Buttons
-    public static HashMap<Integer, Button> gameEndButtons = new HashMap<>();
-    public static ArrayList<TextBox> gameEndTextBoxes = new ArrayList<>();
-
-    // Home menu images
-    public static BufferedImage home;
-    public static BufferedImage homeButtonImg;
-    public static BufferedImage menuMan;
-
-    // Choose menu images
-    public static BufferedImage chooseMenu;
-    public static BufferedImage buttonImg;
-    public static BufferedImage addWeaponIcon;
-    public static BufferedImage readyBar;
-    public static BufferedImage[] countdownText = new BufferedImage[3];
-    public static BufferedImage[] gameOver = new BufferedImage[2];
-    public static BufferedImage[] gameSet = new BufferedImage[2];
-
-    // Game end images
-    public static BufferedImage[] flash = new BufferedImage[2 + Omegaman.NUM_PLAYERS];
-    public static BufferedImage resultsTitle;
-    public static BufferedImage[] happyMan = new BufferedImage[Omegaman.NUM_PLAYERS];
-    public static BufferedImage[] sadMan = new BufferedImage[Omegaman.NUM_PLAYERS];
-    public static BufferedImage[] scoreboard = new BufferedImage[1];
-    public static BufferedImage battleNameBoxImg;
-
-    // Menu stats
-    public static int transitionCounter = 0;
-    public static int transitiono = -1;
-    public static Battle battleDone;
-    public static double flashRotation;
-    public static ArrayList<Battle> battleLog = new ArrayList<>();
-    public static double menuManY = 61;
-    public static int menuManCounter = 0;
-
-    // General game statistics
-    public static int screenShakeCounter = 0;
-    public static BufferedImage placeHolder;
-    public static int gameMode = 0;
+    // Screen Settings
+    public static final Coord SCREEN_SIZE = new Coord(1920, 960);
+    public static final int FPS = 60;
+    public static final int SCREEN_SHAKE_HZ = 2;
+    public static final int SPACING = 25;
 
     // Home menu Constants
-    public static final int MENU_MAN_MIN_Y = 960 - 900 + 1;
-    public static final int MENU_MAN_MOVE_TIMES = 20;
+    public static final Coord MENU_MAN_SIZE = new Coord(860, 900);
     public static final double MENU_MAN_SPD = 1;
+    public static final int MENU_MAN_MIN_Y = (int) (SCREEN_SIZE.y - MENU_MAN_SIZE.y + MENU_MAN_SPD);
+    public static final int MENU_MAN_MOVE_TIMES = 20;
     public static final int MENU_MAN_UP_PAUSE = 20;
     public static final int MENU_MAN_DOWN_PAUSE = 5;
     public static final int MENU_MAN_MOVE_HZ = 2;
-    public static final Coord MENU_MAN_SIZE = new Coord(860, 900);
     public static final Coord HOME_BUTTON_SIZE = new Coord(960, 100);
     public static final Font HOME_BUTTON_FONT = new Font("Consolas", Font.BOLD, 66);
     public static final int HOME_BUTTON_FIRST_Y = 570;
@@ -125,19 +49,8 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static final int EMO_MAN_SCREEN_EDGE_OFFSET = 100;
     public static final Coord HAPPY_MAN_SIZE = new Coord(517, 700);
     public static final Coord SAD_MAN_SIZE = new Coord(326, 500);
-    public static final int NO_GAMEMODES = 1;
-    public static final Coord SCOREBOARD_SIZE = new Coord(600, 500);
-    public static final int SCOREBOARD_SPACING = 43;
-    public static final Coord[] SCOREBOARD_COORD_TO_STATS_COORDS = {new Coord(314, 133), new Coord(457, 133)};
-    public static final Font SCOREBOARD_FONT = new Font("Consolas", Font.BOLD, 30);
     public static final Coord BATTLE_NAME_BOX_SIZE = new Coord(405, 120);
     public static final int BATTLE_NAME_BOX_IDX = 0;
-
-    // Screen Settings
-    public static final Coord SCREEN_SIZE = new Coord(1920, 960);
-    public static final int FPS = 60;
-    public static final int SCREEN_SHAKE_HZ = 2;
-    public static final int SPACING = 25;
 
     // Direction Constants
     public static final int LEFT_SIGN = -1;
@@ -158,6 +71,9 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     // Misc
     public static final double HITBOX_LEEWAY = 5;
     public static final int MAX_RGB_VAL = 255;
+
+    // Gamemode constants
+    public static final int NUM_GAMEMODES = 1;
     public static final int TWOPVE = 0;
 
     // Surge constants
@@ -227,6 +143,87 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     // Color constants
     public static final Color PURPLE = new Color(186, 122, 255);
 
+    // Game States
+    // -1 <- Studio Animation + Start menu
+    // 0 <- Home Screen
+    // 1 <- Choose your fight screen
+    // 2 <- In-Game Screen
+    // 3 <- Game End Screen
+    // 4 <- Credit/Tutorial Screen
+    // 5 <- Battle Log Screen
+    public static int gameState = 0;
+
+    // Players
+    public static Omegaman[] omegaman = new Omegaman[Omegaman.NUM_PLAYERS];
+    public static int[][] loadouts = {{NO_WEAPON, NO_WEAPON}, {NO_WEAPON, NO_WEAPON}};
+    public static int[][] controls = {{KeyEvent.VK_A, KeyEvent.VK_D, KeyEvent.VK_W, KeyEvent.VK_S}, {KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_UP, KeyEvent.VK_DOWN}};
+    public static int[][] shtKeys = {{KeyEvent.VK_C, KeyEvent.VK_V}, {KeyEvent.VK_NUMPAD1, KeyEvent.VK_NUMPAD2}};
+    public static int[][] loadoutButtono = {{11, 12}, {13, 14}};
+
+    // Boss
+    public static ArrayList<Boss> bosses = new ArrayList<>();
+
+    // Mouse/Keyboard Events
+    public static Coord mouse = new Coord();
+    public static boolean clicked;
+    public static HashSet<Integer> pressedKey = new HashSet<>();
+
+    // Stage statistics
+    public static int stageNo = Stage.BATTLEFIELD_NO;
+    public static Stage[] stage = new Stage[Stage.NO_OF_STAGES];
+    public static int stageFlashCounter = 0;
+
+    // Home menu buttons
+    public static HashMap<Integer, Button> homeButtons = new HashMap<>();
+
+    // Choose fight Buttons
+    public static HashMap<Integer, Button> chooseButtons = new HashMap<>();
+    public static int buttonPressed = NO_BUTTON_HIT;
+    public static Button selectedIcon;
+    public static HashMap<Integer, Integer> buttonoToWeaponNo = new HashMap<>();
+    public static BufferedImage[] icon = new BufferedImage[Projectile.NO_OF_PLAYER_PROJECTILES];
+    public static int iconFlashCounter = 0;
+    public static int readyCounter = NOT_READY;
+
+    // Game end Buttons
+    public static HashMap<Integer, Button> gameEndButtons = new HashMap<>();
+    public static ArrayList<TextBox> gameEndTextBoxes = new ArrayList<>();
+
+    // Home menu images
+    public static BufferedImage home;
+    public static BufferedImage homeButtonImg;
+    public static BufferedImage menuMan;
+
+    // Choose menu images
+    public static BufferedImage chooseMenu;
+    public static BufferedImage buttonImg;
+    public static BufferedImage addWeaponIcon;
+    public static BufferedImage readyBar;
+    public static BufferedImage[] countdownText = new BufferedImage[3];
+    public static BufferedImage[] gameOver = new BufferedImage[2];
+    public static BufferedImage[] gameSet = new BufferedImage[2];
+
+    // Game end images
+    public static BufferedImage[] flash = new BufferedImage[2 + Omegaman.NUM_PLAYERS];
+    public static BufferedImage resultsTitle;
+    public static BufferedImage[] happyMan = new BufferedImage[Omegaman.NUM_PLAYERS];
+    public static BufferedImage[] sadMan = new BufferedImage[Omegaman.NUM_PLAYERS];
+    public static BufferedImage battleNameBoxImg;
+
+    // Menu stats
+    public static int transitionCounter = 0;
+    public static int transitiono = NO_TRANSITION;
+    public static Battle battleDone;
+    public static double flashRotation;
+    public static ArrayList<Battle> battleLog = new ArrayList<>();
+    public static double menuManY = MENU_MAN_MIN_Y;
+    public static int menuManCounter = 0;
+
+    // General game statistics
+    public static int screenShakeCounter = 0;
+    public static BufferedImage placeHolder;
+    public static int gameMode = HOME_GS;
+
     // Timer Settings
     public void run() {
         while(true) {
@@ -281,8 +278,8 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
             sadMan[i] = ImageIO.read(new File("menus/" + i + "sadMan.png"));
         }
         resultsTitle = ImageIO.read(new File("menus/results title.png"));
-        for (int i = 0; i != NO_GAMEMODES; i++) {
-            scoreboard[i] = ImageIO.read(new File("menus/" + i + "scoreboard.jpg"));
+        for (int i = 0; i != NUM_GAMEMODES; i++) {
+            Battle.scoreBoard[i] = ImageIO.read(new File("menus/" + i + "scoreboard.jpg"));
         }
         battleNameBoxImg = ImageIO.read(new File("menus/battle name box.png"));
         
@@ -419,8 +416,8 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         buttonoToWeaponNo.put(Spike.BUTTONO, Omegaman.SPIKE_WEAPON_NO);
 
         // Game end buttons
-        gameEndTextBoxes.add(new TextBox(battleNameBoxImg, BUTTON_FONT, new Coord((SCREEN_SIZE.x - BATTLE_NAME_BOX_SIZE.x - RESULTS_SPACING) / 2, RESULTS_EDGE_SPACING + RESULTS_TITLE_SIZE.y + RESULTS_SPACING * 2 + SCOREBOARD_SIZE.y + BATTLE_NAME_BOX_SIZE.y / 2), BATTLE_NAME_BOX_SIZE, Button.SHADOW));
-        gameEndButtons.put(NEXT_BATTLE_BUTTONO, new Button(buttonImg, BUTTON_FONT, new Coord((SCREEN_SIZE.x + BUTTON_SIZE.x + RESULTS_SPACING) / 2, RESULTS_EDGE_SPACING + RESULTS_TITLE_SIZE.y + RESULTS_SPACING * 2 + SCOREBOARD_SIZE.y + BATTLE_NAME_BOX_SIZE.y / 2), BUTTON_SIZE.copy(), "NEXT BATTLE!", NEXT_BATTLE_BUTTONO, Button.SHADOW));
+        gameEndTextBoxes.add(new TextBox(battleNameBoxImg, BUTTON_FONT, new Coord((SCREEN_SIZE.x - BATTLE_NAME_BOX_SIZE.x - RESULTS_SPACING) / 2, RESULTS_EDGE_SPACING + RESULTS_TITLE_SIZE.y + RESULTS_SPACING * 2 + Battle.SCOREBOARD_SIZE.y + BATTLE_NAME_BOX_SIZE.y / 2), BATTLE_NAME_BOX_SIZE, Button.SHADOW));
+        gameEndButtons.put(NEXT_BATTLE_BUTTONO, new Button(buttonImg, BUTTON_FONT, new Coord((SCREEN_SIZE.x + BUTTON_SIZE.x + RESULTS_SPACING) / 2, RESULTS_EDGE_SPACING + RESULTS_TITLE_SIZE.y + RESULTS_SPACING * 2 + Battle.SCOREBOARD_SIZE.y + BATTLE_NAME_BOX_SIZE.y / 2), BUTTON_SIZE.copy(), "NEXT BATTLE!", NEXT_BATTLE_BUTTONO, Button.SHADOW));
         
         // JFrame and JPanel
         JFrame frame = new JFrame("Omega Fight 3");
@@ -675,13 +672,8 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                 g.drawImage(happyMan[1], (int) (SCREEN_SIZE.x - EMO_MAN_SCREEN_EDGE_OFFSET - HAPPY_MAN_SIZE.x), (int) (SCREEN_SIZE.y - HAPPY_MAN_SIZE.y), null);
             }
             
-            g.drawImage(scoreboard[gameMode], (int) (SCREEN_SIZE.x - SCOREBOARD_SIZE.x) / 2, (int) (RESULTS_EDGE_SPACING + RESULTS_TITLE_SIZE.y + RESULTS_SPACING), null);
             
-            if (transitiono != RESULTS_COUNTING) {
-                for (int i = 0; i != Omegaman.NUM_PLAYERS; i++) {
-                    battleDone.draw(SCOREBOARD_FONT, new Coord((SCREEN_SIZE.x - SCOREBOARD_SIZE.x) / 2 + SCOREBOARD_COORD_TO_STATS_COORDS[i].x, RESULTS_EDGE_SPACING + RESULTS_TITLE_SIZE.y + RESULTS_SPACING + SCOREBOARD_COORD_TO_STATS_COORDS[i].y), SCOREBOARD_SPACING, i, 1.0, g);
-                }
-            }
+            if (transitiono != RESULTS_COUNTING) battleDone.drawScoreBoard(new Coord((SCREEN_SIZE.x - Battle.SCOREBOARD_SIZE.x) / 2, RESULTS_EDGE_SPACING + RESULTS_TITLE_SIZE.y + RESULTS_SPACING), Battle.FULL_STATS, g);
 
             drawButtons(gameEndButtons.values(), g);
             drawTextBoxes(gameEndTextBoxes, g);
@@ -816,10 +808,6 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                     double[][] stats = new double[Omegaman.NUM_PLAYERS][];
                     for (int i = 0; i != Omegaman.NUM_PLAYERS; i++) {
                         stats[i] = omegaman[i].stats;
-                        for (int j = 0; j != Omegaman.NO_OF_STATS; j++) {
-                            if (Battle.isPercent[j]) stats[i][j] /= Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
-                        }
-                        stats[i][Omegaman.SKILL_PTS_USED_NO] /= Omegaman.ONES_PER_SKILL_PT;
                         stats[i][Omegaman.LIVES_LEFT_NO] = omegaman[i].livesLeft;
                         omegaman[i] = null;
                     }
@@ -837,10 +825,6 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                     double[][] stats = new double[Omegaman.NUM_PLAYERS][];
                     for (int i = 0; i != Omegaman.NUM_PLAYERS; i++) {
                         stats[i] = omegaman[i].stats;
-                        for (int j = 0; j != Omegaman.NO_OF_STATS; j++) {
-                            if (Battle.isPercent[j]) stats[i][j] /= Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
-                        }
-                        stats[i][Omegaman.SKILL_PTS_USED_NO] /= Omegaman.ONES_PER_SKILL_PT;
                         stats[i][Omegaman.LIVES_LEFT_NO] = omegaman[i].livesLeft;
                         omegaman[i] = null;
                     }
@@ -926,9 +910,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
             }
         }
         else if (transitiono == RESULTS_COUNTING) {
-            for (int i = 0; i != Omegaman.NUM_PLAYERS; i++) {
-                battleDone.draw(SCOREBOARD_FONT, new Coord((SCREEN_SIZE.x - SCOREBOARD_SIZE.x) / 2 + SCOREBOARD_COORD_TO_STATS_COORDS[i].x, RESULTS_EDGE_SPACING + RESULTS_TITLE_SIZE.y + RESULTS_SPACING + SCOREBOARD_COORD_TO_STATS_COORDS[i].y), SCOREBOARD_SPACING, i, 1 - (double) transitionCounter / RESULTS_COUNTING_LEN, g2);
-            }
+            battleDone.drawScoreBoard(new Coord((SCREEN_SIZE.x - Battle.SCOREBOARD_SIZE.x) / 2, RESULTS_EDGE_SPACING + RESULTS_TITLE_SIZE.y + RESULTS_SPACING), 1 - (double) transitionCounter / RESULTS_COUNTING_LEN, g2);
             if (transitionCounter >= RESULTS_COUNTING_LEN - RESULTS_FADE_LEN) {
                 drawFade((double) (transitionCounter - (RESULTS_COUNTING_LEN - RESULTS_FADE_LEN)) / RESULTS_FADE_LEN, g2);
             }

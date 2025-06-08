@@ -56,15 +56,6 @@ abstract class Char {
 }
 
 abstract class Boss extends Char {
-    public static BufferedImage[] surge = new BufferedImage[5];
-
-    // Combat stats
-    public int transitionTo = -1;
-    public double health;
-    public double difficulty;
-    public boolean hurt;
-    public int hurtCounter = -1;
-
     public static final double BOSS_HITBOX_LEEWAY = 0.2;
     public static final int NO_TRANSITION = -1;
     public static final int NOT_HURT = -1;
@@ -75,6 +66,15 @@ abstract class Boss extends Char {
 
     public static final int DEAD = 0;
     public static final int IDLE = 1;
+
+    public static BufferedImage[] surge = new BufferedImage[OmegaFight3.NUM_SURGE_IMAGES];
+
+    // Combat stats
+    public int transitionTo = NO_TRANSITION;
+    public double health;
+    public double difficulty;
+    public boolean hurt;
+    public int hurtCounter = NOT_HURT;
 
     public Boss(Coord coord, int spriteNo, int spriteSign, int frameCounter, Coord size, int state, double health, double difficulty) {
         super(coord, spriteNo, spriteSign, frameCounter, size, state);

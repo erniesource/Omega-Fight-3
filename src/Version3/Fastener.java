@@ -4,11 +4,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public class Fastener extends Projectile {
-    public Coord fastenerVelocity;
-    public int type;
-
-    public static BufferedImage[][] images = new BufferedImage[2][];
-    
     // Damage constants
     public static final double DMG = 7.5 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
     public static final double DURABILITY = 2;
@@ -35,6 +30,11 @@ public class Fastener extends Projectile {
     public static final int NO_OF_TYPES = 2;
     public static final int[] NUM_SPRITES = {3, 4};
     public static final int SPRITE_CHANGE_HZ = 5;
+
+    public static BufferedImage[][] images = new BufferedImage[NO_OF_TYPES][];
+
+    public Coord fastenerVelocity;
+    public int type;
 
     public Fastener(Boss boss, Coord coord, Coord size, double velocity, double dir, double damage, double knockback, double durability, int frameCounter, boolean canHitProj) {
         super(boss, coord, size, size.scaledBy(SIZE_TO_HITBOX), velocity, dir, damage, knockback, durability, frameCounter, canHitProj); // DO SCALED BY STUFF FOR HITBOX SO IT DOESN't FEEL SO BAD

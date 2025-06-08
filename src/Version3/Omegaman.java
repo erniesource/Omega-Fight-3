@@ -7,51 +7,6 @@ import java.util.*;
 import javax.imageio.ImageIO;
 
 public class Omegaman extends Char {
-    // Movement stats
-    public int runSign = 1; // 1: Positive, -1: Negative
-    public int lftKey, ritKey, upKey, dwnKey, shtKeys[], swtKey;
-    public Coord maxVelocity = new Coord(8, 22);
-    public Coord accel = new Coord(1, 2);
-    public int runFrameFreq = 6;
-
-    // Jumping stats
-    public int jumpCounter; // Jump cooldown (3 frames or 1/20 of a second)
-    public int coyoteCounter; // Counter for Coyote time
-    public int jumpState = 1; // Even number (Pressing on the i / 2 - th jump), Odd number (Not pressing on the i / 2 - th jump)
-    public int onPlatform; // -1: Not on plaform (airborne), 0+ (which number platform player is on)
-
-    // Weapon statistics
-    public int shootCharge;
-    public int heatCounter;
-    public int chargingWeapon = -1;
-    public int[] loadout;
-    public int[] loadoutButtono;
-    public Deque<Integer> smokeQ = new LinkedList<>(); // To be used maybe
-
-    // Skill point statistics
-    public int skillPts = ONES_PER_SKILL_PT * 3 / 2;
-    public int skillPtCounter;
-
-    // KB statistics
-    public int stunCounter;
-
-    // Combat statistics
-    public int livesLeft = 3;
-    public int percent;
-    public int percentShakeCounter;
-    public Coord[] percentDigitShake = new Coord[4];
-    public int percentDisplayX;
-    public int invCounter;
-
-    // Images
-    public BufferedImage[] sprite = new BufferedImage[6];
-    public BufferedImage percentDisplay;
-    public BufferedImage[] surge = new BufferedImage[OmegaFight3.NUM_SURGE_IMAGES];
-
-    // Other stats
-    public double[] stats = new double[7];
-    public int playerNo;
-    
     // Sprite Constants
     public static final int IDLE_SPRITE = 0;
     public static final int FRST_RUN_SPRITE = 1;
@@ -157,6 +112,51 @@ public class Omegaman extends Char {
     public static final int SKILL_PTS_USED_NO = 4;
     public static final int DMG_TO_OMEGAMAN = 5;
     public static final int DMG_TO_BOSS = 6;
+
+    // Movement stats
+    public int runSign = 1; // 1: Positive, -1: Negative
+    public int lftKey, ritKey, upKey, dwnKey, shtKeys[], swtKey;
+    public Coord maxVelocity = new Coord(8, 22);
+    public Coord accel = new Coord(1, 2);
+    public int runFrameFreq = 6;
+
+    // Jumping stats
+    public int jumpCounter; // Jump cooldown (3 frames or 1/20 of a second)
+    public int coyoteCounter; // Counter for Coyote time
+    public int jumpState = 1; // Even number (Pressing on the i / 2 - th jump), Odd number (Not pressing on the i / 2 - th jump)
+    public int onPlatform; // -1: Not on plaform (airborne), 0+ (which number platform player is on)
+
+    // Weapon statistics
+    public int shootCharge;
+    public int heatCounter;
+    public int chargingWeapon = NOT_CHARGING;
+    public int[] loadout;
+    public int[] loadoutButtono;
+    public Deque<Integer> smokeQ = new LinkedList<>(); // To be used maybe
+
+    // Skill point statistics
+    public int skillPts = ONES_PER_SKILL_PT * 3 / 2;
+    public int skillPtCounter;
+
+    // KB statistics
+    public int stunCounter;
+
+    // Combat statistics
+    public int livesLeft = 3;
+    public int percent;
+    public int percentShakeCounter;
+    public Coord[] percentDigitShake = new Coord[4];
+    public int percentDisplayX;
+    public int invCounter;
+
+    // Images
+    public BufferedImage[] sprite = new BufferedImage[6];
+    public BufferedImage percentDisplay;
+    public BufferedImage[] surge = new BufferedImage[OmegaFight3.NUM_SURGE_IMAGES];
+
+    // Other stats
+    public double[] stats = new double[NO_OF_STATS];
+    public int playerNo;
 
     public Omegaman(int playerNo, Coord coord, int spriteSign, int onPlatform, int[] controls, int[] shtKeys, int[] loadout, int[] loadoutButtono) throws IOException {
         // Initialize character variables
