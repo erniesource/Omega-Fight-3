@@ -46,11 +46,18 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static final Coord RESULTS_TITLE_SIZE = new Coord(1440, 130); 
     public static final int RESULTS_EDGE_SPACING = 100;
     public static final int RESULTS_SPACING = 40;
-    public static final int EMO_MAN_SCREEN_EDGE_OFFSET = 100;
-    public static final Coord HAPPY_MAN_SIZE = new Coord(517, 700);
-    public static final Coord SAD_MAN_SIZE = new Coord(326, 500);
+    
     public static final Coord BATTLE_NAME_BOX_SIZE = new Coord(405, 120);
     public static final int BATTLE_NAME_BOX_IDX = 0;
+
+    // Battle log menu constants
+    public static final Coord BATTLE_LOG_SCOREBOARD_COORD = new Coord(660, 350);
+    public static final int BATTLE_NO_Y_COORD = 880;
+    public static final Coord BATTLE_LOG_BATTLE_INFO_COORD = new Coord(582, 274);
+    public static final int ARROW_BUTTON_SPACING = 10;
+    public static final int HALF_BATTLE_NO_SIZE = 100;
+    public static final int NO_SORTS = 2;
+    public static final String BATTLE_LOG_FILE_NAME = "battle log";
 
     // Direction Constants
     public static final int LEFT_SIGN = -1;
@@ -92,21 +99,33 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static final int SLIDESHOW_GS = 4;
     public static final int BATTLE_LOG_GS = 5;
 
-    // Button Numbers (Next avail: 16)
+    // Button Numbers (Next avail: 26)
     public static final int NO_BUTTON_HIT = -1;
     // Choose your fight menu
     public static final int CHOOSE_BACK_BUTTONO = 0;
     public static final int READY_BUTTONO = 10;
+
     // Game end menu
     public static final int NEXT_BATTLE_BUTTONO = 15;
     public static final int FIGHT_BUTTONO = 16;
     public static final int SLIDESHOW_BUTTONO = 17;
     public static final int BATTLE_LOG_BUTTONO = 18;
 
+    // Battle log menu
+    public static final int BATTLE_LOG_BACK_BUTTONO = 19;
+    public static final int BATTLE_NO_BACK_BUTTONO = 20;
+    public static final int BATTLE_NO_ALL_BACK_BUTTONO = 21;
+    public static final int BATTLE_NO_NEXT_BUTTONO = 22;
+    public static final int BATTLE_NO_ALL_NEXT_BUTTONO = 23;
+    public static final int BATTLE_NO_SORT_BUTTONO = 24;
+    public static final int BATTLE_NO_ORDER_BUTTONO = 25;
+
     // Button constants
     public static final Font BUTTON_FONT = new Font("Consolas", Font.BOLD, 40); 
-    public static final Font STAGE_FONT = new Font("Consolas", Font.BOLD, 25);
     public static final Coord BUTTON_SIZE = new Coord(400, 50);
+    public static final Coord MED_BUTTON_SIZE = new Coord(100, 50);
+    public static final Coord SML_BUTTON_SIZE = new Coord(50, 50);
+    public static final Font STAGE_FONT = new Font("Consolas", Font.BOLD, 25);
     public static final Coord STAGE_BUTTON_SIZE = new Coord(510, 255);
     public static final Coord WEAPON_ICON_SIZE = new Coord(100, 100);
 
@@ -189,6 +208,11 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static HashMap<Integer, Button> gameEndButtons = new HashMap<>();
     public static ArrayList<TextBox> gameEndTextBoxes = new ArrayList<>();
 
+    // Battle log buttons
+    public static HashMap<Integer, Button> battleLogButtons = new HashMap<>();
+    public static BufferedImage smlButtonImg;
+    public static BufferedImage medButtonImg;
+
     // Home menu images
     public static BufferedImage home;
     public static BufferedImage homeButtonImg;
@@ -206,16 +230,27 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     // Game end images
     public static BufferedImage[] flash = new BufferedImage[2 + Omegaman.NUM_PLAYERS];
     public static BufferedImage resultsTitle;
-    public static BufferedImage[] happyMan = new BufferedImage[Omegaman.NUM_PLAYERS];
-    public static BufferedImage[] sadMan = new BufferedImage[Omegaman.NUM_PLAYERS];
     public static BufferedImage battleNameBoxImg;
+
+    // Battle log images
+    public static BufferedImage battleLogBg;
+    public static BufferedImage noBattle;
 
     // Menu stats
     public static int transitionCounter = 0;
     public static int transitiono = NO_TRANSITION;
+
+    // Choose menu stats
     public static Battle battleDone;
     public static double flashRotation;
+
+    // Battle log stats
     public static ArrayList<Battle> battleLog = new ArrayList<>();
+    public static int battleNo = 0;
+    public static int sortNum = SortByTitle.NUM;
+    public static boolean orderNormal = true;
+
+    // Main menu stats
     public static double menuManY = MENU_MAN_MIN_Y;
     public static int menuManCounter = 0;
 
@@ -274,14 +309,20 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
             flash[i] = ImageIO.read(new File("menus/" + (i - 2) + "flash.jpg"));
         }
         for (int i = 0; i != Omegaman.NUM_PLAYERS; i++) {
-            happyMan[i] = ImageIO.read(new File("menus/" + i + "happyMan.png"));
-            sadMan[i] = ImageIO.read(new File("menus/" + i + "sadMan.png"));
+            Battle.happyMan[i] = ImageIO.read(new File("menus/" + i + "happyMan.png"));
+            Battle.sadMan[i] = ImageIO.read(new File("menus/" + i + "sadMan.png"));
         }
         resultsTitle = ImageIO.read(new File("menus/results title.png"));
         for (int i = 0; i != NUM_GAMEMODES; i++) {
             Battle.scoreBoard[i] = ImageIO.read(new File("menus/" + i + "scoreboard.jpg"));
         }
         battleNameBoxImg = ImageIO.read(new File("menus/battle name box.png"));
+
+        // Battle log image importing
+        battleLogBg = ImageIO.read(new File("menus/battle.jpg"));
+        noBattle = ImageIO.read(new File("menus/no battle.jpg"));
+        smlButtonImg = ImageIO.read(new File("menus/sml button.jpg"));
+        medButtonImg = ImageIO.read(new File("menus/med button.jpg"));
         
         // Player Weapon image importing
         addWeaponIcon = ImageIO.read(new File("menus/no weapon.png"));
@@ -392,7 +433,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         homeButtons.put(BATTLE_LOG_BUTTONO, new Button(homeButtonImg, HOME_BUTTON_FONT, new Coord(SCREEN_SIZE.x - HOME_BUTTON_SIZE.x / 2, HOME_BUTTON_FIRST_Y + HOME_BUTTON_SPACING * 2), HOME_BUTTON_SIZE.copy(), "BATTLE LOG", BATTLE_LOG_BUTTONO, Button.SHADOW));
 
         // Choose your fight menu buttons
-        chooseButtons.put(CHOOSE_BACK_BUTTONO, new Button(buttonImg, BUTTON_FONT, new Coord(SPACING + 400 / 2, SPACING + SPACING / 2), BUTTON_SIZE.copy(), "BACK", CHOOSE_BACK_BUTTONO, Button.SHADOW));
+        chooseButtons.put(CHOOSE_BACK_BUTTONO, new Button(buttonImg, BUTTON_FONT, new Coord(SPACING + BUTTON_SIZE.x / 2, SPACING + BUTTON_SIZE.y / 2), BUTTON_SIZE.copy(), "BACK", CHOOSE_BACK_BUTTONO, Button.SHADOW));
         chooseButtons.put(stage[Stage.BATTLEFIELD_NO].buttono, new Button(stage[Stage.BATTLEFIELD_NO].image, STAGE_FONT, new Coord(SPACING + STAGE_BUTTON_SIZE.x / 2, (BLACK_BAR_TOP + BLACK_BAR_BOTTOM) / 2), STAGE_BUTTON_SIZE.copy(), stage[Stage.BATTLEFIELD_NO].stageName.toUpperCase(), stage[Stage.BATTLEFIELD_NO].buttono, Button.HIGHLIGHT)); // CHange size email Ms. Kim
         chooseButtons.put(stage[Stage.FINAL_DEST_NO].buttono, new Button(stage[Stage.FINAL_DEST_NO].image, STAGE_FONT, new Coord(SPACING * 2 + STAGE_BUTTON_SIZE.x * (1.0 / 2 + 1), (BLACK_BAR_TOP + BLACK_BAR_BOTTOM) / 2), STAGE_BUTTON_SIZE.copy(), stage[Stage.FINAL_DEST_NO].stageName.toUpperCase(), stage[Stage.FINAL_DEST_NO].buttono, Button.HIGHLIGHT));
         chooseButtons.put(3, new Button(placeHolder, STAGE_FONT, new Coord(SPACING * 3 + STAGE_BUTTON_SIZE.x * (1.0 / 2 + 2), (BLACK_BAR_TOP + BLACK_BAR_BOTTOM) / 2), STAGE_BUTTON_SIZE.copy(), "COMING IN 5-10 BUSINESS DAYS", 3, Button.HIGHLIGHT, true, false));
@@ -419,6 +460,38 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         gameEndTextBoxes.add(new TextBox(battleNameBoxImg, BUTTON_FONT, new Coord((SCREEN_SIZE.x - BATTLE_NAME_BOX_SIZE.x - RESULTS_SPACING) / 2, RESULTS_EDGE_SPACING + RESULTS_TITLE_SIZE.y + RESULTS_SPACING * 2 + Battle.SCOREBOARD_SIZE.y + BATTLE_NAME_BOX_SIZE.y / 2), BATTLE_NAME_BOX_SIZE, Button.SHADOW));
         gameEndButtons.put(NEXT_BATTLE_BUTTONO, new Button(buttonImg, BUTTON_FONT, new Coord((SCREEN_SIZE.x + BUTTON_SIZE.x + RESULTS_SPACING) / 2, RESULTS_EDGE_SPACING + RESULTS_TITLE_SIZE.y + RESULTS_SPACING * 2 + Battle.SCOREBOARD_SIZE.y + BATTLE_NAME_BOX_SIZE.y / 2), BUTTON_SIZE.copy(), "NEXT BATTLE!", NEXT_BATTLE_BUTTONO, Button.SHADOW));
         
+        // Battle log buttons
+        battleLogButtons.put(BATTLE_LOG_BACK_BUTTONO, new Button(buttonImg, BUTTON_FONT, new Coord(SPACING + BUTTON_SIZE.x / 2, SPACING + BUTTON_SIZE.y / 2), BUTTON_SIZE.copy(), "BACK", BATTLE_LOG_BACK_BUTTONO, Button.SHADOW));
+        battleLogButtons.put(BATTLE_NO_BACK_BUTTONO, new Button(smlButtonImg, BUTTON_FONT, new Coord(SCREEN_SIZE.x / 2 - HALF_BATTLE_NO_SIZE - ARROW_BUTTON_SPACING - SML_BUTTON_SIZE.x / 2, BATTLE_LOG_SCOREBOARD_COORD.y + Battle.SCOREBOARD_SIZE.y + ARROW_BUTTON_SPACING + SML_BUTTON_SIZE.y / 2), SML_BUTTON_SIZE.copy(), "<", BATTLE_NO_BACK_BUTTONO, Button.SHADOW));
+        battleLogButtons.put(BATTLE_NO_ALL_BACK_BUTTONO, new Button(medButtonImg, BUTTON_FONT, new Coord(SCREEN_SIZE.x / 2 - HALF_BATTLE_NO_SIZE - ARROW_BUTTON_SPACING * 2 - SML_BUTTON_SIZE.x - MED_BUTTON_SIZE.x / 2, BATTLE_LOG_SCOREBOARD_COORD.y + Battle.SCOREBOARD_SIZE.y + ARROW_BUTTON_SPACING + SML_BUTTON_SIZE.y / 2), MED_BUTTON_SIZE.copy(), "<<", BATTLE_NO_ALL_BACK_BUTTONO, Button.SHADOW));
+        battleLogButtons.put(BATTLE_NO_NEXT_BUTTONO, new Button(smlButtonImg, BUTTON_FONT, new Coord(SCREEN_SIZE.x / 2 + HALF_BATTLE_NO_SIZE + ARROW_BUTTON_SPACING + SML_BUTTON_SIZE.x / 2, BATTLE_LOG_SCOREBOARD_COORD.y + Battle.SCOREBOARD_SIZE.y + ARROW_BUTTON_SPACING + SML_BUTTON_SIZE.y / 2), SML_BUTTON_SIZE.copy(), ">", BATTLE_NO_NEXT_BUTTONO, Button.SHADOW));
+        battleLogButtons.put(BATTLE_NO_ALL_NEXT_BUTTONO, new Button(medButtonImg, BUTTON_FONT, new Coord(SCREEN_SIZE.x / 2 + HALF_BATTLE_NO_SIZE + ARROW_BUTTON_SPACING * 2 + SML_BUTTON_SIZE.x + MED_BUTTON_SIZE.x / 2, BATTLE_LOG_SCOREBOARD_COORD.y + Battle.SCOREBOARD_SIZE.y + ARROW_BUTTON_SPACING + SML_BUTTON_SIZE.y / 2), MED_BUTTON_SIZE.copy(), ">>", BATTLE_NO_ALL_NEXT_BUTTONO, Button.SHADOW));
+        battleLogButtons.put(BATTLE_NO_SORT_BUTTONO, new Button(buttonImg, BUTTON_FONT, new Coord(SCREEN_SIZE.x - SPACING - BUTTON_SIZE.x / 2, SPACING + BUTTON_SIZE.y / 2), BUTTON_SIZE.copy(), "SORT BY: " + getSortName(), BATTLE_NO_SORT_BUTTONO, Button.SHADOW));
+        battleLogButtons.put(BATTLE_NO_ORDER_BUTTONO, new Button(buttonImg, BUTTON_FONT, new Coord(SCREEN_SIZE.x - SPACING - BUTTON_SIZE.x / 2, SPACING * 2 + BUTTON_SIZE.y * 1.5), BUTTON_SIZE.copy(), "ORDER BY: " + getOrderName(), BATTLE_NO_ORDER_BUTTONO, Button.SHADOW));
+
+        // Battle log text file reading
+        BufferedReader br = new BufferedReader(new FileReader("menus/" + BATTLE_LOG_FILE_NAME + ".txt"));
+        int numBattles = Integer.parseInt(br.readLine());
+        String stageName, stringStats[];
+        int gameMode, winner;
+        double[][] stats;
+        for (int i = 0; i != numBattles; i++) {
+            stageName = br.readLine();
+            gameMode = Integer.parseInt(br.readLine());
+            winner = Integer.parseInt(br.readLine());
+            stats = new double[Omegaman.NUM_PLAYERS][Omegaman.NO_OF_STATS];
+            for (int j = 0; j != Omegaman.NUM_PLAYERS; j++) {
+                stringStats = br.readLine().split(" ");
+                for (int k = 0; k != Omegaman.NO_OF_STATS; k++) {
+                    stats[j][k] = Double.parseDouble(stringStats[k]);
+                }
+            }
+            battleLog.add(new Battle(stageName, gameMode, winner, stats));
+            battleLog.get(i).name = br.readLine();
+        }
+        br.close();
+        resortLog();
+        
         // JFrame and JPanel
         JFrame frame = new JFrame("Omega Fight 3");
         OmegaFight3 panel = new OmegaFight3();
@@ -428,6 +501,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         frame.setResizable(false);
         frame.setLocationRelativeTo(null);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setIconImage(Toolkit.getDefaultToolkit().getImage("HUD/0face.png"));
     }
 
 
@@ -655,24 +729,8 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
 
             g.drawImage(resultsTitle, (int) (SCREEN_SIZE.x - RESULTS_TITLE_SIZE.x) / 2, RESULTS_EDGE_SPACING, null);
 
-            if (battleDone.winner == Battle.BOTH_WIN) {
-                g.drawImage(happyMan[0], EMO_MAN_SCREEN_EDGE_OFFSET, (int) (SCREEN_SIZE.y - HAPPY_MAN_SIZE.y), null);
-                g.drawImage(happyMan[1], (int) (SCREEN_SIZE.x - EMO_MAN_SCREEN_EDGE_OFFSET - HAPPY_MAN_SIZE.x), (int) (SCREEN_SIZE.y - HAPPY_MAN_SIZE.y), null);
-            }
-            else if (battleDone.winner == Battle.BOSS_WIN) {
-                g.drawImage(sadMan[0], EMO_MAN_SCREEN_EDGE_OFFSET, (int) (SCREEN_SIZE.y - SAD_MAN_SIZE.y), null);
-                g.drawImage(sadMan[1], (int) (SCREEN_SIZE.x - EMO_MAN_SCREEN_EDGE_OFFSET - SAD_MAN_SIZE.x), (int) (SCREEN_SIZE.y - SAD_MAN_SIZE.y), null);
-            }
-            else if (battleDone.winner == 0) {
-                g.drawImage(happyMan[0], EMO_MAN_SCREEN_EDGE_OFFSET, (int) (SCREEN_SIZE.y - HAPPY_MAN_SIZE.y), null);
-                g.drawImage(sadMan[1], (int) (SCREEN_SIZE.x - EMO_MAN_SCREEN_EDGE_OFFSET - SAD_MAN_SIZE.x), (int) (SCREEN_SIZE.y - SAD_MAN_SIZE.y), null);
-            }
-            else if (battleDone.winner == 1) {
-                g.drawImage(sadMan[0], EMO_MAN_SCREEN_EDGE_OFFSET, (int) (SCREEN_SIZE.y - SAD_MAN_SIZE.y), null);
-                g.drawImage(happyMan[1], (int) (SCREEN_SIZE.x - EMO_MAN_SCREEN_EDGE_OFFSET - HAPPY_MAN_SIZE.x), (int) (SCREEN_SIZE.y - HAPPY_MAN_SIZE.y), null);
-            }
-            
-            
+            battleDone.drawEmoMan(g);
+
             if (transitiono != RESULTS_COUNTING) battleDone.drawScoreBoard(new Coord((SCREEN_SIZE.x - Battle.SCOREBOARD_SIZE.x) / 2, RESULTS_EDGE_SPACING + RESULTS_TITLE_SIZE.y + RESULTS_SPACING), Battle.FULL_STATS, g);
 
             drawButtons(gameEndButtons.values(), g);
@@ -691,7 +749,33 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         else if (gameState == SLIDESHOW_GS) {
 
         }
+        else if (gameState == BATTLE_LOG_GS) {
+            g.drawImage(battleLogBg, 0, 0, (int) SCREEN_SIZE.x, (int) SCREEN_SIZE.y,  null);
 
+            if (battleLog.size() == 0) {
+                g.drawImage(noBattle, (int) BATTLE_LOG_SCOREBOARD_COORD.x, (int) BATTLE_LOG_SCOREBOARD_COORD.y, null);
+            }
+            else {
+                battleLog.get(battleNo).drawScoreBoard(BATTLE_LOG_SCOREBOARD_COORD, Battle.FULL_STATS, g);
+                battleLog.get(battleNo).drawEmoMan(g);
+                battleLog.get(battleNo).drawBattleInfo(BATTLE_LOG_BATTLE_INFO_COORD, g);
+            }
+
+            g.setColor(Color.WHITE);
+            g.setFont(Battle.SCOREBOARD_FONT);
+            g.drawString((battleNo + 1) + "/" + battleLog.size(), (int) (OmegaFight3.SCREEN_SIZE.x - g.getFontMetrics().stringWidth((battleNo + 1) + "/" + battleLog.size())) / 2, BATTLE_NO_Y_COORD);
+
+            drawButtons(battleLogButtons.values(), g);
+
+            if (transitiono != NO_TRANSITION) {
+                drawTransition(g2);
+                transition();
+            }
+            else {
+                actionPerformed();
+                processButtons(battleLogButtons.values());
+            }
+        }
     }
 
     public static double lerp(double orig, double goal, double alpha) {
@@ -756,6 +840,35 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         }
     }
 
+    public static String getSortName() {
+        if (sortNum == SortByTitle.NUM) {
+            return SortByTitle.NAME;
+        }
+        else if (sortNum == SortByGrade.NUM) {
+            return SortByGrade.NAME;
+        }
+        return null;
+    }
+
+    public static String getOrderName() {
+        return orderNormal? "LOWEST": "HIGHEST";
+    }
+
+    public static Comparator<Battle> getComparator() {
+        if (sortNum == SortByTitle.NUM) {
+            return new SortByTitle();
+        }
+        else if (sortNum == SortByGrade.NUM) {
+            return new SortByGrade();
+        }
+        return null;
+    }
+
+    public static void resortLog() {
+        if (orderNormal) battleLog.sort(getComparator());
+        else battleLog.sort(Collections.reverseOrder(getComparator()));
+    }
+
     public static void transition() {
         transitionCounter--;
         if (transitiono == FADE_IN) {
@@ -805,14 +918,8 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                 transitiono = RESULTS_COUNTING;
                 transitionCounter = RESULTS_COUNTING_LEN;
                 if (gameMode == TWOPVE) {
-                    double[][] stats = new double[Omegaman.NUM_PLAYERS][];
-                    for (int i = 0; i != Omegaman.NUM_PLAYERS; i++) {
-                        stats[i] = omegaman[i].stats;
-                        stats[i][Omegaman.LIVES_LEFT_NO] = omegaman[i].livesLeft;
-                        omegaman[i] = null;
-                    }
-                    bosses.clear();
-                    battleDone = new Battle(TWOPVE, -1, stats);
+                    double[][] stats = getStatsAndClearChars();
+                    battleDone = new Battle(stage[stageNo].stageName, TWOPVE, Battle.BOSS_WIN, stats);
                 }
             }
         }
@@ -822,14 +929,8 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                 transitiono = RESULTS_COUNTING;
                 transitionCounter = RESULTS_COUNTING_LEN;
                 if (gameMode == TWOPVE) {
-                    double[][] stats = new double[Omegaman.NUM_PLAYERS][];
-                    for (int i = 0; i != Omegaman.NUM_PLAYERS; i++) {
-                        stats[i] = omegaman[i].stats;
-                        stats[i][Omegaman.LIVES_LEFT_NO] = omegaman[i].livesLeft;
-                        omegaman[i] = null;
-                    }
-                    bosses.clear();
-                    battleDone = new Battle(TWOPVE, -2, stats);
+                    double[][] stats = getStatsAndClearChars();
+                    battleDone = new Battle(stage[stageNo].stageName, TWOPVE, Battle.BOTH_WIN, stats);
                 }
             }
         }
@@ -838,6 +939,40 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                 transitiono = NO_TRANSITION;
             }
         }
+    }
+
+    public static void writeFile() {
+        try {
+            PrintWriter pw = new PrintWriter(new FileWriter("menus/" + BATTLE_LOG_FILE_NAME + ".txt"));
+            pw.println(battleLog.size());
+            for (Battle b: battleLog) {
+                pw.printf("%s\n%d\n%d\n", b.stageName, b.gameMode, b.winner);
+                for (int i = 0; i != Omegaman.NUM_PLAYERS; i++) {
+                    for (int j = 0; j != Omegaman.NO_OF_STATS; j++) {
+                        pw.print(b.playerStats[i][j] + " ");
+                    }
+                    pw.println();
+                }
+                pw.println(b.name);
+            }
+            pw.close();
+        }
+        catch (IOException e) {}
+    }
+
+    public static double[][] getStatsAndClearChars() {
+        double[][] stats = new double[Omegaman.NUM_PLAYERS][];
+        for (int i = 0; i != Omegaman.NUM_PLAYERS; i++) {
+            stats[i] = omegaman[i].stats;
+            stats[i][Omegaman.LIVES_LEFT_NO] = omegaman[i].livesLeft;
+            omegaman[i] = null;
+            for (int j = 0; j != Omegaman.NO_OF_STATS; j++) {
+                if (Battle.IS_PERCENT[j]) stats[i][j] /= Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
+            }
+            stats[i][Omegaman.SKILL_PTS_USED_NO] /= Omegaman.ONES_PER_SKILL_PT;
+        }
+        bosses.clear();
+        return stats;
     }
 
     public static void drawTransition(Graphics2D g2) {
@@ -1097,11 +1232,46 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                     gameState = CHOOSE_FIGHT_GS;
                     transitionCounter = FADE_IN_LEN;
                     transitiono = FADE_IN;
-                    battleDone.name = gameEndTextBoxes.get(BATTLE_NAME_BOX_IDX).text;
+                    battleDone.name = gameEndTextBoxes.get(BATTLE_NAME_BOX_IDX).text == ""? "THE UNKNOWN BATTLE": gameEndTextBoxes.get(BATTLE_NAME_BOX_IDX).text;
                     gameEndTextBoxes.get(BATTLE_NAME_BOX_IDX).text = "";
-                    battleLog.add(battleDone);
+                    battleLog.add(battleDone); 
+                    writeFile();
+                    resortLog();
                     battleDone = null;
                     flashRotation = 0;
+                }
+            }
+            else if (gameState == BATTLE_LOG_GS) {
+                if (buttonPressed == BATTLE_LOG_BACK_BUTTONO) {
+                    gameState = HOME_GS;
+                    transitionCounter = FADE_IN_LEN;
+                    transitiono = FADE_IN;
+                }
+                else if (buttonPressed == BATTLE_NO_SORT_BUTTONO) {
+                    sortNum = (sortNum + 1) % NO_SORTS;
+                    battleLogButtons.get(BATTLE_NO_SORT_BUTTONO).text = "SORT BY: " + getSortName();
+                    resortLog();
+                    battleNo = 0;
+                }
+                else if (buttonPressed == BATTLE_NO_ORDER_BUTTONO) {
+                    orderNormal = !orderNormal;
+                    battleLogButtons.get(BATTLE_NO_ORDER_BUTTONO).text = "ORDER BY: " + getOrderName();
+                    resortLog();
+                    battleNo = 0;
+                }
+                else if (battleLog.size() != 0) {
+                    if (buttonPressed == BATTLE_NO_BACK_BUTTONO) {
+                        battleNo = (battleNo - 1 + battleLog.size()) % battleLog.size();
+                    }
+                    else if (buttonPressed == BATTLE_NO_ALL_BACK_BUTTONO) {
+                        battleNo = 0;
+                    }
+                    else if (buttonPressed == BATTLE_NO_NEXT_BUTTONO) {
+                        battleNo = (battleNo + 1) % battleLog.size();
+                    }
+                    else if (buttonPressed == BATTLE_NO_ALL_NEXT_BUTTONO) {
+                        battleNo = battleLog.size() - 1;
+                    }
                 }
             }
             buttonPressed = NO_BUTTON_HIT;

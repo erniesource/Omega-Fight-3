@@ -74,6 +74,8 @@ public class Omegaman extends Char {
     public static final Coord PERCENT_DISPLAY_SIZE_TO_PERCENT_COORD = new Coord(0.5 * PERCENT_DISPLAY_SIZE.x, 0.5 * PERCENT_DISPLAY_SIZE.y);
     public static final int PERCENT_SHAKE_TIME = 24;
     public static final double PERCENT_SHAKE_MULTIPLIER = 2;
+    public static final Coord FACE_SIZE = new Coord(42, 46);
+    public static final int FACE_SPACING = 10;
 
     // Respawn Constants
     public static final int RESPAWN_PAUSE = 120;
@@ -152,6 +154,7 @@ public class Omegaman extends Char {
     // Images
     public BufferedImage[] sprite = new BufferedImage[6];
     public BufferedImage percentDisplay;
+    public BufferedImage face;
     public BufferedImage[] surge = new BufferedImage[OmegaFight3.NUM_SURGE_IMAGES];
 
     // Other stats
@@ -191,6 +194,9 @@ public class Omegaman extends Char {
         for (int i = 0; i != OmegaFight3.NUM_SURGE_IMAGES; i++) {
             surge[i] = ImageIO.read(new File("explosions/" + playerNo + "surge" + i + ".png"));
         }
+
+        // Load Face
+        face = ImageIO.read(new File("HUD/" + playerNo + "face.png"));
     }
 
     public void controlX(boolean lftPressed, boolean ritPressed) {
@@ -757,6 +763,10 @@ public class Omegaman extends Char {
         // Incomplete skill point
         g.setColor(Color.GRAY);
         drawSkillPt(skillPtNo, skillPts % ONES_PER_SKILL_PT / ((double) ONES_PER_SKILL_PT), g);
+
+        for (int i = 0; i != livesLeft; i++) {
+            g.drawImage(face, percentDisplayX + (i * (int) (FACE_SIZE.x + FACE_SPACING)), PERCENT_DISPLAY_Y_COORD - FACE_SPACING - (int) FACE_SIZE.y, null);
+        }
     }
 
     public void drawPercent(Graphics g) {

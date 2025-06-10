@@ -3,9 +3,9 @@ package Version3;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-public class Doctor extends Boss {
+public class Doctor extends Boss { // BUFF THIS DUDE
     // Combat constants
-    public static final double INITIAL_HEALTH = 600 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
+    public static final double INITIAL_HEALTH = 500 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
     public static final int HURT_BLINK_HZ = 1;
 
     // Sprite constants
@@ -31,7 +31,7 @@ public class Doctor extends Boss {
     public static final double SPIT_START_ANGLE = Math.PI / 3;
     public static final double SPIT_SPREAD = Math.PI / 6;
     public static final int SPIT_NUM_PROJS = 4;
-    public static final int SPIT_HZ = 60;
+    public static final int SPIT_HZ = 48;
     public static final Coord COORD_TO_SPIT_COORD = new Coord(STATE_SIZE[SPIT].x / 4, STATE_SIZE[SPIT].y * 3 / 10);
 
     // Laugh constants
@@ -41,12 +41,12 @@ public class Doctor extends Boss {
 
     // Background attack constants
     public static final double PINCER_AMT_SCALING_TO_HEALTH = 0.3;
-    public static final int PINCER_HZ = 600;
-    public static final int MIN_PINCER_HZ = 300;
+    public static final int PINCER_HZ = 480;
+    public static final int MIN_PINCER_HZ = 240;
     public static final double PINCER_THRESHOLD = 0.7;
     public static final double BOMBOT_AMT_SCALING_TO_HEALTH = 0.25;
-    public static final int BOMBOT_HZ = 720;
-    public static final int MIN_BOMBOT_HZ = 360;
+    public static final int BOMBOT_HZ = 600;
+    public static final int MIN_BOMBOT_HZ = 300;
     public static final double BOMBOT_THRESHOLD = 0.4;
     public static final int BOMBOT_NUM_SPAWN_LOCS = 2;
     public static final int LEFT_SPAWN = 0;

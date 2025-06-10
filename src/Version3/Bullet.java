@@ -737,7 +737,7 @@ class Boomer extends Projectile {
 
     // Misc constants
     public static final int BUTTONO = 8;
-    public static final int SKILL_PT_GAIN = 6;
+    public static final int SKILL_PT_GAIN = 3;
     public static final int SCREENSHAKE = 0;
     public static final boolean CAN_HIT_PROJ = false;
 
@@ -810,7 +810,7 @@ class Bouncer extends Projectile {
     public static final Coord SIZE = new Coord(80, 80);
 
     // Damage constants
-    public static final double DMG = 0.75 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
+    public static final double DMG = 0.5 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
     public static final double DURABILITY = INFINITE_DURABILITY;
     public static final double KB = 10;
     public static final double KB_SPREAD = Math.PI / 3;

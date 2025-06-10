@@ -1,7 +1,6 @@
 package Version3;
 
 import java.awt.*;
-import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.util.*;
 
@@ -65,7 +64,7 @@ public class Button {
     // Draw method
     public void draw(Graphics g) {
         if (canSee) {
-            g.drawImage(image, (int) (coord.x - size[state].x / 2), (int) (coord.y - size[state].y / 2), (int) size[state].x, (int) size[state].y, null);
+            g.drawImage(image, (int) (coord.x - (int) size[state].x / 2), (int) (coord.y - (int) size[state].y / 2), (int) size[state].x, (int) size[state].y, null);
             if (text != null) {
                 g.setFont(font[state]);
                 g.setColor(Color.WHITE);
@@ -179,7 +178,7 @@ class TextBox extends Button {
 
     public void addChar(char keyPressed) {
         if (keyPressed >= 32 && keyPressed < 127) {
-            text += keyPressed;
+            text += Character.toUpperCase(keyPressed);
             cursorCounter = 0;
         }
     }

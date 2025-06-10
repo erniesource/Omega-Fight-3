@@ -164,7 +164,7 @@ class Pincer extends Projectile {
     public static final Coord SIZE = new Coord(80, 90);
 
     // Movement constants
-    public static final double VELOCITY = 6;
+    public static final double VELOCITY = 8;
     public static final int LIFE = INF_LIFE;
     public static final int X_MOVEMENT_LEN = 40;
 
@@ -246,8 +246,8 @@ class Bombot extends Projectile {
     public static final Coord EXPLOSION_SIZE_MULTIPLIER = new Coord(2, 4);
 
     // Velocity constants
-    public static final double VELOCITY = 5;
-    public static final int LIFE = 180;
+    public static final double VELOCITY = 6;
+    public static final int LIFE = 200;
     public static final double TURN_SPEED = Math.PI * (180.0 / LIFE / 180.0);
 
     // Misc constants

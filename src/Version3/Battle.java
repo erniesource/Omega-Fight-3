@@ -16,6 +16,12 @@ public class Battle {
     public static final boolean[] IS_PERCENT = {false, false, true, false, false, true, true};
     public static final double FULL_STATS = 1.0;
     public static final int STAT_NUM_DECIMAL_PLACES = 1;
+    public static final int BATTLE_INFO_SPACING = 35;
+
+    // Emo man constants
+    public static final int EMO_MAN_SCREEN_EDGE_OFFSET = 75;
+    public static final Coord HAPPY_MAN_SIZE = new Coord(517, 700);
+    public static final Coord SAD_MAN_SIZE = new Coord(326, 500);
 
     // 2P V E grade calculation constants
     public static final double[] WEIGHTING = {2, 1, -1, 2};
@@ -30,24 +36,24 @@ public class Battle {
 
     public static int hundFlashCounter = 0;
 
+    // Images
+    public static BufferedImage[] happyMan = new BufferedImage[Omegaman.NUM_PLAYERS];
+    public static BufferedImage[] sadMan = new BufferedImage[Omegaman.NUM_PLAYERS];
+
     public String name;
+    public String stageName;
     public int gameMode;
     public int winner; // -2: Both players, -1: Boss, 0+: Players
     public double[][] playerStats = new double[Omegaman.NUM_PLAYERS][Omegaman.NO_OF_STATS];
-    public String result;
     public double grade;
+    public String result;
     // Settings??? (difficulty, lives)
 
-    public Battle(int gameMode, int winner, double[][] playerStats) {
+    public Battle(String stageName, int gameMode, int winner, double[][] playerStats) {
+        this.stageName = stageName;
         this.gameMode = gameMode;
         this.winner = winner;
         this.playerStats = playerStats;
-        for (int i = 0; i != Omegaman.NUM_PLAYERS; i++) {
-            for (int j = 0; j != Omegaman.NO_OF_STATS; j++) {
-                if (IS_PERCENT[j]) playerStats[i][j] /= Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
-            }
-            playerStats[i][Omegaman.SKILL_PTS_USED_NO] /= Omegaman.ONES_PER_SKILL_PT;
-        }
 
         if (gameMode == OmegaFight3.TWOPVE) {
             boolean playerDied = false;
@@ -62,7 +68,7 @@ public class Battle {
             grade *= STATS_WEIGHT / TOTAL_POS_WEIGHT / Omegaman.NUM_PLAYERS;
             if (!playerDied) grade += 1 - STATS_WEIGHT;
             grade = Math.round(grade * 100 * Math.pow(10, STAT_NUM_DECIMAL_PLACES)) / Math.pow(10, STAT_NUM_DECIMAL_PLACES);
-            result = "" + (grade * 100) + "%";
+            result = "" + grade + "%";
         }
     }
 
@@ -99,5 +105,31 @@ public class Battle {
             }
             g.drawString(progress == FULL_STATS? result: (Math.round(grade * progress * Math.pow(10, STAT_NUM_DECIMAL_PLACES)) / Math.pow(10, STAT_NUM_DECIMAL_PLACES) + "%"), (int) (coord.x + SCOREBOARD_COORD_TO_GRADE_COORD.x), (int) (coord.y + SCOREBOARD_COORD_TO_GRADE_COORD.y));
         }
+    }
+
+    public void drawEmoMan(Graphics g) {
+        if (winner == Battle.BOTH_WIN) {
+                g.drawImage(happyMan[0], EMO_MAN_SCREEN_EDGE_OFFSET, (int) (OmegaFight3.SCREEN_SIZE.y - HAPPY_MAN_SIZE.y), null);
+                g.drawImage(happyMan[1], (int) (OmegaFight3.SCREEN_SIZE.x - EMO_MAN_SCREEN_EDGE_OFFSET - HAPPY_MAN_SIZE.x), (int) (OmegaFight3.SCREEN_SIZE.y - HAPPY_MAN_SIZE.y), null);
+            }
+            else if (winner == Battle.BOSS_WIN) {
+                g.drawImage(sadMan[0], EMO_MAN_SCREEN_EDGE_OFFSET, (int) (OmegaFight3.SCREEN_SIZE.y - SAD_MAN_SIZE.y), null);
+                g.drawImage(sadMan[1], (int) (OmegaFight3.SCREEN_SIZE.x - EMO_MAN_SCREEN_EDGE_OFFSET - SAD_MAN_SIZE.x), (int) (OmegaFight3.SCREEN_SIZE.y - SAD_MAN_SIZE.y), null);
+            }
+            else if (winner == 0) {
+                g.drawImage(happyMan[0], EMO_MAN_SCREEN_EDGE_OFFSET, (int) (OmegaFight3.SCREEN_SIZE.y - HAPPY_MAN_SIZE.y), null);
+                g.drawImage(sadMan[1], (int) (OmegaFight3.SCREEN_SIZE.x - EMO_MAN_SCREEN_EDGE_OFFSET - SAD_MAN_SIZE.x), (int) (OmegaFight3.SCREEN_SIZE.y - SAD_MAN_SIZE.y), null);
+            }
+            else if (winner == 1) {
+                g.drawImage(sadMan[0], EMO_MAN_SCREEN_EDGE_OFFSET, (int) (OmegaFight3.SCREEN_SIZE.y - SAD_MAN_SIZE.y), null);
+                g.drawImage(happyMan[1], (int) (OmegaFight3.SCREEN_SIZE.x - EMO_MAN_SCREEN_EDGE_OFFSET - HAPPY_MAN_SIZE.x), (int) (OmegaFight3.SCREEN_SIZE.y - HAPPY_MAN_SIZE.y), null);
+            }
+    }
+
+    public void drawBattleInfo(Coord coord, Graphics g) {
+        g.setColor(Color.WHITE);
+        g.setFont(SCOREBOARD_FONT);
+        g.drawString(name, (int) coord.x, (int) coord.y);
+        g.drawString("ON " + stageName.toUpperCase(), (int) coord.x, (int) coord.y + BATTLE_INFO_SPACING);
     }
 }
