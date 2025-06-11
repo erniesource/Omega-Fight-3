@@ -56,17 +56,13 @@ public class Battle {
         this.playerStats = playerStats;
 
         if (gameMode == OmegaFight3.TWOPVE) {
-            boolean playerDied = false;
             for (int i = 0; i != Omegaman.NUM_PLAYERS; i++) {
                 for (int j = NO_FORMATIVE_STATS; j != Omegaman.NO_OF_STATS; j++) {
                     grade += WEIGHTING[j - NO_FORMATIVE_STATS] * Math.min(1, playerStats[i][j] / MAX_SCORE[j - NO_FORMATIVE_STATS]);
                 }
-                if (playerStats[i][Omegaman.LIVES_LEFT_NO] <= 0) {
-                    playerDied = true;
-                }
             }
             grade *= STATS_WEIGHT / TOTAL_POS_WEIGHT / Omegaman.NUM_PLAYERS;
-            if (!playerDied) grade += 1 - STATS_WEIGHT;
+            if (winner != BOSS_WIN) grade += 1 - STATS_WEIGHT;
             grade = Math.round(grade * 100 * Math.pow(10, STAT_NUM_DECIMAL_PLACES)) / Math.pow(10, STAT_NUM_DECIMAL_PLACES);
             result = "" + grade + "%";
         }
