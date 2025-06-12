@@ -10,28 +10,31 @@ abstract public class Projectile {
     public Coord size;
     public Coord hitBoxSize;
     public boolean hitBoxActive = true;
+    public boolean canHitProj;
 
     // Movement variables
     public double velocity;
     public double dir;
+    public int frameCounter;
 
     // Combat variables
     public double damage;
     public double knockback;
     public double durability;
 
-    // Life variables
-    public int frameCounter;
-
     // Explosion variables
     public static final int EXPLOSION_FRAME_HZ = 4;
     public static final int NUM_EXPLOSION_IMAGES = 8;
     public static final int EXPLOSION_TIME = EXPLOSION_FRAME_HZ * NUM_EXPLOSION_IMAGES;
     public static BufferedImage[] explosionImages = new BufferedImage[NUM_EXPLOSION_IMAGES];
-
+    public static final int NUM_OF_WEAPONS = 6;
     public static final double INFINITE_DURABILITY = 100;
 
-    public Projectile(Char character, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double durability, int frameCounter) {
+    // Misc Variables
+    public static final int NO_OF_PLAYER_PROJECTILES = 6;
+    public static final int INF_LIFE = 0;
+
+    public Projectile(Char character, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double durability, int frameCounter, boolean canHitProj) {
         this.character = character;
         this.coord = coord;
         this.size = size;
@@ -42,14 +45,11 @@ abstract public class Projectile {
         this.knockback = knockback;
         this.durability = durability;
         this.frameCounter = frameCounter;
-    }
-
-    public boolean checkHitbox(Coord enemyCoord, Coord enemyHitBoxSize) {
-        return Math.abs(enemyCoord.x - coord.x) <= (enemyHitBoxSize.x + hitBoxSize.x) / 2 - OmegaFight3.HITBOX_LEEWAY && Math.abs(enemyCoord.y - coord.y) <= (enemyHitBoxSize.y + hitBoxSize.y) / 2 - OmegaFight3.HITBOX_LEEWAY;  
+        this.canHitProj = canHitProj;
     }
 
     public void die() {
-        ((Omegaman) character).deadProjectiles.add(this);
+        character.deadProjectiles.add(this);
     }
 
     public void process() {
