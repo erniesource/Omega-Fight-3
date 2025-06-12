@@ -7,6 +7,7 @@ import java.io.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.util.*;
+import javax.sound.sampled.*;
 // Ernest Todo: menus, bosses
 // Ernest Long term Todo: ultimate, dash, smoke
 
@@ -16,6 +17,21 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static final int FPS = 60;
     public static final int SCREEN_SHAKE_HZ = 2;
     public static final int SPACING = 25;
+
+    // Start menu constants
+    public static final int TITLE_Y = 75;
+    public static final Coord TITLE_SIZE = new Coord(753, 356);
+    public static final int TITLE_NUM_Y = 455;
+    public static final Coord TITLE_NUM_SIZE = new Coord(708, 250);
+    public static final int TITLE_NUM_CENTRE_Y = TITLE_NUM_Y + (int) TITLE_NUM_SIZE.y / 2;
+    public static final int PRESS_START_Y = 724;
+    public static final Coord PRESS_START_SIZE = new Coord(551, 31);
+    public static final int PRESS_START_BLINK_HZ = 60;
+    public static final int NUM_SLAM_SCREENSHAKE = 30;
+    public static final Coord STUDIO_LOGO_SIZE = new Coord(256, 140);
+    public static final int STUDIO_FADE_LEN = 6;
+    public static final int BLACK_PAUSE = 1000;
+    public static final int STUDIO_PAUSE = 2000;
 
     // Home menu Constants
     public static final Coord MENU_MAN_SIZE = new Coord(860, 900);
@@ -45,7 +61,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
 
     // Game end menu constants
     public static final double FLASH_ROTATIONS_PER_S = 1.0 / 6;
-    public static final double FLASH_ROTATE_SPD = Math.PI * 2 / OmegaFight3.FPS * FLASH_ROTATIONS_PER_S;
+    public static final double FLASH_ROTATE_SPD = Math.PI * 2 / FPS * FLASH_ROTATIONS_PER_S;
     public static final Coord RESULTS_TITLE_SIZE = new Coord(1440, 130); 
     public static final int RESULTS_EDGE_SPACING = 100;
     public static final int RESULTS_SPACING = 40;
@@ -176,6 +192,21 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
 
     public static final int PAUSE = 6;
 
+    public static final int START_ANIM = 7;
+    public static final int LETTER_APPEAR_HZ = 4;
+    public static final int TOTAL_LETTER_ANIM_LEN = (Letter.NUM_LETTERS - 1) * LETTER_APPEAR_HZ + Letter.LETTER_ANIM_LEN;
+    public static final int NUM_SLAM_LEN = 8;
+    public static final int STUDIO_PAUSE_LEN = 60;
+    public static final int STUDIO_LEN = 240;
+    public static final int START_ANIM_LEN = STUDIO_LEN + TOTAL_LETTER_ANIM_LEN + NUM_SLAM_LEN;
+
+    public static final int FLASH = 8;
+    public static final int FLASH_LEN = 6;
+
+    public static final int FLASH_FADE = 9;
+    public static final int FLASH_FADE_LEN = 70;
+    public static final int TRUE_FLASH_FADE_LEN = 10;
+
     // Color constants
     public static final Color PURPLE = new Color(186, 122, 255);
 
@@ -187,7 +218,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     // 3 <- Game End Screen
     // 4 <- Credit/Tutorial Screen
     // 5 <- Battle Log Screen
-    public static int gameState = 0;
+    public static int gameState = STUDIO_ANIM_GS;
 
     // Players
     public static Omegaman[] omegaman = new Omegaman[Omegaman.NUM_PLAYERS];
@@ -236,6 +267,12 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     // Slideshow buttons
     public static HashMap<Integer, Button> slideshowButtons = new HashMap<>();
 
+    // Start menu images
+    public static BufferedImage startBg;
+    public static BufferedImage titleNum;
+    public static BufferedImage pressAnyText;
+    public static BufferedImage studioLogo;
+
     // Home menu images
     public static BufferedImage home;
     public static BufferedImage homeButtonImg;
@@ -266,8 +303,13 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static BufferedImage[] slides = new BufferedImage[NUM_SLIDES];
 
     // Menu stats
-    public static int transitionCounter = 0;
-    public static int transitiono = NO_TRANSITION;
+    public static int transitionCounter = START_ANIM_LEN;
+    public static int transitiono = START_ANIM;
+
+    // Start menu
+    public static LinkedList<Integer> letterOrder = new LinkedList<>();
+    public static HashSet<Letter> letters = new HashSet<>();
+    public static int pressStartCounter = 0;
 
     // Choose menu stats
     public static Battle battleDone;
@@ -290,6 +332,10 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static int screenShakeCounter = 0;
     public static BufferedImage placeHolder;
     public static int gameMode = HOME_GS;
+
+    // Sounds
+    public static Clip menuMusic;
+    public static Clip endMusic;
 
     // Timer Settings
     public void run() {
@@ -319,6 +365,15 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static void main(String[] args) throws IOException {
         // Misc image imoprting
         placeHolder = ImageIO.read(new File("misc/placeholder.jpg"));
+
+        // Start menu importing
+        startBg = ImageIO.read(new File("menus/start.jpg"));
+        titleNum = ImageIO.read(new File("menus/number.png"));
+        pressAnyText = ImageIO.read(new File("menus/press start.png"));
+        for (int i = 0; i != Letter.NUM_LETTERS; i++) {
+            Letter.letters[i] = ImageIO.read(new File("menus/letter" + i + ".png"));
+        }
+        studioLogo = ImageIO.read(new File("menus/studio.png"));
 
         // Home menu image importing
         home = ImageIO.read(new File("menus/home.jpg"));
@@ -540,6 +595,21 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         }
         br.close();
         resortLog();
+
+        try {
+            menuMusic = AudioSystem.getClip();
+            menuMusic.open(AudioSystem.getAudioInputStream(new File("music/menu music.wav").toURI().toURL()));
+            menuMusic.setFramePosition(0);
+
+            endMusic = AudioSystem.getClip();
+            endMusic.open(AudioSystem.getAudioInputStream(new File("music/end music.wav").toURI().toURL()));
+            endMusic.setFramePosition(0);
+        }
+        catch (Exception e) {}
+
+        for (int i = 0; i != Letter.NUM_LETTERS; i++) {
+            letterOrder.add((int) (letterOrder.size() * Math.random()), i);
+        }
         
         // JFrame and JPanel
         JFrame frame = new JFrame("Omega Fight 3");
@@ -567,7 +637,22 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
             g.translate((int) Stage.coord.x, (int) Stage.coord.y);
         }
         if (gameState == STUDIO_ANIM_GS) {
-
+            g.drawImage(startBg, 0, 0, (int) SCREEN_SIZE.x, (int) SCREEN_SIZE.y, null);
+            if (transitiono != START_ANIM) g.drawImage(titleNum, (int) (SCREEN_SIZE.x - TITLE_NUM_SIZE.x) / 2, TITLE_NUM_Y, null);
+            setOpacity(0.5 * (Math.sin(Math.PI * 2 / (PRESS_START_BLINK_HZ * 2) * (pressStartCounter - PRESS_START_BLINK_HZ / 2)) + 1), g2);
+            g.drawImage(pressAnyText, (int) (SCREEN_SIZE.x - PRESS_START_SIZE.x) / 2, PRESS_START_Y, null);
+            setOpacity(1, g2);
+            if (transitiono != NO_TRANSITION) {
+                drawTransition(g2);
+                transition();
+            }
+            else {
+                pressStartCounter = (pressStartCounter + 1) % (PRESS_START_BLINK_HZ * 2);
+                if (pressedKey.size() != 0) {
+                    transitiono = FLASH;
+                    transitionCounter = FLASH_LEN;
+                }
+            }
         }
         else if(gameState == HOME_GS) {
             g.drawImage(home, 0, 0, (int) SCREEN_SIZE.x, (int) SCREEN_SIZE.y, null);
@@ -585,11 +670,13 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                     processButtons(homeButtons.values());
 
                     menuManCounter = (menuManCounter + 1) % (MENU_MAN_MOVE_TIMES * MENU_MAN_MOVE_HZ * 2 + MENU_MAN_DOWN_PAUSE + MENU_MAN_UP_PAUSE);
-                    if (menuManCounter < MENU_MAN_MOVE_TIMES * MENU_MAN_MOVE_HZ && menuManCounter % MENU_MAN_MOVE_HZ == 0) {
-                        menuManY += MENU_MAN_SPD;
-                    }
-                    else if (menuManCounter >= MENU_MAN_MOVE_TIMES * MENU_MAN_MOVE_HZ + MENU_MAN_DOWN_PAUSE && menuManCounter < MENU_MAN_MOVE_TIMES * MENU_MAN_MOVE_HZ * 2 + MENU_MAN_DOWN_PAUSE && menuManCounter % MENU_MAN_MOVE_HZ == 0) {
-                        menuManY -= MENU_MAN_SPD;
+                    if (menuManCounter % MENU_MAN_MOVE_HZ == 0) {
+                        if (menuManCounter < MENU_MAN_MOVE_TIMES * MENU_MAN_MOVE_HZ) {
+                            menuManY += MENU_MAN_SPD;
+                        }
+                        else if (menuManCounter >= MENU_MAN_MOVE_TIMES * MENU_MAN_MOVE_HZ + MENU_MAN_DOWN_PAUSE && menuManCounter < MENU_MAN_MOVE_TIMES * MENU_MAN_MOVE_HZ * 2 + MENU_MAN_DOWN_PAUSE) {
+                            menuManY -= MENU_MAN_SPD;
+                        }
                     }
                 }
             }
@@ -835,7 +922,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
 
             g.setColor(Color.WHITE);
             g.setFont(Battle.SCOREBOARD_FONT);
-            g.drawString((battleNo + 1) + "/" + battleLog.size(), (int) (OmegaFight3.SCREEN_SIZE.x - g.getFontMetrics().stringWidth((battleNo + 1) + "/" + battleLog.size())) / 2, BATTLE_NO_Y_COORD);
+            g.drawString((battleNo + 1) + "/" + battleLog.size(), (int) (SCREEN_SIZE.x - g.getFontMetrics().stringWidth((battleNo + 1) + "/" + battleLog.size())) / 2, BATTLE_NO_Y_COORD);
 
             drawButtons(battleLogButtons.values(), g);
 
@@ -1028,6 +1115,35 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                 processButtons(pauseButtons.values());
             }
         }
+        else if (transitiono == START_ANIM) {
+            if (transitionCounter >= START_ANIM_LEN - STUDIO_LEN - TOTAL_LETTER_ANIM_LEN && transitionCounter <= START_ANIM_LEN - STUDIO_LEN) {
+                if (transitionCounter >= START_ANIM_LEN - STUDIO_LEN - TOTAL_LETTER_ANIM_LEN + Letter.LETTER_ANIM_LEN) {
+                    if ((transitionCounter - (START_ANIM_LEN - STUDIO_LEN - TOTAL_LETTER_ANIM_LEN + Letter.LETTER_ANIM_LEN)) % LETTER_APPEAR_HZ == 0) {
+                        int letterNo = letterOrder.removeFirst();
+                        letters.add(new Letter(Letter.LETTER_COORDS[letterNo], Letter.LETTER_SIZE[letterNo], Letter.letters[letterNo], Math.random() < 0.5));
+                    }
+                }
+                for (Letter letter: letters) {
+                    letter.process();
+                }
+            }
+            if (transitionCounter == 0) {
+                transitiono = NO_TRANSITION;
+                screenShakeCounter += NUM_SLAM_SCREENSHAKE;
+            }
+        }
+        else if (transitiono == FLASH) {
+            if (transitionCounter == 0) {
+                gameState = HOME_GS;
+                transitiono = FLASH_FADE;
+                transitionCounter = FLASH_FADE_LEN;
+            }
+        }
+        else if (transitiono == FLASH_FADE) {
+            if (transitionCounter == 0) {
+                transitiono = NO_TRANSITION;
+            }
+        }
     }
 
     public static void writeFile() {
@@ -1143,10 +1259,56 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
             g2.drawImage(pausedBg, 0, 0, (int) SCREEN_SIZE.x, (int) SCREEN_SIZE.y, null);
             drawButtons(pauseButtons.values(), g2);
         }
+        else if (transitiono == START_ANIM) {
+            if (transitionCounter >= NUM_SLAM_LEN) {
+                g2.setColor(Color.BLACK);
+                g2.fillRect(0, 0, (int) SCREEN_SIZE.x, (int) SCREEN_SIZE.y);
+                if (transitionCounter >= START_ANIM_LEN - STUDIO_LEN) {
+                    if (transitionCounter >= START_ANIM_LEN - STUDIO_LEN + STUDIO_PAUSE_LEN && transitionCounter < START_ANIM_LEN - STUDIO_PAUSE_LEN) {
+                        if (transitionCounter >= START_ANIM_LEN - STUDIO_PAUSE_LEN - STUDIO_FADE_LEN) {
+                            setOpacity(1 - (double) (transitionCounter - (START_ANIM_LEN - STUDIO_PAUSE_LEN - STUDIO_FADE_LEN)) / STUDIO_FADE_LEN, g2);
+                        }
+                        else if (transitionCounter < START_ANIM_LEN - STUDIO_LEN + STUDIO_PAUSE_LEN + STUDIO_FADE_LEN) {
+                            setOpacity((double) (transitionCounter - (START_ANIM_LEN - STUDIO_LEN + STUDIO_PAUSE_LEN)) / STUDIO_FADE_LEN, g2);
+                        }
+                        g2.drawImage(studioLogo, (int) (SCREEN_SIZE.x - STUDIO_LOGO_SIZE.x) / 2, (int) (SCREEN_SIZE.y - STUDIO_LOGO_SIZE.y) / 2, null);
+                        setOpacity(1.0, g2);
+                    }
+                }
+                else {
+                    for (Letter letter: letters) {
+                        letter.draw(g2);
+                    }
+                }
+            }
+            else {
+                double opactiy = (double) transitionCounter / NUM_SLAM_LEN;
+                drawFade(opactiy, g2);
+                setOpacity(opactiy, g2);
+                for (Letter letter: letters) {
+                    letter.draw(g2);
+                }
+                setOpacity(1.0, g2);
+                double progress = 1 - (double) (transitionCounter) / NUM_SLAM_LEN;
+                Coord curSize = new Coord(lerp(TITLE_NUM_SIZE.x * SCREEN_SIZE.y / TITLE_NUM_SIZE.y, TITLE_NUM_SIZE.x, progress), lerp(SCREEN_SIZE.y, TITLE_NUM_SIZE.y, progress));
+                g2.drawImage(titleNum, (int) (SCREEN_SIZE.x - curSize.x) / 2, (int) (TITLE_NUM_CENTRE_Y - curSize.y / 2), (int) curSize.x, (int) curSize.y, null);
+            }
+        }
+        else if (transitiono == FLASH) {
+            drawFlash(1 - (double) transitionCounter / FLASH_LEN, g2);
+        }
+        else if (transitiono == FLASH_FADE) {
+            drawFlash(Math.min(1.0, (double) transitionCounter / TRUE_FLASH_FADE_LEN), g2);
+        }
     }
 
     public static void drawFade(double amt, Graphics g) {
         g.setColor(new Color(0, 0, 0, (int) (MAX_RGB_VAL * amt)));
+        g.fillRect(0, 0, (int) SCREEN_SIZE.x, (int) SCREEN_SIZE.y);
+    }
+
+    public static void drawFlash(double amt, Graphics g) {
+        g.setColor(new Color(255, 255, 255, (int) (MAX_RGB_VAL * amt)));
         g.fillRect(0, 0, (int) SCREEN_SIZE.x, (int) SCREEN_SIZE.y);
     }
 

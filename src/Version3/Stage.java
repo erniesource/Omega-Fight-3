@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import javax.imageio.ImageIO;
+import javax.sound.sampled.*;
 
 public class Stage {
     public static final int NO_OF_STAGES = 2;
@@ -17,6 +18,7 @@ public class Stage {
     public int[] spawnPlatformNo;
     public int buttono;
     public String stageName;
+    public Clip music;
     
     public static Coord coord = new Coord();
 
@@ -28,6 +30,13 @@ public class Stage {
         this.spawnSpriteSign = spawnSpriteSign;
         this.spawnPlatformNo = spawnPlatformNo;
         this.buttono = buttono;
+
+        try {
+            music = AudioSystem.getClip();
+            music.open(AudioSystem.getAudioInputStream(new File("music/" + stageName + " music.wav").toURI().toURL()));
+            music.setFramePosition(0);
+        }
+        catch (Exception e) {}
     }
 
     public void drawStage(Graphics g) {
