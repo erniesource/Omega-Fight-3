@@ -3,6 +3,7 @@ package Version3;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.*;
+import javax.sound.sampled.*;
 
 public class Button {
     public static final double DIFF_IN_SIZE_OF_STATES = 0.05;
@@ -16,6 +17,9 @@ public class Button {
     public static final double LEEWAY = 0;
     public static final double SHADOW_OFFSET = 0.05;
     public static final int NO_BUTTON_NUM = -1;
+
+    public static Clip hover;
+    public static Clip click;
 
     public BufferedImage image;
     public Font[] font = new Font[NUM_STATES];
@@ -86,10 +90,22 @@ public class Button {
         if (canUse) {
             if (OmegaFight3.intersects(mouse, Coord.PT, coord, size[NOPRESSED], LEEWAY)) {
                 if (clicked) {
-                    if (state != PRESSED) state = PRESSED;
+                    if (state != PRESSED) {
+                        state = PRESSED;
+                        click.stop();
+                        click.setFramePosition(0);
+                        click.start();
+                    }
                     return true;
                 }
-                else if (state != HOVERED) state = HOVERED;
+                else if (state != HOVERED) {
+                    if (state != PRESSED) {
+                        hover.stop();
+                        hover.setFramePosition(0);
+                        hover.start();
+                    }
+                    state = HOVERED;
+                }
             }
             else if (state != NOPRESSED) state = NOPRESSED;
         }
@@ -145,7 +161,12 @@ class TextBox extends Button {
         if (canUse) {
             if (OmegaFight3.intersects(mouse, Coord.PT, coord, size[NOPRESSED], LEEWAY)) {
                 if (clicked) {
-                    if (state != PRESSED) state = PRESSED;
+                    if (state != PRESSED) {
+                        state = PRESSED;
+                        click.stop();
+                        click.setFramePosition(0);
+                        click.start();
+                    }
                     if (clickedOutside) clickedOutside = false;
                 }
                 else if (state != HOVERED) {
@@ -154,6 +175,9 @@ class TextBox extends Button {
                         cursorCounter = 0;
                     }
                     state = HOVERED;
+                    hover.stop();
+                    hover.setFramePosition(0);
+                    hover.start();
                 }
             }
             else {

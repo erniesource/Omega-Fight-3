@@ -101,6 +101,11 @@ abstract class Boss extends Char {
 
     public void surge() {
         frameCounter++;
+        if (frameCounter == OmegaFight3.SURGE_FRAME_HZ * OmegaFight3.NUM_SURGE_IMAGES) {
+            OmegaFight3.cheer.stop();
+            OmegaFight3.cheer.setFramePosition(0);
+            OmegaFight3.cheer.start();
+        }
     }
 
     public void drawSurge(Graphics g) {

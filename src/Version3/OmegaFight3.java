@@ -22,7 +22,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static final int TITLE_Y = 75;
     public static final Coord TITLE_SIZE = new Coord(753, 356);
     public static final int TITLE_NUM_Y = 455;
-    public static final Coord TITLE_NUM_SIZE = new Coord(708, 250);
+    public static final Coord TITLE_NUM_SIZE = new Coord(708, 250); 
     public static final int TITLE_NUM_CENTRE_Y = TITLE_NUM_Y + (int) TITLE_NUM_SIZE.y / 2;
     public static final int PRESS_START_Y = 724;
     public static final Coord PRESS_START_SIZE = new Coord(551, 31);
@@ -196,8 +196,8 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static final int LETTER_APPEAR_HZ = 4;
     public static final int TOTAL_LETTER_ANIM_LEN = (Letter.NUM_LETTERS - 1) * LETTER_APPEAR_HZ + Letter.LETTER_ANIM_LEN;
     public static final int NUM_SLAM_LEN = 8;
-    public static final int STUDIO_PAUSE_LEN = 60;
-    public static final int STUDIO_LEN = 240;
+    public static final int STUDIO_PAUSE_LEN = 40;
+    public static final int STUDIO_LEN = 180;
     public static final int START_ANIM_LEN = STUDIO_LEN + TOTAL_LETTER_ANIM_LEN + NUM_SLAM_LEN;
 
     public static final int FLASH = 8;
@@ -336,6 +336,9 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     // Sounds
     public static Clip menuMusic;
     public static Clip endMusic;
+    public static Clip superClick;
+    public static Clip boom;
+    public static Clip cheer;
 
     // Timer Settings
     public void run() {
@@ -417,6 +420,11 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         // Slideshow image importing
         for (int i = 0; i != NUM_SLIDES; i++) {
             slides[i] = ImageIO.read(new File("slideshow/slide" + i + ".jpg"));
+        }
+
+        // Smoke image importing
+        for (int i = 0; i != Smoke.NUM_SMOKES; i++) {
+            Smoke.smokes[i] = ImageIO.read(new File("player sprites/smoke" + i + ".png"));
         }
         
         // Player Weapon image importing
@@ -604,6 +612,26 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
             endMusic = AudioSystem.getClip();
             endMusic.open(AudioSystem.getAudioInputStream(new File("music/end music.wav").toURI().toURL()));
             endMusic.setFramePosition(0);
+
+            superClick = AudioSystem.getClip();
+            superClick.open(AudioSystem.getAudioInputStream(new File("SFX/super click.wav").toURI().toURL()));
+            superClick.setFramePosition(0);
+
+            Button.click = AudioSystem.getClip();
+            Button.click.open(AudioSystem.getAudioInputStream(new File("SFX/click.wav").toURI().toURL()));
+            Button.click.setFramePosition(0);
+
+            Button.hover = AudioSystem.getClip();
+            Button.hover.open(AudioSystem.getAudioInputStream(new File("SFX/hover.wav").toURI().toURL()));
+            Button.hover.setFramePosition(0);
+
+            boom = AudioSystem.getClip();
+            boom.open(AudioSystem.getAudioInputStream(new File("SFX/boom.wav").toURI().toURL()));
+            boom.setFramePosition(0);
+
+            cheer = AudioSystem.getClip();
+            cheer.open(AudioSystem.getAudioInputStream(new File("SFX/cheer.wav").toURI().toURL()));
+            cheer.setFramePosition(0);
         }
         catch (Exception e) {}
 
@@ -651,6 +679,9 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                 if (pressedKey.size() != 0) {
                     transitiono = FLASH;
                     transitionCounter = FLASH_LEN;
+                    superClick.stop();
+                    superClick.setFramePosition(0);
+                    superClick.start();
                 }
             }
         }
@@ -751,6 +782,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
 
             for (Omegaman omega: omegaman) {
                 omega.drawHUD(g);
+                omega.drawSmokes(g2);
                 if (omega.state == Omegaman.ALIVE_STATE) {
                     omega.draw(g);
                     omega.drawCharge(g);
@@ -812,6 +844,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                 }
 
                 for (Omegaman omega: omegaman) {
+                    omega.processSmokes();
                     if (omega.state == Omegaman.ALIVE_STATE) {
                         if (omega.stunCounter == Omegaman.NOT_STUNNED) {
                             omega.controlX(pressedKey.contains(omega.lftKey), pressedKey.contains(omega.ritKey));
@@ -1049,6 +1082,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         if (transitiono == READY_FADE) {
             if (transitionCounter == 0) {
                 gameState = GAME_GS;
+
                 for (int i = 0; i != Omegaman.NUM_PLAYERS; i++) {
                     try {
                         omegaman[i] = new Omegaman(i, stage[stageNo].spawnCoords[i].copy(), stage[stageNo].spawnSpriteSign[i], stage[stageNo].spawnPlatformNo[i], controls[i], shtKeys[i], loadouts[i].clone(), loadoutButtono[i]);
@@ -1059,6 +1093,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                         chooseButtons.get(omegaman[i].loadoutButtono[j]).image = addWeaponIcon;
                     }
                 }
+
                 readyCounter = -1;
                 stageFlashCounter = 0;
                 iconFlashCounter = 0;
@@ -1073,8 +1108,12 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                         bosses.add(new Dragon(1));
                     }
                 }
+
                 transitionCounter = COUNTDOWN_LEN;
                 transitiono = COUNTDOWN;
+                stage[stageNo].music.stop();
+                stage[stageNo].music.setFramePosition(0);
+                stage[stageNo].music.loop(Clip.LOOP_CONTINUOUSLY);
             }
         }
         else if (transitiono == COUNTDOWN) {
@@ -1111,17 +1150,22 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         }
         else if (transitiono == PAUSE) {
             actionPerformed();
-            if (transitiono == NO_TRANSITION) {
+            if (transitiono == PAUSE) {
                 processButtons(pauseButtons.values());
             }
         }
         else if (transitiono == START_ANIM) {
-            if (transitionCounter >= START_ANIM_LEN - STUDIO_LEN - TOTAL_LETTER_ANIM_LEN && transitionCounter <= START_ANIM_LEN - STUDIO_LEN) {
-                if (transitionCounter >= START_ANIM_LEN - STUDIO_LEN - TOTAL_LETTER_ANIM_LEN + Letter.LETTER_ANIM_LEN) {
-                    if ((transitionCounter - (START_ANIM_LEN - STUDIO_LEN - TOTAL_LETTER_ANIM_LEN + Letter.LETTER_ANIM_LEN)) % LETTER_APPEAR_HZ == 0) {
+            if (transitionCounter >= NUM_SLAM_LEN && transitionCounter <= START_ANIM_LEN - STUDIO_LEN) {
+                if (transitionCounter >= NUM_SLAM_LEN + Letter.LETTER_ANIM_LEN) {
+                    if ((transitionCounter - (NUM_SLAM_LEN + Letter.LETTER_ANIM_LEN)) % LETTER_APPEAR_HZ == 0) {
                         int letterNo = letterOrder.removeFirst();
                         letters.add(new Letter(Letter.LETTER_COORDS[letterNo], Letter.LETTER_SIZE[letterNo], Letter.letters[letterNo], Math.random() < 0.5));
                     }
+                }
+                else if (transitionCounter == NUM_SLAM_LEN) {
+                    menuMusic.stop();
+                    menuMusic.setFramePosition(0);
+                    menuMusic.loop(Clip.LOOP_CONTINUOUSLY);
                 }
                 for (Letter letter: letters) {
                     letter.process();
@@ -1333,6 +1377,10 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                 if (omega.livesLeft <= 0 && omega.frameCounter == SURGE_FRAME_HZ * SURGE_SPRITE_WIN_CHECK) {
                     transitionCounter = GAME_END_LEN;
                     transitiono = GAME_OVER;
+                    stage[stageNo].music.stop();
+                    endMusic.stop();
+                    endMusic.setFramePosition(0);
+                    endMusic.loop(Clip.LOOP_CONTINUOUSLY);
                 }
             }
 
@@ -1345,6 +1393,10 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
             if (bossDead) {
                 transitionCounter = GAME_END_LEN;
                 transitiono = GAME_SET;
+                stage[stageNo].music.stop();
+                endMusic.stop();
+                endMusic.setFramePosition(0);
+                endMusic.loop(Clip.LOOP_CONTINUOUSLY);
             }
         }
     }
@@ -1465,6 +1517,10 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                 else if (buttonPressed == READY_BUTTONO) {
                     transitiono = READY_FADE;
                     transitionCounter = READY_FADE_LEN;
+                    menuMusic.stop();
+                    superClick.stop();
+                    superClick.setFramePosition(0);
+                    superClick.start();
                     resetButtons(chooseButtons.values());
                 }
                 else {
@@ -1503,6 +1559,10 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                     transitiono = GAME_OVER;
                     transitionCounter = GAME_END_LEN - GAME_END_TEXT_LEN - GAME_END_TEXT_TRANSITION_LEN * 2;
                     resetButtons(pauseButtons.values());
+                    stage[stageNo].music.stop();
+                    endMusic.stop();
+                    endMusic.setFramePosition(0);
+                    endMusic.loop(Clip.LOOP_CONTINUOUSLY);
                 }
             }
             else if (gameState == GAME_END_GS) {
@@ -1519,6 +1579,10 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                     flashRotation = 0;
                     resetButtons(gameEndButtons.values());
                     resetTextBoxes(gameEndTextBoxes);
+                    endMusic.stop();
+                    menuMusic.stop();
+                    menuMusic.setFramePosition(0);
+                    menuMusic.loop(Clip.LOOP_CONTINUOUSLY);
                 }
             }
             else if (gameState == SLIDESHOW_GS) {

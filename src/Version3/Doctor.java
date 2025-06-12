@@ -192,5 +192,8 @@ public class Doctor extends Boss { // BUFF THIS DUDE
         super.prepareToDie();
         spriteNo = STATE_SPRITE_START[DEAD];
         size = STATE_SIZE[DEAD];
+        OmegaFight3.boom.stop();
+        OmegaFight3.boom.setFramePosition(0);
+        OmegaFight3.boom.start();
     }
 }

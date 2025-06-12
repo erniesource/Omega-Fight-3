@@ -134,7 +134,7 @@ public class Omegaman extends Char {
     public int chargingWeapon = NOT_CHARGING;
     public int[] loadout;
     public int[] loadoutButtono;
-    public Deque<Integer> smokeQ = new LinkedList<>(); // To be used maybe
+    public Deque<Smoke> smokeQ = new LinkedList<>(); // To be used maybe
 
     // Skill point statistics
     public int skillPts = ONES_PER_SKILL_PT * 3 / 2;
@@ -527,8 +527,10 @@ public class Omegaman extends Char {
             skillPtCounter = 0;
             stunCounter = 0;
             invCounter = RESPAWN_INITIAL_VELOCITY + RESPAWN_TIME_LIMIT + 2;
+            OmegaFight3.boom.stop();
+            OmegaFight3.boom.setFramePosition(0);
+            OmegaFight3.boom.start();
             // fireCounter = 0;
-            // iFramesCounter = 60;
         }
     }
 
@@ -536,6 +538,9 @@ public class Omegaman extends Char {
         coord.x = OmegaFight3.stage[OmegaFight3.stageNo].spawnCoords[playerNo].x;
         coord.y = -size.y;
         percent = 0;
+        OmegaFight3.cheer.stop();
+        OmegaFight3.cheer.setFramePosition(0);
+        OmegaFight3.cheer.start();
     }
 
     public void drawSurge(Graphics2D g2) {
@@ -652,6 +657,21 @@ public class Omegaman extends Char {
         }
     }
 
+    public void processSmokes() {
+        for (Smoke smoke: smokeQ) {
+            smoke.process();
+        }
+        while (!smokeQ.isEmpty() && smokeQ.getFirst().frameCounter == 0) {
+            smokeQ.removeFirst();
+        }
+    }
+
+    public void drawSmokes(Graphics2D g2) {
+        for (Smoke smoke: smokeQ) {
+            smoke.draw(g2);
+        }
+    }
+
     public void knockback() {
         decelerate();
         
@@ -680,6 +700,8 @@ public class Omegaman extends Char {
                 jumpState = 1;
             }
         }
+
+        smokeQ.add(new Smoke(coord.copy(), Smoke.SMOKE_SIZE.scaledBy(Math.pow(Math.hypot(velocity.x, velocity.y), Smoke.SMOKE_VEL_SCALE) * Math.min(size.x, size.y) / Smoke.SMOKE_DESIGNED_SIZE), Math.random() * Math.PI * 2)); // Fix this for Size
     }
 
     public void countInv() {

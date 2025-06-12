@@ -120,6 +120,9 @@ class Rocket extends Projectile {
             frameCounter = EXPLOSION_TIME;
             size.x *= EXPLOSION_SIZE_MULTIPLIER;
             size.y *= EXPLOSION_SIZE_MULTIPLIER;
+            OmegaFight3.boom.stop();
+            OmegaFight3.boom.setFramePosition(0);
+            OmegaFight3.boom.start();
         }
     }
 
@@ -465,6 +468,9 @@ class Missile extends Projectile {
             frameCounter = EXPLOSION_TIME;
             size.x *= EXPLOSION_SIZE_MULTIPLIER;
             size.y *= EXPLOSION_SIZE_MULTIPLIER;
+            OmegaFight3.boom.stop();
+            OmegaFight3.boom.setFramePosition(0);
+            OmegaFight3.boom.start();
         }
     }
 
