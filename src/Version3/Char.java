@@ -59,6 +59,7 @@ abstract class Boss extends Char {
     public static final double BOSS_HITBOX_LEEWAY = 0.2;
     public static final int NO_TRANSITION = -1;
     public static final int NOT_HURT = -1;
+    public static final int HURT_BLINK_HZ = 1;
 
     // Die constants
     public static final double DIE_ACCEL = 1;
@@ -85,7 +86,17 @@ abstract class Boss extends Char {
     public void hurt(double damage) {
         health -= damage;
         if (!hurt) hurt = true;
-        if (health <= 0) prepareToDie();
+        if (health <= 0 && state != DEAD) prepareToDie();
+    }
+
+    public void processHurt() {
+        if (hurt) {
+            hurtCounter = (hurtCounter + 1) % (HURT_BLINK_HZ * 2);
+            hurt = false;
+        }
+        else {
+            hurtCounter = Boss.NOT_HURT;
+        }
     }
 
     public void prepareToDie() {

@@ -6,7 +6,6 @@ import java.awt.image.BufferedImage;
 public class Doctor extends Boss { // BUFF THIS DUDE
     // Combat constants
     public static final double INITIAL_HEALTH = 500 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
-    public static final int HURT_BLINK_HZ = 1;
 
     // Sprite constants
     public static final int[] STATE_SPRITE_START = {0, 2, 4, 7};
@@ -162,16 +161,9 @@ public class Doctor extends Boss { // BUFF THIS DUDE
     }
 
     public void draw(Graphics g) {
-        if (!hurt || hurtCounter >= HURT_BLINK_HZ) {
+        if (!hurt || hurtCounter >= Boss.HURT_BLINK_HZ) {
             if (spriteSign == 1) g.drawImage(sprite[spriteNo], (int) (coord.x - size.x / 2), (int) (coord.y - size.y / 2), null);
             else g.drawImage(sprite[spriteNo], (int) (coord.x - size.x / 2 + size.x), (int) (coord.y - size.y / 2), (int) -size.x, (int) size.y, null);
-        }
-        if (hurt) {
-            hurtCounter = (hurtCounter + 1) % (HURT_BLINK_HZ * 2);
-            hurt = false;
-        }
-        else {
-            hurtCounter = Boss.NOT_HURT;
         }
     }
 

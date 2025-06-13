@@ -6,7 +6,6 @@ import java.awt.image.BufferedImage;
 public class Dragon extends Boss{
     // Combat constants
     public static final double INITIAL_HEALTH = 500 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
-    public static final int HURT_BLINK_HZ = 1;
 
     // Sprite constants
     public static final int[] STATE_SPRITE_START = {0, 4, 8, 12};
@@ -146,16 +145,9 @@ public class Dragon extends Boss{
     }
 
     public void draw(Graphics g) {
-        if (!hurt || hurtCounter >= HURT_BLINK_HZ) {
+        if (!hurt || hurtCounter >= Boss.HURT_BLINK_HZ) {
             if (spriteSign == 1) g.drawImage(sprite[spriteNo], (int) (coord.x - size.x / 2), (int) (coord.y - size.y / 2), null);
             else g.drawImage(sprite[spriteNo], (int) (coord.x - size.x / 2 + size.x), (int) (coord.y - size.y / 2), (int) -size.x, (int) size.y, null);
-        }
-        if (hurt) {
-            hurtCounter = (hurtCounter + 1) % (HURT_BLINK_HZ * 2);
-            hurt = false;
-        }
-        else {
-            hurtCounter = Boss.NOT_HURT;
         }
     }
 
@@ -169,6 +161,9 @@ public class Dragon extends Boss{
             frameCounter = 0;
             spriteNo = 0;
             OmegaFight3.screenShakeCounter += DIE_SCREENSHAKE;
+            OmegaFight3.boom.stop();
+            OmegaFight3.boom.setFramePosition(0);
+            OmegaFight3.boom.start();
         }
     }
 
@@ -176,8 +171,5 @@ public class Dragon extends Boss{
         super.prepareToDie();
         spriteNo = STATE_SPRITE_START[DEAD];
         size = STATE_SIZE[DEAD];
-        OmegaFight3.boom.stop();
-        OmegaFight3.boom.setFramePosition(0);
-        OmegaFight3.boom.start();
     }
 }
