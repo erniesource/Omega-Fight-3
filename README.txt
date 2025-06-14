@@ -16,6 +16,8 @@ HOW TO PLAY:
             - You consume half a skill point if it's less than halfway charged, and a full one otherwise
         - There is a time limit to how long you can hold it
         - Use as many skill points as possible, as they increase your score
+    - After firing a projectile, your blaster will be on cooldown for a short while. Charged attacks make your blaster go on cooldown for a long while.
+      So if you can't shoot for a while, it's probably because you just used a charged attack
     - Look in the slideshow in game to see what keys are your controls
     - Friendly fire is on, so try not to shoot your friend, since that will reduce your score
     - You can press escape at any time to pause the game (In case you need to dookie mid-fight)

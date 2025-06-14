@@ -68,6 +68,9 @@ class Platform {
 }
 
 class Coord { // Note: Coord is actually more of a Vector, but Vector has already been taken as a class name soooo
+    // Constants
+    public static final Coord PT = new Coord();
+    
     // Instance variables
     public double x;
     public double y;
