@@ -31,27 +31,36 @@ public class Fastener extends Projectile {
     public static final int[] NUM_SPRITES = {3, 4};
     public static final int SPRITE_CHANGE_HZ = 5;
 
+    // Static images
     public static BufferedImage[][] images = new BufferedImage[NO_OF_TYPES][];
 
+    // Instance variables
     public Coord fastenerVelocity;
     public int type;
 
+    // Constructor with custom stats
     public Fastener(Boss boss, Coord coord, Coord size, double velocity, double dir, double damage, double knockback, double durability, int frameCounter, boolean canHitProj) {
         super(boss, coord, size, size.scaledBy(SIZE_TO_HITBOX), velocity, dir, damage, knockback, durability, frameCounter, canHitProj); // DO SCALED BY STUFF FOR HITBOX SO IT DOESN't FEEL SO BAD
         fastenerVelocity = new Coord(velocity * Math.cos(dir), velocity * Math.sin(dir));
         type = (int) (Math.random() * NO_OF_TYPES);
     }
 
+    // Constructor with default stats
     public Fastener(Boss boss, Coord coord, double dir) {
         this(boss, coord, SIZE, VELOCITY, dir, DMG, KB, DURABILITY, LIFE, CAN_HIT_PROJ);
     }
 
+    // Description: Draws the fastener object
     public void draw(Graphics2D g2) {
         g2.drawImage(images[type][frameCounter / SPRITE_CHANGE_HZ], (int) (coord.x - size.x / 2), (int) (coord.y - size.y / 2), (int) size.x, (int) size.y, null);
     }
 
+    // Description: Processes the fastener
     public void process() {
+        // Sprite change
         frameCounter = (frameCounter + 1) % (NUM_SPRITES[type] * SPRITE_CHANGE_HZ);
+
+        // Movement
         coord.x += fastenerVelocity.x;
         coord.y += fastenerVelocity.y;
         if (fastenerVelocity.x < 0) {
@@ -62,14 +71,21 @@ public class Fastener extends Projectile {
             if (fastenerVelocity.x < 0) fastenerVelocity.x = 0;
         }
         fastenerVelocity.y += ACCEL;
-        if (coord.x < 0 || coord.x > OmegaFight3.SCREEN_SIZE.x || coord.y < 0 || coord.y > OmegaFight3.SCREEN_SIZE.y) {
+
+        // Check if out of screen
+        if (OmegaFight3.outOfScreen(coord, size)) {
             die();
         }
+
+        // Loop through players and their projectiles
         for (Omegaman enemy: OmegaFight3.omegaman) {
+            // Enemy hitbox
             if (OmegaFight3.intersects(coord, hitBoxSize, enemy.coord, enemy.size, OmegaFight3.HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
                 enemy.hurt(damage, knockback, coord, dir, KB_SPREAD, SCREENSHAKE);
                 die();
             }
+
+            // Enemy projectiles
             if (canHitProj) {
                 for (Projectile proj: enemy.projectiles) {
                     if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, OmegaFight3.HITBOX_LEEWAY) && proj.hitBoxActive && proj.canHitProj) {
@@ -83,10 +99,6 @@ public class Fastener extends Projectile {
 }
 
 class Energy extends Projectile {
-    public double rotation;
-
-    public static BufferedImage[] images = new BufferedImage[2];
-    
     // Damage constants
     public static final double DMG = 10 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
     public static final double DURABILITY = 2;
@@ -109,33 +121,53 @@ class Energy extends Projectile {
     public static final int NO_OF_SPRITES = 2;
     public static final int SPRITE_CHANGE_HZ = 10;
 
+    // Instance variables
+    public double rotation;
+
+    // Static images
+    public static BufferedImage[] images = new BufferedImage[NO_OF_SPRITES];
+
+    // Constructor with custom stats
     public Energy(Boss boss, Coord coord, Coord size, double velocity, double dir, double damage, double knockback, double durability, int frameCounter, boolean canHitProj) {
         super(boss, coord, size, size.scaledBy(SIZE_TO_HITBOX), velocity, dir, damage, knockback, durability, frameCounter, canHitProj);
     }
 
+    // Constructor with default stats
     public Energy(Boss boss, Coord coord, double dir) {
         this(boss, coord, SIZE, VELOCITY, dir, DMG, KB, DURABILITY, LIFE, CAN_HIT_PROJ);
     }
 
+    // Description: THis method draws the pellet of energy on screen
     public void draw(Graphics2D g2) {
         g2.rotate(rotation, coord.x, coord.y);
         g2.drawImage(images[frameCounter / SPRITE_CHANGE_HZ], (int) (coord.x - size.x / 2), (int) (coord.y - size.y / 2), (int) size.x, (int) size.y, null);
         g2.rotate(-rotation, coord.x, coord.y);
     }
 
+    // Description: This method processes the pellet
     public void process() {
+        // Movement
         coord.x += velocity * Math.cos(dir);
         coord.y += velocity * Math.sin(dir);
+
+        // Sprite change
         frameCounter = (frameCounter + 1) % (NO_OF_SPRITES * SPRITE_CHANGE_HZ);
         rotation += ROTATION_SPEED;
-        if (coord.x < 0 || coord.x > OmegaFight3.SCREEN_SIZE.x || coord.y < 0 || coord.y > OmegaFight3.SCREEN_SIZE.y) {
+
+        // Check if out of screen
+        if (OmegaFight3.outOfScreen(coord, size)) {
             die();
         }
+
+        // Check player hitboxes and projectiles
         for (Omegaman enemy: OmegaFight3.omegaman) {
+            // Enemy hitbox
             if (OmegaFight3.intersects(coord, hitBoxSize, enemy.coord, enemy.size, OmegaFight3.HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
                 enemy.hurt(damage, knockback, coord, dir, KB_SPREAD, SCREENSHAKE);
                 die();
             }
+
+            // Enemy projectiles
             if (canHitProj) {
                 for (Projectile proj: enemy.projectiles) {
                     if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, OmegaFight3.HITBOX_LEEWAY) && proj.hitBoxActive && proj.canHitProj) {
@@ -149,11 +181,6 @@ class Energy extends Projectile {
 }
 
 class Pincer extends Projectile {
-    public double trueDir;
-    public int xMovementCounter = 10;
-
-    public static BufferedImage[] images = new BufferedImage[3];
-    
     // Damage constants
     public static final double DMG = 10 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
     public static final double DURABILITY = 2;
@@ -174,23 +201,37 @@ class Pincer extends Projectile {
     public static final int NO_OF_SPRITES = 3;
     public static final int SPRITE_CHANGE_HZ = 7;
 
+    // Instance variables
+    public double trueDir;
+    public int xMovementCounter = 10;
+
+    // static images
+    public static BufferedImage[] images = new BufferedImage[NO_OF_SPRITES];
+
+    // Customized constructor
     public Pincer(Boss boss, Coord coord, Coord size, double velocity, double dir, double damage, double knockback, double durability, int frameCounter, boolean canHitProj) {
         super(boss, coord, size, size, velocity, dir, damage, knockback, durability, frameCounter, canHitProj);
         this.trueDir = dir;
     }
 
+    // General constructor
     public Pincer(Boss boss, Coord coord) {
         this(boss, coord, SIZE, VELOCITY, coord.x < OmegaFight3.SCREEN_SIZE.x / 2? 0: Math.PI, DMG, KB, DURABILITY, LIFE, CAN_HIT_PROJ);
     }
 
+    // Description: This method draws the pincer
     public void draw(Graphics2D g2) {
         g2.rotate(dir, coord.x, coord.y);
         g2.drawImage(images[frameCounter / SPRITE_CHANGE_HZ], (int) (coord.x - size.x / 2), (int) (coord.y - size.y / 2), (int) size.x, (int) size.y, null);
         g2.rotate(-dir, coord.x, coord.y);
     }
 
+    // Description: THis method processes the pincer
     public void process() {
+        // Spritecahnge
         frameCounter = (frameCounter + 1) % (NO_OF_SPRITES * SPRITE_CHANGE_HZ);
+
+        // X-movement
         if (xMovementCounter != 0) {
             coord.x += velocity * Math.cos(dir);
             xMovementCounter--;
@@ -202,6 +243,8 @@ class Pincer extends Projectile {
                 }
             }
         }
+
+        // Y-movement
         else {
             if (coord.y + velocity * Math.sin(dir) > OmegaFight3.SCREEN_SIZE.y || coord.y + velocity * Math.sin(dir) < 0) {
                 dir = trueDir;
@@ -209,14 +252,21 @@ class Pincer extends Projectile {
             }
             coord.y += velocity * Math.sin(dir);
         }
+
+        // Check if out of left-right sides of the screen
         if (coord.x < 0 || coord.x > OmegaFight3.SCREEN_SIZE.x) {
             die();
         }
+
+        // Check player hitboxes and projectiles
         for (Omegaman enemy: OmegaFight3.omegaman) {
+            // Enemy hitbox
             if (OmegaFight3.intersects(coord, hitBoxSize, enemy.coord, enemy.size, OmegaFight3.HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
                 enemy.hurt(damage, knockback, coord, dir, KB_SPREAD, SCREENSHAKE);
                 die();
             }
+
+            // Enemy projectiles
             if (canHitProj) {
                 for (Projectile proj: enemy.projectiles) {
                     if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, OmegaFight3.HITBOX_LEEWAY) && proj.hitBoxActive && proj.canHitProj) {
@@ -230,11 +280,6 @@ class Pincer extends Projectile {
 }
 
 class Bombot extends Projectile {
-    public int state; // 0: Travelling, 1: Exploding
-    public int sign;
-
-    public static BufferedImage[] images = new BufferedImage[2];
-
     // Size constants
     public static final Coord SIZE = new Coord(150, 75);
 
@@ -250,24 +295,38 @@ class Bombot extends Projectile {
     public static final int LIFE = 200;
     public static final double TURN_SPEED = Math.PI * (180.0 / LIFE / 180.0);
 
+    // State constants
+    public static final int TRAVELLING = 0;
+    public static final int EXPLODING = 1;
+
     // Misc constants
     public static final int SCREENSHAKE = 15;
     public static final boolean CAN_HIT_PROJ = true;
     public static final int NO_OF_SPRITES = 2;
     public static final int SPRITE_CHANGE_HZ = 10;
 
+    // Instance variables
+    public int state = TRAVELLING; // 0: Travelling, 1: Exploding
+    public int sign;
+
+    // Static images
+    public static BufferedImage[] images = new BufferedImage[2];
+
+    // Constructor with custom stats
     public Bombot(Boss boss, Coord coord, Coord size, double velocity, double dir, double damage, double knockback, double durability, int frameCounter, int sign, boolean canHitProj) {
         super(boss, coord, size, size, velocity, dir, damage, knockback, durability, frameCounter, canHitProj);
         this.sign = sign;
     }
 
+    // General constructor with default stats
     public Bombot(Boss boss, Coord coord, double dir, int sign) {
         this(boss, coord, SIZE.copy(), VELOCITY, dir, DMG, KB, DURABILITY, LIFE, sign, CAN_HIT_PROJ);
     }
 
+    // Description: This method explodes the bombot
     public void die() {
-        if (state == 0) {
-            state = 1;
+        if (state == TRAVELLING) {
+            state = EXPLODING;
             hitBoxActive = false;
             frameCounter = EXPLOSION_TIME;
             size.x *= EXPLOSION_SIZE_MULTIPLIER.x;
@@ -278,6 +337,7 @@ class Bombot extends Projectile {
         }
     }
 
+    // Description: This method draws the bombot
     public void draw(Graphics2D g2) {
         if (state == 1) g2.drawImage(explosionImages[(EXPLOSION_TIME - frameCounter - 1) / EXPLOSION_FRAME_HZ], (int) (coord.x - size.x / 2), (int) (coord.y - size.y / 2), (int) size.x, (int) size.y, null);
         else {
@@ -287,12 +347,15 @@ class Bombot extends Projectile {
         }
     }
 
+    // Description: this method processes the bombot
     public void process() {
-        if (state == 0) {
+        // Not exploding
+        if (state == TRAVELLING) {
+            // Movement
             super.process();
 
             // Homing
-            // Loop thru all boss parts (replace Omegaman with Boss class and OmegaFight.omegaman with OmegaFight.boss)
+            // Loop thru all players and find closest target
             Char target = null;
             double closestDist = Double.MAX_VALUE;
             for (Omegaman enemy : OmegaFight3.omegaman) {
@@ -305,6 +368,7 @@ class Bombot extends Projectile {
                 }
             }
             
+            // Adjust direction and home
             if (target != null) {
                 double targetDir = Math.atan2(target.coord.y - coord.y, target.coord.x - coord.x);
                 double angleDif = targetDir - dir;
@@ -313,14 +377,20 @@ class Bombot extends Projectile {
                 else dir += Math.signum(angleDif) * TURN_SPEED;
             }
 
-            if (coord.x < 0 || coord.x > OmegaFight3.SCREEN_SIZE.x || coord.y < 0 || coord.y > OmegaFight3.SCREEN_SIZE.y) {
+            // Check if out of screen
+            if (OmegaFight3.outOfScreen(coord, size)) {
                 die();
             }
+
+            // Loop through all players and their projectiles
             for (Omegaman enemy: OmegaFight3.omegaman) {
+                // Enemy hitbox
                 if (OmegaFight3.intersects(coord, hitBoxSize, enemy.coord, enemy.size, OmegaFight3.HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
                     enemy.hurt(damage, knockback, coord, dir, KB_SPREAD, (int) (SCREENSHAKE * (size.x / SIZE.x)));
                     die();
                 }
+
+                // Enemy projectiles
                 if (canHitProj) {
                     for (Projectile proj: enemy.projectiles) {
                         if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, OmegaFight3.HITBOX_LEEWAY) && proj.hitBoxActive && proj.canHitProj) {
@@ -331,12 +401,15 @@ class Bombot extends Projectile {
                 }
             }
         }
+
+        // Exploding
         else {
             frameCounter--;
             if (frameCounter == 0) super.die();
         }
     }
 
+    // Description: This method returns that the missile should die to anything
     public boolean shouldDieTo(double enemyDurability) {
         return true;
     }

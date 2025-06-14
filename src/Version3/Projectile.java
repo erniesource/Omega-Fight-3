@@ -34,6 +34,7 @@ abstract public class Projectile {
     public double knockback;
     public double durability;
 
+    // Constructor
     public Projectile(Char character, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double durability, int frameCounter, boolean canHitProj) {
         this.character = character;
         this.coord = coord;
@@ -48,10 +49,12 @@ abstract public class Projectile {
         this.canHitProj = canHitProj;
     }
 
+    // Description: THis method kills the projectile
     public void die() {
         character.deadProjectiles.add(this);
     }
 
+    // Description: THis method processes the movement and expiry of the projectile
     public void process() {
         coord.x += velocity * Math.cos(dir);
         coord.y += velocity * Math.sin(dir);
@@ -59,10 +62,11 @@ abstract public class Projectile {
         if (frameCounter == 0) die();
     }
 
+    // Description: This method determines whether or not this projectile should die to another projectile with the specified durability
     public boolean shouldDieTo(double enemyDurability) {
         return durability <= enemyDurability;
     }
 
-    // Methods that exist purely for polymorphism to happen
+    // Abstract method(s)
     abstract public void draw(Graphics2D g2);
 }
