@@ -84,6 +84,7 @@ BUGS:
         - https://www.mechanical-keyboard.org/key-rollover-test/- 
     - So this problem isn't caused by the code that I wrote, and should be a problem for all games if you have a not-so-great keyboard
         - Although it is slightly more noticeable on my game if you have a lot of keyboard ghosting since so many keys are being pressed on one keyboard while fighting
+    - OmegaFight3 is teh driver class
 
 CHEAT KEYS (Must have CHEATS final variable (line 31) in OmegaFight3 set to true to use):
 In-game gamestate:

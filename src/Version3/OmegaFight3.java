@@ -362,6 +362,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static Clip superClick;
     public static Clip boom;
     public static Clip cheer;
+    public static Clip shing;
 
     // Timer Settings
     // Parameters: None
@@ -667,6 +668,10 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
             cheer = AudioSystem.getClip();
             cheer.open(AudioSystem.getAudioInputStream(new File("SFX/cheer.wav").toURI().toURL()));
             cheer.setFramePosition(0);
+
+            shing = AudioSystem.getClip();
+            shing.open(AudioSystem.getAudioInputStream(new File("SFX/shing.wav").toURI().toURL()));
+            shing.setFramePosition(0);
         }
         catch (Exception e) {}
 
@@ -830,6 +835,9 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                             readyCounter = 0;
                             readyButton.canSee = true;
                             readyButton.coord.x = -READY_BAR_SIZE.x / 2;
+                            shing.stop();
+                            shing.setFramePosition(0);
+                            shing.start();
                         }
                     }
                     else if (readyCounter != READY_ANIM_LEN) {
