@@ -52,17 +52,24 @@ public class Dragon extends Boss{
     // Images
     public static BufferedImage[] sprite = new BufferedImage[NO_OF_SPRITES];
 
+    // Constructor
     public Dragon(double difficulty) {
         super(STATE_COORD[IDLE].copy(), STATE_SPRITE_START[IDLE], STATE_SPRITE_SIGN[IDLE], STATE_TIME[IDLE], STATE_SIZE[IDLE].copy(), IDLE, INITIAL_HEALTH, difficulty);
     }
 
+    // Description: This method calculates the dragon transitioning from one attack to the next
     public void transition() {
+        // Sprite change
         frameCounter--;
         if (frameCounter % STATE_SPRITE_CHANGE_HZ[IDLE] == 0) {
             spriteNo = STATE_SPRITE_START[IDLE] + (spriteNo - STATE_SPRITE_START[IDLE] + 1) % STATE_NO_SPRITES[IDLE];
         }
+
+        // Movement
         coord.x = OmegaFight3.lerp(STATE_COORD[transitionTo].x, STATE_COORD[state].x, (double) frameCounter / TRANSITION_TIME);
         coord.y = OmegaFight3.lerp(STATE_COORD[transitionTo].y, STATE_COORD[state].y, (double) frameCounter / TRANSITION_TIME);
+
+        // Finished transition, start attack
         if (frameCounter == 0) {
             state = transitionTo;
             transitionTo = NO_TRANSITION;
@@ -73,17 +80,26 @@ public class Dragon extends Boss{
         }
     }
 
+    // Description: This method calculates the dragon attacking
     public void attack() {
+        // Calculate frames
         frameCounter--;
+
+        // Idle
         if (state == IDLE) {
             if (frameCounter % STATE_SPRITE_CHANGE_HZ[IDLE] == 0) {
                 spriteNo = STATE_SPRITE_START[IDLE] + (spriteNo - STATE_SPRITE_START[IDLE] + 1) % STATE_NO_SPRITES[IDLE];
             }
         }
+
+        // Laser eyes attack
         else if (state == DIZZY) {
+            // Sprite change
             if (frameCounter % STATE_SPRITE_CHANGE_HZ[DIZZY] == 0) {
                 spriteNo = STATE_SPRITE_START[DIZZY] + (spriteNo - STATE_SPRITE_START[DIZZY] + 1) % STATE_NO_SPRITES[DIZZY];
             }
+
+            // Fire laser ring at closest alive player
             if (frameCounter % (DIZZY_HZ * DIZZY_NUM_PROJS + DIZZY_PAUSE) < DIZZY_HZ * DIZZY_NUM_PROJS) {
                 if (frameCounter % DIZZY_HZ == 0) {
                     Omegaman target = null;
@@ -105,29 +121,45 @@ public class Dragon extends Boss{
                 }
             }
         }
+
+        // Meteors/Meatball cosine wave attack
         else if (state == BARF) {
+            // Sprite change
             if (frameCounter % STATE_SPRITE_CHANGE_HZ[BARF] == 0) {
                 spriteNo = STATE_SPRITE_START[BARF] + (spriteNo - STATE_SPRITE_START[BARF] + 1) % STATE_NO_SPRITES[BARF];
             }
+
+            // Barf meteor
             if (frameCounter % (STATE_NO_SPRITES[BARF] * STATE_SPRITE_CHANGE_HZ[BARF] * BARF_TO_GAG_HZ) == STATE_SPRITE_CHANGE_HZ[BARF]) {
                 projectiles.add(new Meteor(this, coord.x + COORD_TO_BARF_COORD.x * spriteSign, spriteSign));
             }
         }
+
+        // Attack finished, transition to same or different attack
         if (frameCounter == 0) {
             transitionTo = (int) (Math.random() * (NO_OF_STATES - 1)) + 1;
+
+            // Transition to same attack
             if (transitionTo == state) {
                 transitionTo = NO_TRANSITION;
                 frameCounter = STATE_TIME[state];
                 spriteNo = STATE_SPRITE_START[state];
             }
+
+            // Transition to different attack
             else {
                 frameCounter = TRANSITION_TIME;
                 spriteNo = STATE_SPRITE_START[IDLE];
+                spriteSign = (int) Math.signum(STATE_COORD[transitionTo].x - STATE_COORD[state].x);
+                if (spriteSign == 0) spriteSign = STATE_SPRITE_SIGN[transitionTo];
+                size = STATE_SIZE[IDLE];
             }
         }
     }
 
+    // Description: This method calculates the background attacks of the dragon
     public void backgroundAttack() {
+        // Bubble attack
         if (health < INITIAL_HEALTH * difficulty * BUBBLE_THRESHOLD) {
             bubbleCounter++;
             if (bubbleCounter >= Math.max(MIN_BUBBLE_HZ, BUBBLE_HZ * health / (INITIAL_HEALTH * difficulty * BUBBLE_THRESHOLD) / BUBBLE_AMT_SCALING_TO_HEALTH)) {
@@ -135,6 +167,8 @@ public class Dragon extends Boss{
                 bubbleCounter = 0;
             }
         }
+
+        // Flames from the ceiling attack
         if (health < INITIAL_HEALTH * difficulty * FIRE_THRESHOLD) {
             fireCounter++;
             if (fireCounter >= Math.max(MIN_FIRE_HZ, FIRE_HZ * health / (INITIAL_HEALTH * difficulty * FIRE_THRESHOLD) / FIRE_AMT_SCALING_TO_HEALTH)) {
@@ -144,19 +178,25 @@ public class Dragon extends Boss{
         }
     }
 
+    // Description: This method draws the dragon using the Graphics object provided
     public void draw(Graphics g) {
         if (!hurt || hurtCounter >= Boss.HURT_BLINK_HZ) {
-            if (spriteSign == 1) g.drawImage(sprite[spriteNo], (int) (coord.x - size.x / 2), (int) (coord.y - size.y / 2), null);
-            else g.drawImage(sprite[spriteNo], (int) (coord.x - size.x / 2 + size.x), (int) (coord.y - size.y / 2), (int) -size.x, (int) size.y, null);
+            g.drawImage(sprite[spriteNo], (int) (coord.x - size.x / 2 * spriteSign), (int) (coord.y - size.y / 2), (int) size.x * spriteSign, (int) size.y, null);
         }
     }
 
+    // Description: This method calculates the dragon falling to his death
     public void fall() {
+        // Movement
         super.fall();
+
+        // Sprite change
         frameCounter = (frameCounter + 1) % STATE_SPRITE_CHANGE_HZ[DEAD];
         if (frameCounter == 0) {
             spriteNo = (spriteNo + 1) % STATE_NO_SPRITES[DEAD];
         }
+
+        // Falling finished, start surge and play boom sound effect
         if (coord.y > OmegaFight3.SCREEN_SIZE.y + size.y / 2) {
             frameCounter = 0;
             spriteNo = 0;
@@ -167,6 +207,7 @@ public class Dragon extends Boss{
         }
     }
 
+    // Description: This method changes the stats of the dragon to prepare him for death
     public void prepareToDie() {
         super.prepareToDie();
         spriteNo = STATE_SPRITE_START[DEAD];

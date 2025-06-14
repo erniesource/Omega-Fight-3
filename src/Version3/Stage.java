@@ -7,21 +7,22 @@ import javax.imageio.ImageIO;
 import javax.sound.sampled.*;
 
 public class Stage {
+    // Constants
     public static final int NO_OF_STAGES = 2;
     public static final int BATTLEFIELD_NO = 0;
     public static final int FINAL_DEST_NO = 1;
     
+    // Instance variables
     public BufferedImage image;
-    public Platform[] platforms; // Make an arraylist?
+    public Platform[] platforms; // Make an arraylist? not yet
     public Coord[] spawnCoords;
     public int[] spawnSpriteSign;
     public int[] spawnPlatformNo;
     public int buttono;
     public String stageName;
     public Clip music;
-    
-    public static Coord coord = new Coord();
 
+    // Constructor (Also imports music and background)
     public Stage(String stageName, Platform[] platforms, Coord[] spawnCoords, int[] spawnSpriteSign, int[] spawnPlatformNo, int buttono) throws IOException {
         image = ImageIO.read(new File("stages/" + stageName + ".jpg"));
         this.stageName = stageName;
@@ -39,17 +40,20 @@ public class Stage {
         catch (Exception e) {}
     }
 
+    // Description: This method draws the stage background
     public void drawStage(Graphics g) {
         g.drawImage(image, 0, 0, null);
     }
 }
 
 class Platform {
-    public boolean isMain;
-    public int leftX; // Replace left with lft and right with rit
+    // Instance variables
+    public boolean isMain; // Players can't drop through main platforms
+    public int leftX;
     public int rightX;
     public int y;
 
+    // Constructor
     public Platform(int leftX, int rightX, int y, boolean isMain) {
         this.leftX = leftX;
         this.rightX = rightX;
@@ -57,36 +61,40 @@ class Platform {
         this.isMain = isMain;
     }
 
+    // Description: THis method returns whther or not an object has landed on this platform given it's x coordinate, initial y coordinate and final y coordinate
     public boolean landed(double x, double initialY, double finalY) {
         return (leftX <= x && x <= rightX && initialY <= y && finalY >= y);
     }
-
-    public boolean onPlatform(double x) {
-        return leftX <= x && x <= rightX;
-    }
 }
 
-class Coord {
+class Coord { // Note: Coord is actually more of a Vector, but Vector has already been taken as a class name soooo
+    // Constants
+    public static final Coord PT = new Coord();
+    
+    // Instance variables
     public double x;
     public double y;
 
-    public static final Coord PT = new Coord();
-
+    // Constructor that initializes origin
     public Coord() {}
 
+    // More specifid constructor
     public Coord(double x, double y) {
         this.x = x;
         this.y = y;
     }
 
+    // Description: This method returns a copy of this coord
     public Coord copy() {
         return new Coord(x, y);
     }
 
+    // Description: This method returns a new Coord with it's x and y scaled by a specified amount
     public Coord scaledBy(double multiplier) {
         return new Coord(x * multiplier, y * multiplier);
     }
 
+    // Description: This method is for printing out coords when debugging
     public String toString() {
         return "(" + x + ", " + y + ")";
     }
