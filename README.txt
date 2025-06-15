@@ -65,6 +65,7 @@ NOTES:
 - There are some similarities in code in projectile processing, but I did that because there were a lot of variations and tweaks between each projectile's processing and I felt it was less of a pain and A LOT easier
   to work with copy pasted solitary methods with a TON of helper methods that I can individually customize to my liking than to have one or two general methods with a kajillion parameters for all of the
   different variations in processing for each projectile.
+- It is possible to gain a score below 0. This is intentional. It can be done if both players score badly enough in the summative categories and deal a lot of damage to each other
 
 BUGS:
 1) (Not really a bug in my code but still caused me a lot of fustration last semester for Omega Fight 2)
