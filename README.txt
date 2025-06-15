@@ -4,6 +4,7 @@ HOW TO PLAY:
     - Players may not have duplicate weapons (even between players there cannot be duplicates)
     - If you want to access weapons that are blocked by the ready to fight bar, do something invalid
       (Try to put in a weapon that will be a duplicate) and the ready bar will disappear
+    - You can also just exit the choose your fight game state by pressing the back button and reselect your weapons
 2) Click the ready to fight bar to enter battle
 3) Shoot the boss
     - You can quickly tap one of your two fire buttons to launch a basic attack

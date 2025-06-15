@@ -60,7 +60,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
 
     // Choose Fight Menu Constants
     public static final int NOT_READY = -1;
-    public static final int READY_ANIM_LEN = 10;
+    public static final int READY_ANIM_LEN = 6;
     public static final int BLACK_BAR_TOP = 100;
     public static final int BLACK_BAR_BOTTOM = 500;
     public static final int DIVIDER_RIGHT_X = 1645;
@@ -772,13 +772,11 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
 
                     // Calculate menu omegamen's coordinates
                     menuManCounter = (menuManCounter + 1) % (MENU_MAN_MOVE_TIMES * MENU_MAN_MOVE_HZ * 2 + MENU_MAN_DOWN_PAUSE + MENU_MAN_UP_PAUSE);
-                    if (menuManCounter % MENU_MAN_MOVE_HZ == 0) {
-                        if (menuManCounter < MENU_MAN_MOVE_TIMES * MENU_MAN_MOVE_HZ) {
-                            menuManY += MENU_MAN_SPD;
-                        }
-                        else if (menuManCounter >= MENU_MAN_MOVE_TIMES * MENU_MAN_MOVE_HZ + MENU_MAN_DOWN_PAUSE && menuManCounter < MENU_MAN_MOVE_TIMES * MENU_MAN_MOVE_HZ * 2 + MENU_MAN_DOWN_PAUSE) {
-                            menuManY -= MENU_MAN_SPD;
-                        }
+                    if (menuManCounter < MENU_MAN_MOVE_TIMES * MENU_MAN_MOVE_HZ && menuManCounter % MENU_MAN_MOVE_HZ == 0) {
+                        menuManY += MENU_MAN_SPD;
+                    }
+                    else if (menuManCounter >= MENU_MAN_MOVE_TIMES * MENU_MAN_MOVE_HZ + MENU_MAN_DOWN_PAUSE && menuManCounter < MENU_MAN_MOVE_TIMES * MENU_MAN_MOVE_HZ * 2 + MENU_MAN_DOWN_PAUSE && (menuManCounter - (MENU_MAN_MOVE_TIMES * MENU_MAN_MOVE_HZ + MENU_MAN_DOWN_PAUSE)) % MENU_MAN_MOVE_HZ == 0) {
+                        menuManY -= MENU_MAN_SPD;
                     }
                 }
             }
@@ -1371,7 +1369,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                         omegaman[i] = new Omegaman(i, stage[stageNo].spawnCoords[i].copy(), stage[stageNo].spawnSpriteSign[i], stage[stageNo].spawnPlatformNo[i], controls[i], shtKeys[i], loadouts[i].clone(), loadoutButtono[i]);
                     }
                     catch (IOException e) {}
-                    for (int j = 0; j != omegaman[i].loadout.length; j++) {
+                    for (int j = 0; j != Omegaman.LOADOUT_NUM_WEAPONS; j++) {
                         loadouts[i][j] = NO_WEAPON;
                         chooseButtons.get(omegaman[i].loadoutButtono[j]).image = addWeaponIcon;
                     }
@@ -1833,8 +1831,8 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         }
         
         // Chekc if previous selected icon is loadout button
-        for (int i = 0; i < loadouts.length; i++) {
-            for (int j = 0; j < loadouts[i].length; j++) {
+        for (int i = 0; i < Omegaman.NUM_PLAYERS; i++) {
+            for (int j = 0; j < Omegaman.LOADOUT_NUM_WEAPONS; j++) {
                 if (selectedIcon.num == loadoutButtono[i][j]) {
                     int weaponNo = buttonoToWeaponNo.get(weaponButton.num);
                     // Check if weapon is already in any loadout and invalidate if so 
@@ -1877,8 +1875,8 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         }
 
         // If the selected icon is not a loadout button, swap or select weapon
-        for (int i = 0; i < loadouts.length; i++) {
-            for (int j = 0; j < loadouts[i].length; j++) {
+        for (int i = 0; i < Omegaman.NUM_PLAYERS; i++) {
+            for (int j = 0; j < Omegaman.LOADOUT_NUM_WEAPONS; j++) {
                 // Swap loadouts
                 if (selectedIcon.num == loadoutButtono[i][j]) {
                     int temp0 = loadouts[playerNo][loadoutSlot];
@@ -1960,6 +1958,21 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                     // transition counter to fade
                     transitionCounter = FADE_IN_LEN;
                     transitiono = FADE_IN;
+
+                    // Reset loadouts
+                    for (int i = 0; i != Omegaman.NUM_PLAYERS; i++) {
+                        for (int j = 0; j != Omegaman.LOADOUT_NUM_WEAPONS; j++) {
+                            loadouts[i][j] = NO_WEAPON;
+                            chooseButtons.get(loadoutButtono[i][j]).image = addWeaponIcon;
+                        }
+                    }
+
+                    // Reset choose your fight menu variables
+                    readyCounter = -1;
+                    stageFlashCounter = 0;
+                    iconFlashCounter = 0;
+                    chooseButtons.get(READY_BUTTONO).canUse = false;
+                    chooseButtons.get(READY_BUTTONO).canSee = false;
                     resetButtons(chooseButtons.values());
                 }
 
@@ -1997,8 +2010,8 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                     }
 
                     // Loadout icon buttons
-                    for (int i = 0; i != loadouts.length; i++) {
-                        for (int j = 0; j != loadouts[i].length; j++) {
+                    for (int i = 0; i != Omegaman.NUM_PLAYERS; i++) {
+                        for (int j = 0; j != Omegaman.LOADOUT_NUM_WEAPONS; j++) {
                             int loadoutBtn = loadoutButtono[i][j];
                             if (buttonPressed == loadoutBtn) {
                                 if (selectedIcon != null) {
