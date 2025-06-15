@@ -1243,6 +1243,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static void resetTextBoxes(Collection<TextBox> textBoxes) {
         for (TextBox textBox : textBoxes) {
             textBox.state = TextBox.NOPRESSED;
+            textBox.typing = false;
         }
     }
 
