@@ -66,26 +66,24 @@ NOTES:
   to work with copy pasted solitary methods with a TON of helper methods that I can individually customize to my liking than to have one or two general methods with a kajillion parameters for all of the
   different variations in processing for each projectile.
 - It is possible to gain a score below 0. This is intentional. It can be done if both players score badly enough in the summative categories and deal a lot of damage to each other
+- OmegaFight3 is the driver class
+- If you'd like to see what happens when the battle log is empty, delete everything in the text file and type "0". (First number represents number of battles stored)
 
 BUGS:
-1) (Not really a bug in my code but still caused me a lot of fustration last semester for Omega Fight 2)
-   You can't press certain combinations of three or more keys at the same time if you have a cheap keyboard.
-    - I searched this problem up, and it's called "Keyboard Ghosting" or "Keyboard Rollover"
-      and is one of the reasons high end gaming keyboards exist. Here are my sources:
+- (More of a hardware limitation than a bug) Cheap keyboards can’t register very specific 3+ key combos
+    - Low-end keyboards block signals when too many keys are pressed.
+    - Gaming keyboards avoid this with "N-key rollover" (NKRO).
+    - Try this website to see what combinations of keys you can't press together!
+        - https://www.mechanical-keyboard.org/key-rollover-test/- 
+    - This is called "Keyboard Ghosting" or "Keyboard Rollover". Here are my sources
         - https://discourse.processing.org/t/keypressed-for-multiple-keys-pressed-at-the-same-time/18892/5
         - https://stackoverflow.com/questions/38847661/java-keylistener-multiple-keys
         - http://board.flashkit.com/board/showthread.php?789015-wont-respond-to-keyboard-up-left-and-space-at-the-same-time
         - http://forums.steampowered.com/forums/showthread.php?t=1928521
         - http://www.tomshardware.co.uk/answers/id-2159074/alt-space-bar-work-holding-left-arrow.html
         - https://unix.stackexchange.com/questions/268850/leftupspace-keys-not-working-on-thinkpad-x201
-    - This doesn't crash the game, but players (at least on my cheap aah keyboard) can't press:
-        - up arrow, right arrow, and numPad 2 at the same time
-        - up arrow, down arrow, and numPad 1 at the same time
-    - Try this website to see what combinations of keys you can't press together!
-        - https://www.mechanical-keyboard.org/key-rollover-test/- 
-    - So this problem isn't caused by the code that I wrote, and should be a problem for all games if you have a not-so-great keyboard
-        - Although it is slightly more noticeable on my game if you have a lot of keyboard ghosting since so many keys are being pressed on one keyboard while fighting
-    - OmegaFight3 is teh driver class
+    - This should be a problem for all games if you have a not-so-great keyboard
+        - Although it is more noticeable on my game since so many keys are pressed on one keyboard.
 
 CHEAT KEYS (Must have CHEATS final variable (line 31) in OmegaFight3 set to true to use):
 In-game gamestate:

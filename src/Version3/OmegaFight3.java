@@ -2133,30 +2133,56 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
 
     // Mouse Methods for MouseListener and MouseMotionListener
     public void mouseClicked(MouseEvent e) {}
+
+    // Parameters:
+    // e: The mouse clicked event
+    // Return: None
+    // Description: This method sets clicked to true when the mouse is pressed
     public void mousePressed(MouseEvent e) {
         clicked = true;
         // System.out.println(mouse);
     }
+
+    // Parameters:
+    // e: The mouse released event
+    // Return: None
+    // Description: This method sets clicked to false when the mouse is released
     public void mouseReleased(MouseEvent e) {
         clicked = false;
     }
+
     public void mouseEntered(MouseEvent e) {}
     public void mouseExited(MouseEvent e) {}
+
+    // Parameters:
+    // e: The mouse dragged event
+    // Return: None
+    // Description: This method stores the coordinates of the mouse when the mouse is dragged
     public void mouseDragged(MouseEvent e) {
         mouse.x = e.getX();
         mouse.y = e.getY();
     }
+
+    // Parameters:
+    // e: The mouse moved event
+    // Return: None
+    // Description: This method stores the coordinates of the mouse when the mouse is moved
     public void mouseMoved(MouseEvent e) {
         mouse.x = e.getX();
         mouse.y = e.getY();
     }
 
-    // Keyboard methods
+    // Keyboard methods for KeyListener
     public void keyTyped(KeyEvent e) {}
+
+    // Parameters:
+    // e: The key pressed event
+    // Return: None
+    // Description: This method stores the key pressed in the pressedKey HashSet and also types in the textboxes of each game state
     public void keyPressed(KeyEvent e) {
         pressedKey.add(e.getKeyCode());
 
-        // Text box calculation stuff
+        // Text box calculation
         // Backspace
         if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
             if (gameState == STUDIO_ANIM_GS) {
@@ -2175,7 +2201,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                 // Battle name text box backspace 
                 if (transitiono == NO_TRANSITION) {
                     for (TextBox textBox: gameEndTextBoxes) {
-                        textBox.backspace();
+                        if (textBox.typing) textBox.backspace();
                     }
                 }
             }
@@ -2204,7 +2230,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                 // Battle name text box typing
                 if (transitiono == NO_TRANSITION) {
                     for (TextBox textBox: gameEndTextBoxes) {
-                        textBox.addChar(e.getKeyChar());
+                        if (textBox.typing) textBox.addChar(e.getKeyChar());
                     }
                 }
             }
@@ -2216,6 +2242,11 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
             }
         }
     }
+
+    // Parameters:
+    // e: The key released event
+    // Return: None
+    // Description: This method removes the key released from the pressedKey HashSet
     public void keyReleased(KeyEvent e) {
         pressedKey.remove(e.getKeyCode());
     }

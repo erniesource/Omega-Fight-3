@@ -127,7 +127,7 @@ public class Button {
 
 class TextBox extends Button {
     // Constants
-    public static final int CURSOR_HZ = 30;
+    public static final int CURSOR_HZ = 20;
     public static final int CURSOR_SPACING = 0;
     public static final int ALLOWED_DIST_FROM_EDGE = 10;
 
