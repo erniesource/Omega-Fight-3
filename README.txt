@@ -33,7 +33,7 @@ NOTES:
 - If you don't have a number pad, you can change the controls of the players in lines 248-249 of OmegaFight3 (I might add the ability to change controls in the summer)
 - I fulfilled the HashMap requirement with button numbers
 - I fulfilled the Sorting requirement with the battle log (Try sorting by title or grade in the battle log)
-- I did all of the stuff I promised to do in the initial proposal and also:
+- I did all of the stuff I promised to do in the initial proposal (except the stuff I listed I would do if I had extra time) and also:
     - Music (You should turn up your volume before you run the game, I think the music is pretty fire)
     - SFX
     - Smoke trails when you get knocked back
