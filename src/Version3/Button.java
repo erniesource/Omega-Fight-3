@@ -127,7 +127,7 @@ public class Button {
 
 class TextBox extends Button {
     // Constants
-    public static final int CURSOR_HZ = 30;
+    public static final int CURSOR_HZ = 20;
     public static final int CURSOR_SPACING = 0;
     public static final int ALLOWED_DIST_FROM_EDGE = 10;
 
@@ -197,10 +197,12 @@ class TextBox extends Button {
                         typing = true;
                         cursorCounter = 0;
                     }
+                    else {
+                        hover.stop();
+                        hover.setFramePosition(0);
+                        hover.start();
+                    }
                     state = HOVERED;
-                    hover.stop();
-                    hover.setFramePosition(0);
-                    hover.start();
                 }
             }
             else {

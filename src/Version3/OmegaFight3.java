@@ -60,7 +60,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
 
     // Choose Fight Menu Constants
     public static final int NOT_READY = -1;
-    public static final int READY_ANIM_LEN = 10;
+    public static final int READY_ANIM_LEN = 6;
     public static final int BLACK_BAR_TOP = 100;
     public static final int BLACK_BAR_BOTTOM = 500;
     public static final int DIVIDER_RIGHT_X = 1645;
@@ -772,13 +772,11 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
 
                     // Calculate menu omegamen's coordinates
                     menuManCounter = (menuManCounter + 1) % (MENU_MAN_MOVE_TIMES * MENU_MAN_MOVE_HZ * 2 + MENU_MAN_DOWN_PAUSE + MENU_MAN_UP_PAUSE);
-                    if (menuManCounter % MENU_MAN_MOVE_HZ == 0) {
-                        if (menuManCounter < MENU_MAN_MOVE_TIMES * MENU_MAN_MOVE_HZ) {
-                            menuManY += MENU_MAN_SPD;
-                        }
-                        else if (menuManCounter >= MENU_MAN_MOVE_TIMES * MENU_MAN_MOVE_HZ + MENU_MAN_DOWN_PAUSE && menuManCounter < MENU_MAN_MOVE_TIMES * MENU_MAN_MOVE_HZ * 2 + MENU_MAN_DOWN_PAUSE) {
-                            menuManY -= MENU_MAN_SPD;
-                        }
+                    if (menuManCounter < MENU_MAN_MOVE_TIMES * MENU_MAN_MOVE_HZ && menuManCounter % MENU_MAN_MOVE_HZ == 0) {
+                        menuManY += MENU_MAN_SPD;
+                    }
+                    else if (menuManCounter >= MENU_MAN_MOVE_TIMES * MENU_MAN_MOVE_HZ + MENU_MAN_DOWN_PAUSE && menuManCounter < MENU_MAN_MOVE_TIMES * MENU_MAN_MOVE_HZ * 2 + MENU_MAN_DOWN_PAUSE && (menuManCounter - (MENU_MAN_MOVE_TIMES * MENU_MAN_MOVE_HZ + MENU_MAN_DOWN_PAUSE)) % MENU_MAN_MOVE_HZ == 0) {
+                        menuManY -= MENU_MAN_SPD;
                     }
                 }
             }
@@ -1245,6 +1243,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static void resetTextBoxes(Collection<TextBox> textBoxes) {
         for (TextBox textBox : textBoxes) {
             textBox.state = TextBox.NOPRESSED;
+            textBox.typing = false;
         }
     }
 
@@ -1371,7 +1370,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                         omegaman[i] = new Omegaman(i, stage[stageNo].spawnCoords[i].copy(), stage[stageNo].spawnSpriteSign[i], stage[stageNo].spawnPlatformNo[i], controls[i], shtKeys[i], loadouts[i].clone(), loadoutButtono[i]);
                     }
                     catch (IOException e) {}
-                    for (int j = 0; j != omegaman[i].loadout.length; j++) {
+                    for (int j = 0; j != Omegaman.LOADOUT_NUM_WEAPONS; j++) {
                         loadouts[i][j] = NO_WEAPON;
                         chooseButtons.get(omegaman[i].loadoutButtono[j]).image = addWeaponIcon;
                     }
@@ -1833,8 +1832,8 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         }
         
         // Chekc if previous selected icon is loadout button
-        for (int i = 0; i < loadouts.length; i++) {
-            for (int j = 0; j < loadouts[i].length; j++) {
+        for (int i = 0; i < Omegaman.NUM_PLAYERS; i++) {
+            for (int j = 0; j < Omegaman.LOADOUT_NUM_WEAPONS; j++) {
                 if (selectedIcon.num == loadoutButtono[i][j]) {
                     int weaponNo = buttonoToWeaponNo.get(weaponButton.num);
                     // Check if weapon is already in any loadout and invalidate if so 
@@ -1877,8 +1876,8 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         }
 
         // If the selected icon is not a loadout button, swap or select weapon
-        for (int i = 0; i < loadouts.length; i++) {
-            for (int j = 0; j < loadouts[i].length; j++) {
+        for (int i = 0; i < Omegaman.NUM_PLAYERS; i++) {
+            for (int j = 0; j < Omegaman.LOADOUT_NUM_WEAPONS; j++) {
                 // Swap loadouts
                 if (selectedIcon.num == loadoutButtono[i][j]) {
                     int temp0 = loadouts[playerNo][loadoutSlot];
@@ -1960,6 +1959,21 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                     // transition counter to fade
                     transitionCounter = FADE_IN_LEN;
                     transitiono = FADE_IN;
+
+                    // Reset loadouts
+                    for (int i = 0; i != Omegaman.NUM_PLAYERS; i++) {
+                        for (int j = 0; j != Omegaman.LOADOUT_NUM_WEAPONS; j++) {
+                            loadouts[i][j] = NO_WEAPON;
+                            chooseButtons.get(loadoutButtono[i][j]).image = addWeaponIcon;
+                        }
+                    }
+
+                    // Reset choose your fight menu variables
+                    readyCounter = -1;
+                    stageFlashCounter = 0;
+                    iconFlashCounter = 0;
+                    chooseButtons.get(READY_BUTTONO).canUse = false;
+                    chooseButtons.get(READY_BUTTONO).canSee = false;
                     resetButtons(chooseButtons.values());
                 }
 
@@ -1997,8 +2011,8 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                     }
 
                     // Loadout icon buttons
-                    for (int i = 0; i != loadouts.length; i++) {
-                        for (int j = 0; j != loadouts[i].length; j++) {
+                    for (int i = 0; i != Omegaman.NUM_PLAYERS; i++) {
+                        for (int j = 0; j != Omegaman.LOADOUT_NUM_WEAPONS; j++) {
                             int loadoutBtn = loadoutButtono[i][j];
                             if (buttonPressed == loadoutBtn) {
                                 if (selectedIcon != null) {
@@ -2133,30 +2147,56 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
 
     // Mouse Methods for MouseListener and MouseMotionListener
     public void mouseClicked(MouseEvent e) {}
+
+    // Parameters:
+    // e: The mouse clicked event
+    // Return: None
+    // Description: This method sets clicked to true when the mouse is pressed
     public void mousePressed(MouseEvent e) {
         clicked = true;
         // System.out.println(mouse);
     }
+
+    // Parameters:
+    // e: The mouse released event
+    // Return: None
+    // Description: This method sets clicked to false when the mouse is released
     public void mouseReleased(MouseEvent e) {
         clicked = false;
     }
+
     public void mouseEntered(MouseEvent e) {}
     public void mouseExited(MouseEvent e) {}
+
+    // Parameters:
+    // e: The mouse dragged event
+    // Return: None
+    // Description: This method stores the coordinates of the mouse when the mouse is dragged
     public void mouseDragged(MouseEvent e) {
         mouse.x = e.getX();
         mouse.y = e.getY();
     }
+
+    // Parameters:
+    // e: The mouse moved event
+    // Return: None
+    // Description: This method stores the coordinates of the mouse when the mouse is moved
     public void mouseMoved(MouseEvent e) {
         mouse.x = e.getX();
         mouse.y = e.getY();
     }
 
-    // Keyboard methods
+    // Keyboard methods for KeyListener
     public void keyTyped(KeyEvent e) {}
+
+    // Parameters:
+    // e: The key pressed event
+    // Return: None
+    // Description: This method stores the key pressed in the pressedKey HashSet and also types in the textboxes of each game state
     public void keyPressed(KeyEvent e) {
         pressedKey.add(e.getKeyCode());
 
-        // Text box calculation stuff
+        // Text box calculation
         // Backspace
         if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
             if (gameState == STUDIO_ANIM_GS) {
@@ -2175,7 +2215,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                 // Battle name text box backspace 
                 if (transitiono == NO_TRANSITION) {
                     for (TextBox textBox: gameEndTextBoxes) {
-                        textBox.backspace();
+                        if (textBox.typing) textBox.backspace();
                     }
                 }
             }
@@ -2204,7 +2244,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                 // Battle name text box typing
                 if (transitiono == NO_TRANSITION) {
                     for (TextBox textBox: gameEndTextBoxes) {
-                        textBox.addChar(e.getKeyChar());
+                        if (textBox.typing) textBox.addChar(e.getKeyChar());
                     }
                 }
             }
@@ -2216,6 +2256,11 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
             }
         }
     }
+
+    // Parameters:
+    // e: The key released event
+    // Return: None
+    // Description: This method removes the key released from the pressedKey HashSet
     public void keyReleased(KeyEvent e) {
         pressedKey.remove(e.getKeyCode());
     }
