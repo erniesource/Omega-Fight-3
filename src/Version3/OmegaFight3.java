@@ -123,6 +123,18 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static final Coord SURGE_SIZE = new Coord(741, 949);
     public static final int SURGE_SPRITE_WIN_CHECK = 2;
 
+    // Directory constants
+    public static final String MISC_DIR = "misc/";
+    public static final String MENUS_DIR = "menus/";
+    public static final String SLIDESHOW_DIR = "slideshow/";
+    public static final String PLAYER_SPRITES_DIR = "player sprites/";
+    public static final String PLAYER_PROJS_DIR = "player projectiles/";
+    public static final String EXPLOSIONS_DIR = "explosions/";
+    public static final String DOCTOR_PROJS_DIR = "doctor projectiles/";
+    public static final String DRAGON_PROJS_DIR = "dragon projectiles/";
+    public static final String DOCTOR_DIR = "doctor/";
+    public static final String DRAGON_DIR = "dragon/";
+
     // Gamestates
     public static final int STUDIO_ANIM_GS = -1;
     public static final int HOME_GS = 0;
@@ -401,133 +413,133 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     // Description this is the main method where everything is initalized. This includes images and sounds
     public static void main(String[] args) throws IOException {
         // Misc image imoprting
-        placeHolder = ImageIO.read(new File("misc/placeholder.jpg"));
+        placeHolder = ImageIO.read(new File(MISC_DIR + "placeholder.jpg"));
 
         // Start menu importing
-        startBg = ImageIO.read(new File("menus/start.jpg"));
-        titleNum = ImageIO.read(new File("menus/number.png"));
-        pressAnyText = ImageIO.read(new File("menus/press start.png"));
+        startBg = ImageIO.read(new File(MENUS_DIR + "start.jpg"));
+        titleNum = ImageIO.read(new File(MENUS_DIR + "number.png"));
+        pressAnyText = ImageIO.read(new File(MENUS_DIR + "press start.png"));
         for (int i = 0; i != Letter.NUM_LETTERS; i++) {
-            Letter.letters[i] = ImageIO.read(new File("menus/letter" + i + ".png"));
+            Letter.letters[i] = ImageIO.read(new File(MENUS_DIR + "letter" + i + ".png"));
         }
-        studioLogo = ImageIO.read(new File("menus/studio.png"));
+        studioLogo = ImageIO.read(new File(MENUS_DIR + "studio.png"));
 
         // Home menu image importing
-        home = ImageIO.read(new File("menus/home.jpg"));
-        homeButtonImg = ImageIO.read(new File("menus/home button.png"));
-        menuMan = ImageIO.read(new File("menus/menuman.png"));
+        home = ImageIO.read(new File(MENUS_DIR + "home.jpg"));
+        homeButtonImg = ImageIO.read(new File(MENUS_DIR + "home button.png"));
+        menuMan = ImageIO.read(new File(MENUS_DIR + "menuman.png"));
 
         // Paused images importing
-        pausedBg = ImageIO.read(new File("menus/paused.png"));
+        pausedBg = ImageIO.read(new File(MENUS_DIR + "paused.png"));
 
         // Choose Menu image importing
-        chooseMenu = ImageIO.read(new File("menus/choose.jpg"));
-        buttonImg = ImageIO.read(new File("menus/button.jpg"));
-        readyBar = ImageIO.read(new File("menus/ready.jpg"));
-        countdownText[READY_TEXT] = ImageIO.read(new File("menus/ready text.png"));
+        chooseMenu = ImageIO.read(new File(MENUS_DIR + "choose.jpg"));
+        buttonImg = ImageIO.read(new File(MENUS_DIR + "button.jpg"));
+        readyBar = ImageIO.read(new File(MENUS_DIR + "ready.jpg"));
+        countdownText[READY_TEXT] = ImageIO.read(new File(MENUS_DIR + "ready text.png"));
         for (int i = 0; i != 2; i++) {
-            countdownText[FIGHT_TEXT_START + i] = ImageIO.read(new File("menus/fight" + i + ".png"));
-            gameOver[i] = ImageIO.read(new File("menus/game over" + i + ".png"));
-            gameSet[i] = ImageIO.read(new File("menus/game set" + i + ".png"));
+            countdownText[FIGHT_TEXT_START + i] = ImageIO.read(new File(MENUS_DIR + "fight" + i + ".png"));
+            gameOver[i] = ImageIO.read(new File(MENUS_DIR + "game over" + i + ".png"));
+            gameSet[i] = ImageIO.read(new File(MENUS_DIR + "game set" + i + ".png"));
         }
 
         // Game end image importing
         for (int i = 0; i != 2 + Omegaman.NUM_PLAYERS; i++) {
-            flash[i] = ImageIO.read(new File("menus/" + (i - 2) + "flash.jpg"));
+            flash[i] = ImageIO.read(new File(MENUS_DIR + "" + (i - 2) + "flash.jpg"));
         }
         for (int i = 0; i != Omegaman.NUM_PLAYERS; i++) {
-            Battle.happyMan[i] = ImageIO.read(new File("menus/" + i + "happyMan.png"));
-            Battle.sadMan[i] = ImageIO.read(new File("menus/" + i + "sadMan.png"));
+            Battle.happyMan[i] = ImageIO.read(new File(MENUS_DIR + "" + i + "happyMan.png"));
+            Battle.sadMan[i] = ImageIO.read(new File(MENUS_DIR + "" + i + "sadMan.png"));
         }
-        resultsTitle = ImageIO.read(new File("menus/results title.png"));
+        resultsTitle = ImageIO.read(new File(MENUS_DIR + "results title.png"));
         for (int i = 0; i != NUM_GAMEMODES; i++) {
-            Battle.scoreBoard[i] = ImageIO.read(new File("menus/" + i + "scoreboard.jpg"));
+            Battle.scoreBoard[i] = ImageIO.read(new File(MENUS_DIR + "" + i + "scoreboard.jpg"));
         }
-        battleNameBoxImg = ImageIO.read(new File("menus/battle name box.png"));
+        battleNameBoxImg = ImageIO.read(new File(MENUS_DIR + "battle name box.png"));
 
         // Battle log image importing
-        battleLogBg = ImageIO.read(new File("menus/battle.jpg"));
-        noBattle = ImageIO.read(new File("menus/no battle.jpg"));
-        smlButtonImg = ImageIO.read(new File("menus/sml button.jpg"));
-        medButtonImg = ImageIO.read(new File("menus/med button.jpg"));
+        battleLogBg = ImageIO.read(new File(MENUS_DIR + "battle.jpg"));
+        noBattle = ImageIO.read(new File(MENUS_DIR + "no battle.jpg"));
+        smlButtonImg = ImageIO.read(new File(MENUS_DIR + "sml button.jpg"));
+        medButtonImg = ImageIO.read(new File(MENUS_DIR + "med button.jpg"));
 
         // Slideshow image importing
         for (int i = 0; i != NUM_SLIDES; i++) {
-            slides[i] = ImageIO.read(new File("slideshow/slide" + i + ".jpg"));
+            slides[i] = ImageIO.read(new File(SLIDESHOW_DIR + "slide" + i + ".jpg"));
         }
 
         // Smoke image importing
         for (int i = 0; i != Smoke.NUM_SMOKES; i++) {
-            Smoke.smokes[i] = ImageIO.read(new File("player sprites/smoke" + i + ".png"));
+            Smoke.smokes[i] = ImageIO.read(new File(PLAYER_SPRITES_DIR + "smoke" + i + ".png"));
         }
         
         // Player Weapon image importing
-        addWeaponIcon = ImageIO.read(new File("menus/no weapon.png"));
-        Bullet.image = ImageIO.read(new File("player projectiles/bullet.png"));
-        icon[Omegaman.BULLET_WEAPON_NO] = ImageIO.read(new File("menus/bullet icon.png"));
-        Shotgun.image = ImageIO.read(new File("player projectiles/shotgun.png"));
-        icon[Omegaman.SHOTGUN_WEAPON_NO] = ImageIO.read(new File("menus/shotgun icon.png"));
-        Spammer.image = ImageIO.read(new File("player projectiles/spammer.png"));
-        icon[Omegaman.SPAMMER_WEAPON_NO] = ImageIO.read(new File("menus/spammer icon.png"));
-        Sniper.image = ImageIO.read(new File("player projectiles/sniper.png"));
-        icon[Omegaman.SNIPER_WEAPON_NO] = ImageIO.read(new File("menus/sniper icon.png"));
-        Laser.ball = ImageIO.read(new File("player projectiles/ball.png"));
-        Laser.beam = ImageIO.read(new File("player projectiles/beam.png"));
-        icon[Omegaman.BOOMER_WEAPON_NO] = ImageIO.read(new File("menus/boomer icon.png"));
-        Spike.image = ImageIO.read(new File("player projectiles/spike.png"));
-        icon[Omegaman.SPIKE_WEAPON_NO] = ImageIO.read(new File("menus/spike icon.png"));
-        Thorn.image = ImageIO.read(new File("player projectiles/thorn.png"));
+        addWeaponIcon = ImageIO.read(new File(MENUS_DIR + "no weapon.png"));
+        Bullet.image = ImageIO.read(new File(PLAYER_PROJS_DIR + "/bullet.png"));
+        icon[Omegaman.BULLET_WEAPON_NO] = ImageIO.read(new File(MENUS_DIR + "bullet icon.png"));
+        Shotgun.image = ImageIO.read(new File(PLAYER_PROJS_DIR + "/shotgun.png"));
+        icon[Omegaman.SHOTGUN_WEAPON_NO] = ImageIO.read(new File(MENUS_DIR + "shotgun icon.png"));
+        Spammer.image = ImageIO.read(new File(PLAYER_PROJS_DIR + "/spammer.png"));
+        icon[Omegaman.SPAMMER_WEAPON_NO] = ImageIO.read(new File(MENUS_DIR + "spammer icon.png"));
+        Sniper.image = ImageIO.read(new File(PLAYER_PROJS_DIR + "/sniper.png"));
+        icon[Omegaman.SNIPER_WEAPON_NO] = ImageIO.read(new File(MENUS_DIR + "sniper icon.png"));
+        Laser.ball = ImageIO.read(new File(PLAYER_PROJS_DIR + "/ball.png"));
+        Laser.beam = ImageIO.read(new File(PLAYER_PROJS_DIR + "/beam.png"));
+        icon[Omegaman.BOOMER_WEAPON_NO] = ImageIO.read(new File(MENUS_DIR + "boomer icon.png"));
+        Spike.image = ImageIO.read(new File(PLAYER_PROJS_DIR + "/spike.png"));
+        icon[Omegaman.SPIKE_WEAPON_NO] = ImageIO.read(new File(MENUS_DIR + "spike icon.png"));
+        Thorn.image = ImageIO.read(new File(PLAYER_PROJS_DIR + "/thorn.png"));
         for (int i = 0; i != Omegaman.NUM_PLAYERS; i++) {
-            Rocket.images[i] = ImageIO.read(new File("player projectiles/" + i + "rocket.png"));
-            Firework.images[i] = ImageIO.read(new File("player projectiles/" + i + "firework.png"));
-            Firework.chargingImages[i] = ImageIO.read(new File("player projectiles/" + i + "fireworkCharge.png"));
-            Missile.images[i] = ImageIO.read(new File("player projectiles/" + i + "missile.png"));
-            Boomer.images[i] = ImageIO.read(new File("player projectiles/" + i + "boomer.png"));
-            Bouncer.images[i] = ImageIO.read(new File("player projectiles/" + i + "bouncer.png"));
-            Splitter.images[i] = ImageIO.read(new File("player projectiles/" + i + "splitter.png"));
+            Rocket.images[i] = ImageIO.read(new File(PLAYER_PROJS_DIR + "/" + i + "rocket.png"));
+            Firework.images[i] = ImageIO.read(new File(PLAYER_PROJS_DIR + "/" + i + "firework.png"));
+            Firework.chargingImages[i] = ImageIO.read(new File(PLAYER_PROJS_DIR + "/" + i + "fireworkCharge.png"));
+            Missile.images[i] = ImageIO.read(new File(PLAYER_PROJS_DIR + "/" + i + "missile.png"));
+            Boomer.images[i] = ImageIO.read(new File(PLAYER_PROJS_DIR + "/" + i + "boomer.png"));
+            Bouncer.images[i] = ImageIO.read(new File(PLAYER_PROJS_DIR + "/" + i + "bouncer.png"));
+            Splitter.images[i] = ImageIO.read(new File(PLAYER_PROJS_DIR + "/" + i + "splitter.png"));
         }
 
         // Explosion image importing
         for (int i = 0; i != Rocket.NUM_EXPLOSION_IMAGES; i++) {
-            Projectile.explosionImages[i] = ImageIO.read(new File("explosions/explosion" + i + ".png"));
+            Projectile.explosionImages[i] = ImageIO.read(new File(EXPLOSIONS_DIR + "explosion" + i + ".png"));
         }
 
         // Boss surge image importing
         for (int i = 0; i != NUM_SURGE_IMAGES; i++) {
-            Boss.surge[i] = ImageIO.read(new File("explosions/bsurge" + i + ".png"));
+            Boss.surge[i] = ImageIO.read(new File(EXPLOSIONS_DIR + "bsurge" + i + ".png"));
         }
 
         // Doctor projectile image importing
         Fastener.images[Fastener.NUT] = new BufferedImage[Fastener.NUM_SPRITES[Fastener.NUT]];
         for (int i = 0; i != Fastener.NUM_SPRITES[Fastener.NUT]; i++) {
-            Fastener.images[Fastener.NUT][i] = ImageIO.read(new File("doctor projectiles/nut" + i + ".png"));
+            Fastener.images[Fastener.NUT][i] = ImageIO.read(new File(DOCTOR_PROJS_DIR + "nut" + i + ".png"));
         }
         Fastener.images[Fastener.BOLT] = new BufferedImage[Fastener.NUM_SPRITES[Fastener.BOLT]];
         for (int i = 0; i != Fastener.NUM_SPRITES[Fastener.BOLT]; i++) {
-            Fastener.images[Fastener.BOLT][i] = ImageIO.read(new File("doctor projectiles/bolt" + i + ".png"));
+            Fastener.images[Fastener.BOLT][i] = ImageIO.read(new File(DOCTOR_PROJS_DIR + "bolt" + i + ".png"));
         }
         for (int i = 0; i != Energy.NO_OF_SPRITES; i++) {
-            Energy.images[i] = ImageIO.read(new File("doctor projectiles/energy" + i + ".png"));
+            Energy.images[i] = ImageIO.read(new File(DOCTOR_PROJS_DIR + "energy" + i + ".png"));
         }
         for (int i = 0; i != Pincer.NO_OF_SPRITES; i++) {
-            Pincer.images[i] = ImageIO.read(new File("doctor projectiles/pincer" + i + ".png"));
+            Pincer.images[i] = ImageIO.read(new File(DOCTOR_PROJS_DIR + "pincer" + i + ".png"));
         }
         for (int i = 0; i != Bombot.NO_OF_SPRITES; i++) {
-            Bombot.images[i] = ImageIO.read(new File("doctor projectiles/bombot" + i + ".png"));
+            Bombot.images[i] = ImageIO.read(new File(DOCTOR_PROJS_DIR + "bombot" + i + ".png"));
         }
 
         // Dragon projectile image importing
         for (int i = 0; i != Ring.NO_OF_SPRITES; i++) {
-            Ring.images[i] = ImageIO.read(new File("dragon projectiles/ring" + i + ".png"));
+            Ring.images[i] = ImageIO.read(new File(DRAGON_PROJS_DIR + "ring" + i + ".png"));
         }
         for (int i = 0; i != Meteor.NO_OF_SPRITES; i++) {
-            Meteor.images[i] = ImageIO.read(new File("dragon projectiles/meteor" + i + ".png"));
+            Meteor.images[i] = ImageIO.read(new File(DRAGON_PROJS_DIR + "meteor" + i + ".png"));
         }
         for (int i = 0; i != Bubble.NO_OF_SPRITES; i++) {
-            Bubble.images[i] = ImageIO.read(new File("dragon projectiles/bubble" + i + ".png"));
+            Bubble.images[i] = ImageIO.read(new File(DRAGON_PROJS_DIR + "bubble" + i + ".png"));
         }
         for (int i = 0; i != Fire.NO_OF_SPRITES; i++) {
-            Fire.images[i] = ImageIO.read(new File("dragon projectiles/fire" + i + ".png"));
+            Fire.images[i] = ImageIO.read(new File(DRAGON_PROJS_DIR + "fire" + i + ".png"));
         }
 
         // Stages
@@ -537,30 +549,30 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
 
         // Doctor image importing
         for (int i = 0; i != Doctor.STATE_NO_SPRITES[Boss.DEAD]; i++) {
-            Doctor.sprite[Doctor.STATE_SPRITE_START[Boss.DEAD] + i] = ImageIO.read(new File("doctor/dead" + i + ".png"));
+            Doctor.sprite[Doctor.STATE_SPRITE_START[Boss.DEAD] + i] = ImageIO.read(new File(DOCTOR_DIR + "dead" + i + ".png"));
         }
         for (int i = 0; i != Doctor.STATE_NO_SPRITES[Boss.IDLE]; i++) {
-            Doctor.sprite[Doctor.STATE_SPRITE_START[Boss.IDLE] + i] = ImageIO.read(new File("doctor/idle" + i + ".png"));
+            Doctor.sprite[Doctor.STATE_SPRITE_START[Boss.IDLE] + i] = ImageIO.read(new File(DOCTOR_DIR + "idle" + i + ".png"));
         }
         for (int i = 0; i != Doctor.STATE_NO_SPRITES[Doctor.SPIT]; i++) {
-            Doctor.sprite[Doctor.STATE_SPRITE_START[Doctor.SPIT] + i] = ImageIO.read(new File("doctor/spit" + i + ".png"));
+            Doctor.sprite[Doctor.STATE_SPRITE_START[Doctor.SPIT] + i] = ImageIO.read(new File(DOCTOR_DIR + "spit" + i + ".png"));
         }
         for (int i = 0; i != Doctor.STATE_NO_SPRITES[Doctor.LAUGH]; i++) {
-            Doctor.sprite[Doctor.STATE_SPRITE_START[Doctor.LAUGH] + i] = ImageIO.read(new File("doctor/laugh" + i + ".png"));
+            Doctor.sprite[Doctor.STATE_SPRITE_START[Doctor.LAUGH] + i] = ImageIO.read(new File(DOCTOR_DIR + "laugh" + i + ".png"));
         }
 
         // Dragon image importing
         for (int i = 0; i != Dragon.STATE_NO_SPRITES[Boss.DEAD]; i++) {
-            Dragon.sprite[Dragon.STATE_SPRITE_START[Boss.DEAD] + i] = ImageIO.read(new File("dragon/dead" + i + ".png"));
+            Dragon.sprite[Dragon.STATE_SPRITE_START[Boss.DEAD] + i] = ImageIO.read(new File(DRAGON_DIR + "dead" + i + ".png"));
         }
         for (int i = 0; i != Dragon.STATE_NO_SPRITES[Boss.IDLE]; i++) {
-            Dragon.sprite[Dragon.STATE_SPRITE_START[Boss.IDLE] + i] = ImageIO.read(new File("dragon/idle" + i + ".png"));
+            Dragon.sprite[Dragon.STATE_SPRITE_START[Boss.IDLE] + i] = ImageIO.read(new File(DRAGON_DIR + "idle" + i + ".png"));
         }
         for (int i = 0; i != Dragon.STATE_NO_SPRITES[Dragon.DIZZY]; i++) {
-            Dragon.sprite[Dragon.STATE_SPRITE_START[Dragon.DIZZY] + i] = ImageIO.read(new File("dragon/dizzy" + i + ".png"));
+            Dragon.sprite[Dragon.STATE_SPRITE_START[Dragon.DIZZY] + i] = ImageIO.read(new File(DRAGON_DIR + "dizzy" + i + ".png"));
         }
         for (int i = 0; i != Dragon.STATE_NO_SPRITES[Dragon.BARF]; i++) {
-            Dragon.sprite[Dragon.STATE_SPRITE_START[Dragon.BARF] + i] = ImageIO.read(new File("dragon/barf" + i + ".png"));
+            Dragon.sprite[Dragon.STATE_SPRITE_START[Dragon.BARF] + i] = ImageIO.read(new File(DRAGON_DIR + "barf" + i + ".png"));
         }
 
         // Buttons
@@ -617,7 +629,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         slideshowButtons.put(SLIDE_NO_NEXT_BUTTONO, new Button(smlButtonImg, BUTTON_FONT, new Coord(SCREEN_SIZE.x - SPACING - SML_BUTTON_SIZE.x / 2, SPACING + SML_BUTTON_SIZE.y / 2), SML_BUTTON_SIZE.copy(), ">", SLIDE_NO_NEXT_BUTTONO, Button.SHADOW));
 
         // Battle log text file reading
-        BufferedReader br = new BufferedReader(new FileReader("menus/" + BATTLE_LOG_FILE_NAME + ".txt"));
+        BufferedReader br = new BufferedReader(new FileReader(MENUS_DIR + "" + BATTLE_LOG_FILE_NAME + ".txt"));
         int numBattles = Integer.parseInt(br.readLine());
         String stageName, stringStats[];
         int gameMode, winner;
@@ -1516,7 +1528,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     // This method writes the battle log to a file named "battle log.txt" in the "menus" directory CHANGE SO IT APPENDS?
     public static void writeFile() {
         try {
-            PrintWriter pw = new PrintWriter(new FileWriter("menus/" + BATTLE_LOG_FILE_NAME + ".txt"));
+            PrintWriter pw = new PrintWriter(new FileWriter(MENUS_DIR + "" + BATTLE_LOG_FILE_NAME + ".txt"));
             pw.println(battleLog.size());
             for (Battle b: battleLog) {
                 pw.printf("%s\n%d\n%d\n", b.stageName, b.gameMode, b.winner);

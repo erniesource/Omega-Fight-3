@@ -114,6 +114,9 @@ public class Omegaman extends Char {
     public static final int DMG_TO_OMEGAMAN = 5;
     public static final int DMG_TO_BOSS = 6;
 
+    // Directory constants
+    public static final String HUD_DIR = "HUD/";
+
     // Movement stats
     public int runSign = 1; // 1: Positive, -1: Negative
     public int lftKey, ritKey, upKey, dwnKey, shtKeys[], swtKey;
@@ -180,23 +183,23 @@ public class Omegaman extends Char {
 
         // Percent related stuff
         percentDisplayX = PERCENT_DISPLAY_DIST + (int) (PERCENT_DISPLAY_SIZE.x + PERCENT_DISPLAY_DIST) * playerNo;
-        percentDisplay = ImageIO.read(new File("HUD/" + playerNo + "percentdisplay.png"));
+        percentDisplay = ImageIO.read(new File(HUD_DIR + playerNo + "percentdisplay.png"));
 
         // Load sprites
-        sprite[IDLE_SPRITE] = ImageIO.read(new File("player sprites/" + playerNo + "idle.png"));
+        sprite[IDLE_SPRITE] = ImageIO.read(new File(OmegaFight3.PLAYER_SPRITES_DIR + playerNo + "idle.png"));
         for (int i = 0; i != LAST_RUN_SPRITE - FRST_RUN_SPRITE + 1; i++) {
-            sprite[i + 1] = ImageIO.read(new File("player sprites/" + playerNo + "run" + i + ".png"));
+            sprite[i + 1] = ImageIO.read(new File(OmegaFight3.PLAYER_SPRITES_DIR + playerNo + "run" + i + ".png"));
         }
-        sprite[JUMP_SPRITE] = ImageIO.read(new File("player sprites/" + playerNo + "jump.png"));
-        sprite[HURT_SPRITE] = ImageIO.read(new File("player sprites/" + playerNo + "hurt.png"));
+        sprite[JUMP_SPRITE] = ImageIO.read(new File(OmegaFight3.PLAYER_SPRITES_DIR + playerNo + "jump.png"));
+        sprite[HURT_SPRITE] = ImageIO.read(new File(OmegaFight3.PLAYER_SPRITES_DIR + playerNo + "hurt.png"));
 
         // Load surge images
         for (int i = 0; i != OmegaFight3.NUM_SURGE_IMAGES; i++) {
-            surge[i] = ImageIO.read(new File("explosions/" + playerNo + "surge" + i + ".png"));
+            surge[i] = ImageIO.read(new File(OmegaFight3.EXPLOSIONS_DIR + playerNo + "surge" + i + ".png"));
         }
 
         // Load Face
-        face = ImageIO.read(new File("HUD/" + playerNo + "face.png"));
+        face = ImageIO.read(new File(HUD_DIR + playerNo + "face.png"));
     }
 
     // Description: This methods calculates the control in the x-direction
