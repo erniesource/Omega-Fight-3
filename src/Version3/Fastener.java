@@ -21,7 +21,6 @@ public class Fastener extends Projectile {
     public static final double DECCEL = 0.5;
 
     // Misc constants
-    public static final int SCREENSHAKE = 0;
     public static final boolean CAN_HIT_PROJ = true;
 
     // Sprite constants
@@ -81,7 +80,7 @@ public class Fastener extends Projectile {
         for (Omegaman enemy: OmegaFight3.omegaman) {
             // Enemy hitbox
             if (OmegaFight3.intersects(coord, hitBoxSize, enemy.coord, enemy.size, OmegaFight3.HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
-                enemy.hurt(damage, knockback, coord, dir, KB_SPREAD, SCREENSHAKE);
+                enemy.hurt(damage, knockback, coord, dir, KB_SPREAD);
                 die();
             }
 
@@ -116,7 +115,6 @@ class Energy extends Projectile {
     public static final double ROTATION_SPEED = Math.PI * 2 / OmegaFight3.FPS * ROTATION_PER_SECOND;
 
     // Misc constants
-    public static final int SCREENSHAKE = 0;
     public static final boolean CAN_HIT_PROJ = false;
     public static final int NO_OF_SPRITES = 2;
     public static final int SPRITE_CHANGE_HZ = 10;
@@ -163,7 +161,7 @@ class Energy extends Projectile {
         for (Omegaman enemy: OmegaFight3.omegaman) {
             // Enemy hitbox
             if (OmegaFight3.intersects(coord, hitBoxSize, enemy.coord, enemy.size, OmegaFight3.HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
-                enemy.hurt(damage, knockback, coord, dir, KB_SPREAD, SCREENSHAKE);
+                enemy.hurt(damage, knockback, coord, dir, KB_SPREAD);
                 die();
             }
 
@@ -196,7 +194,6 @@ class Pincer extends Projectile {
     public static final int X_MOVEMENT_LEN = 40;
 
     // Misc constants
-    public static final int SCREENSHAKE = 0;
     public static final boolean CAN_HIT_PROJ = true;
     public static final int NO_OF_SPRITES = 3;
     public static final int SPRITE_CHANGE_HZ = 7;
@@ -262,7 +259,7 @@ class Pincer extends Projectile {
         for (Omegaman enemy: OmegaFight3.omegaman) {
             // Enemy hitbox
             if (OmegaFight3.intersects(coord, hitBoxSize, enemy.coord, enemy.size, OmegaFight3.HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
-                enemy.hurt(damage, knockback, coord, dir, KB_SPREAD, SCREENSHAKE);
+                enemy.hurt(damage, knockback, coord, dir, KB_SPREAD);
                 die();
             }
 
@@ -386,7 +383,8 @@ class Bombot extends Projectile {
             for (Omegaman enemy: OmegaFight3.omegaman) {
                 // Enemy hitbox
                 if (OmegaFight3.intersects(coord, hitBoxSize, enemy.coord, enemy.size, OmegaFight3.HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
-                    enemy.hurt(damage, knockback, coord, dir, KB_SPREAD, (int) (SCREENSHAKE * (size.x / SIZE.x)));
+                    enemy.hurt(damage, knockback, coord, dir, KB_SPREAD);
+                    OmegaFight3.screenShakeCounter += (int) (SCREENSHAKE * (size.x / SIZE.x));
                     die();
                 }
 

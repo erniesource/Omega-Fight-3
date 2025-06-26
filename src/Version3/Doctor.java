@@ -5,7 +5,7 @@ import java.awt.image.BufferedImage;
 
 public class Doctor extends Boss {
     // Combat constants
-    public static final double INITIAL_HEALTH = 500 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
+    public static final double INITIAL_HEALTH = 600 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
 
     // Sprite constants
     public static final int[] STATE_SPRITE_START = {0, 2, 4, 7};

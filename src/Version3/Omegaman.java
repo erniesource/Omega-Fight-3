@@ -56,7 +56,6 @@ public class Omegaman extends Char {
     // Kamikaze constants
     public static final double KAMIKAZE_DMG = 1 * Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
     public static final double KAMIKAZE_KB = 10;
-    public static final int KAMIKAZE_SCREENSHAKE = 0;
     public static final double KAMIKAZE_DIST = 0.5;
 
     // HUD Constants
@@ -530,7 +529,7 @@ public class Omegaman extends Char {
         if (invCounter == VULNERABLE) {
             for (Boss boss: OmegaFight3.bosses) {
                 if (OmegaFight3.intersects(coord, size, boss.coord, boss.size, Math.min(boss.size.x, boss.size.y) * KAMIKAZE_DIST)) {
-                    hurt(KAMIKAZE_DMG, KAMIKAZE_KB, boss.coord, KAMIKAZE_SCREENSHAKE);
+                    hurt(KAMIKAZE_DMG, KAMIKAZE_KB, boss.coord);
                 }
             }
         }
@@ -687,7 +686,7 @@ public class Omegaman extends Char {
     }
 
     // Description: This method hurts the player and prepares them for knockback
-    public void hurtWithKb(double damage, double knockback, Coord enemyCoord, int screenShake) {
+    public void hurtWithKb(double damage, double knockback, Coord enemyCoord) {
         hurt(damage);
 
         // Ensure no clipping through platforms
@@ -699,12 +698,11 @@ public class Omegaman extends Char {
         
         // Stat changes and screenshake
         resetStats(GENERAL_STAT_RESET);
-        OmegaFight3.screenShakeCounter += screenShake;
     }
 
     // Description: This method hurts the player and knocks them back in the directions specified with the amount of spread specified based on the enemy coordinates
-    public void hurt(double damage, double knockback, Coord enemyCoord, double dir, double kbSpread, int screenShake) {
-        hurtWithKb(damage, knockback, enemyCoord, screenShake);
+    public void hurt(double damage, double knockback, Coord enemyCoord, double dir, double kbSpread) {
+        hurtWithKb(damage, knockback, enemyCoord);
 
         // knockback calculations
         knockback *= (percent / Math.pow(10, PERCENT_NUM_DECIMALS) / 100 + 1);
@@ -730,8 +728,8 @@ public class Omegaman extends Char {
     }
 
     // Description: This method hurts the player and knocks them back in any direction based on the enemy coordinates
-    public void hurt(double damage, double knockback, Coord enemyCoord, int screenShake) {
-        hurtWithKb(damage, knockback, enemyCoord, screenShake);
+    public void hurt(double damage, double knockback, Coord enemyCoord) {
+        hurtWithKb(damage, knockback, enemyCoord);
 
         // knockback calculations
         knockback *= (percent / Math.pow(10, PERCENT_NUM_DECIMALS) / 100 + 1);

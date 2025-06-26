@@ -20,7 +20,6 @@ public class Bullet extends Projectile {
     // Misc constants
     public static final int BUTTONO = 4;
     public static final int SKILL_PT_GAIN = 4;
-    public static final int SCREENSHAKE = 0;
     public static final boolean CAN_HIT_PROJ = true;
 
     // Static image
@@ -56,7 +55,7 @@ public class Bullet extends Projectile {
             if (enemy != character) {
                 // Enemy hitbox
                 if (OmegaFight3.intersects(coord, hitBoxSize, enemy.coord, enemy.size, OmegaFight3.HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
-                    enemy.hurt(damage, knockback, coord, dir, KB_SPREAD, SCREENSHAKE);
+                    enemy.hurt(damage, knockback, coord, dir, KB_SPREAD);
                     die();
                     ((Omegaman) character).addSkillPts(SKILL_PT_GAIN);
                     ((Omegaman) character).stats[Omegaman.DMG_TO_OMEGAMAN] += damage;
@@ -177,7 +176,8 @@ class Rocket extends Projectile {
                 if (enemy != character) {
                     // Enemy hitbox
                     if (OmegaFight3.intersects(coord, hitBoxSize, enemy.coord, enemy.size, OmegaFight3.HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
-                        enemy.hurt(damage, knockback, coord, dir, KB_SPREAD, (int) (SCREENSHAKE * (size.x / SIZE.x)));
+                        enemy.hurt(damage, knockback, coord, dir, KB_SPREAD);
+                        OmegaFight3.screenShakeCounter += (int) (SCREENSHAKE * (size.x / SIZE.x));
                         die();
                         ((Omegaman) character).stats[Omegaman.DMG_TO_OMEGAMAN] += damage;
                     }
@@ -199,6 +199,7 @@ class Rocket extends Projectile {
                 // Boss hitbox
                 if (OmegaFight3.intersects(coord, hitBoxSize, boss.coord, boss.size, Boss.BOSS_HITBOX_LEEWAY * Math.min(boss.size.x, boss.size.y))) {
                     boss.hurt(damage);
+                    OmegaFight3.screenShakeCounter += (int) (SCREENSHAKE * (size.x / SIZE.x));
                     die();
                     ((Omegaman) character).stats[Omegaman.DMG_TO_BOSS] += damage;
                 }
@@ -250,7 +251,6 @@ class Shotgun extends Projectile {
     // Misc constants
     public static final int BUTTONO = 5;
     public static final int SKILL_PT_GAIN = 1;
-    public static final int SCREENSHAKE = 0;
     public static final boolean CAN_HIT_PROJ = true;
 
     // Static image
@@ -288,7 +288,7 @@ class Shotgun extends Projectile {
             if (enemy != character) {
                 // Enemy hitbox
                 if (OmegaFight3.intersects(coord, hitBoxSize, enemy.coord, enemy.size, OmegaFight3.HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
-                    enemy.hurt(damage, knockback, coord, dir, KB_SPREAD, SCREENSHAKE);
+                    enemy.hurt(damage, knockback, coord, dir, KB_SPREAD);
                     die();
                     ((Omegaman) character).addSkillPts(SKILL_PT_GAIN);
                     ((Omegaman) character).stats[Omegaman.DMG_TO_OMEGAMAN] += damage;
@@ -347,7 +347,6 @@ class Firework extends Projectile {
     // Misc constants
     public static final double MINIMUM_STAT_PERCENTAGE = 0.5;
     public static final int NUM_SHOTS = 8;
-    public static final int SCREENSHAKE = 0;
     public static final boolean CAN_HIT_PROJ = true;
 
     // Static images
@@ -385,7 +384,7 @@ class Firework extends Projectile {
             if (enemy != character) {
                 // Enemy hitbox
                 if (OmegaFight3.intersects(coord, hitBoxSize, enemy.coord, enemy.size, OmegaFight3.HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
-                    enemy.hurt(damage, knockback, coord, dir, KB_SPREAD, SCREENSHAKE);
+                    enemy.hurt(damage, knockback, coord, dir, KB_SPREAD);
                     die();
                     ((Omegaman) character).stats[Omegaman.DMG_TO_OMEGAMAN] += damage;
                 }
@@ -445,7 +444,6 @@ class Spammer extends Projectile {
     // Misc constants
     public static final int BUTTONO = 6;
     public static final int SKILL_PT_GAIN = 1;
-    public static final int SCREENSHAKE = 0;
     public static final boolean CAN_HIT_PROJ = false;
 
     // Static image
@@ -482,7 +480,7 @@ class Spammer extends Projectile {
         for (Omegaman enemy: OmegaFight3.omegaman) {
             if (enemy != character) {
                 if (OmegaFight3.intersects(coord, hitBoxSize, enemy.coord, enemy.size, OmegaFight3.HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
-                    enemy.hurt(damage, knockback, coord, dir, KB_SPREAD, SCREENSHAKE);
+                    enemy.hurt(damage, knockback, coord, dir, KB_SPREAD);
                     die();
                     ((Omegaman) character).addSkillPts(SKILL_PT_GAIN);
                     ((Omegaman) character).stats[Omegaman.DMG_TO_OMEGAMAN] += damage;
@@ -633,7 +631,8 @@ class Missile extends Projectile {
                 if (enemy != character) {
                     // Enemy hitbox
                     if (OmegaFight3.intersects(coord, hitBoxSize, enemy.coord, enemy.size, OmegaFight3.HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
-                        enemy.hurt(damage, knockback, coord, dir, KB_SPREAD, (int) (SCREENSHAKE * (size.x / SIZE.x)));
+                        enemy.hurt(damage, knockback, coord, dir, KB_SPREAD);
+                        OmegaFight3.screenShakeCounter += (int) (SCREENSHAKE * (size.x / SIZE.x));
                         die();
                         ((Omegaman) character).stats[Omegaman.DMG_TO_OMEGAMAN] += damage;
                     }
@@ -655,6 +654,7 @@ class Missile extends Projectile {
                 // Boss hitbox
                 if (OmegaFight3.intersects(coord, hitBoxSize, boss.coord, boss.size, Boss.BOSS_HITBOX_LEEWAY * Math.min(boss.size.x, boss.size.y))) {
                     boss.hurt(damage);
+                    OmegaFight3.screenShakeCounter += (int) (SCREENSHAKE * (size.x / SIZE.x));
                     die();
                     ((Omegaman) character).stats[Omegaman.DMG_TO_BOSS] += damage;
                 }
@@ -703,7 +703,6 @@ class Sniper extends Projectile {
     // Misc constants
     public static final int BUTTONO = 7;
     public static final int SKILL_PT_GAIN = 10;
-    public static final int SCREENSHAKE = 0;
     public static final double RECOIL = 4;
     public static final boolean CAN_HIT_PROJ = true;
 
@@ -741,7 +740,7 @@ class Sniper extends Projectile {
             if (enemy != character) {
                 // Enemy hitbox
                 if (OmegaFight3.intersects(coord, hitBoxSize, enemy.coord, enemy.size, OmegaFight3.HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
-                    enemy.hurt(damage * velocity / VELOCITY, knockback * velocity / VELOCITY, coord, dir, KB_SPREAD, SCREENSHAKE);
+                    enemy.hurt(damage * velocity / VELOCITY, knockback * velocity / VELOCITY, coord, dir, KB_SPREAD);
                     die();
                     ((Omegaman) character).addSkillPts(SKILL_PT_GAIN);
                     ((Omegaman) character).stats[Omegaman.DMG_TO_OMEGAMAN] += damage * velocity / VELOCITY;
@@ -800,7 +799,6 @@ class Laser extends Projectile {
     public static final int LIFE = 20; // Not affected by charging
 
     // Animation constants
-    public static final int SCREENSHAKE = 0;
     public static final int RESIZE_LEN = 4;
     public static final double SIZE_Y_TO_PULSE_SIZE_Y = 1.1;
     public static final int PULSE_HZ = 2;
@@ -838,7 +836,7 @@ class Laser extends Projectile {
             if (enemy != character) {
                 // Enemy hitbox
                 if (OmegaFight3.intersects(coord, hitBoxSize, enemy.coord, enemy.size, OmegaFight3.HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
-                    enemy.hurt(damage, knockback, coord, BASE_KB_DIR + KB_DIR_TILT * Math.cos(dir), KB_SPREAD, SCREENSHAKE);
+                    enemy.hurt(damage, knockback, coord, BASE_KB_DIR + KB_DIR_TILT * Math.cos(dir), KB_SPREAD);
                     ((Omegaman) character).stats[Omegaman.DMG_TO_OMEGAMAN] += damage;
                 }
 
@@ -896,7 +894,6 @@ class Boomer extends Projectile {
     // Misc constants
     public static final int BUTTONO = 8;
     public static final int SKILL_PT_GAIN = 3;
-    public static final int SCREENSHAKE = 0;
     public static final boolean CAN_HIT_PROJ = false;
 
     // Static images
@@ -938,7 +935,7 @@ class Boomer extends Projectile {
                 // Enemy hitbox
                 if (OmegaFight3.intersects(coord, hitBoxSize, enemy.coord, enemy.size, OmegaFight3.HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
                     int multiplier = velocity < 0? 2: 1;
-                    enemy.hurt(damage * multiplier, knockback * multiplier, coord, dir + multiplier / 2 * Math.PI, KB_SPREAD, SCREENSHAKE);
+                    enemy.hurt(damage * multiplier, knockback * multiplier, coord, dir + multiplier / 2 * Math.PI, KB_SPREAD);
                     die();
                     ((Omegaman) character).addSkillPts(SKILL_PT_GAIN * multiplier);
                     ((Omegaman) character).stats[Omegaman.DMG_TO_OMEGAMAN] += damage * multiplier;
@@ -1000,7 +997,6 @@ class Bouncer extends Projectile {
 
     // Misc constants
     public static final double MINIMUM_STAT_PERCENTAGE = 0.5;
-    public static final int SCREENSHAKE = 0;
     public static final boolean CAN_HIT_PROJ = true;
 
     // Static images
@@ -1039,7 +1035,7 @@ class Bouncer extends Projectile {
             if (enemy != character) {
                 // Enemy hitbox
                 if (OmegaFight3.intersects(coord, hitBoxSize, enemy.coord, enemy.size, OmegaFight3.HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
-                    enemy.hurt(damage, knockback, coord, dir, KB_SPREAD, SCREENSHAKE);
+                    enemy.hurt(damage, knockback, coord, dir, KB_SPREAD);
                     ((Omegaman) character).stats[Omegaman.DMG_TO_OMEGAMAN] += damage;
                 }
 
@@ -1101,7 +1097,6 @@ class Spike extends Projectile {
     // Misc constants
     public static final int BUTTONO = 9;
     public static final int SKILL_PT_GAIN = 0;
-    public static final int SCREENSHAKE = 0;
     public static final boolean CAN_HIT_PROJ = true;
 
     // Instance variables
@@ -1216,7 +1211,6 @@ class Thorn extends Projectile {
 
     // Misc constants
     public static final int SKILL_PT_GAIN = 1;
-    public static final int SCREENSHAKE = 0;
     public static final boolean CAN_HIT_PROJ = false;
 
     // Instance variables
@@ -1254,7 +1248,7 @@ class Thorn extends Projectile {
             if (enemy != character) {
                 // Enemy hitbox
                 if (OmegaFight3.intersects(coord, hitBoxSize, enemy.coord, enemy.size, OmegaFight3.HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
-                    enemy.hurt(damage, knockback, coord, dir, KB_SPREAD, SCREENSHAKE);
+                    enemy.hurt(damage, knockback, coord, dir, KB_SPREAD);
                     die();
                     ((Omegaman) character).addSkillPts(SKILL_PT_GAIN);
                     ((Omegaman) character).stats[Omegaman.DMG_TO_OMEGAMAN] += damage;
@@ -1316,7 +1310,6 @@ class Splitter extends Projectile {
 
     // Misc constants
     public static final double MINIMUM_STAT_PERCENTAGE = 0.5;
-    public static final int SCREENSHAKE = 0;
     public static final boolean CAN_HIT_PROJ = true;
 
     // Instance variables
@@ -1358,7 +1351,7 @@ class Splitter extends Projectile {
             if (enemy != character) {
                 // Enemy hitbox
                 if (OmegaFight3.intersects(coord, hitBoxSize, enemy.coord, enemy.size, OmegaFight3.HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
-                    enemy.hurt(damage, knockback, coord, dir, KB_SPREAD, SCREENSHAKE);
+                    enemy.hurt(damage, knockback, coord, dir, KB_SPREAD);
                     ((Omegaman) character).stats[Omegaman.DMG_TO_OMEGAMAN] += damage;
                 }
 

@@ -19,7 +19,6 @@ public class Ring extends Projectile{
     public static final int LIFE = INF_LIFE;
 
     // Misc constants
-    public static final int SCREENSHAKE = 0;
     public static final boolean CAN_HIT_PROJ = true;
     public static final int NO_OF_SPRITES = 3;
     public static final int SPRITE_CHANGE_HZ = 7;
@@ -62,7 +61,7 @@ public class Ring extends Projectile{
         for (Omegaman enemy: OmegaFight3.omegaman) {
             // Enemy hitbox
             if (OmegaFight3.intersects(coord, hitBoxSize, enemy.coord, enemy.size, OmegaFight3.HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
-                enemy.hurt(damage, knockback, coord, dir, KB_SPREAD, SCREENSHAKE);
+                enemy.hurt(damage, knockback, coord, dir, KB_SPREAD);
                 die();
             }
 
@@ -96,7 +95,6 @@ class Meteor extends Projectile {
     public static final double PERIODS = 1.75;
 
     // Misc constants
-    public static final int SCREENSHAKE = 0;
     public static final boolean CAN_HIT_PROJ = false;
     public static final int NO_OF_SPRITES = 3;
     public static final int SPRITE_CHANGE_HZ = 7;
@@ -144,7 +142,7 @@ class Meteor extends Projectile {
         for (Omegaman enemy: OmegaFight3.omegaman) {
             // Enemy hitbox
             if (OmegaFight3.intersects(coord, hitBoxSize, enemy.coord, enemy.size, OmegaFight3.HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
-                enemy.hurt(damage, knockback, coord, dir, KB_SPREAD, SCREENSHAKE);
+                enemy.hurt(damage, knockback, coord, dir, KB_SPREAD);
             }
 
             // Enemy projectiles
@@ -187,7 +185,6 @@ class Bubble extends Projectile {
     public static final double CHANGE_OF_BIG_JUMP = 0.33;
 
     // Misc constants
-    public static final int SCREENSHAKE = 0;
     public static final boolean CAN_HIT_PROJ = true;
 
     // Sprite constants
@@ -239,7 +236,7 @@ class Bubble extends Projectile {
         for (Omegaman enemy: OmegaFight3.omegaman) {
             // Enemy hitbox
             if (OmegaFight3.intersects(coord, hitBoxSize, enemy.coord, enemy.size, OmegaFight3.HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
-                enemy.hurt(damage, knockback, coord, dir, KB_SPREAD, SCREENSHAKE);
+                enemy.hurt(damage, knockback, coord, dir, KB_SPREAD);
                 die();
             }
 
@@ -272,7 +269,6 @@ class Fire extends Projectile {
     public static final double VELOCITY = 5;
 
     // Misc constants
-    public static final int SCREENSHAKE = 0;
     public static final boolean CAN_HIT_PROJ = false;
 
     // Sprite constants
@@ -316,7 +312,7 @@ class Fire extends Projectile {
         }
 
         // Check if fire from the ceiling is out of the screen
-        if (coord.y < 0) {
+        if (coord.y <= 0) {
             die();
         }
 
@@ -324,7 +320,7 @@ class Fire extends Projectile {
         for (Omegaman enemy: OmegaFight3.omegaman) {
             // Enemy hitbox
             if (OmegaFight3.intersects(coord, hitBoxSize, enemy.coord, enemy.size, OmegaFight3.HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
-                enemy.hurt(damage, knockback, coord, dir, KB_SPREAD, SCREENSHAKE);
+                enemy.hurt(damage, knockback, coord, dir, KB_SPREAD);
             }
 
             // Enemy projectiles

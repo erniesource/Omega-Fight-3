@@ -569,7 +569,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         homeButtons.put(SLIDESHOW_BUTTONO, new Button(homeButtonImg, HOME_BUTTON_FONT, new Coord(SCREEN_SIZE.x - HOME_BUTTON_SIZE.x / 2, HOME_BUTTON_FIRST_Y + HOME_BUTTON_SPACING), HOME_BUTTON_SIZE.copy(), "SLIDESHOW", SLIDESHOW_BUTTONO, Button.SHADOW));
         homeButtons.put(BATTLE_LOG_BUTTONO, new Button(homeButtonImg, HOME_BUTTON_FONT, new Coord(SCREEN_SIZE.x - HOME_BUTTON_SIZE.x / 2, HOME_BUTTON_FIRST_Y + HOME_BUTTON_SPACING * 2), HOME_BUTTON_SIZE.copy(), "BATTLE LOG", BATTLE_LOG_BUTTONO, Button.SHADOW));
 
-        // Choose your fight menu buttons
+        // Choose your fight menu buttons CHANGE STAGE BUTTONS SO TEXT AT TOP?
         chooseButtons.put(CHOOSE_BACK_BUTTONO, new Button(buttonImg, BUTTON_FONT, new Coord(SPACING + BUTTON_SIZE.x / 2, SPACING + BUTTON_SIZE.y / 2), BUTTON_SIZE.copy(), "BACK", CHOOSE_BACK_BUTTONO, Button.SHADOW));
         chooseButtons.put(stage[Stage.BATTLEFIELD_NO].buttono, new Button(stage[Stage.BATTLEFIELD_NO].image, STAGE_FONT, new Coord(SPACING + STAGE_BUTTON_SIZE.x / 2, (BLACK_BAR_TOP + BLACK_BAR_BOTTOM) / 2), STAGE_BUTTON_SIZE.copy(), stage[Stage.BATTLEFIELD_NO].stageName.toUpperCase(), stage[Stage.BATTLEFIELD_NO].buttono, Button.HIGHLIGHT)); // CHange size email Ms. Kim
         chooseButtons.put(stage[Stage.FINAL_DEST_NO].buttono, new Button(stage[Stage.FINAL_DEST_NO].image, STAGE_FONT, new Coord(SPACING * 2 + STAGE_BUTTON_SIZE.x * (1.0 / 2 + 1), (BLACK_BAR_TOP + BLACK_BAR_BOTTOM) / 2), STAGE_BUTTON_SIZE.copy(), stage[Stage.FINAL_DEST_NO].stageName.toUpperCase(), stage[Stage.FINAL_DEST_NO].buttono, Button.HIGHLIGHT));
@@ -1380,6 +1380,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                 readyCounter = -1;
                 stageFlashCounter = 0;
                 iconFlashCounter = 0;
+                selectedIcon = null;
                 chooseButtons.get(READY_BUTTONO).canUse = false;
                 chooseButtons.get(READY_BUTTONO).canSee = false;
 
@@ -1512,7 +1513,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     // Parameters: None
     // Return: None
     // Description:
-    // This method writes the battle log to a file named "battle log.txt" in the "menus" directory
+    // This method writes the battle log to a file named "battle log.txt" in the "menus" directory CHANGE SO IT APPENDS?
     public static void writeFile() {
         try {
             PrintWriter pw = new PrintWriter(new FileWriter("menus/" + BATTLE_LOG_FILE_NAME + ".txt"));
@@ -1972,6 +1973,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                     readyCounter = -1;
                     stageFlashCounter = 0;
                     iconFlashCounter = 0;
+                    selectedIcon = null;
                     chooseButtons.get(READY_BUTTONO).canUse = false;
                     chooseButtons.get(READY_BUTTONO).canSee = false;
                     resetButtons(chooseButtons.values());
@@ -2039,7 +2041,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                 // Quit button
                 else if (buttonPressed == QUIT_BUTTONO) {
                     transitiono = GAME_OVER;
-                    transitionCounter = GAME_END_LEN - GAME_END_TEXT_LEN - GAME_END_TEXT_TRANSITION_LEN * 2;
+                    transitionCounter = (GAME_END_LEN - GAME_END_TEXT_LEN - GAME_END_TEXT_TRANSITION_LEN * 2) / 2;
                     resetButtons(pauseButtons.values());
                     stage[stageNo].music.stop();
                     endMusic.stop();
