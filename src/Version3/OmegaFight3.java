@@ -701,7 +701,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         frame.setResizable(false);
         frame.setLocationRelativeTo(null);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setIconImage(Toolkit.getDefaultToolkit().getImage("HUD/0face.png"));
+        frame.setIconImage(Toolkit.getDefaultToolkit().getImage(MISC_DIR + "icon.png"));
     }
 
 
