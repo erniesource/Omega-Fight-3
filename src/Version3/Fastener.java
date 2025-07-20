@@ -328,9 +328,7 @@ class Bombot extends Projectile {
             frameCounter = EXPLOSION_TIME;
             size.x *= EXPLOSION_SIZE_MULTIPLIER.x;
             size.y *= EXPLOSION_SIZE_MULTIPLIER.y;
-            OmegaFight3.boom.stop();
-            OmegaFight3.boom.setFramePosition(0);
-            OmegaFight3.boom.start();
+            OmegaFight3.play(OmegaFight3.boom);
         }
     }
 

@@ -164,9 +164,9 @@ public class Omegaman extends Char {
     public int playerNo;
 
     // Constructor
-    public Omegaman(int playerNo, Coord coord, int spriteSign, int onPlatform, int[] controls, int[] shtKeys, int[] loadout, int[] loadoutButtono) throws IOException {
+    public Omegaman(int playerNo, Coord coord, Coord size, int spriteSign, int onPlatform, int[] controls, int[] shtKeys, int[] loadout, int[] loadoutButtono) throws IOException {
         // Initialize character variables
-        super(coord, IDLE_SPRITE, spriteSign, 0, SIZE.copy(), ALIVE_STATE);
+        super(coord, IDLE_SPRITE, spriteSign, 0, size, ALIVE_STATE);
 
         // Initialize player variables
         this.playerNo = playerNo;
@@ -523,7 +523,7 @@ public class Omegaman extends Char {
 
     // Description: This method return which platform number the player is landing on and AIRBORNE if they are not landing
     public int checkPlatforms() {
-        for (int i = 0; i != OmegaFight3.stage[OmegaFight3.stageNo].platforms.length; i++) if (OmegaFight3.stage[OmegaFight3.stageNo].platforms[i].landed(coord.x, coord.y, coord.y + velocity.y)) return i;
+        for (int i = 0; i != OmegaFight3.stage[OmegaFight3.stageNo].platforms.length; i++) if (OmegaFight3.stage[OmegaFight3.stageNo].platforms[i].landed(coord.x, size.y, coord.y, coord.y + velocity.y)) return i;
         return AIRBORNE;
     }
 
@@ -591,9 +591,7 @@ public class Omegaman extends Char {
             skillPtCounter = 0;
             stunCounter = 0;
             invCounter = RESPAWN_INITIAL_VELOCITY + RESPAWN_TIME_LIMIT + 2;
-            OmegaFight3.boom.stop();
-            OmegaFight3.boom.setFramePosition(0);
-            OmegaFight3.boom.start();
+            OmegaFight3.play(OmegaFight3.boom);
             // fireCounter = 0;
         }
     }
@@ -603,9 +601,7 @@ public class Omegaman extends Char {
         coord.x = OmegaFight3.stage[OmegaFight3.stageNo].spawnCoords[playerNo].x;
         coord.y = -size.y;
         percent = 0;
-        OmegaFight3.cheer.stop();
-        OmegaFight3.cheer.setFramePosition(0);
-        OmegaFight3.cheer.start();
+        OmegaFight3.play(OmegaFight3.cheer);
     }
 
     // Description: This method draws the surge of the dying player
@@ -815,7 +811,7 @@ public class Omegaman extends Char {
 
     // Description: This method gets the y-coordinate of the platform number specified
     public double getPlatformY(int platformNo) {
-        return OmegaFight3.stage[OmegaFight3.stageNo].platforms[platformNo].y;
+        return OmegaFight3.stage[OmegaFight3.stageNo].platforms[platformNo].y - size.y / 2;
     }
 
     // Description: This method calculates the shaking percent of the player

@@ -201,9 +201,7 @@ public class Dragon extends Boss{
             frameCounter = 0;
             spriteNo = 0;
             OmegaFight3.screenShakeCounter += DIE_SCREENSHAKE;
-            OmegaFight3.boom.stop();
-            OmegaFight3.boom.setFramePosition(0);
-            OmegaFight3.boom.start();
+            OmegaFight3.play(OmegaFight3.boom);
         }
     }
 
