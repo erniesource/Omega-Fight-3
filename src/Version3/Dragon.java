@@ -9,7 +9,7 @@ public class Dragon extends Boss{
 
     // Sprite constants
     public static final int[] STATE_SPRITE_START = {0, 4, 8, 12};
-    public static final int[] STATE_SPRITE_SIGN = {OmegaFight3.RIGHT_SIGN, OmegaFight3.RIGHT_SIGN, OmegaFight3.RIGHT_SIGN, OmegaFight3.LEFT_SIGN};
+    public static final int[] STATE_SPRITE_SIGN = {0, OmegaFight3.RIGHT_SIGN, OmegaFight3.RIGHT_SIGN, OmegaFight3.LEFT_SIGN};
     public static final int[] STATE_NO_SPRITES = {4, 4, 4, 3};
     public static final int NO_OF_SPRITES = 15;
 
@@ -23,7 +23,7 @@ public class Dragon extends Boss{
     public static final Coord[] STATE_COORD = {null, new Coord(OmegaFight3.SCREEN_SIZE.x / 8, OmegaFight3.SCREEN_SIZE.y * 5 / 8),
         new Coord(OmegaFight3.SCREEN_SIZE.x / 8, OmegaFight3.SCREEN_SIZE.y * 5 / 8),
         new Coord(OmegaFight3.SCREEN_SIZE.x * 7 / 8, STATE_SIZE[BARF].y / 2)};
-    public static final int[] STATE_TIME = {20, 60, 320, 300};
+    public static final int[] STATE_TIME = {0, 60, 320, 300};
 
     // Dizzy Constants
     public static final int DIZZY_NUM_PROJS = 3;

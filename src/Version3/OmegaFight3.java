@@ -97,14 +97,14 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static final int BATTLEFIELD_NO = 0;
     public static final int FINAL_DEST_NO = 1;
     public static final int NORTH_CAVE_NO = 2;
-    public static final String[] STAGE_NAME = {"battlefield", "final destination", "northern cave"}; // CHANGE SO IT WORKS REGARDLESS OF OMEGAMAN SIZE
+    public static final String[] STAGE_NAME = {"battlefield", "final destination", "northern cave"};
     public static final Platform[][] PLATFORMS = {{new Platform(395, 1525, 660, true), new Platform(535, 820, 485, false), new Platform(1095, 1385, 485, false)},
     {new Platform(245, 1675, 600, true)},
     {new Platform(187, 1709, 735, true), new Platform(90, 440, 500, false), new Platform(1480, 1830, 500, false)}};
     public static final Coord[][] SPAWN_COORDS = {{new Coord(700, 485), new Coord(1260, 485)},
     {new Coord(700, 600), new Coord(1260, 600)},
-    {new Coord(265, 500), new Coord(1655, 500)}};
-    public static final int[][] SPAWN_SIGN = {{RIGHT_SIGN, RIGHT_SIGN}, {RIGHT_SIGN, RIGHT_SIGN}, {RIGHT_SIGN, LEFT_SIGN}};
+    {new Coord(910, 735), new Coord(1010, 735)}};
+    public static final int[][] SPAWN_SIGN = {{RIGHT_SIGN, RIGHT_SIGN}, {RIGHT_SIGN, RIGHT_SIGN}, {RIGHT_SIGN, RIGHT_SIGN}};
     public static final int[][] SPAWN_PLATFORM_NO = {{1, 2}, {0, 0}, {1, 2}};
     public static final int[] STAGE_BUTTONO = {1, 2, 3};
     public static final int FLASH_HZ = 10;
@@ -136,6 +136,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static final String DRAGON_PROJS_DIR = "dragon projectiles/";
     public static final String DOCTOR_DIR = "doctor/";
     public static final String DRAGON_DIR = "dragon/";
+    public static final String BIRD_DIR = "bird/";
 
     // Gamestates
     public static final int STUDIO_ANIM_GS = -1;
@@ -548,7 +549,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
             stage[i] = new Stage(STAGE_NAME[i], PLATFORMS[i], SPAWN_COORDS[i], SPAWN_SIGN[i], SPAWN_PLATFORM_NO[i], STAGE_BUTTONO[i]);
         }
 
-        // Doctor image importing
+        // Doctor image importing (MAKE THIS WITH ONE LOOP AND VAR STORING STATE NAMES???)
         for (int i = 0; i != Doctor.STATE_NO_SPRITES[Boss.DEAD]; i++) {
             Doctor.sprite[Doctor.STATE_SPRITE_START[Boss.DEAD] + i] = ImageIO.read(new File(DOCTOR_DIR + "dead" + i + ".png"));
         }
@@ -574,6 +575,20 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         }
         for (int i = 0; i != Dragon.STATE_NO_SPRITES[Dragon.BARF]; i++) {
             Dragon.sprite[Dragon.STATE_SPRITE_START[Dragon.BARF] + i] = ImageIO.read(new File(DRAGON_DIR + "barf" + i + ".png"));
+        }
+
+        // Bird image importing
+        for (int i = 0; i != Bird.STATE_NO_SPRITES[Boss.DEAD]; i++) {
+            Bird.sprite[Bird.STATE_SPRITE_START[Boss.DEAD] + i] = ImageIO.read(new File(BIRD_DIR + "dead" + i + ".png"));
+        }
+        for (int i = 0; i != Bird.STATE_NO_SPRITES[Boss.IDLE]; i++) {
+            Bird.sprite[Bird.STATE_SPRITE_START[Boss.IDLE] + i] = ImageIO.read(new File(BIRD_DIR + "idle" + i + ".png"));
+        }
+        for (int i = 0; i != Bird.STATE_NO_SPRITES[Bird.VOMIT]; i++) {
+            Bird.sprite[Bird.STATE_SPRITE_START[Bird.VOMIT] + i] = ImageIO.read(new File(BIRD_DIR + "vomit" + i + ".png"));
+        }
+        for (int i = 0; i != Bird.STATE_NO_SPRITES[Bird.TWEAK]; i++) {
+            Bird.sprite[Bird.STATE_SPRITE_START[Bird.TWEAK] + i] = ImageIO.read(new File(BIRD_DIR + "tweak" + i + ".png"));
         }
 
         // Buttons
@@ -1395,6 +1410,9 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                     else if (stageNo == FINAL_DEST_NO) {
                         bosses.add(new Dragon(1));
                     }
+                    else if (stageNo == NORTH_CAVE_NO) {
+                        bosses.add(new Bird(1));
+                    }
                 }
 
                 // Initialize transition variables and start music
@@ -1951,7 +1969,6 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                     gameState = SLIDESHOW_GS;
                     transitionCounter = FADE_IN_LEN;
                     transitiono = FADE_IN;
-                    menuManCounter = 0;
                     resetButtons(homeButtons.values());
                 }
 
@@ -1960,7 +1977,6 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                     gameState = BATTLE_LOG_GS;
                     transitionCounter = FADE_IN_LEN;
                     transitiono = FADE_IN;
-                    menuManCounter = 0;
                     resetButtons(homeButtons.values());
                 }
             }

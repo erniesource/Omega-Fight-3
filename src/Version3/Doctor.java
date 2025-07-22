@@ -9,7 +9,7 @@ public class Doctor extends Boss {
 
     // Sprite constants
     public static final int[] STATE_SPRITE_START = {0, 2, 4, 7};
-    public static final int[] STATE_SPRITE_SIGN = {OmegaFight3.LEFT_SIGN, OmegaFight3.LEFT_SIGN, OmegaFight3.LEFT_SIGN, OmegaFight3.RIGHT_SIGN};
+    public static final int[] STATE_SPRITE_SIGN = {0, OmegaFight3.LEFT_SIGN, OmegaFight3.LEFT_SIGN, OmegaFight3.RIGHT_SIGN};
     public static final int[] STATE_NO_SPRITES = {2, 2, 3, 4};
     public static final int NO_OF_SPRITES = 11;
 
@@ -23,7 +23,7 @@ public class Doctor extends Boss {
     public static final Coord[] STATE_COORD = {null, new Coord(OmegaFight3.SCREEN_SIZE.x * 7 / 8, OmegaFight3.SCREEN_SIZE.y / 2),
         new Coord(OmegaFight3.SCREEN_SIZE.x * 7 / 8, OmegaFight3.stage[OmegaFight3.BATTLEFIELD_NO].platforms[1].y - (OmegaFight3.stage[OmegaFight3.BATTLEFIELD_NO].platforms[0].y - OmegaFight3.stage[OmegaFight3.BATTLEFIELD_NO].platforms[1].y)),
         new Coord(OmegaFight3.SCREEN_SIZE.x / 8, OmegaFight3.SCREEN_SIZE.y / 2)};
-    public static final int[] STATE_TIME = {20, 60, 30, 300};
+    public static final int[] STATE_TIME = {0, 60, 30, 300};
 
     // Spit Constants
     public static final double SPIT_SPEED = 7;
