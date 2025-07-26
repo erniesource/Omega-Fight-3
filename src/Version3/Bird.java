@@ -18,7 +18,7 @@ public class Bird extends Boss {
     public static final int TWEAK = 3;
     public static final int NO_OF_STATES = 4;
     public static final int TRANSITION_TIME = 120;
-    public static final Coord[] STATE_SIZE = {new Coord(520, 530), new Coord(640, 415), new Coord(715, 495), new Coord(710, 670)};
+    public static final Coord[] STATE_SIZE = {new Coord(520, 530), new Coord(645, 425), new Coord(720, 485), new Coord(710, 670)};
     public static final int[] STATE_SPRITE_CHANGE_HZ = {10, 5, 5, 7};
     public static final Coord[] STATE_COORD = {null, new Coord(OmegaFight3.SCREEN_SIZE.x - STATE_SIZE[IDLE].x / 2, OmegaFight3.SCREEN_SIZE.y / 2),
         new Coord(STATE_SIZE[VOMIT].x / 2, OmegaFight3.SCREEN_SIZE.y / 2),

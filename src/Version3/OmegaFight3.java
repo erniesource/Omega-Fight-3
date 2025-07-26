@@ -734,8 +734,8 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         if (screenShakeCounter != 0) {
             screenShakeCounter--;
             if (screenShakeCounter % SCREEN_SHAKE_HZ == 0) {
-                screenCoord.x = randomSign() * screenShakeCounter / 2 * Math.random();
-                screenCoord.y = randomSign() * screenShakeCounter / 2 * Math.random();
+                screenCoord.x = randomSign() * screenShakeCounter * Math.random();
+                screenCoord.y = randomSign() * screenShakeCounter * Math.random();
             }
             g.translate((int) screenCoord.x, (int) screenCoord.y);
         }
@@ -1593,7 +1593,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
 
         // Ready fade out transition
         else if (transitiono == READY_FADE) {
-            drawFade(1 - (double) transitionCounter / READY_FADE_LEN, g2);
+            drawFade(1 - (double) (transitionCounter - 1) / READY_FADE_LEN, g2);
         }
 
         // Countdown transition
