@@ -13,7 +13,7 @@ public class Omegaman extends Char {
     public static final int LAST_RUN_SPRITE = 3;
     public static final int JUMP_SPRITE = 4;
     public static final int HURT_SPRITE = 5;
-    public static final Coord SIZE = new Coord(100, 100);
+    public static final Coord SIZE = new Coord(100);
 
     // Movement Constants
     public static final int AIRBORNE = -1;
@@ -50,13 +50,12 @@ public class Omegaman extends Char {
     public static final int NOT_STUNNED = 0;
     public static final int KB_COORD_Y_OFFSET = 50;
     public static final double KB_GRAVITY = 1.25;
-    public static final double BOUNCE_MIN_VEL_Y = 11;
+    public static final double BOUNCE_MIN_VEL_Y = 10;
     public static final double STUN_REDUCTION = 0.9;
 
     // Kamikaze constants
     public static final double KAMIKAZE_DMG = 1 * Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
     public static final double KAMIKAZE_KB = 10;
-    public static final double KAMIKAZE_DIST = 0.5;
 
     // HUD Constants
     public static final int PERCENT_DISPLAY_Y_COORD = 790;
@@ -136,7 +135,6 @@ public class Omegaman extends Char {
     public int chargingWeapon = NOT_CHARGING;
     public int[] loadout;
     public int[] loadoutButtono;
-    public Deque<Smoke> smokeQ = new LinkedList<>(); // To be used maybe
 
     // Skill point statistics
     public int skillPts = ONES_PER_SKILL_PT * 3 / 2;
@@ -146,7 +144,7 @@ public class Omegaman extends Char {
     public int stunCounter;
 
     // Combat statistics
-    public int livesLeft = 3;
+    public int livesLeft = 8;
     public int percent;
     public int percentShakeCounter;
     public Coord[] percentDigitShake = new Coord[4];
@@ -200,6 +198,10 @@ public class Omegaman extends Char {
 
         // Load Face
         face = ImageIO.read(new File(HUD_DIR + playerNo + "face.png"));
+    }
+
+    public static int percMult() {
+        return (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
     }
 
     // Description: This methods calculates the control in the x-direction
@@ -531,7 +533,7 @@ public class Omegaman extends Char {
     public void checkBossHitbox() {
         if (invCounter == VULNERABLE) {
             for (Boss boss: OmegaFight3.bosses) {
-                if (OmegaFight3.intersects(coord, size, boss.coord, boss.size, Math.min(boss.size.x, boss.size.y) * KAMIKAZE_DIST)) {
+                if (OmegaFight3.intersects(coord, size, boss.coord, boss.size.scaledBy(boss.sizeToHitbox), 0)) {
                     hurt(KAMIKAZE_DMG, KAMIKAZE_KB, boss.coord);
                 }
             }
@@ -685,7 +687,7 @@ public class Omegaman extends Char {
     }
 
     // Description: This method hurts the player and prepares them for knockback
-    public void hurtWithKb(double damage, double knockback, Coord enemyCoord) {
+    private void hurtWithKb(double damage, double knockback, Coord enemyCoord) {
         hurt(damage);
 
         // Ensure no clipping through platforms
@@ -745,26 +747,6 @@ public class Omegaman extends Char {
         if (spriteSign == 0) spriteSign = OmegaFight3.RIGHT_SIGN;
     }
 
-    // Description: This method processes the smoke trails of the player and gets rid of dead smoke
-    public void processSmokes() {
-        // Process smoke trails
-        for (Smoke smoke: smokeQ) {
-            smoke.setFrameCounter(smoke.getFrameCounter() - 1);
-        }
-
-        // Delete dead smoke
-        while (!smokeQ.isEmpty() && smokeQ.getFirst().getFrameCounter() == 0) {
-            smokeQ.removeFirst();
-        }
-    }
-
-    // Description: This method draws the smoke trails of the player
-    public void drawSmokes(Graphics2D g2) {
-        for (Smoke smoke: smokeQ) {
-            smoke.draw(g2);
-        }
-    }
-
     // Description: THis method calculates the knockback of the player
     public void knockback() {
         decelerate();
@@ -775,7 +757,7 @@ public class Omegaman extends Char {
         if (platformNo != AIRBORNE) {
             coord.y = getPlatformY(platformNo);
             if (velocity.y >= BOUNCE_MIN_VEL_Y) {
-                hurt(velocity.y);
+                hurt(velocity.y - BOUNCE_MIN_VEL_Y);
                 velocity.y *= -1;
             }
             else velocity.y = 0;

@@ -5,7 +5,7 @@ import java.awt.image.BufferedImage;
 
 public class Bullet extends Projectile {
     // Damage constants
-    public static final double DMG = 2 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
+    public static final double DMG = 2 * Omegaman.percMult();
     public static final double DURABILITY = 2;
     public static final double KB = 5;
     public static final double KB_SPREAD = Math.PI / 3;
@@ -103,7 +103,7 @@ class Rocket extends Projectile {
     public static final Coord SIZE = new Coord(50, 50);
 
     // Damage constants
-    public static final double DMG = 15 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
+    public static final double DMG = 15 * Omegaman.percMult();
     public static final double DURABILITY = INFINITE_DURABILITY;
     public static final double KB = 20;
     public static final double KB_SPREAD = Math.PI / 3;
@@ -230,7 +230,7 @@ class Rocket extends Projectile {
 
 class Shotgun extends Projectile {
     // Damage constants
-    public static final double DMG = 2 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
+    public static final double DMG = 2 * Omegaman.percMult();
     public static final double DURABILITY = 1;
     public static final double KB = 3;
     public static final double KB_SPREAD = Math.PI / 3;
@@ -333,7 +333,7 @@ class Firework extends Projectile {
     public static final Coord SIZE = new Coord(50, 50);
 
     // Damage constants
-    public static final double DMG = 3.5 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
+    public static final double DMG = 3.5 * Omegaman.percMult();
     public static final double DURABILITY = INFINITE_DURABILITY;
     public static final double KB = 3;
     public static final double KB_SPREAD = Math.PI / 3;
@@ -424,7 +424,7 @@ class Firework extends Projectile {
 
 class Spammer extends Projectile {
     // Damage constants
-    public static final double DMG = 1.5 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
+    public static final double DMG = 1.5 * Omegaman.percMult();
     public static final double DURABILITY = 1;
     public static final double KB = 4;
     public static final double KB_SPREAD = Math.PI / 3;
@@ -521,7 +521,7 @@ class Missile extends Projectile {
     public static final Coord SIZE = new Coord(60, 60);
 
     // Damage constants
-    public static final double DMG = 12 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
+    public static final double DMG = 12 * Omegaman.percMult();
     public static final double DURABILITY = INFINITE_DURABILITY;
     public static final double KB = 16;
     public static final double KB_SPREAD = Math.PI / 3;
@@ -683,7 +683,7 @@ class Missile extends Projectile {
 
 class Sniper extends Projectile {
     // Damage constants
-    public static final double DMG = 2.5 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
+    public static final double DMG = 2.5 * Omegaman.percMult();
     public static final double DURABILITY = 3;
     public static final double KB = 1.5;
     public static final double KB_SPREAD = Math.PI / 3;
@@ -784,7 +784,7 @@ class Laser extends Projectile {
     public static final Coord BEAM_SIZE_Y_TO_BALL_SIZE = new Coord(50 / SIZE_Y, 50 / SIZE_Y);
 
     // Damage constants
-    public static final double DMG = 1 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
+    public static final double DMG = 1 * Omegaman.percMult();
     public static final double DURABILITY = INFINITE_DURABILITY;
     public static final double KB = 5;
     public static final double BASE_KB_DIR = Math.PI * 1.5;
@@ -874,7 +874,7 @@ class Laser extends Projectile {
 
 class Boomer extends Projectile {
     // Damage constants
-    public static final double DMG = 3.5 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
+    public static final double DMG = 3.5 * Omegaman.percMult();
     public static final double DURABILITY = 2;
     public static final double KB = 5;
     public static final double KB_SPREAD = Math.PI / 3;
@@ -979,7 +979,7 @@ class Bouncer extends Projectile {
     public static final Coord SIZE = new Coord(80, 80);
 
     // Damage constants
-    public static final double DMG = 0.5 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
+    public static final double DMG = 0.5 * Omegaman.percMult();
     public static final double DURABILITY = INFINITE_DURABILITY;
     public static final double KB = 10;
     public static final double KB_SPREAD = Math.PI / 3;
@@ -1023,7 +1023,7 @@ class Bouncer extends Projectile {
 
         // Check if the bouncer is out of the screen and bounce if so
         if (OmegaFight3.outOfScreen(coord, size)) {
-            dir += Math.PI;
+            dir = (dir + Math.PI) % (Math.PI * 2);
         }
 
         // Check for collisions with other characters and their projectiles
@@ -1136,7 +1136,6 @@ class Spike extends Projectile {
                 // Enemy hitbox
                 if (OmegaFight3.intersects(coord, hitBoxSize, enemy.coord, enemy.size, OmegaFight3.HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
                     die();
-
                 }
 
                 // Enemy projectiles
@@ -1191,7 +1190,7 @@ class Spike extends Projectile {
 
 class Thorn extends Projectile {
     // Damage constants
-    public static final double DMG = 1 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
+    public static final double DMG = 1 * Omegaman.percMult();
     public static final double DURABILITY = 1;
     public static final double KB = 3;
     public static final double KB_SPREAD = Math.PI / 3;

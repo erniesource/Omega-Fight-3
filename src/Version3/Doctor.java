@@ -5,7 +5,8 @@ import java.awt.image.BufferedImage;
 
 public class Doctor extends Boss {
     // Combat constants
-    public static final double INITIAL_HEALTH = 600 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
+    public static final double INITIAL_HEALTH = 600 * Omegaman.percMult();
+    public static final double SIZE_TO_HITBOX = 0.4;
 
     // Sprite constants
     public static final int[] STATE_SPRITE_START = {0, 2, 4, 7};
@@ -60,7 +61,7 @@ public class Doctor extends Boss {
 
     // Constructor
     public Doctor(double difficulty) {
-        super(STATE_COORD[IDLE].copy(), STATE_SPRITE_START[IDLE], STATE_SPRITE_SIGN[IDLE], STATE_TIME[IDLE], STATE_SIZE[IDLE].copy(), IDLE, INITIAL_HEALTH, difficulty);
+        super(STATE_COORD[IDLE].copy(), STATE_SPRITE_START[IDLE], STATE_SPRITE_SIGN[IDLE], STATE_TIME[IDLE], STATE_SIZE[IDLE].copy(), IDLE, INITIAL_HEALTH, difficulty, SIZE_TO_HITBOX);
     }
 
     // Description: This method transitions the boss from state to state (from each attack's location to another attack's location)

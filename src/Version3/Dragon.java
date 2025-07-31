@@ -5,7 +5,8 @@ import java.awt.image.BufferedImage;
 
 public class Dragon extends Boss{
     // Combat constants
-    public static final double INITIAL_HEALTH = 600 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
+    public static final double INITIAL_HEALTH = 600 * Omegaman.percMult();
+    public static final double SIZE_TO_HITBOX = 0.25;
 
     // Sprite constants
     public static final int[] STATE_SPRITE_START = {0, 4, 8, 12};
@@ -54,7 +55,7 @@ public class Dragon extends Boss{
 
     // Constructor
     public Dragon(double difficulty) {
-        super(STATE_COORD[IDLE].copy(), STATE_SPRITE_START[IDLE], STATE_SPRITE_SIGN[IDLE], STATE_TIME[IDLE], STATE_SIZE[IDLE].copy(), IDLE, INITIAL_HEALTH, difficulty);
+        super(STATE_COORD[IDLE].copy(), STATE_SPRITE_START[IDLE], STATE_SPRITE_SIGN[IDLE], STATE_TIME[IDLE], STATE_SIZE[IDLE].copy(), IDLE, INITIAL_HEALTH, difficulty, SIZE_TO_HITBOX);
     }
 
     // Description: This method calculates the dragon transitioning from one attack to the next

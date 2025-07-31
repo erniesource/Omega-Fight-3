@@ -73,6 +73,11 @@ class Coord { // Note: Coord is actually more of a Vector, but Vector has alread
     // Constructor that initializes origin
     public Coord() {}
 
+    public Coord(double xy) {
+        x = xy;
+        y = xy;
+    }
+
     // More specifid constructor
     public Coord(double x, double y) {
         this.x = x;

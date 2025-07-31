@@ -23,6 +23,7 @@ import javax.sound.sampled.*;
 public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionListener, KeyListener, Runnable {
     // Screen Settings
     public static final Coord SCREEN_SIZE = new Coord(1920, 960);
+    public static final Coord SCREEN_CENTER = SCREEN_SIZE.scaledBy(0.5);
     public static final int FPS = 60;
     public static final int SCREEN_SHAKE_HZ = 2;
     public static final int SPACING = 25;
@@ -105,7 +106,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     {new Coord(700, 600), new Coord(1260, 600)},
     {new Coord(910, 735), new Coord(1010, 735)}};
     public static final int[][] SPAWN_SIGN = {{RIGHT_SIGN, RIGHT_SIGN}, {RIGHT_SIGN, RIGHT_SIGN}, {RIGHT_SIGN, RIGHT_SIGN}};
-    public static final int[][] SPAWN_PLATFORM_NO = {{1, 2}, {0, 0}, {1, 2}};
+    public static final int[][] SPAWN_PLATFORM_NO = {{1, 2}, {0, 0}, {0, 0}};
     public static final int[] STAGE_BUTTONO = {1, 2, 3};
     public static final int FLASH_HZ = 10;
     public static final int FLASH_SIZE = 10;
@@ -113,6 +114,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     // Misc
     public static final double HITBOX_LEEWAY = 5;
     public static final int MAX_RGB_VAL = 255;
+    public static final double EPSILON = 1e-15;
 
     // Gamemode constants
     public static final int NUM_GAMEMODES = 1;
@@ -134,6 +136,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static final String EXPLOSIONS_DIR = "explosions/";
     public static final String DOCTOR_PROJS_DIR = "doctor projectiles/";
     public static final String DRAGON_PROJS_DIR = "dragon projectiles/";
+    public static final String BIRD_PROJS_DIR = "bird projectiles/";
     public static final String DOCTOR_DIR = "doctor/";
     public static final String DRAGON_DIR = "dragon/";
     public static final String BIRD_DIR = "bird/";
@@ -182,10 +185,10 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static final Font BUTTON_FONT = new Font("Consolas", Font.BOLD, 40); 
     public static final Coord BUTTON_SIZE = new Coord(400, 50);
     public static final Coord MED_BUTTON_SIZE = new Coord(100, 50);
-    public static final Coord SML_BUTTON_SIZE = new Coord(50, 50);
+    public static final Coord SML_BUTTON_SIZE = new Coord(50);
     public static final Font STAGE_FONT = new Font("Consolas", Font.BOLD, 25);
     public static final Coord STAGE_BUTTON_SIZE = new Coord(510, 255);
-    public static final Coord WEAPON_ICON_SIZE = new Coord(100, 100);
+    public static final Coord WEAPON_ICON_SIZE = new Coord(100);
 
     // Transition constants
     public static final int NO_TRANSITION = -1;
@@ -255,7 +258,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     // 3 <- Game End Screen
     // 4 <- Credit/Tutorial Screen
     // 5 <- Battle Log Screen
-    public static int gameState = STUDIO_ANIM_GS;
+    public static int gameState = CHOOSE_FIGHT_GS; // STUDIO_ANIM_GS;
 
     // Players
     public static Omegaman[] omegaman = new Omegaman[Omegaman.NUM_PLAYERS];
@@ -340,8 +343,8 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static BufferedImage[] slides = new BufferedImage[NUM_SLIDES];
 
     // Menu stats
-    public static int transitionCounter = START_ANIM_LEN;
-    public static int transitiono = START_ANIM;
+    public static int transitionCounter = 0; // START_ANIM_LEN;
+    public static int transitiono = NO_TRANSITION; // START_ANIM;
 
     // Start menu
     public static LinkedList<Integer> letterOrder = new LinkedList<>();
@@ -542,6 +545,19 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         }
         for (int i = 0; i != Fire.NO_OF_SPRITES; i++) {
             Fire.images[i] = ImageIO.read(new File(DRAGON_PROJS_DIR + "fire" + i + ".png"));
+        }
+
+        // Bird projectile image importing
+        for (int i = 0; i != Egg.NO_OF_STATES; i++) {
+            Egg.images[i] = new BufferedImage[Egg.NUM_TYPES[i]][Egg.NUM_SPRITES[i]];
+            for (int j = 0 ; j != Egg.NUM_TYPES[i]; j++) {
+                for (int k = 0; k != Egg.NUM_SPRITES[i]; k++) {
+                    Egg.images[i][j][k] = ImageIO.read(new File(BIRD_PROJS_DIR + j + Egg.STATE_NAMES[i] + k + ".png"));
+                }
+            }
+        }
+        for (int i = 0; i != Feather.NO_OF_SPRITES; i++) {
+            Feather.images[i] = ImageIO.read(new File(BIRD_PROJS_DIR + "feather" + i + ".png"));
         }
 
         // Stages
@@ -884,6 +900,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
 
             // Draw boss
             for (Boss boss: bosses) {
+                boss.drawSmokes(g2);
                 if (boss.state != Boss.DEAD || boss.coord.y <= SCREEN_SIZE.y + boss.size.y / 2) boss.draw(g);
                 else boss.drawSurge(g);
             }
@@ -984,7 +1001,6 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                         omega.checkBossHitbox();
                         omega.countInv();
                         omega.regenSkillPts();
-                        omega.shakePercent();
                     }
                 }
                 
@@ -1002,6 +1018,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
 
                 // Process bosses
                 for (Boss boss: bosses) {
+                    boss.processSmokes();
                     // Process alive bosses
                     if (boss.state != Boss.DEAD) {
                         if (boss.transitionTo != Boss.NO_TRANSITION) {
@@ -1019,6 +1036,10 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                             boss.surge();
                         }
                     }
+                }
+
+                for (Omegaman omega: omegaman) {
+                    omega.shakePercent();
                 }
 
                 // Process and draw game end transitions and countdown transitions
@@ -1213,7 +1234,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     // Return: Whether or not the object is out of the screen
     // Description: This method returns whether or not an object is completely out of the screen given it's center coordinate and size
     public static boolean outOfScreen(Coord coord, Coord size) {
-        return (coord.x < -size.x / 2 || coord.x > SCREEN_SIZE.x + size.x / 2 || coord.y < -size.y / 2 || coord.y > SCREEN_SIZE.y + size.y / 2);
+        return !intersects(SCREEN_CENTER, SCREEN_SIZE, coord, size, 0);
     }
 
     // Parameters:
@@ -2084,8 +2105,20 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                     transitionCounter = FADE_IN_LEN;
                     transitiono = FADE_IN;
                     battleDone.name = gameEndTextBoxes.get(BATTLE_NAME_BOX_IDX).text == ""? "THE UNKNOWN BATTLE": gameEndTextBoxes.get(BATTLE_NAME_BOX_IDX).text;
+                    ArrayList<Battle> sortedBattleLog = new ArrayList<>(battleLog);
+                    sortedBattleLog.sort(new SortByTitle());
+                    int i = Collections.binarySearch(sortedBattleLog, battleDone, new SortByTitle());
+                    if (i >= 0) {
+                        int num = 0;
+                        i++;
+                        while (i != sortedBattleLog.size() && sortedBattleLog.get(i).name.equals(battleDone.name + " " + num)) {
+                            i++;
+                            num++;
+                        }
+                        battleDone.name += " " + num;
+                    }
+                    battleLog.add(battleDone);
                     gameEndTextBoxes.get(BATTLE_NAME_BOX_IDX).text = "";
-                    battleLog.add(battleDone); 
                     writeFile();
                     resortLog();
                     battleDone = null;
