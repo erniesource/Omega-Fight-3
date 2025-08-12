@@ -5,12 +5,11 @@ import java.awt.image.BufferedImage;
 
 public class Doctor extends Boss {
     // Combat constants
-    public static final double INITIAL_HEALTH = 600 * Omegaman.percMult();
-    public static final double SIZE_TO_HITBOX = 0.4;
+    public static final double INITIAL_HEALTH = 500 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
 
     // Sprite constants
     public static final int[] STATE_SPRITE_START = {0, 2, 4, 7};
-    public static final int[] STATE_SPRITE_SIGN = {0, OmegaFight3.LEFT_SIGN, OmegaFight3.LEFT_SIGN, OmegaFight3.RIGHT_SIGN};
+    public static final int[] STATE_SPRITE_SIGN = {OmegaFight3.LEFT_SIGN, OmegaFight3.LEFT_SIGN, OmegaFight3.LEFT_SIGN, OmegaFight3.RIGHT_SIGN};
     public static final int[] STATE_NO_SPRITES = {2, 2, 3, 4};
     public static final int NO_OF_SPRITES = 11;
 
@@ -22,9 +21,9 @@ public class Doctor extends Boss {
     public static final Coord[] STATE_SIZE = {new Coord(220, 420), new Coord(280, 400), new Coord(280, 440), new Coord(400, 525)};
     public static final int[] STATE_SPRITE_CHANGE_HZ = {10, 10, 7, 5};
     public static final Coord[] STATE_COORD = {null, new Coord(OmegaFight3.SCREEN_SIZE.x * 7 / 8, OmegaFight3.SCREEN_SIZE.y / 2),
-        new Coord(OmegaFight3.SCREEN_SIZE.x * 7 / 8, OmegaFight3.stage[OmegaFight3.BATTLEFIELD_NO].platforms[1].y - (OmegaFight3.stage[OmegaFight3.BATTLEFIELD_NO].platforms[0].y - OmegaFight3.stage[OmegaFight3.BATTLEFIELD_NO].platforms[1].y)),
+        new Coord(OmegaFight3.SCREEN_SIZE.x * 7 / 8, OmegaFight3.stage[Stage.BATTLEFIELD_NO].platforms[1].y - (OmegaFight3.stage[Stage.BATTLEFIELD_NO].platforms[0].y - OmegaFight3.stage[Stage.BATTLEFIELD_NO].platforms[1].y)),
         new Coord(OmegaFight3.SCREEN_SIZE.x / 8, OmegaFight3.SCREEN_SIZE.y / 2)};
-    public static final int[] STATE_TIME = {0, 60, 30, 300};
+    public static final int[] STATE_TIME = {20, 60, 30, 300};
 
     // Spit Constants
     public static final double SPIT_SPEED = 7;
@@ -61,7 +60,7 @@ public class Doctor extends Boss {
 
     // Constructor
     public Doctor(double difficulty) {
-        super(STATE_COORD[IDLE].copy(), STATE_SPRITE_START[IDLE], STATE_SPRITE_SIGN[IDLE], STATE_TIME[IDLE], STATE_SIZE[IDLE].copy(), IDLE, INITIAL_HEALTH, difficulty, SIZE_TO_HITBOX);
+        super(STATE_COORD[IDLE].copy(), STATE_SPRITE_START[IDLE], STATE_SPRITE_SIGN[IDLE], STATE_TIME[IDLE], STATE_SIZE[IDLE].copy(), IDLE, INITIAL_HEALTH, difficulty);
     }
 
     // Description: This method transitions the boss from state to state (from each attack's location to another attack's location)
@@ -220,7 +219,9 @@ public class Doctor extends Boss {
             frameCounter = 0;
             spriteNo = 0;
             OmegaFight3.screenShakeCounter += DIE_SCREENSHAKE;
-            OmegaFight3.play(OmegaFight3.boom);
+            OmegaFight3.boom.stop();
+            OmegaFight3.boom.setFramePosition(0);
+            OmegaFight3.boom.start();
         }
     }
 

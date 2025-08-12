@@ -1,0 +1,348 @@
+package Version4;
+
+import java.awt.*;
+import java.awt.image.BufferedImage;
+
+public class Ring extends Projectile{
+    // Damage constants
+    public static final double DMG = 10 * Omegaman.PERC_MULT;
+    public static final double DURABILITY = 2;
+    public static final double KB = 10;
+    public static final double KB_SPREAD = Math.PI / 3;
+
+    // Size constants
+    public static final Coord SIZE = new Coord(90, 135);
+    public static final double SIZE_TO_HITBOX = 0.85;
+
+    // Movement constants
+    public static final double VELOCITY = 4;
+
+    // Misc constants
+    public static final boolean CAN_HIT_PROJ = true;
+    public static final boolean IS_ON_TOP = true;
+    public static final int NO_OF_SPRITES = 3;
+    public static final int SPRITE_CHANGE_HZ = 7;
+
+    // Static images
+    public static BufferedImage[] images = new BufferedImage[NO_OF_SPRITES];
+
+    // Constructor with custom stats
+    public Ring(Boss boss, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double durability, boolean canHitProj, boolean isOnTop) {
+        super(boss, coord, size, hitBoxSize, velocity, dir, damage, knockback, durability, INF_LIFE, canHitProj, isOnTop);
+    }
+
+    // Constructor with default stats
+    public Ring(Boss boss, Coord coord, double dir) {
+        this(boss, coord, SIZE.copy(), SIZE.scaledBy(SIZE_TO_HITBOX), VELOCITY, dir, DMG, KB, DURABILITY, CAN_HIT_PROJ, IS_ON_TOP);
+    }
+
+    // Description: This method draws the laser ring
+    public void draw(Graphics2D g2) {
+        g2.rotate(dir, coord.x, coord.y);
+        g2.drawImage(images[-frameCounter / SPRITE_CHANGE_HZ], (int) (coord.x - size.x / 2), (int) (coord.y - size.y / 2), (int) size.x, (int) size.y, null);
+        g2.rotate(-dir, coord.x, coord.y);
+    }
+
+    // Description: this method processes the laser ring
+    public void process() {
+        super.process();
+        if (frameCounter == -SPRITE_CHANGE_HZ * NO_OF_SPRITES) frameCounter = 0;
+
+        // Check each player's hitbox and projectiles
+        for (Omegaman enemy: OmegaFight3.omegaman) {
+            // Enemy hitbox
+            if (OmegaFight3.intersects(coord, hitBoxSize, enemy.coord, enemy.size, OmegaFight3.HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
+                enemy.hurt(damage, knockback, coord, dir, KB_SPREAD);
+                die();
+            }
+
+            // Enemy projectiles
+            if (canHitProj) {
+                for (Projectile proj: enemy.projectiles) {
+                    if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, OmegaFight3.HITBOX_LEEWAY) && proj.hitBoxActive && proj.canHitProj) {
+                        if (shouldDieTo(proj.durability)) die();
+                        if (proj.shouldDieTo(durability)) proj.die();
+                    }
+                }
+            }
+        }
+    }
+}
+
+class Meteor extends Projectile {
+    // Damage constants
+    public static final double DMG = 5 * Omegaman.PERC_MULT;
+    public static final double DURABILITY = INFINITE_DURABILITY;
+    public static final double KB = 20;
+    public static final double KB_SPREAD = Math.PI / 3;
+
+    // Size constants
+    public static final Coord SIZE = (new Coord(220, 170)).scaledBy(0.75);
+    public static final double SIZE_TO_HITBOX = 0.7;
+    public static final double SIZE_TO_SMOKE_SIZE = 0.5;
+
+    // Movement constants
+    public static final double VELOCITY = 8;
+    public static final double PERIODS = 1.75;
+
+    // Misc constants
+    public static final boolean CAN_HIT_PROJ = false;
+    public static final boolean IS_ON_TOP = true;
+    public static final int NO_OF_SPRITES = 3;
+    public static final int SPRITE_CHANGE_HZ = 7;
+
+    // Instance variables
+    public int sign;
+
+    // Static images
+    public static BufferedImage[] images = new BufferedImage[NO_OF_SPRITES];
+
+    // Constructor with custom stats
+    public Meteor(Boss boss, Coord size, Coord hitBoxSize, double xCoord, double velocity, double dir, double damage, double knockback, double durability, int sign, boolean canHitProj, boolean isOnTop) {
+        super(boss, new Coord(xCoord), size, hitBoxSize, velocity, dir, damage, knockback, durability, INF_LIFE, canHitProj, isOnTop);
+        this.sign = sign;
+        func();
+    }
+
+    // Constructor with default stats
+    public Meteor(Boss boss, double xCoord, int sign) {
+        this(boss, SIZE.copy(), SIZE.scaledBy(SIZE_TO_HITBOX), xCoord, VELOCITY, 0, DMG, KB, DURABILITY, sign, CAN_HIT_PROJ, IS_ON_TOP);
+    }
+
+    // Description: This method draws the meteor
+    public void draw(Graphics2D g2) {
+        g2.rotate(dir, coord.x, coord.y);
+        g2.drawImage(images[frameCounter / SPRITE_CHANGE_HZ], (int) (coord.x - size.x / 2), (int) (coord.y - size.y / 2), (int) size.x, (int) size.y, null);
+        g2.rotate(-dir, coord.x, coord.y);
+    }
+
+    // Description: This method processes the meteor
+    public void process() {
+        // Movement
+        coord.x += velocity * sign;
+        func();
+
+        // Smoke
+        character.smokeQ.add(new Smoke(coord.copy(), new Coord(Math.max(size.x, size.y) * SIZE_TO_SMOKE_SIZE), Math.random() * Math.PI * 2));
+
+        // Sprite change
+        frameCounter = (frameCounter + 1) % (NO_OF_SPRITES * SPRITE_CHANGE_HZ);
+
+        // Check if meteor is out of screen
+        if (OmegaFight3.outOfScreen(coord, size)) {
+            die();
+        }
+
+        // Loop through every player's hitbox and projectiles
+        for (Omegaman enemy: OmegaFight3.omegaman) {
+            // Enemy hitbox
+            if (OmegaFight3.intersects(coord, hitBoxSize, enemy.coord, enemy.size, OmegaFight3.HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
+                enemy.hurt(damage, knockback, coord, dir, KB_SPREAD);
+            }
+
+            // Enemy projectiles
+            if (canHitProj) {
+                for (Projectile proj: enemy.projectiles) {
+                    if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, OmegaFight3.HITBOX_LEEWAY) && proj.hitBoxActive && proj.canHitProj) {
+                        if (shouldDieTo(proj.durability)) die();
+                        if (proj.shouldDieTo(durability)) proj.die();
+                    }
+                }
+            }
+        }
+    }
+
+    // Description: This method uses a function and it's derivative to calculate the meteor's direction and y coordinate (First time I've ever actually applied differential calculus).
+    // It's called func because it uses a function
+    public void func() {
+        coord.y = Math.abs(OmegaFight3.SCREEN_SIZE.y - SIZE.y / 2 - (Dragon.STATE_COORD[Dragon.BARF].y + Dragon.COORD_TO_BARF_COORD.y)) / 2 * -Math.cos(Math.PI * 2 / ((Dragon.STATE_COORD[Dragon.BARF].x + Dragon.COORD_TO_BARF_COORD.x * Dragon.STATE_SPRITE_SIGN[Dragon.BARF]) / PERIODS) * (coord.x - (Dragon.STATE_COORD[Dragon.BARF].x + Dragon.COORD_TO_BARF_COORD.x * sign))) + (OmegaFight3.SCREEN_SIZE.y - SIZE.y / 2 + (Dragon.STATE_COORD[Dragon.BARF].y + Dragon.COORD_TO_BARF_COORD.y)) / 2;
+        dir = Math.atan(Math.abs(OmegaFight3.SCREEN_SIZE.y - SIZE.y / 2 - (Dragon.STATE_COORD[Dragon.BARF].y + Dragon.COORD_TO_BARF_COORD.y)) / 2 * (Math.PI * 2 / ((Dragon.STATE_COORD[Dragon.BARF].x + Dragon.COORD_TO_BARF_COORD.x * Dragon.STATE_SPRITE_SIGN[Dragon.BARF]) / PERIODS)) * Math.sin(Math.PI * 2 / ((Dragon.STATE_COORD[Dragon.BARF].x + Dragon.COORD_TO_BARF_COORD.x * Dragon.STATE_SPRITE_SIGN[Dragon.BARF]) / PERIODS) * (coord.x - (Dragon.STATE_COORD[Dragon.BARF].x + Dragon.COORD_TO_BARF_COORD.x * sign)))) + (sign == OmegaFight3.LEFT_SIGN? 0: Math.PI);
+    }
+}
+
+class Bubble extends Projectile {
+    // Damage constants
+    public static final double DMG = 10 * Omegaman.PERC_MULT;
+    public static final double DURABILITY = INFINITE_DURABILITY;
+    public static final double KB = 15;
+    public static final double KB_SPREAD = Math.PI / 3;
+
+    // Size constants
+    public static final Coord SIZE = new Coord(120, 120);
+    public static final double SIZE_TO_HITBOX = 1.0;
+    public static final double EXPLOSION_SIZE_MULT = 2;
+
+    // Movement constants
+    public static final double VELOCITY = 10;
+    public static final double ACCEL = 2;
+    public static final double ACCEL_TO_BIG_JUMP_VEL = -22;
+    public static final double ACCEL_TO_SML_JUMP_VEL = -8;
+    public static final double CHANGE_OF_BIG_JUMP = 0.33;
+
+    // Misc constants
+    public static final boolean CAN_HIT_PROJ = true;
+    public static final boolean IS_ON_TOP = true;
+    public static final int SCREENSHAKE = 15;
+
+    // Sprite constants
+    public static final int NO_OF_SPRITES = 3;
+    public static final int SPRITE_CHANGE_HZ = 7;
+
+    // Instance variables
+    public Coord bubbleVelocity;
+
+    // Static images
+    public static BufferedImage[] images = new BufferedImage[NO_OF_SPRITES];
+
+    // Constructor with custom stats
+    public Bubble(Boss boss, Coord coord, Coord size, Coord hitBoxSize, double velocity, double damage, double knockback, double durability, boolean canHitProj, boolean isOnTop) {
+        super(boss, coord, size, hitBoxSize, 0, (coord.x < OmegaFight3.SCREEN_SIZE.x / 2? 0: Math.PI), damage, knockback, durability, INF_LIFE, canHitProj, isOnTop);
+        bubbleVelocity = new Coord(velocity * Math.cos(dir), 0);
+    }
+
+    // Constructor with default stats
+    public Bubble(Boss boss, Coord coord) {
+        this(boss, coord, SIZE.copy(), SIZE.scaledBy(SIZE_TO_HITBOX), VELOCITY, DMG, KB, DURABILITY, CAN_HIT_PROJ, IS_ON_TOP);
+    }
+
+    // Description: This method explodes the bombot
+    public void die() {
+        if (!dead) {
+            OmegaFight3.explosionQ.add(new Explosion(coord, size.scaledBy(EXPLOSION_SIZE_MULT)));
+        }
+        super.die();
+    }
+
+    // Description: This method draws the Fire bubble
+    public void draw(Graphics2D g2) {
+        g2.drawImage(images[frameCounter / SPRITE_CHANGE_HZ], (int) (coord.x - size.x / 2), (int) (coord.y - size.y / 2), (int) size.x, (int) size.y, null);
+    }
+
+    // Description: This method processes the fire bubble
+    public void process() {
+        // Sprit change
+        frameCounter = (frameCounter + 1) % (NO_OF_SPRITES * SPRITE_CHANGE_HZ);
+
+        // Movement
+        coord.x += bubbleVelocity.x;
+        coord.y += bubbleVelocity.y;
+        if (coord.y > OmegaFight3.SCREEN_SIZE.y - size.y / 2) {
+            bubbleVelocity.y = ACCEL * (Math.random() < CHANGE_OF_BIG_JUMP? ACCEL_TO_BIG_JUMP_VEL: ACCEL_TO_SML_JUMP_VEL);
+            coord.y = OmegaFight3.SCREEN_SIZE.y - size.y / 2;
+        }
+        bubbleVelocity.y += ACCEL;
+
+        // Check if fire bubble is outside of screen
+        if (OmegaFight3.outOfScreen(coord, size)) {
+            die();
+        }
+
+        // Loop through every player's hitbox and projectiles
+        for (Omegaman enemy: OmegaFight3.omegaman) {
+            // Enemy hitbox
+            if (OmegaFight3.intersects(coord, hitBoxSize, enemy.coord, enemy.size, OmegaFight3.HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
+                enemy.hurt(damage, knockback, coord, Math.atan2(bubbleVelocity.y, bubbleVelocity.x), KB_SPREAD);
+                OmegaFight3.screenShakeCounter += (int) (SCREENSHAKE * (size.x / SIZE.x));
+                die();
+            }
+
+            // Enemy projectiles
+            if (canHitProj) {
+                for (Projectile proj: enemy.projectiles) {
+                    if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, OmegaFight3.HITBOX_LEEWAY) && proj.hitBoxActive && proj.canHitProj) {
+                        if (shouldDieTo(proj.durability)) die();
+                        if (proj.shouldDieTo(durability)) proj.die();
+                    }
+                }
+            }
+        }
+    }
+
+    // Description: This method returns that the missile should die to anything
+    public boolean shouldDieTo(double enemyDurability) {
+        return true;
+    }
+}
+
+class Fire extends Projectile {
+    // Damage constants
+    public static final double DMG = 10 * Omegaman.PERC_MULT;
+    public static final double DURABILITY = 2;
+    public static final double KB = 20;
+    public static final double KB_SPREAD = Math.PI / 3;
+
+    // Size constants
+    public static final Coord SIZE = new Coord(150, 645);
+    public static final double SIZE_TO_HITBOX = 0.75;
+
+    // Movement constants
+    public static final double VELOCITY = 5;
+
+    // Misc constants
+    public static final boolean CAN_HIT_PROJ = false;
+    public static final boolean IS_ON_TOP = true;
+
+    // Sprite constants
+    public static final int NO_OF_SPRITES = 2;
+    public static final int SPRITE_CHANGE_HZ = 10;
+
+    // Instance variables
+    public double trueDir;
+
+    // Static images
+    public static BufferedImage[] images = new BufferedImage[NO_OF_SPRITES];
+
+    // Constructor with custom stats
+    public Fire(Boss boss, Coord coord, double sizeX, double velocity, double dir, double damage, double knockback, double durability, boolean canHitProj, boolean isOnTop) {
+        super(boss, coord, new Coord(sizeX, 0), (new Coord(sizeX, 0)).scaledBy(SIZE_TO_HITBOX), velocity, OmegaFight3.normalizeAngle(dir) < 0? -Math.PI / 2: Math.PI / 2, damage, knockback, durability, INF_LIFE, canHitProj, isOnTop);
+        trueDir = dir;
+    }
+
+    // Constructor with default stats
+    public Fire(Boss boss, Coord coord, double dir) {
+        this(boss, coord, SIZE.x, VELOCITY, dir, DMG, KB, DURABILITY, CAN_HIT_PROJ, IS_ON_TOP);
+    }
+
+    // Description: This method draws the Fire from the ceiling
+    public void draw(Graphics2D g2) {
+        g2.drawImage(images[frameCounter / SPRITE_CHANGE_HZ], (int) (coord.x - size.x / 2), (int) (coord.y - size.y / 2 * Math.signum(trueDir)), (int) size.x, (int) (size.y * Math.signum(trueDir)), null);
+    }
+
+    // Description: This method processes the fire from the ceiling
+    public void process() {
+        // Sprite change
+        frameCounter = (frameCounter + 1) % (NO_OF_SPRITES * SPRITE_CHANGE_HZ);
+
+        // Locational changes
+        coord.y += velocity * Math.sin(dir);
+        size.y += velocity * Math.sin(dir) * 2;
+        hitBoxSize.y += velocity * Math.sin(dir) * 2 * SIZE_TO_HITBOX;
+        if (Math.abs(size.y) > Math.abs(SIZE.y)) {
+            size.y = SIZE.y;
+            dir *= -1;
+        }
+
+        // Check if fire from the ceiling is out of the screen
+        if (coord.y <= 0) {
+            die();
+        }
+
+        // Loop through every player's hitbox and projectiles
+        for (Omegaman enemy: OmegaFight3.omegaman) {
+            // Enemy hitbox
+            if (OmegaFight3.intersects(coord, hitBoxSize, enemy.coord, enemy.size, OmegaFight3.HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
+                enemy.hurt(damage, knockback, coord, trueDir, KB_SPREAD);
+            }
+
+            // Enemy projectiles
+            if (canHitProj) {
+                for (Projectile proj: enemy.projectiles) {
+                    if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, OmegaFight3.HITBOX_LEEWAY) && proj.hitBoxActive && proj.canHitProj) {
+                        if (shouldDieTo(proj.durability)) die();
+                        if (proj.shouldDieTo(durability)) proj.die();
+                    }
+                }
+            }
+        }
+    }
+}

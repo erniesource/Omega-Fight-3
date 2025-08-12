@@ -5,7 +5,7 @@ import java.awt.image.BufferedImage;
 
 public class Ring extends Projectile{
     // Damage constants
-    public static final double DMG = 10 * Omegaman.percMult();
+    public static final double DMG = 10 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
     public static final double DURABILITY = 2;
     public static final double KB = 10;
     public static final double KB_SPREAD = Math.PI / 3;
@@ -19,6 +19,7 @@ public class Ring extends Projectile{
     public static final int LIFE = INF_LIFE;
 
     // Misc constants
+    public static final int SCREENSHAKE = 0;
     public static final boolean CAN_HIT_PROJ = true;
     public static final int NO_OF_SPRITES = 3;
     public static final int SPRITE_CHANGE_HZ = 7;
@@ -61,7 +62,7 @@ public class Ring extends Projectile{
         for (Omegaman enemy: OmegaFight3.omegaman) {
             // Enemy hitbox
             if (OmegaFight3.intersects(coord, hitBoxSize, enemy.coord, enemy.size, OmegaFight3.HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
-                enemy.hurt(damage, knockback, coord, dir, KB_SPREAD);
+                enemy.hurt(damage, knockback, coord, dir, KB_SPREAD, SCREENSHAKE);
                 die();
             }
 
@@ -80,7 +81,7 @@ public class Ring extends Projectile{
 
 class Meteor extends Projectile {
     // Damage constants
-    public static final double DMG = 5 * Omegaman.percMult();
+    public static final double DMG = 5 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
     public static final double DURABILITY = INFINITE_DURABILITY;
     public static final double KB = 20;
     public static final double KB_SPREAD = Math.PI / 3;
@@ -88,7 +89,6 @@ class Meteor extends Projectile {
     // Size constants
     public static final Coord SIZE = (new Coord(220, 170)).scaledBy(0.75);
     public static final double SIZE_TO_HITBOX = 0.7;
-    public static final double SIZE_TO_SMOKE_SIZE = 0.5;
 
     // Movement constants
     public static final double VELOCITY = 8;
@@ -96,6 +96,7 @@ class Meteor extends Projectile {
     public static final double PERIODS = 1.75;
 
     // Misc constants
+    public static final int SCREENSHAKE = 0;
     public static final boolean CAN_HIT_PROJ = false;
     public static final int NO_OF_SPRITES = 3;
     public static final int SPRITE_CHANGE_HZ = 7;
@@ -131,9 +132,6 @@ class Meteor extends Projectile {
         coord.x += velocity * sign;
         func();
 
-        // Smoke
-        character.smokeQ.add(new Smoke(coord.copy(), new Coord(Math.max(size.x, size.y) * SIZE_TO_SMOKE_SIZE), Math.random() * Math.PI * 2));
-
         // Sprite change
         frameCounter = (frameCounter + 1) % (NO_OF_SPRITES * SPRITE_CHANGE_HZ);
 
@@ -146,7 +144,7 @@ class Meteor extends Projectile {
         for (Omegaman enemy: OmegaFight3.omegaman) {
             // Enemy hitbox
             if (OmegaFight3.intersects(coord, hitBoxSize, enemy.coord, enemy.size, OmegaFight3.HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
-                enemy.hurt(damage, knockback, coord, dir, KB_SPREAD);
+                enemy.hurt(damage, knockback, coord, dir, KB_SPREAD, SCREENSHAKE);
             }
 
             // Enemy projectiles
@@ -171,7 +169,7 @@ class Meteor extends Projectile {
 
 class Bubble extends Projectile {
     // Damage constants
-    public static final double DMG = 10 * Omegaman.percMult();
+    public static final double DMG = 10 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
     public static final double DURABILITY = 2;
     public static final double KB = 15;
     public static final double KB_SPREAD = Math.PI / 3;
@@ -189,6 +187,7 @@ class Bubble extends Projectile {
     public static final double CHANGE_OF_BIG_JUMP = 0.33;
 
     // Misc constants
+    public static final int SCREENSHAKE = 0;
     public static final boolean CAN_HIT_PROJ = true;
 
     // Sprite constants
@@ -240,7 +239,7 @@ class Bubble extends Projectile {
         for (Omegaman enemy: OmegaFight3.omegaman) {
             // Enemy hitbox
             if (OmegaFight3.intersects(coord, hitBoxSize, enemy.coord, enemy.size, OmegaFight3.HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
-                enemy.hurt(damage, knockback, coord, Math.atan2(bubbleVelocity.y, bubbleVelocity.x), KB_SPREAD);
+                enemy.hurt(damage, knockback, coord, dir, KB_SPREAD, SCREENSHAKE);
                 die();
             }
 
@@ -259,7 +258,7 @@ class Bubble extends Projectile {
 
 class Fire extends Projectile {
     // Damage constants
-    public static final double DMG = 10 * Omegaman.percMult();
+    public static final double DMG = 10 * (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
     public static final double DURABILITY = 2;
     public static final double KB = 20;
     public static final double KB_SPREAD = Math.PI / 3;
@@ -273,6 +272,7 @@ class Fire extends Projectile {
     public static final double VELOCITY = 5;
 
     // Misc constants
+    public static final int SCREENSHAKE = 0;
     public static final boolean CAN_HIT_PROJ = false;
 
     // Sprite constants
@@ -316,7 +316,7 @@ class Fire extends Projectile {
         }
 
         // Check if fire from the ceiling is out of the screen
-        if (coord.y <= 0) {
+        if (coord.y < 0) {
             die();
         }
 
@@ -324,7 +324,7 @@ class Fire extends Projectile {
         for (Omegaman enemy: OmegaFight3.omegaman) {
             // Enemy hitbox
             if (OmegaFight3.intersects(coord, hitBoxSize, enemy.coord, enemy.size, OmegaFight3.HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
-                enemy.hurt(damage, knockback, coord, trueDir, KB_SPREAD);
+                enemy.hurt(damage, knockback, coord, dir, KB_SPREAD, SCREENSHAKE);
             }
 
             // Enemy projectiles

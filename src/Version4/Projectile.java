@@ -1,0 +1,71 @@
+package Version4;
+
+import java.awt.*;
+
+abstract public class Projectile {
+    // Misc Variables
+    public static final double INFINITE_DURABILITY = 100;
+    public static final int NO_OF_PLAYER_PROJECTILES = 6;
+    public static final int INF_LIFE = 0;
+    
+    // General variables
+    public Char character;
+    public Coord coord;
+    public Coord size;
+    public Coord hitBoxSize;
+    public boolean hitBoxActive = true;
+    public boolean canHitProj;
+    public boolean isOnTop;
+    public boolean dead;
+
+    // Movement variables
+    public double velocity;
+    public double dir;
+    public int frameCounter;
+
+    // Combat variables
+    public double damage;
+    public double knockback;
+    public double durability;
+
+    // Constructor
+    public Projectile(Char character, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double durability, int frameCounter, boolean canHitProj, boolean isOnTop) {
+        this.character = character;
+        this.coord = coord;
+        this.size = size;
+        this.hitBoxSize = hitBoxSize;
+        this.velocity = velocity;
+        this.dir = dir;
+        this.damage = damage;
+        this.knockback = knockback;
+        this.durability = durability;
+        this.frameCounter = frameCounter;
+        this.canHitProj = canHitProj;
+        this.isOnTop = isOnTop;
+    }
+
+    // Description: THis method kills the projectile
+    public void die() {
+        if (!dead) {
+            dead = true;
+            character.deadProjectiles.add(this);
+        }
+    }
+
+    // Description: THis method processes the movement and expiry of the projectile
+    public void process() {
+        coord.x += velocity * Math.cos(dir);
+        coord.y += velocity * Math.sin(dir);
+        frameCounter--;
+        if (frameCounter == 0) die();
+        else if (OmegaFight3.outOfScreen(coord, size)) die(); // Gotta revamp this ig make subclass for gravity affected?
+    }
+
+    // Description: This method determines whether or not this projectile should die to another projectile with the specified durability
+    public boolean shouldDieTo(double enemyDurability) {
+        return durability <= enemyDurability;
+    }
+
+    // Abstract method(s)
+    abstract public void draw(Graphics2D g2);
+}

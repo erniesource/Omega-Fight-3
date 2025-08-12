@@ -13,7 +13,7 @@ public class Omegaman extends Char {
     public static final int LAST_RUN_SPRITE = 3;
     public static final int JUMP_SPRITE = 4;
     public static final int HURT_SPRITE = 5;
-    public static final Coord SIZE = new Coord(100);
+    public static final Coord SIZE = new Coord(100, 100);
 
     // Movement Constants
     public static final int AIRBORNE = -1;
@@ -50,12 +50,14 @@ public class Omegaman extends Char {
     public static final int NOT_STUNNED = 0;
     public static final int KB_COORD_Y_OFFSET = 50;
     public static final double KB_GRAVITY = 1.25;
-    public static final double BOUNCE_MIN_VEL_Y = 10;
+    public static final double BOUNCE_MIN_VEL_Y = 11;
     public static final double STUN_REDUCTION = 0.9;
 
     // Kamikaze constants
     public static final double KAMIKAZE_DMG = 1 * Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
     public static final double KAMIKAZE_KB = 10;
+    public static final int KAMIKAZE_SCREENSHAKE = 0;
+    public static final double KAMIKAZE_DIST = 0.5;
 
     // HUD Constants
     public static final int PERCENT_DISPLAY_Y_COORD = 790;
@@ -113,9 +115,6 @@ public class Omegaman extends Char {
     public static final int DMG_TO_OMEGAMAN = 5;
     public static final int DMG_TO_BOSS = 6;
 
-    // Directory constants
-    public static final String HUD_DIR = "HUD/";
-
     // Movement stats
     public int runSign = 1; // 1: Positive, -1: Negative
     public int lftKey, ritKey, upKey, dwnKey, shtKeys[], swtKey;
@@ -135,6 +134,7 @@ public class Omegaman extends Char {
     public int chargingWeapon = NOT_CHARGING;
     public int[] loadout;
     public int[] loadoutButtono;
+    public Deque<Smoke> smokeQ = new LinkedList<>(); // To be used maybe
 
     // Skill point statistics
     public int skillPts = ONES_PER_SKILL_PT * 3 / 2;
@@ -144,7 +144,7 @@ public class Omegaman extends Char {
     public int stunCounter;
 
     // Combat statistics
-    public int livesLeft = 8;
+    public int livesLeft = 3;
     public int percent;
     public int percentShakeCounter;
     public Coord[] percentDigitShake = new Coord[4];
@@ -162,9 +162,9 @@ public class Omegaman extends Char {
     public int playerNo;
 
     // Constructor
-    public Omegaman(int playerNo, Coord coord, Coord size, int spriteSign, int onPlatform, int[] controls, int[] shtKeys, int[] loadout, int[] loadoutButtono) throws IOException {
+    public Omegaman(int playerNo, Coord coord, int spriteSign, int onPlatform, int[] controls, int[] shtKeys, int[] loadout, int[] loadoutButtono) throws IOException {
         // Initialize character variables
-        super(coord, IDLE_SPRITE, spriteSign, 0, size, ALIVE_STATE);
+        super(coord, IDLE_SPRITE, spriteSign, 0, SIZE.copy(), ALIVE_STATE);
 
         // Initialize player variables
         this.playerNo = playerNo;
@@ -181,27 +181,23 @@ public class Omegaman extends Char {
 
         // Percent related stuff
         percentDisplayX = PERCENT_DISPLAY_DIST + (int) (PERCENT_DISPLAY_SIZE.x + PERCENT_DISPLAY_DIST) * playerNo;
-        percentDisplay = ImageIO.read(new File(HUD_DIR + playerNo + "percentdisplay.png"));
+        percentDisplay = ImageIO.read(new File("HUD/" + playerNo + "percentdisplay.png"));
 
         // Load sprites
-        sprite[IDLE_SPRITE] = ImageIO.read(new File(OmegaFight3.PLAYER_SPRITES_DIR + playerNo + "idle.png"));
+        sprite[IDLE_SPRITE] = ImageIO.read(new File("player sprites/" + playerNo + "idle.png"));
         for (int i = 0; i != LAST_RUN_SPRITE - FRST_RUN_SPRITE + 1; i++) {
-            sprite[i + 1] = ImageIO.read(new File(OmegaFight3.PLAYER_SPRITES_DIR + playerNo + "run" + i + ".png"));
+            sprite[i + 1] = ImageIO.read(new File("player sprites/" + playerNo + "run" + i + ".png"));
         }
-        sprite[JUMP_SPRITE] = ImageIO.read(new File(OmegaFight3.PLAYER_SPRITES_DIR + playerNo + "jump.png"));
-        sprite[HURT_SPRITE] = ImageIO.read(new File(OmegaFight3.PLAYER_SPRITES_DIR + playerNo + "hurt.png"));
+        sprite[JUMP_SPRITE] = ImageIO.read(new File("player sprites/" + playerNo + "jump.png"));
+        sprite[HURT_SPRITE] = ImageIO.read(new File("player sprites/" + playerNo + "hurt.png"));
 
         // Load surge images
         for (int i = 0; i != OmegaFight3.NUM_SURGE_IMAGES; i++) {
-            surge[i] = ImageIO.read(new File(OmegaFight3.EXPLOSIONS_DIR + playerNo + "surge" + i + ".png"));
+            surge[i] = ImageIO.read(new File("explosions/" + playerNo + "surge" + i + ".png"));
         }
 
         // Load Face
-        face = ImageIO.read(new File(HUD_DIR + playerNo + "face.png"));
-    }
-
-    public static int percMult() {
-        return (int) Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
+        face = ImageIO.read(new File("HUD/" + playerNo + "face.png"));
     }
 
     // Description: This methods calculates the control in the x-direction
@@ -525,7 +521,7 @@ public class Omegaman extends Char {
 
     // Description: This method return which platform number the player is landing on and AIRBORNE if they are not landing
     public int checkPlatforms() {
-        for (int i = 0; i != OmegaFight3.stage[OmegaFight3.stageNo].platforms.length; i++) if (OmegaFight3.stage[OmegaFight3.stageNo].platforms[i].landed(coord.x, size.y, coord.y, coord.y + velocity.y)) return i;
+        for (int i = 0; i != OmegaFight3.stage[OmegaFight3.stageNo].platforms.length; i++) if (OmegaFight3.stage[OmegaFight3.stageNo].platforms[i].landed(coord.x, coord.y, coord.y + velocity.y)) return i;
         return AIRBORNE;
     }
 
@@ -533,8 +529,8 @@ public class Omegaman extends Char {
     public void checkBossHitbox() {
         if (invCounter == VULNERABLE) {
             for (Boss boss: OmegaFight3.bosses) {
-                if (OmegaFight3.intersects(coord, size, boss.coord, boss.size.scaledBy(boss.sizeToHitbox), 0)) {
-                    hurt(KAMIKAZE_DMG, KAMIKAZE_KB, boss.coord);
+                if (OmegaFight3.intersects(coord, size, boss.coord, boss.size, Math.min(boss.size.x, boss.size.y) * KAMIKAZE_DIST)) {
+                    hurt(KAMIKAZE_DMG, KAMIKAZE_KB, boss.coord, KAMIKAZE_SCREENSHAKE);
                 }
             }
         }
@@ -593,7 +589,9 @@ public class Omegaman extends Char {
             skillPtCounter = 0;
             stunCounter = 0;
             invCounter = RESPAWN_INITIAL_VELOCITY + RESPAWN_TIME_LIMIT + 2;
-            OmegaFight3.play(OmegaFight3.boom);
+            OmegaFight3.boom.stop();
+            OmegaFight3.boom.setFramePosition(0);
+            OmegaFight3.boom.start();
             // fireCounter = 0;
         }
     }
@@ -603,7 +601,9 @@ public class Omegaman extends Char {
         coord.x = OmegaFight3.stage[OmegaFight3.stageNo].spawnCoords[playerNo].x;
         coord.y = -size.y;
         percent = 0;
-        OmegaFight3.play(OmegaFight3.cheer);
+        OmegaFight3.cheer.stop();
+        OmegaFight3.cheer.setFramePosition(0);
+        OmegaFight3.cheer.start();
     }
 
     // Description: This method draws the surge of the dying player
@@ -687,7 +687,7 @@ public class Omegaman extends Char {
     }
 
     // Description: This method hurts the player and prepares them for knockback
-    private void hurtWithKb(double damage, double knockback, Coord enemyCoord) {
+    public void hurtWithKb(double damage, double knockback, Coord enemyCoord, int screenShake) {
         hurt(damage);
 
         // Ensure no clipping through platforms
@@ -699,11 +699,12 @@ public class Omegaman extends Char {
         
         // Stat changes and screenshake
         resetStats(GENERAL_STAT_RESET);
+        OmegaFight3.screenShakeCounter += screenShake;
     }
 
     // Description: This method hurts the player and knocks them back in the directions specified with the amount of spread specified based on the enemy coordinates
-    public void hurt(double damage, double knockback, Coord enemyCoord, double dir, double kbSpread) {
-        hurtWithKb(damage, knockback, enemyCoord);
+    public void hurt(double damage, double knockback, Coord enemyCoord, double dir, double kbSpread, int screenShake) {
+        hurtWithKb(damage, knockback, enemyCoord, screenShake);
 
         // knockback calculations
         knockback *= (percent / Math.pow(10, PERCENT_NUM_DECIMALS) / 100 + 1);
@@ -729,8 +730,8 @@ public class Omegaman extends Char {
     }
 
     // Description: This method hurts the player and knocks them back in any direction based on the enemy coordinates
-    public void hurt(double damage, double knockback, Coord enemyCoord) {
-        hurtWithKb(damage, knockback, enemyCoord);
+    public void hurt(double damage, double knockback, Coord enemyCoord, int screenShake) {
+        hurtWithKb(damage, knockback, enemyCoord, screenShake);
 
         // knockback calculations
         knockback *= (percent / Math.pow(10, PERCENT_NUM_DECIMALS) / 100 + 1);
@@ -747,6 +748,26 @@ public class Omegaman extends Char {
         if (spriteSign == 0) spriteSign = OmegaFight3.RIGHT_SIGN;
     }
 
+    // Description: This method processes the smoke trails of the player and gets rid of dead smoke
+    public void processSmokes() {
+        // Process smoke trails
+        for (Smoke smoke: smokeQ) {
+            smoke.setFrameCounter(smoke.getFrameCounter() - 1);
+        }
+
+        // Delete dead smoke
+        while (!smokeQ.isEmpty() && smokeQ.getFirst().getFrameCounter() == 0) {
+            smokeQ.removeFirst();
+        }
+    }
+
+    // Description: This method draws the smoke trails of the player
+    public void drawSmokes(Graphics2D g2) {
+        for (Smoke smoke: smokeQ) {
+            smoke.draw(g2);
+        }
+    }
+
     // Description: THis method calculates the knockback of the player
     public void knockback() {
         decelerate();
@@ -757,7 +778,7 @@ public class Omegaman extends Char {
         if (platformNo != AIRBORNE) {
             coord.y = getPlatformY(platformNo);
             if (velocity.y >= BOUNCE_MIN_VEL_Y) {
-                hurt(velocity.y - BOUNCE_MIN_VEL_Y);
+                hurt(velocity.y);
                 velocity.y *= -1;
             }
             else velocity.y = 0;
@@ -793,7 +814,7 @@ public class Omegaman extends Char {
 
     // Description: This method gets the y-coordinate of the platform number specified
     public double getPlatformY(int platformNo) {
-        return OmegaFight3.stage[OmegaFight3.stageNo].platforms[platformNo].y - size.y / 2;
+        return OmegaFight3.stage[OmegaFight3.stageNo].platforms[platformNo].y;
     }
 
     // Description: This method calculates the shaking percent of the player

@@ -13,13 +13,11 @@ public class Button {
     public static final int HOVERED = 2;
     public static final int NUM_STATES = 3;
     public static final int SHADOW = 0;
-    public static final int HIGHLIGHT = 1; // CHANGE
-    public static final double FONT_SIZE_TO_HIGHLIGHT_BUFFER_X = 0.4;
-    public static final int HIGHLIGHT_SPACING_Y = 5;
+    public static final int HIGHLIGHT = 1;
+    public static final int HIGHLIGHT_X_BUFFER = 10;
     public static final double LEEWAY = 0;
     public static final double SHADOW_OFFSET = 0.05;
     public static final int NO_BUTTON_NUM = -1;
-    public static final double FONT_SIZE_TO_ACC_SIZE = 0.9;
 
     // Sounds
     public static Clip hover;
@@ -80,19 +78,16 @@ public class Button {
             // Draw text
             if (text != null) {
                 g.setFont(font[state]);
+                g.setColor(Color.WHITE);
                 if (style == SHADOW) {
-                    g.setColor(Color.WHITE);
-                    g.drawString(text, (int) (coord.x - g.getFontMetrics().stringWidth(text) / 2 + SHADOW_OFFSET * Math.pow(font[state].getSize(), FONT_SIZE_TO_ACC_SIZE)),
-                    (int) (coord.y + Math.pow(font[state].getSize(), FONT_SIZE_TO_ACC_SIZE) / 2 + SHADOW_OFFSET * Math.pow(font[state].getSize(), FONT_SIZE_TO_ACC_SIZE)));
-                    g.setColor(Color.BLACK);
-                    g.drawString(text, (int) (coord.x - g.getFontMetrics().stringWidth(text) / 2), (int) (coord.y + Math.pow(font[state].getSize(), FONT_SIZE_TO_ACC_SIZE) / 2));
+                    g.drawString(text, (int) (coord.x - g.getFontMetrics().stringWidth(text) / 2 + SHADOW_OFFSET * Math.pow(font[state].getSize(), 0.9)),
+                    (int) (coord.y + Math.pow(font[state].getSize(), 0.9) / 2 + SHADOW_OFFSET * Math.pow(font[state].getSize(), 0.9)));
                 }
                 else if (style == HIGHLIGHT) {
-                    g.setColor(Color.WHITE);
-                    g.fillRect((int) (coord.x - (g.getFontMetrics().stringWidth(text) + font[state].getSize() * FONT_SIZE_TO_HIGHLIGHT_BUFFER_X) / 2), (int) (coord.y + size[state].y / 2 - font[state].getSize() - HIGHLIGHT_SPACING_Y), g.getFontMetrics().stringWidth(text) + (int) (font[state].getSize() * FONT_SIZE_TO_HIGHLIGHT_BUFFER_X), font[state].getSize());
-                    g.setColor(Color.BLACK);
-                    g.drawString(text, (int) (coord.x - g.getFontMetrics().stringWidth(text) / 2), (int) (coord.y + (size[state].y - font[state].getSize() + Math.pow(font[state].getSize(), FONT_SIZE_TO_ACC_SIZE)) / 2 - HIGHLIGHT_SPACING_Y));
+                    g.fillRect((int) (coord.x - (g.getFontMetrics().stringWidth(text) + HIGHLIGHT_X_BUFFER) / 2), (int) (coord.y - font[state].getSize() / 2), g.getFontMetrics().stringWidth(text) + HIGHLIGHT_X_BUFFER, font[state].getSize());
                 }
+                g.setColor(Color.BLACK);
+                g.drawString(text, (int) (coord.x - g.getFontMetrics().stringWidth(text) / 2), (int) (coord.y + Math.pow(font[state].getSize(), 0.9) / 2));
             }
         }
     }
@@ -105,7 +100,9 @@ public class Button {
                 if (clicked) {
                     if (state != PRESSED) {
                         state = PRESSED;
-                        OmegaFight3.play(click);
+                        click.stop();
+                        click.setFramePosition(0);
+                        click.start();
                     }
                     return true;
                 }
@@ -113,7 +110,9 @@ public class Button {
                 // Hovered
                 else if (state != HOVERED) {
                     if (state != PRESSED) {
-                        OmegaFight3.play(hover);
+                        hover.stop();
+                        hover.setFramePosition(0);
+                        hover.start();
                     }
                     state = HOVERED;
                 }
@@ -130,32 +129,49 @@ class TextBox extends Button {
     // Constants
     public static final int CURSOR_HZ = 20;
     public static final int CURSOR_SPACING = 0;
-    public static final int TEXT_BUFFER_X = 10;
+    public static final int ALLOWED_DIST_FROM_EDGE = 10;
 
     // Instance variables
     public boolean typing;
     public boolean clickedOutside;
     public HashSet<Integer> prevPressedKeys;
     public int cursorCounter;
-    public int textBufferX;
+    public int allowedDistFromEdge;
 
     // Constructors order from most customized to most general
-    public TextBox(BufferedImage image, Font font, Coord coord, Coord size, int style, int textBufferX, boolean canSee, boolean canUse) {
+    public TextBox(BufferedImage image, Font font, Coord coord, Coord size, int style, int allowedDistFromEdge, boolean canSee, boolean canUse) {
         super(image, font, coord, size, "", NO_BUTTON_NUM, style, canSee, canUse);
-        this.textBufferX = textBufferX;
+        this.allowedDistFromEdge = allowedDistFromEdge;
     }
 
-    public TextBox(BufferedImage image, Font font, Coord coord, Coord size, int style, int textBufferX) {
+    public TextBox(BufferedImage image, Font font, Coord coord, Coord size, int style) {
         super(image, font, coord, size, "", NO_BUTTON_NUM, style);
+        allowedDistFromEdge = ALLOWED_DIST_FROM_EDGE;
+        
     }
 
     // Description: This method draws the text box on the screen based on its current state and instance variables
     public void draw(Graphics g) {
-        super.draw(g);
         if (canSee) {
+            // Draw image
+            g.drawImage(image, (int) (coord.x - size[state].x / 2), (int) (coord.y - size[state].y / 2), (int) size[state].x, (int) size[state].y, null);
+            
+            // Draw text
+            g.setFont(font[state]);
+            g.setColor(Color.WHITE);
+            if (style == SHADOW) {
+                g.drawString(text, (int) (coord.x - g.getFontMetrics().stringWidth(text) / 2 + SHADOW_OFFSET * Math.pow(font[state].getSize(), 0.9)),
+                (int) (coord.y + Math.pow(font[state].getSize(), 0.9) / 2 + SHADOW_OFFSET * Math.pow(font[state].getSize(), 0.9)));
+            }
+            else if (style == HIGHLIGHT) {
+                g.fillRect((int) (coord.x - (g.getFontMetrics().stringWidth(text) + HIGHLIGHT_X_BUFFER) / 2), (int) (coord.y - font[state].getSize() / 2), g.getFontMetrics().stringWidth(text) + HIGHLIGHT_X_BUFFER, font[state].getSize());
+            }
+            g.setColor(Color.BLACK);
+            g.drawString(text, (int) (coord.x - g.getFontMetrics().stringWidth(text) / 2), (int) (coord.y + Math.pow(font[state].getSize(), 0.9) / 2));
+
             // Draw cursor
             if (typing && cursorCounter % (CURSOR_HZ * 2) < CURSOR_HZ) {;
-                g.drawString("|", (int) (coord.x + g.getFontMetrics().stringWidth(text) / 2) + CURSOR_SPACING, (int) (coord.y + Math.pow(font[state].getSize(), FONT_SIZE_TO_ACC_SIZE) / 2));
+                g.drawString("|", (int) (coord.x + g.getFontMetrics().stringWidth(text) / 2) + CURSOR_SPACING, (int) (coord.y + Math.pow(font[state].getSize(), 0.9) / 2));
             }
         }
     }
@@ -168,7 +184,9 @@ class TextBox extends Button {
                 if (clicked) {
                     if (state != PRESSED) {
                         state = PRESSED;
-                        OmegaFight3.play(click);
+                        click.stop();
+                        click.setFramePosition(0);
+                        click.start();
                     }
                     if (clickedOutside) clickedOutside = false;
                 }
@@ -180,7 +198,9 @@ class TextBox extends Button {
                         cursorCounter = 0;
                     }
                     else {
-                        OmegaFight3.play(hover);
+                        hover.stop();
+                        hover.setFramePosition(0);
+                        hover.start();
                     }
                     state = HOVERED;
                 }
@@ -205,7 +225,7 @@ class TextBox extends Button {
 
             // Check if text fits inside textbox
             g.setFont(font[NOPRESSED]);
-            while (g.getFontMetrics().stringWidth(text) >= size[NOPRESSED].x - textBufferX * 2) text = text.substring(0, text.length() - 1);
+            while (g.getFontMetrics().stringWidth(text) >= size[NOPRESSED].x - allowedDistFromEdge * 2) text = text.substring(0, text.length() - 1);
 
             // Calculate cursor blinking
             if (typing) cursorCounter = (cursorCounter + 1) % (CURSOR_HZ * 2);

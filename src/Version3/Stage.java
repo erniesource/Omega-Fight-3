@@ -7,6 +7,11 @@ import javax.imageio.ImageIO;
 import javax.sound.sampled.*;
 
 public class Stage {
+    // Constants
+    public static final int NO_OF_STAGES = 2;
+    public static final int BATTLEFIELD_NO = 0;
+    public static final int FINAL_DEST_NO = 1;
+    
     // Instance variables
     public BufferedImage image;
     public Platform[] platforms; // Make an arraylist? not yet
@@ -57,8 +62,8 @@ class Platform {
     }
 
     // Description: THis method returns whther or not an object has landed on this platform given it's x coordinate, initial y coordinate and final y coordinate
-    public boolean landed(double x, double sizeY, double initialY, double finalY) {
-        return (leftX <= x && x <= rightX && initialY <= y - sizeY / 2 && finalY >= y - sizeY / 2);
+    public boolean landed(double x, double initialY, double finalY) {
+        return (leftX <= x && x <= rightX && initialY <= y && finalY >= y);
     }
 }
 
@@ -72,11 +77,6 @@ class Coord { // Note: Coord is actually more of a Vector, but Vector has alread
 
     // Constructor that initializes origin
     public Coord() {}
-
-    public Coord(double xy) {
-        x = xy;
-        y = xy;
-    }
 
     // More specifid constructor
     public Coord(double x, double y) {

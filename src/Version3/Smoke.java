@@ -8,7 +8,7 @@ public class Smoke {
     public static final int SMOKE_CHANGE_HZ = 8;
     public static final int NUM_SMOKES = 4;
     public static final int SMOKE_LEN = SMOKE_CHANGE_HZ * NUM_SMOKES;
-    public static final Coord SMOKE_SIZE = new Coord(64);
+    public static final Coord SMOKE_SIZE = new Coord(64, 64);
     public static final double SMOKE_VEL_SCALE = 0.25;
     public static final double SMOKE_DESIGNED_SIZE = 100;
 

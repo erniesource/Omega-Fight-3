@@ -16,7 +16,6 @@ abstract class Char {
     public HashSet<Projectile> babyProjectiles = new HashSet<>();
     public HashSet<Projectile> projectiles = new HashSet<>();
     public HashSet<Projectile> deadProjectiles = new HashSet<>();
-    public Deque<Smoke> smokeQ = new LinkedList<>();
 
     // Constructor
     public Char(Coord coord, int spriteNo, int spriteSign, int frameCounter, Coord size, int state) {
@@ -58,25 +57,6 @@ abstract class Char {
         deadProjectiles.clear();
     }
 
-    public void processSmokes() {
-        // Process smoke trails
-        for (Smoke smoke: smokeQ) {
-            smoke.setFrameCounter(smoke.getFrameCounter() - 1);
-        }
-
-        // Delete dead smoke
-        while (!smokeQ.isEmpty() && smokeQ.getFirst().getFrameCounter() == 0) {
-            smokeQ.removeFirst();
-        }
-    }
-
-    // Description: This method draws the smoke trails of the player
-    public void drawSmokes(Graphics2D g2) {
-        for (Smoke smoke: smokeQ) {
-            smoke.draw(g2);
-        }
-    }
-
     // Abstract methods for each char
     abstract public void hurt(double damage);
     abstract public void draw(Graphics g);
@@ -106,14 +86,12 @@ abstract class Boss extends Char {
     public double difficulty;
     public boolean hurt;
     public int hurtCounter = NOT_HURT;
-    public double sizeToHitbox;
 
     // Constructor
-    public Boss(Coord coord, int spriteNo, int spriteSign, int frameCounter, Coord size, int state, double health, double difficulty, double sizeToHitbox) {
+    public Boss(Coord coord, int spriteNo, int spriteSign, int frameCounter, Coord size, int state, double health, double difficulty) {
         super(coord, spriteNo, spriteSign, frameCounter, size, state);
         this.health = health * difficulty;
         this.difficulty = difficulty;
-        this.sizeToHitbox = sizeToHitbox; 
     }
 
     // Description: This method hurts and prepares the boss to die if they're gonna die
@@ -157,7 +135,9 @@ abstract class Boss extends Char {
 
         //Cheer sound effect
         if (frameCounter == OmegaFight3.SURGE_FRAME_HZ * OmegaFight3.NUM_SURGE_IMAGES) {
-            OmegaFight3.play(OmegaFight3.cheer);
+            OmegaFight3.cheer.stop();
+            OmegaFight3.cheer.setFramePosition(0);
+            OmegaFight3.cheer.start();
         }
     }
 
