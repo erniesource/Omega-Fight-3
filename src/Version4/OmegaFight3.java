@@ -38,6 +38,9 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static final int SCREEN_SHAKE_HZ = 2;
     public static final double SCREEN_SHAKE_MULT = 0.75;
 
+    // Sound settings
+    public static final boolean SOUND_ON = false;
+
     // Cheat constants
     public static final boolean CHEATS = true;
     public static final int KILL_KEY = KeyEvent.VK_K;
@@ -2089,15 +2092,19 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     }
 
     public static void play(Clip clip) {
-        clip.stop();
-        clip.setFramePosition(0);
-        clip.start();
+        if (SOUND_ON) {
+            clip.stop();
+            clip.setFramePosition(0);
+            clip.start();
+        }
     }
 
     public static void loop(Clip clip) {
-        clip.stop();
-        clip.setFramePosition(0);
-        clip.loop(Clip.LOOP_CONTINUOUSLY);
+        if (SOUND_ON) {
+            clip.stop();
+            clip.setFramePosition(0);
+            clip.loop(Clip.LOOP_CONTINUOUSLY);
+        }
     }
 
     // Parameters: None
