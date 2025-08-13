@@ -118,7 +118,7 @@ public class Dragon extends Boss{
 
                     if (target != null) {
                         double angle = Math.atan2(target.coord.y - (coord.y + COORD_TO_DIZZY_COORD.y), target.coord.x - (coord.x + COORD_TO_DIZZY_COORD.x * spriteSign));
-                        projectiles.add(new Ring(this, new Coord (coord.x + COORD_TO_DIZZY_COORD.x * spriteSign, coord.y + COORD_TO_DIZZY_COORD.y), angle));
+                        OmegaFight3.projectiles.add(new Ring(this, new Coord (coord.x + COORD_TO_DIZZY_COORD.x * spriteSign, coord.y + COORD_TO_DIZZY_COORD.y), angle));
                     }
                 }
             }
@@ -133,7 +133,7 @@ public class Dragon extends Boss{
 
             // Barf meteor
             if (frameCounter % (STATE_NO_SPRITES[BARF] * STATE_SPRITE_CHANGE_HZ[BARF] * BARF_TO_GAG_HZ) == STATE_SPRITE_CHANGE_HZ[BARF]) {
-                projectiles.add(new Meteor(this, coord.x + COORD_TO_BARF_COORD.x * spriteSign, spriteSign));
+                OmegaFight3.projectiles.add(new Meteor(this, coord.x + COORD_TO_BARF_COORD.x * spriteSign, spriteSign));
             }
         }
 
@@ -165,7 +165,7 @@ public class Dragon extends Boss{
         if (health <= INITIAL_HEALTH * OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty] * BUBBLE_THRESHOLD) {
             bubbleCounter++;
             if (bubbleCounter >= Math.max(MIN_BUBBLE_HZ, BUBBLE_HZ * health / (INITIAL_HEALTH * OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty] * BUBBLE_THRESHOLD) / BUBBLE_AMT_SCALING_TO_HEALTH)) {
-                projectiles.add(new Bubble(this, new Coord(OmegaFight3.randomSign() * (OmegaFight3.SCREEN_SIZE.x + Bubble.SIZE.x) / 2 + OmegaFight3.SCREEN_SIZE.x / 2, OmegaFight3.SCREEN_SIZE.y - Bubble.SIZE.y / 2)));
+                OmegaFight3.projectiles.add(new Bubble(this, new Coord(OmegaFight3.randomSign() * (OmegaFight3.SCREEN_SIZE.x + Bubble.SIZE.x) / 2 + OmegaFight3.SCREEN_SIZE.x / 2, OmegaFight3.SCREEN_SIZE.y - Bubble.SIZE.y / 2)));
                 bubbleCounter = 0;
             }
         }
@@ -174,7 +174,7 @@ public class Dragon extends Boss{
         if (health <= INITIAL_HEALTH * OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty] * FIRE_THRESHOLD) {
             fireCounter++;
             if (fireCounter >= Math.max(MIN_FIRE_HZ, FIRE_HZ * health / (INITIAL_HEALTH * OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty] * FIRE_THRESHOLD) / FIRE_AMT_SCALING_TO_HEALTH)) {
-                projectiles.add(new Fire(this, new Coord(Math.random() * (OmegaFight3.SCREEN_SIZE.x - Fire.SIZE.x) + Fire.SIZE.x / 2, 0), Math.PI / 2));
+                OmegaFight3.projectiles.add(new Fire(this, new Coord(Math.random() * (OmegaFight3.SCREEN_SIZE.x - Fire.SIZE.x) + Fire.SIZE.x / 2, 0), Math.PI / 2));
                 fireCounter = 0;
             }
         }

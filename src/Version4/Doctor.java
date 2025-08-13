@@ -5,7 +5,7 @@ import java.awt.image.BufferedImage;
 
 public class Doctor extends Boss {
     // Combat constants
-    public static final double INITIAL_HEALTH = 100 * Omegaman.PERC_MULT;//600 * Omegaman.PERC_MULT;
+    public static final double INITIAL_HEALTH = 200 * Omegaman.PERC_MULT;//600 * Omegaman.PERC_MULT;
     public static final double SIZE_TO_HITBOX = 0.4;
 
     // State constants
@@ -121,7 +121,7 @@ public class Doctor extends Boss {
             else if (frameCounter == 0) {
                 frameCounter = SPIT_HZ;
                 for (int i = 0; i != SPIT_NUM_PROJS; i++) {
-                    projectiles.add(new Fastener(this, new Coord(coord.x + COORD_TO_SPIT_COORD.x * spriteSign, coord.y + COORD_TO_SPIT_COORD.y),
+                    OmegaFight3.projectiles.add(new Fastener(this, new Coord(coord.x + COORD_TO_SPIT_COORD.x * spriteSign, coord.y + COORD_TO_SPIT_COORD.y),
                     -Math.PI / 2 + (SPIT_START_ANGLE + Math.random() * SPIT_SPREAD) * spriteSign));
                 }
             }
@@ -137,13 +137,13 @@ public class Doctor extends Boss {
             // Alternate between LAUGH_NO_PROJS and LAUGH_NO_PROJS - 1 so that players can't just stay in one place to dodge
             if (frameCounter % (LAUGH_HZ * 2) == 0) {
                 for (int i = 0; i != LAUGH_NO_PROJS - 1; i++) {
-                    projectiles.add(new Energy(this, new Coord(coord.x + COORD_TO_GEM_COORD.x * spriteSign, coord.y + COORD_TO_GEM_COORD.y),
+                    OmegaFight3.projectiles.add(new Energy(this, new Coord(coord.x + COORD_TO_GEM_COORD.x * spriteSign, coord.y + COORD_TO_GEM_COORD.y),
                     -Math.PI / 2 + Math.PI / (LAUGH_NO_PROJS - 1) / 2 + Math.PI / (LAUGH_NO_PROJS - 1) * i * spriteSign));
                 }
             }
             else if (frameCounter % LAUGH_HZ == 0) {
                 for (int i = 0; i != LAUGH_NO_PROJS; i++) {
-                    projectiles.add(new Energy(this, new Coord(coord.x + COORD_TO_GEM_COORD.x * spriteSign, coord.y + COORD_TO_GEM_COORD.y),
+                    OmegaFight3.projectiles.add(new Energy(this, new Coord(coord.x + COORD_TO_GEM_COORD.x * spriteSign, coord.y + COORD_TO_GEM_COORD.y),
                     -Math.PI / 2 + Math.PI / (LAUGH_NO_PROJS - 1) * i * spriteSign));
                 }
             }
@@ -177,7 +177,7 @@ public class Doctor extends Boss {
         if (health <= INITIAL_HEALTH * OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty] * PINCER_THRESHOLD) {
             pincerCounter++;
             if (pincerCounter >= Math.max(MIN_PINCER_HZ, PINCER_HZ * health / (INITIAL_HEALTH * OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty] * PINCER_THRESHOLD) / PINCER_AMT_SCALING_TO_HEALTH)) {
-                projectiles.add(new Pincer(this, new Coord((int) (Math.random() * 2) * OmegaFight3.SCREEN_SIZE.x, (int) (Math.random() * 2) * OmegaFight3.SCREEN_SIZE.y)));
+                OmegaFight3.projectiles.add(new Pincer(this, new Coord((int) (Math.random() * 2) * OmegaFight3.SCREEN_SIZE.x, (int) (Math.random() * 2) * OmegaFight3.SCREEN_SIZE.y)));
                 pincerCounter = 0;
             }
         }
@@ -188,10 +188,10 @@ public class Doctor extends Boss {
             if (bombotCounter >= Math.max(MIN_BOMBOT_HZ, BOMBOT_HZ * health / (INITIAL_HEALTH * OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty] * BOMBOT_THRESHOLD) / BOMBOT_AMT_SCALING_TO_HEALTH)) {
                 int spawn = (int) (Math.random() * BOMBOT_NUM_SPAWN_LOCS);
                 if (spawn == LEFT_SPAWN) {
-                    projectiles.add(new Bombot(this, new Coord(-Bombot.SIZE.x / 2, OmegaFight3.SCREEN_SIZE.y * Math.random()), 0, OmegaFight3.RIGHT_SIGN));
+                    OmegaFight3.projectiles.add(new Bombot(this, new Coord(-Bombot.SIZE.x / 2, OmegaFight3.SCREEN_SIZE.y * Math.random()), 0, OmegaFight3.RIGHT_SIGN));
                 }
                 else if (spawn == RIGHT_SPAWN) {
-                    projectiles.add(new Bombot(this, new Coord(OmegaFight3.SCREEN_SIZE.x + Bombot.SIZE.x / 2, OmegaFight3.SCREEN_SIZE.y * Math.random()), Math.PI, OmegaFight3.LEFT_SIGN));
+                    OmegaFight3.projectiles.add(new Bombot(this, new Coord(OmegaFight3.SCREEN_SIZE.x + Bombot.SIZE.x / 2, OmegaFight3.SCREEN_SIZE.y * Math.random()), Math.PI, OmegaFight3.LEFT_SIGN));
                 }
                 bombotCounter = 0;
             }

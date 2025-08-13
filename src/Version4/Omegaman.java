@@ -268,23 +268,23 @@ public class Omegaman extends Char {
                             // Fire basic
                             if (shootCharge <= BASIC_SHOOT_TIME_LIMIT || skillPts < ONES_PER_SKILL_PT) {
                                 // Bullet
-                                if (loadout[i] == BULLET_WEAPON_NO) projectiles.add(new Bullet(this, newProjCoord, OmegaFight3.signToRadians(spriteSign)));
+                                if (loadout[i] == BULLET_WEAPON_NO) OmegaFight3.projectiles.add(new Bullet(this, newProjCoord, OmegaFight3.signToRadians(spriteSign)));
 
                                 // SHotgun
                                 else if (loadout[i] == SHOTGUN_WEAPON_NO) {
                                     for (int j = 0; j != Shotgun.NUM_SHOTS; j++) {
-                                        projectiles.add(new Shotgun(this, newProjCoord.copy(), OmegaFight3.signToRadians(spriteSign) - Shotgun.SPREAD + j * (Shotgun.SPREAD * 2 / (Shotgun.NUM_SHOTS - 1))));
+                                        OmegaFight3.projectiles.add(new Shotgun(this, newProjCoord.copy(), OmegaFight3.signToRadians(spriteSign) - Shotgun.SPREAD + j * (Shotgun.SPREAD * 2 / (Shotgun.NUM_SHOTS - 1))));
                                     }
                                 }
 
                                 // Spammer
                                 else if (loadout[i] == SPAMMER_WEAPON_NO) {
-                                    projectiles.add(new Spammer(this, newProjCoord, OmegaFight3.signToRadians(spriteSign) - Spammer.SPREAD + Math.random() * Spammer.SPREAD * 2));
+                                    OmegaFight3.projectiles.add(new Spammer(this, newProjCoord, OmegaFight3.signToRadians(spriteSign) - Spammer.SPREAD + Math.random() * Spammer.SPREAD * 2));
                                 }
 
                                 // SNiper
                                 else if (loadout[i] == SNIPER_WEAPON_NO) {
-                                    projectiles.add(new Sniper(this, newProjCoord, OmegaFight3.signToRadians(spriteSign)));
+                                    OmegaFight3.projectiles.add(new Sniper(this, newProjCoord, OmegaFight3.signToRadians(spriteSign)));
                                     
                                     // Recoil
                                     recoil(Sniper.RECOIL);
@@ -292,12 +292,12 @@ public class Omegaman extends Char {
 
                                 // Boomer
                                 else if (loadout[i] == BOOMER_WEAPON_NO) {
-                                    projectiles.add(new Boomer(this, newProjCoord, OmegaFight3.signToRadians(spriteSign)));
+                                    OmegaFight3.projectiles.add(new Boomer(this, newProjCoord, OmegaFight3.signToRadians(spriteSign)));
                                 }
 
                                 // Spike
                                 else if (loadout[i] == SPIKE_WEAPON_NO) {
-                                    projectiles.add(new Spike(this, newProjCoord, OmegaFight3.signToRadians(spriteSign)));
+                                    OmegaFight3.projectiles.add(new Spike(this, newProjCoord, OmegaFight3.signToRadians(spriteSign)));
                                 }
 
                                 // update shoot cooldown
@@ -310,7 +310,7 @@ public class Omegaman extends Char {
 
                                 // Rocket
                                 if (loadout[i] == BULLET_WEAPON_NO) {
-                                    projectiles.add(new Rocket(this, newProjCoord, OmegaFight3.signToRadians(spriteSign), OmegaFight3.lerp(Rocket.MIN_SIZE_PERCENT, 1, getPercentCharged(BULLET_WEAPON_NO))));
+                                    OmegaFight3.projectiles.add(new Rocket(this, newProjCoord, OmegaFight3.signToRadians(spriteSign), OmegaFight3.lerp(Rocket.MIN_SIZE_PERCENT, 1, getPercentCharged(BULLET_WEAPON_NO))));
                                 
                                     // Recoil
                                     recoil(Rocket.RECOIL * percentCharged);
@@ -320,13 +320,13 @@ public class Omegaman extends Char {
                                 else if (loadout[i] == SHOTGUN_WEAPON_NO) {
                                     percentCharged = OmegaFight3.lerp(Rocket.MIN_SIZE_PERCENT, 1, getPercentCharged(SHOTGUN_WEAPON_NO));
                                     for (int j = 0; j != Firework.NUM_SHOTS; j++) {
-                                        projectiles.add(new Firework(this, newProjCoord.copy(), Math.PI * 2 / Firework.NUM_SHOTS * j, percentCharged));
+                                        OmegaFight3.projectiles.add(new Firework(this, newProjCoord.copy(), Math.PI * 2 / Firework.NUM_SHOTS * j, percentCharged));
                                     }
                                 }
 
                                 // Missile
                                 else if (loadout[i] == SPAMMER_WEAPON_NO) {
-                                    projectiles.add(new Missile(this, newProjCoord, OmegaFight3.signToRadians(spriteSign), spriteSign, OmegaFight3.lerp(Missile.MIN_SIZE_PERCENT, 1, getPercentCharged(SPAMMER_WEAPON_NO))));
+                                    OmegaFight3.projectiles.add(new Missile(this, newProjCoord, OmegaFight3.signToRadians(spriteSign), spriteSign, OmegaFight3.lerp(Missile.MIN_SIZE_PERCENT, 1, getPercentCharged(SPAMMER_WEAPON_NO))));
                                     
                                     // Recoil
                                     recoil(Missile.RECOIL * percentCharged);
@@ -334,7 +334,7 @@ public class Omegaman extends Char {
 
                                 // Laser
                                 else if (loadout[i] == SNIPER_WEAPON_NO) {
-                                    projectiles.add(new Laser(this, new Coord((newProjCoord.x + OmegaFight3.SCREEN_SIZE.x * (spriteSign + 1) / 2) / 2, newProjCoord.y), Math.abs(newProjCoord.x - OmegaFight3.SCREEN_SIZE.x * (spriteSign + 1) / 2), OmegaFight3.signToRadians(spriteSign), OmegaFight3.lerp(Laser.MIN_SIZE_PERCENT, 1, getPercentCharged(SNIPER_WEAPON_NO))));
+                                    OmegaFight3.projectiles.add(new Laser(this, new Coord((newProjCoord.x + OmegaFight3.SCREEN_SIZE.x * (spriteSign + 1) / 2) / 2, newProjCoord.y), Math.abs(newProjCoord.x - OmegaFight3.SCREEN_SIZE.x * (spriteSign + 1) / 2), OmegaFight3.signToRadians(spriteSign), OmegaFight3.lerp(Laser.MIN_SIZE_PERCENT, 1, getPercentCharged(SNIPER_WEAPON_NO))));
 
                                     // Recoil
                                     recoil(Laser.RECOIL * percentCharged);
@@ -342,12 +342,12 @@ public class Omegaman extends Char {
 
                                 // Bouncer
                                 else if (loadout[i] == BOOMER_WEAPON_NO) {
-                                    projectiles.add(new Bouncer(this, newProjCoord, OmegaFight3.signToRadians(spriteSign), OmegaFight3.lerp(Bouncer.MIN_SIZE_PERCENT, 1, getPercentCharged(BOOMER_WEAPON_NO))));
+                                    OmegaFight3.projectiles.add(new Bouncer(this, newProjCoord, OmegaFight3.signToRadians(spriteSign), OmegaFight3.lerp(Bouncer.MIN_SIZE_PERCENT, 1, getPercentCharged(BOOMER_WEAPON_NO))));
                                 }
 
                                 // Splitter
                                 else if (loadout[i] == SPIKE_WEAPON_NO) {
-                                    projectiles.add(new Splitter(this, newProjCoord, OmegaFight3.signToRadians(spriteSign), OmegaFight3.lerp(Splitter.MIN_SIZE_PERCENT, 1, getPercentCharged(SPIKE_WEAPON_NO))));
+                                    OmegaFight3.projectiles.add(new Splitter(this, newProjCoord, OmegaFight3.signToRadians(spriteSign), OmegaFight3.lerp(Splitter.MIN_SIZE_PERCENT, 1, getPercentCharged(SPIKE_WEAPON_NO))));
                                 }
 
                                 // Update stats

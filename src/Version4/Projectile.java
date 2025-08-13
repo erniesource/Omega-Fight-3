@@ -26,10 +26,11 @@ abstract public class Projectile {
     // Combat variables
     public double damage;
     public double knockback;
+    public double kbSpread;
     public double durability;
 
     // Constructor
-    public Projectile(Char character, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double durability, int frameCounter, boolean canHitProj, boolean isOnTop) {
+    public Projectile(Char character, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double kbSpread, double durability, int frameCounter, boolean canHitProj, boolean isOnTop) {
         this.character = character;
         this.coord = coord;
         this.size = size;
@@ -38,6 +39,7 @@ abstract public class Projectile {
         this.dir = dir;
         this.damage = damage;
         this.knockback = knockback;
+        this.kbSpread = kbSpread;
         this.durability = durability;
         this.frameCounter = frameCounter;
         this.canHitProj = canHitProj;
@@ -48,17 +50,49 @@ abstract public class Projectile {
     public void die() {
         if (!dead) {
             dead = true;
-            character.deadProjectiles.add(this);
+            OmegaFight3.deadProjectiles.add(this);
         }
     }
 
     // Description: THis method processes the movement and expiry of the projectile
     public void process() {
-        coord.x += velocity * Math.cos(dir);
-        coord.y += velocity * Math.sin(dir);
+        move();
+        expire();
+        checkLeave();
+    }
+
+    public void checkLeave() {
+        if (OmegaFight3.outOfScreen(coord, size)) die();
+    }
+
+    public void expire() {
         frameCounter--;
         if (frameCounter == 0) die();
-        else if (OmegaFight3.outOfScreen(coord, size)) die(); // Gotta revamp this ig make subclass for gravity affected?
+    }
+
+    public void move() {
+        coord.x += velocity * Math.cos(dir);
+        coord.y += velocity * Math.sin(dir);
+    }
+
+    public void hitPlayerProj(Projectile proj) {
+        if (shouldDieTo(proj.durability)) die();
+        if (proj.shouldDieTo(durability)) proj.die();
+    }
+
+    public void hitBossProj(Projectile proj) {
+        if (shouldDieTo(proj.durability)) die();
+        if (proj.shouldDieTo(durability)) proj.die();
+    }
+
+    public void hitPlayer(Omegaman omega) {
+        omega.hurt(damage, knockback, coord, dir, kbSpread);
+        die();
+    }
+
+    public void hitBoss(Boss boss) {
+        boss.hurt(damage);
+        die();
     }
 
     // Description: This method determines whether or not this projectile should die to another projectile with the specified durability

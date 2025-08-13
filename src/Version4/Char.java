@@ -13,9 +13,6 @@ abstract class Char {
     public Coord size;
     public Coord velocity = new Coord();
     public int state;
-    public HashSet<Projectile> babyProjectiles = new HashSet<>();
-    public HashSet<Projectile> projectiles = new HashSet<>();
-    public HashSet<Projectile> deadProjectiles = new HashSet<>();
     public Deque<Smoke> smokeQ = new LinkedList<>();
 
     // Constructor
@@ -26,36 +23,6 @@ abstract class Char {
         this.frameCounter = frameCounter;
         this.size = size;
         this.state = state;
-    }
-
-    // Description: This method adds all new Projectiles into the main projectiles HashSet
-    public void addbabyProjectiles() {
-        for (Projectile proj: babyProjectiles) {
-            projectiles.add(proj);
-        }
-        babyProjectiles.clear();
-    }
-
-    // Description: This method processes all projectiles in the main projectiles HashSet
-    public void processProjectiles() {
-        for (Projectile proj: projectiles) {
-            proj.process();
-        }
-    }
-
-    // Description: This method draws all projectiles in the main projectiles HashSet
-    public void drawProjectiles(boolean isTop, Graphics2D g2) {
-        for (Projectile proj: projectiles) {
-            if (proj.isOnTop == isTop) proj.draw(g2);
-        }
-    }
-
-    // Descrption: This method deletes all dead projectiles from the main projectiles HashSet
-    public void deleteDeadProjectiles() {
-        for (Projectile proj: deadProjectiles) {
-            projectiles.remove(proj);
-        }
-        deadProjectiles.clear();
     }
 
     public void processSmokes() { // make an explosion class

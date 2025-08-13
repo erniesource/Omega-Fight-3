@@ -41,11 +41,10 @@ public class Egg extends Projectile{
     public double rotation;
     public int state;
     public int type;
-    public boolean dead;
 
     // Constructor with custom stats
-    public Egg(Boss boss, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double durability, int state, int type, boolean canHitProj, boolean isOnTop) {
-        super(boss, coord, size, hitBoxSize, velocity, dir, damage, knockback, durability, INF_LIFE, canHitProj, isOnTop);
+    public Egg(Boss boss, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double kbSpread, double durability, int state, int type, boolean canHitProj, boolean isOnTop) {
+        super(boss, coord, size, hitBoxSize, velocity, dir, damage, knockback, kbSpread, durability, INF_LIFE, canHitProj, isOnTop);
         eggVelocity = new Coord(velocity * Math.cos(dir), velocity * Math.sin(dir));
         this.state = state;
         this.type = type;
@@ -53,7 +52,7 @@ public class Egg extends Projectile{
 
     // Constructors with default stats
     public Egg(Boss boss, Coord coord, double dir, int state) {
-        this(boss, coord, SIZE[state].copy(), SIZE[state].scaledBy(SIZE_TO_HITBOX), VELOCITY[state], dir, DMG[state], KB[state], DURABILITY, state, (int) (Math.random() * NUM_TYPES[state]), CAN_HIT_PROJ, IS_ON_TOP);
+        this(boss, coord, SIZE[state].copy(), SIZE[state].scaledBy(SIZE_TO_HITBOX), VELOCITY[state], dir, DMG[state], KB[state], KB_SPREAD, DURABILITY, state, (int) (Math.random() * NUM_TYPES[state]), CAN_HIT_PROJ, IS_ON_TOP);
     }
     public Egg(Boss boss, Coord coord, double dir) {
         this(boss, coord, dir, NO_OF_STATES - 1);
@@ -81,7 +80,7 @@ public class Egg extends Projectile{
         character.smokeQ.add(new Smoke(coord.copy(), new Coord(Math.max(size.x, size.y) * SIZE_TO_SMOKE_SIZE), Math.random() * Math.PI * 2));
 
         // Check if out of screen
-        if (coord.x < -size.x / 2 || coord.x > OmegaFight3.SCREEN_SIZE.x +size.x / 2 || coord.y > OmegaFight3.SCREEN_SIZE.y + size.y / 2) {
+        if (coord.x < -size.x / 2 || coord.x > OmegaFight3.SCREEN_SIZE.x + size.x / 2 || coord.y > OmegaFight3.SCREEN_SIZE.y + size.y / 2) {
             die();
         }
         else {
@@ -93,40 +92,27 @@ public class Egg extends Projectile{
                 }
             }
         }
-
-        // Loop through players and their projectiles
-        for (Omegaman enemy: OmegaFight3.omegaman) {
-            // Enemy hitbox
-            if (OmegaFight3.intersects(coord, hitBoxSize, enemy.coord, enemy.size, OmegaFight3.HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
-                enemy.hurt(damage, knockback, coord, Math.atan2(eggVelocity.y, eggVelocity.x), KB_SPREAD);
-                super.die();
-            }
-
-            // Enemy projectiles
-            if (canHitProj) {
-                for (Projectile proj: enemy.projectiles) {
-                    if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, OmegaFight3.HITBOX_LEEWAY) && proj.hitBoxActive && proj.canHitProj) {
-                        if (shouldDieTo(proj.durability)) die();
-                        if (proj.shouldDieTo(durability)) proj.die();
-                    }
-                }
-            }
-        }
     }
 
     public void die() { // Change this to be like spike
         if (!dead) {
-            dead = true;
             super.die();
 
             // Split if not at final state
             if (state != 0) {
                 for (int i = 0; i != PROJS_PER_SPLIT[state - 1]; i++) {
-                    character.babyProjectiles.add(new Egg((Boss) character, coord.copy(), -Math.PI / (PROJS_PER_SPLIT[state - 1] + 1) * (i + 1), state - 1));
+                    OmegaFight3.babyProjectiles.add(new Egg((Boss) character, coord.copy(), -Math.PI / (PROJS_PER_SPLIT[state - 1] + 1) * (i + 1), state - 1));
                 }
             }
         }
     }
+
+    public void hitPlayer(Omegaman omega) {
+        omega.hurt(damage, knockback, coord, Math.atan2(eggVelocity.y, eggVelocity.x), kbSpread);
+        super.die();
+    }
+    public void hitBoss(Boss boss) {}
+    public void hitBossProj(Projectile proj) {}
 }
 
 class Feather extends Projectile {
@@ -141,7 +127,7 @@ class Feather extends Projectile {
     public static final double SIZE_TO_HITBOX = 1.0;
 
     // Movement constants
-    public static final double VELOCITY = 12;
+    public static final double VELOCITY = 6;
 
     // Misc constants
     public static final boolean CAN_HIT_PROJ = false;
@@ -153,13 +139,13 @@ class Feather extends Projectile {
     public static BufferedImage[] images = new BufferedImage[NO_OF_SPRITES];
 
     // Constructor with custom stats
-    public Feather(Boss boss, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double durability, boolean canHitProj, boolean isOnTop) {
-        super(boss, coord, size, hitBoxSize, velocity, dir, damage, knockback, durability, INF_LIFE, canHitProj, isOnTop);
+    public Feather(Boss boss, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double kbSpread, double durability, boolean canHitProj, boolean isOnTop) {
+        super(boss, coord, size, hitBoxSize, velocity, dir, damage, knockback, kbSpread, durability, INF_LIFE, canHitProj, isOnTop);
     }
 
     // Constructor with default stats
     public Feather(Boss boss, Coord coord, double dir) {
-        this(boss, coord, SIZE.copy(), (new Coord(Math.min(SIZE.x, SIZE.y))).scaledBy(SIZE_TO_HITBOX), VELOCITY, dir, DMG, KB, DURABILITY, CAN_HIT_PROJ, IS_ON_TOP);
+        this(boss, coord, SIZE.copy(), (new Coord(Math.min(SIZE.x, SIZE.y))).scaledBy(SIZE_TO_HITBOX), VELOCITY, dir, DMG, KB, KB_SPREAD, DURABILITY, CAN_HIT_PROJ, IS_ON_TOP);
     }
 
     // Description: THis method draws the pellet of energy on screen
@@ -173,26 +159,10 @@ class Feather extends Projectile {
     public void process() {
         super.process();
         if (frameCounter == -SPRITE_CHANGE_HZ * NO_OF_SPRITES) frameCounter = 0;
-
-        // Check player hitboxes and projectiles
-        for (Omegaman enemy: OmegaFight3.omegaman) {
-            // Enemy hitbox
-            if (OmegaFight3.intersects(coord, hitBoxSize, enemy.coord, enemy.size, OmegaFight3.HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
-                enemy.hurt(damage, knockback, coord, dir, KB_SPREAD);
-                die();
-            }
-
-            // Enemy projectiles
-            if (canHitProj) {
-                for (Projectile proj: enemy.projectiles) {
-                    if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, OmegaFight3.HITBOX_LEEWAY) && proj.hitBoxActive && proj.canHitProj) {
-                        if (shouldDieTo(proj.durability)) die();
-                        if (proj.shouldDieTo(durability)) proj.die();
-                    }
-                }
-            }
-        }
     }
+
+    public void hitBoss(Boss boss) {}
+    public void hitBossProj(Projectile proj) {}
 }
 
 class Diver extends Projectile {
@@ -220,7 +190,7 @@ class Diver extends Projectile {
     public static final int DIVING = 1;
 
     // Misc constants
-    public static final int SCREENSHAKE = 15;
+    public static final int SCREENSHAKE = 2;
     public static final boolean CAN_HIT_PROJ = true;
     public static final boolean IS_ON_TOP = true;
     public static final int NO_OF_SPRITES = 4;
@@ -234,14 +204,14 @@ class Diver extends Projectile {
     public static BufferedImage[] images = new BufferedImage[NO_OF_SPRITES];
 
     // Constructor with custom stats
-    public Diver(Boss boss, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double durability, int sign, boolean canHitProj, boolean isOnTop) {
-        super(boss, coord, size, hitBoxSize, velocity, dir, damage, knockback, durability, INF_LIFE, canHitProj, isOnTop);
+    public Diver(Boss boss, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double kbSpread, double durability, int sign, boolean canHitProj, boolean isOnTop) {
+        super(boss, coord, size, hitBoxSize, velocity, dir, damage, knockback, kbSpread, durability, INF_LIFE, canHitProj, isOnTop);
         this.sign = sign;
     }
 
     // General constructor with default stats
     public Diver(Boss boss, Coord coord, double dir, int sign) {
-        this(boss, coord, SIZE.copy(), SIZE.scaledBy(SIZE_TO_HITBOX), VELOCITY, dir, DMG, KB, DURABILITY, sign, CAN_HIT_PROJ, IS_ON_TOP);
+        this(boss, coord, SIZE.copy(), SIZE.scaledBy(SIZE_TO_HITBOX), VELOCITY, dir, DMG, KB, KB_SPREAD, DURABILITY, sign, CAN_HIT_PROJ, IS_ON_TOP);
     }
 
     // Description: This method explodes the bombot
@@ -292,26 +262,19 @@ class Diver extends Projectile {
             // Smoke
             character.smokeQ.add(new Smoke(coord.copy(), new Coord(Math.max(size.x, size.y) * SIZE_TO_SMOKE_SIZE), Math.random() * Math.PI * 2));
         }
-
-        for (Omegaman enemy: OmegaFight3.omegaman) {
-            // Enemy hitbox
-            if (OmegaFight3.intersects(coord, hitBoxSize, enemy.coord, enemy.size, OmegaFight3.HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
-                enemy.hurt(damage * Math.sqrt(velocity) * DMG_KB_MULT, knockback * Math.sqrt(velocity) * DMG_KB_MULT, coord, dir, KB_SPREAD);
-                OmegaFight3.screenShakeCounter += (int) (SCREENSHAKE * (size.x / SIZE.x));
-                die();
-            }
-
-            // Enemy projectiles
-            if (canHitProj) {
-                for (Projectile proj: enemy.projectiles) {
-                    if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, OmegaFight3.HITBOX_LEEWAY) && proj.hitBoxActive && proj.canHitProj) {
-                        die();
-                        if (proj.shouldDieTo(durability)) proj.die();
-                    }
-                }
-            }
-        }
     }
+
+    public boolean shouldDieTo(Projectile proj) {
+        return true;
+    }
+
+    public void hitPlayer(Omegaman omega) {
+        omega.hurt(damage * Math.sqrt(velocity) * DMG_KB_MULT, knockback * Math.sqrt(velocity) * DMG_KB_MULT, coord, dir, KB_SPREAD);
+        OmegaFight3.screenShakeCounter += (int) (SCREENSHAKE * Math.sqrt(velocity));
+        die();
+    }
+    public void hitBoss(Boss boss) {}
+    public void hitBossProj(Projectile proj) {}
 }
 
 class Plush extends Projectile {
@@ -336,20 +299,19 @@ class Plush extends Projectile {
     // Static images
     public static BufferedImage[][] images = new BufferedImage[NO_OF_STATES][NO_OF_SPRITES];
 
-    public int state = NO_OF_STATES - 1;
+    public int state = NO_OF_STATES - 1; // rotate on it's own?
 
     // Constructor with custom stats
-    public Plush(Boss boss, Coord size, Coord hitBoxSize, double damage, double knockback, double durability, boolean canHitProj, boolean isOnTop) {
-        super(boss, new Coord(OmegaFight3.SCREEN_CENTER.x, OmegaFight3.stage[OmegaFight3.NORTH_CAVE_NO].platforms[0].y - SIZE.y / 2), size, hitBoxSize, 0, 0, damage, knockback, durability, INF_LIFE, canHitProj, isOnTop);
-        hitBoxActive = false;
+    public Plush(Boss boss, Coord size, Coord hitBoxSize, double damage, double knockback, double kbSpread, double durability, boolean canHitProj, boolean isOnTop) {
+        super(boss, new Coord(OmegaFight3.SCREEN_CENTER.x, OmegaFight3.stage[OmegaFight3.NORTH_CAVE_NO].platforms[0].y - SIZE.y / 2), size, hitBoxSize, 0, 0, damage, knockback, kbSpread, durability, INF_LIFE, canHitProj, isOnTop);
     }
 
     // Constructor with default stats
     public Plush(Boss boss) {
-        this(boss, SIZE.copy(), SIZE.scaledBy(SIZE_TO_HITBOX), DMG, KB, DURABILITY, CAN_HIT_PROJ, IS_ON_TOP);
+        this(boss, SIZE.copy(), SIZE.scaledBy(SIZE_TO_HITBOX), DMG, KB, KB_SPREAD, DURABILITY, CAN_HIT_PROJ, IS_ON_TOP);
     }
 
-    // Description: THis method draws the pellet of energy on screen
+    // Description: THis method draws the plush on screen
     public void draw(Graphics2D g2) {
         if (state != DEAD) {
             g2.rotate(dir, coord.x, coord.y);
@@ -361,31 +323,13 @@ class Plush extends Projectile {
     // Description: This method processes the pellet
     public void process() {
         frameCounter = (frameCounter + 1) % (NO_OF_SPRITES * SPRITE_CHANGE_HZ);
-
-        // Check player hitboxes and projectiles
-        for (Omegaman enemy: OmegaFight3.omegaman) { // Just change the order?
-            // Enemy hitbox
-            if (OmegaFight3.intersects(coord, hitBoxSize, enemy.coord, enemy.size, OmegaFight3.HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
-                enemy.hurt(damage, knockback, coord, dir, KB_SPREAD);
-                die(); // Die twice?
-            }
-
-            // Enemy projectiles
-            if (canHitProj) {
-                for (Projectile proj: enemy.projectiles) {
-                    if (OmegaFight3.intersects(coord, hitBoxSize, proj.coord, proj.hitBoxSize, OmegaFight3.HITBOX_LEEWAY) && proj.hitBoxActive && proj.canHitProj) {
-                        if (shouldDieTo(proj.durability)) die();
-                        if (proj.shouldDieTo(durability)) proj.die();
-                    }
-                }
-            }
-        }
     }
 
     public void die() {
         if (state != DEAD) {
             state--;
             if (state == DEAD) {
+                hitBoxActive = false;
                 ((Punk) character).trueHurt(1);
             }
         }
@@ -394,4 +338,7 @@ class Plush extends Projectile {
     public boolean shouldDieTo(double enemyDurability) {
         return true;
     }
+
+    public void hitBoss(Boss boss) {}
+    public void hitBossProj(Projectile proj) {}
 }
