@@ -2,18 +2,17 @@ package Version4;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.*;
 import javax.sound.sampled.*;
 
 public class Button {
     // Constants
-    public static final double DIFF_IN_SIZE_OF_STATES = 0.05;
+    public static final double STATE_SIZE_DIFF = 0.05;
     public static final int PRESSED = 0;
     public static final int NOPRESSED = 1;
     public static final int HOVERED = 2;
     public static final int NUM_STATES = 3;
     public static final int SHADOW = 0;
-    public static final int HIGHLIGHT = 1; // CHANGE
+    public static final int HIGHLIGHT = 1;
     public static final double FONT_SIZE_TO_HIGHLIGHT_BUFFER_X = 0.4;
     public static final int HIGHLIGHT_SPACING_Y = 5;
     public static final double LEEWAY = 0;
@@ -34,41 +33,36 @@ public class Button {
     public int state = NOPRESSED; // 0: Pressed, 1: Not Pressed, 2: Hovered
     public int num;
     public int style;
-    public boolean canSee = true;
-    public boolean canUse = true;
+    public boolean canSee;
+    public boolean canUse;
 
     // Constructors order from most customized to most general
     public Button(BufferedImage image, Font font, Coord coord, Coord size, String text, int num, int style, boolean canSee, boolean canUse) {
         this(image, coord, size, num, canSee, canUse);
-        this.font[PRESSED] = new Font(font.getName(), font.getStyle(), (int) (font.getSize() * (1 - DIFF_IN_SIZE_OF_STATES)));
+        this.font[PRESSED] = new Font(font.getName(), font.getStyle(), (int) (font.getSize() * (1 - STATE_SIZE_DIFF)));
         this.font[NOPRESSED] = font;
-        this.font[HOVERED] = new Font(font.getName(), font.getStyle(), (int) (font.getSize() * (1 + DIFF_IN_SIZE_OF_STATES)));
+        this.font[HOVERED] = new Font(font.getName(), font.getStyle(), (int) (font.getSize() * (1 + STATE_SIZE_DIFF)));
         this.text = text;
         this.style = style;
     }
 
     public Button(BufferedImage image, Font font, Coord coord, Coord size, String text, int num, int style) {
-        this(image, coord, size, num);
-        this.font[PRESSED] = new Font(font.getName(), font.getStyle(), (int) (font.getSize() * (1 - DIFF_IN_SIZE_OF_STATES)));
-        this.font[NOPRESSED] = font;
-        this.font[HOVERED] = new Font(font.getName(), font.getStyle(), (int) (font.getSize() * (1 + DIFF_IN_SIZE_OF_STATES)));
-        this.text = text;
-        this.style = style;
+        this(image, font, coord, size, text, num, style, true, true);
     }
 
     public Button(BufferedImage image, Coord coord, Coord size, int num, boolean canSee, boolean canUse) {
-        this(image, coord, size, num);
+        this.image = image;
+        this.coord = coord;
+        this.size[PRESSED] = size.scaledBy(1 - STATE_SIZE_DIFF);
+        this.size[NOPRESSED] = size;
+        this.size[HOVERED] = size.scaledBy(1 + STATE_SIZE_DIFF);
+        this.num = num;
         this.canSee = canSee;
         this.canUse = canUse;
     }
 
     public Button(BufferedImage image, Coord coord, Coord size, int num) {
-        this.image = image;
-        this.coord = coord;
-        this.size[PRESSED] = size.scaledBy(1 - DIFF_IN_SIZE_OF_STATES);
-        this.size[NOPRESSED] = size;
-        this.size[HOVERED] = size.scaledBy(1 + DIFF_IN_SIZE_OF_STATES);
-        this.num = num;
+        this(image, coord, size, num, true, true);
     }
 
     // Description: This method draws the button on the screen based on its current state and instance variables
@@ -80,18 +74,23 @@ public class Button {
             // Draw text
             if (text != null) {
                 g.setFont(font[state]);
+                int strWidth = g.getFontMetrics().stringWidth(text);
+                double accFontSize = Math.pow(font[state].getSize(), FONT_SIZE_TO_ACC_SIZE);
                 if (style == SHADOW) {
                     g.setColor(Color.WHITE);
-                    g.drawString(text, (int) (coord.x - g.getFontMetrics().stringWidth(text) / 2 + SHADOW_OFFSET * Math.pow(font[state].getSize(), FONT_SIZE_TO_ACC_SIZE)),
-                    (int) (coord.y + Math.pow(font[state].getSize(), FONT_SIZE_TO_ACC_SIZE) / 2 + SHADOW_OFFSET * Math.pow(font[state].getSize(), FONT_SIZE_TO_ACC_SIZE)));
+                    double shadowOffset = SHADOW_OFFSET * accFontSize;
+                    Coord textCoord = new Coord(coord.x - strWidth / 2, coord.y + accFontSize / 2);
+                    g.drawString(text, (int) (textCoord.x + shadowOffset), (int) (textCoord.y + shadowOffset));
                     g.setColor(Color.BLACK);
-                    g.drawString(text, (int) (coord.x - g.getFontMetrics().stringWidth(text) / 2), (int) (coord.y + Math.pow(font[state].getSize(), FONT_SIZE_TO_ACC_SIZE) / 2));
+                    g.drawString(text, (int) (textCoord.x), (int) (textCoord.y));
                 }
                 else if (style == HIGHLIGHT) {
                     g.setColor(Color.WHITE);
-                    g.fillRect((int) (coord.x - (g.getFontMetrics().stringWidth(text) + font[state].getSize() * FONT_SIZE_TO_HIGHLIGHT_BUFFER_X) / 2), (int) (coord.y + size[state].y / 2 - font[state].getSize() - HIGHLIGHT_SPACING_Y), g.getFontMetrics().stringWidth(text) + (int) (font[state].getSize() * FONT_SIZE_TO_HIGHLIGHT_BUFFER_X), font[state].getSize());
+                    double highlightSizeX = strWidth + font[state].getSize() * FONT_SIZE_TO_HIGHLIGHT_BUFFER_X;
+                    double buttonBottom = coord.y + size[state].y / 2;
+                    g.fillRect((int) (coord.x - highlightSizeX / 2), (int) (buttonBottom - font[state].getSize() - HIGHLIGHT_SPACING_Y), (int) (highlightSizeX), font[state].getSize());
                     g.setColor(Color.BLACK);
-                    g.drawString(text, (int) (coord.x - g.getFontMetrics().stringWidth(text) / 2), (int) (coord.y + (size[state].y - font[state].getSize() + Math.pow(font[state].getSize(), FONT_SIZE_TO_ACC_SIZE)) / 2 - HIGHLIGHT_SPACING_Y));
+                    g.drawString(text, (int) (coord.x - strWidth / 2), (int) (buttonBottom + (-font[state].getSize() + accFontSize) / 2 - HIGHLIGHT_SPACING_Y));
                 }
             }
         }
@@ -134,8 +133,7 @@ class TextBox extends Button {
 
     // Instance variables
     public boolean typing;
-    public boolean clickedOutside;
-    public HashSet<Integer> prevPressedKeys;
+    public boolean clickedOut;
     public int cursorCounter;
     public int textBufferX;
 
@@ -146,7 +144,7 @@ class TextBox extends Button {
     }
 
     public TextBox(BufferedImage image, Font font, Coord coord, Coord size, int style, int textBufferX) {
-        super(image, font, coord, size, "", NO_BUTTON_NUM, style);
+        this(image, font, coord, size, style, textBufferX, true, true);
     }
 
     // Description: This method draws the text box on the screen based on its current state and instance variables
@@ -170,7 +168,7 @@ class TextBox extends Button {
                         state = PRESSED;
                         OmegaFight3.play(click);
                     }
-                    if (clickedOutside) clickedOutside = false;
+                    if (clickedOut) clickedOut = false;
                 }
 
                 // Hovered
@@ -188,13 +186,13 @@ class TextBox extends Button {
             else {
                 // Clicked outside
                 if (clicked) {
-                    clickedOutside = true;
+                    clickedOut = true;
                 }
 
                 // Released click outside
                 else {
-                    if (clickedOutside) {
-                        clickedOutside = false;
+                    if (clickedOut) {
+                        clickedOut = false;
                         typing = false;
                     }
                 }
@@ -224,6 +222,7 @@ class TextBox extends Button {
     public void backspace() {
         if (text.length() > 0) {
             text = text.substring(0, text.length() - 1);
+            cursorCounter = 0;
         }
     }
 }

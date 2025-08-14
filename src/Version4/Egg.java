@@ -6,7 +6,7 @@ import java.awt.image.BufferedImage;
 public class Egg extends Projectile{
     // Damage constants
     public static final double[] DMG = {2 * Omegaman.PERC_MULT, 4 * Omegaman.PERC_MULT, 8 * Omegaman.PERC_MULT};
-    public static final double DURABILITY = 1;
+    public static final double DURA = 1;
     public static final double[] KB = {3, 6, 12};
     public static final double KB_SPREAD = Math.PI / 3;
     public static final int[] PROJS_PER_SPLIT = {2, 2};
@@ -43,8 +43,8 @@ public class Egg extends Projectile{
     public int type;
 
     // Constructor with custom stats
-    public Egg(Boss boss, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double kbSpread, double durability, int state, int type, boolean canHitProj, boolean isOnTop) {
-        super(boss, coord, size, hitBoxSize, velocity, dir, damage, knockback, kbSpread, durability, INF_LIFE, canHitProj, isOnTop);
+    public Egg(Boss boss, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double kbSpread, double dura, int state, int type, boolean canHitProj, boolean isOnTop) {
+        super(boss, coord, size, hitBoxSize, velocity, dir, damage, knockback, kbSpread, dura, INF_LIFE, canHitProj, isOnTop);
         eggVelocity = new Coord(velocity * Math.cos(dir), velocity * Math.sin(dir));
         this.state = state;
         this.type = type;
@@ -52,7 +52,7 @@ public class Egg extends Projectile{
 
     // Constructors with default stats
     public Egg(Boss boss, Coord coord, double dir, int state) {
-        this(boss, coord, SIZE[state].copy(), SIZE[state].scaledBy(SIZE_TO_HITBOX), VELOCITY[state], dir, DMG[state], KB[state], KB_SPREAD, DURABILITY, state, (int) (Math.random() * NUM_TYPES[state]), CAN_HIT_PROJ, IS_ON_TOP);
+        this(boss, coord, SIZE[state].copy(), SIZE[state].scaledBy(SIZE_TO_HITBOX), VELOCITY[state], dir, DMG[state], KB[state], KB_SPREAD, DURA, state, (int) (Math.random() * NUM_TYPES[state]), CAN_HIT_PROJ, IS_ON_TOP);
     }
     public Egg(Boss boss, Coord coord, double dir) {
         this(boss, coord, dir, NO_OF_STATES - 1);
@@ -118,7 +118,7 @@ public class Egg extends Projectile{
 class Feather extends Projectile {
     // Damage constants
     public static final double DMG = 10 * Omegaman.PERC_MULT;
-    public static final double DURABILITY = 2;
+    public static final double DURA = 2;
     public static final double KB = 10;
     public static final double KB_SPREAD = Math.PI / 3;
 
@@ -127,7 +127,7 @@ class Feather extends Projectile {
     public static final double SIZE_TO_HITBOX = 1.0;
 
     // Movement constants
-    public static final double VELOCITY = 6;
+    public static final double VELOCITY = 8;
 
     // Misc constants
     public static final boolean CAN_HIT_PROJ = false;
@@ -139,13 +139,13 @@ class Feather extends Projectile {
     public static BufferedImage[] images = new BufferedImage[NO_OF_SPRITES];
 
     // Constructor with custom stats
-    public Feather(Boss boss, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double kbSpread, double durability, boolean canHitProj, boolean isOnTop) {
-        super(boss, coord, size, hitBoxSize, velocity, dir, damage, knockback, kbSpread, durability, INF_LIFE, canHitProj, isOnTop);
+    public Feather(Boss boss, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double kbSpread, double dura, boolean canHitProj, boolean isOnTop) {
+        super(boss, coord, size, hitBoxSize, velocity, dir, damage, knockback, kbSpread, dura, INF_LIFE, canHitProj, isOnTop);
     }
 
     // Constructor with default stats
     public Feather(Boss boss, Coord coord, double dir) {
-        this(boss, coord, SIZE.copy(), (new Coord(Math.min(SIZE.x, SIZE.y))).scaledBy(SIZE_TO_HITBOX), VELOCITY, dir, DMG, KB, KB_SPREAD, DURABILITY, CAN_HIT_PROJ, IS_ON_TOP);
+        this(boss, coord, SIZE.copy(), (new Coord(Math.min(SIZE.x, SIZE.y))).scaledBy(SIZE_TO_HITBOX), VELOCITY, dir, DMG, KB, KB_SPREAD, DURA, CAN_HIT_PROJ, IS_ON_TOP);
     }
 
     // Description: THis method draws the pellet of energy on screen
@@ -174,7 +174,7 @@ class Diver extends Projectile {
 
     // Damage constants
     public static final double DMG = 10 * Omegaman.PERC_MULT;
-    public static final double DURABILITY = INFINITE_DURABILITY;
+    public static final double DURA = INF_DURA;
     public static final double KB = 10;
     public static final double KB_SPREAD = Math.PI / 3;
     public static final double DMG_KB_MULT = 0.35; // FIDDLE WITH THIS
@@ -204,14 +204,14 @@ class Diver extends Projectile {
     public static BufferedImage[] images = new BufferedImage[NO_OF_SPRITES];
 
     // Constructor with custom stats
-    public Diver(Boss boss, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double kbSpread, double durability, int sign, boolean canHitProj, boolean isOnTop) {
-        super(boss, coord, size, hitBoxSize, velocity, dir, damage, knockback, kbSpread, durability, INF_LIFE, canHitProj, isOnTop);
+    public Diver(Boss boss, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double kbSpread, double dura, int sign, boolean canHitProj, boolean isOnTop) {
+        super(boss, coord, size, hitBoxSize, velocity, dir, damage, knockback, kbSpread, dura, INF_LIFE, canHitProj, isOnTop);
         this.sign = sign;
     }
 
     // General constructor with default stats
     public Diver(Boss boss, Coord coord, double dir, int sign) {
-        this(boss, coord, SIZE.copy(), SIZE.scaledBy(SIZE_TO_HITBOX), VELOCITY, dir, DMG, KB, KB_SPREAD, DURABILITY, sign, CAN_HIT_PROJ, IS_ON_TOP);
+        this(boss, coord, SIZE.copy(), SIZE.scaledBy(SIZE_TO_HITBOX), VELOCITY, dir, DMG, KB, KB_SPREAD, DURA, sign, CAN_HIT_PROJ, IS_ON_TOP);
     }
 
     // Description: This method explodes the bombot
@@ -280,7 +280,7 @@ class Diver extends Projectile {
 class Plush extends Projectile {
     // Damage constants
     public static final double DMG = 10 * Omegaman.PERC_MULT;
-    public static final double DURABILITY = INFINITE_DURABILITY;
+    public static final double DURA = INF_DURA;
     public static final double KB = 10;
     public static final double KB_SPREAD = Math.PI / 3;
 
@@ -302,13 +302,13 @@ class Plush extends Projectile {
     public int state = NO_OF_STATES - 1; // rotate on it's own?
 
     // Constructor with custom stats
-    public Plush(Boss boss, Coord size, Coord hitBoxSize, double damage, double knockback, double kbSpread, double durability, boolean canHitProj, boolean isOnTop) {
-        super(boss, new Coord(OmegaFight3.SCREEN_CENTER.x, OmegaFight3.stage[OmegaFight3.NORTH_CAVE_NO].platforms[0].y - SIZE.y / 2), size, hitBoxSize, 0, 0, damage, knockback, kbSpread, durability, INF_LIFE, canHitProj, isOnTop);
+    public Plush(Boss boss, Coord size, Coord hitBoxSize, double damage, double knockback, double kbSpread, double dura, boolean canHitProj, boolean isOnTop) {
+        super(boss, new Coord(OmegaFight3.SCREEN_CENTER.x, OmegaFight3.stage[OmegaFight3.NORTH_CAVE_NO].platforms[0].y - SIZE.y / 2), size, hitBoxSize, 0, 0, damage, knockback, kbSpread, dura, INF_LIFE, canHitProj, isOnTop);
     }
 
     // Constructor with default stats
     public Plush(Boss boss) {
-        this(boss, SIZE.copy(), SIZE.scaledBy(SIZE_TO_HITBOX), DMG, KB, KB_SPREAD, DURABILITY, CAN_HIT_PROJ, IS_ON_TOP);
+        this(boss, SIZE.copy(), SIZE.scaledBy(SIZE_TO_HITBOX), DMG, KB, KB_SPREAD, DURA, CAN_HIT_PROJ, IS_ON_TOP);
     }
 
     // Description: THis method draws the plush on screen
@@ -335,7 +335,7 @@ class Plush extends Projectile {
         }
     }
 
-    public boolean shouldDieTo(double enemyDurability) {
+    public boolean shouldDieTo(double enemyDura) {
         return true;
     }
 

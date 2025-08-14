@@ -67,19 +67,48 @@ abstract class Boss extends Char {
     // Static surge images for bosses
     public static BufferedImage[] surge = new BufferedImage[OmegaFight3.NUM_SURGE_IMAGES];
 
-    // Combat stats
-    public int transitionTo = NO_TRANSITION;
-    public double health;
-    public boolean hurt;
-    public int hurtCounter = NOT_HURT;
-    public double sizeToHitbox;
+    // public static int[] STATE_SPRITE_START = new int[NUM_STATES];
+    // public static final int[] STATE_SPRITE_SIGN = {OmegaFight3.RIGHT_SIGN, OmegaFight3.LEFT_SIGN, OmegaFight3.RIGHT_SIGN, OmegaFight3.RIGHT_SIGN};
+    // public static final int[] STATE_NUM_SPRITES = {2, 4, 4, 3};
 
-    // Constructor
-    public Boss(Coord coord, int spriteNo, int spriteSign, int frameCounter, Coord size, int state, double health, double sizeToHitbox) {
-        super(coord, spriteNo, spriteSign, frameCounter, size, state);
+    // State stats
+    public int numStates;
+    public int transTime;
+    public Coord[] stateSize;
+    public int[] stateSpriteHz;
+    public Coord[] stateCoord;
+    public int[] stateTime;
+    public int[] stateSpriteStart;
+    public int[] stateSpriteSign;
+    public int[] stateNumSprites;
+
+    public Boss(BufferedImage[] sprite, Coord[] stateCoord, Coord[] stateSize, int[] stateSpriteHz, int[] stateTime,
+    int[] stateSpriteStart, int[] stateSpriteSign, int[] stateNumSprites, double health, double sizeToHitbox, int state, int numStates, int transTime) {
+        super(stateCoord[state].copy(), stateSpriteStart[state], stateSpriteSign[state], stateTime[state], stateSize[state], state);
+        this.sprite = sprite;
+        this.stateCoord = stateCoord;
+        this.stateSize = stateSize;
+        this.stateSpriteHz = stateSpriteHz;
+        this.stateTime = stateTime;
+        this.stateSpriteStart = stateSpriteStart;
+        this.stateSpriteSign = stateSpriteSign;
+        this.stateNumSprites = stateNumSprites;
         this.health = health;
-        this.sizeToHitbox = sizeToHitbox; 
+        this.sizeToHitbox = sizeToHitbox;
+        this.state = state;
+        this.numStates = numStates;
+        this.transTime = transTime;
     }
+
+    // Combat stats
+    public double health;
+    public double sizeToHitbox;
+    public int transitionTo = NO_TRANSITION;
+    public int hurtCounter = NOT_HURT;
+    public boolean hurt;
+
+    // Images
+    public BufferedImage[] sprite;
 
     // Description: This method hurts and prepares the boss to die if they're gonna die
     public void hurt(double damage) {
@@ -107,12 +136,28 @@ abstract class Boss extends Char {
         state = DEAD;
         frameCounter = 0;
         velocity.y = 0;
+        spriteNo = stateSpriteStart[DEAD];
+        size = stateSize[DEAD];
     }
 
     // Description: This method calculates the boss falling to his death
     public void fall() {
         coord.y += velocity.y;
         velocity.y += DIE_ACCEL;
+
+        // Sprite changes
+        frameCounter = (frameCounter + 1) % stateSpriteHz[DEAD];
+        if (frameCounter == 0) {
+            spriteNo = (spriteNo + 1) % stateNumSprites[DEAD];
+        }
+
+        // Start surge animation
+        if (coord.y > OmegaFight3.SCREEN_SIZE.y + size.y / 2) {
+            frameCounter = 0;
+            spriteNo = 0;
+            OmegaFight3.screenShakeCounter += DIE_SCREENSHAKE;
+            OmegaFight3.play(OmegaFight3.boom);
+        }
     }
 
     // Description: This method calculates the surge animation and sounds effects
@@ -135,8 +180,64 @@ abstract class Boss extends Char {
         }
     }
 
+    public void draw(Graphics g) {
+        if (!hurt || hurtCounter >= Boss.HURT_BLINK_HZ) {
+            g.drawImage(sprite[spriteNo], (int) (coord.x - size.x / 2 * spriteSign), (int) (coord.y - size.y / 2), (int) size.x * spriteSign, (int) size.y, null);
+        }
+    }
+
+    public void transition() {
+        // Sprite change
+        frameCounter--;
+        if (frameCounter % stateSpriteHz[IDLE] == 0) {
+            spriteNo = stateSpriteStart[IDLE] + (spriteNo - stateSpriteStart[IDLE] + 1) % stateNumSprites[IDLE];
+        }
+
+        // Change position
+        coord.x = OmegaFight3.lerp(stateCoord[transitionTo].x, stateCoord[state].x, (double) frameCounter / transTime);
+        coord.y = OmegaFight3.lerp(stateCoord[transitionTo].y, stateCoord[state].y, (double) frameCounter / transTime);
+
+        // Change state if finished transition
+        if (frameCounter == 0) {
+            state = transitionTo;
+            transitionTo = NO_TRANSITION;
+            frameCounter = stateTime[state];
+            spriteNo = stateSpriteStart[state];
+            spriteSign = stateSpriteSign[state];
+            size = stateSize[state];
+        }
+    }
+
+    public void calcSprites() {
+        frameCounter--; // Seperate this and last thing into two different methods
+        if (frameCounter % stateSpriteHz[state] == 0) {
+            spriteNo = stateSpriteStart[state] + (spriteNo - stateSpriteStart[state] + 1) % stateNumSprites[state];
+        }
+    }
+
+    public void checkFinish() {
+        if (frameCounter == 0) {
+            transitionTo = (int) (Math.random() * (numStates - 1)) + 1;
+
+            // Transition to same attack
+            if (transitionTo == state) {
+                transitionTo = NO_TRANSITION;
+                frameCounter = stateTime[state];
+                spriteNo = stateSpriteStart[state];
+            }
+
+            // Transition to different attack
+            else {
+                frameCounter = transTime;
+                spriteNo = stateSpriteStart[IDLE];
+                spriteSign = (int) Math.signum(stateCoord[transitionTo].x - stateCoord[state].x);
+                if (spriteSign == 0) spriteSign = stateSpriteSign[transitionTo];
+                size = stateSize[IDLE];
+            }
+        }
+    }
+
     // Abstract methods for each boss
-    abstract public void transition();
     abstract public void attack();
     abstract public void backgroundAttack();
 }

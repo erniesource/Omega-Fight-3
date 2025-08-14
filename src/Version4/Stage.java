@@ -98,6 +98,10 @@ class Coord { // Note: Coord is actually more of a Vector, but Vector has alread
         return new Coord(x * coord.x, y * coord.y);
     }
 
+    public Coord add(Coord coord) {
+        return new Coord(x + coord.x, y + coord.y);
+    }
+
     // Description: This method is for printing out coords when debugging
     public String toString() {
         return "(" + x + ", " + y + ")";

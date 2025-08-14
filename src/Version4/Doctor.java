@@ -1,44 +1,44 @@
 package Version4;
 
-import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public class Doctor extends Boss {
     // Combat constants
-    public static final double INITIAL_HEALTH = 200 * Omegaman.PERC_MULT;//600 * Omegaman.PERC_MULT;
+    public static final double INITIAL_HEALTH = 100 * Omegaman.PERC_MULT;//600 * Omegaman.PERC_MULT;
     public static final double SIZE_TO_HITBOX = 0.4;
 
     // State constants
     public static final int SPIT = 2;
     public static final int LAUGH = 3;
-    public static final int NO_OF_STATES = 4;
-    public static final int TRANSITION_TIME = 120;
+    public static final int NUM_STATES = 4;
+    public static final int TRANS_TIME = 120;
     public static final Coord[] STATE_SIZE = {new Coord(220, 420), new Coord(280, 400), new Coord(280, 440), new Coord(400, 525)};
-    public static final int[] STATE_SPRITE_CHANGE_HZ = {10, 10, 7, 5};
-    public static final Coord[] STATE_COORD = {null, new Coord(OmegaFight3.SCREEN_SIZE.x * 7 / 8, OmegaFight3.SCREEN_SIZE.y / 2),
+    public static final int[] STATE_SPRITE_HZ = {10, 10, 7, 5};
+    public static final Coord[] STATE_COORD = {null, new Coord(OmegaFight3.SCREEN_SIZE.x * 7 / 8, OmegaFight3.SCREEN_CENTER.y),
         new Coord(OmegaFight3.SCREEN_SIZE.x * 7 / 8, OmegaFight3.stage[OmegaFight3.BATTLEFIELD_NO].platforms[1].y - (OmegaFight3.stage[OmegaFight3.BATTLEFIELD_NO].platforms[0].y - OmegaFight3.stage[OmegaFight3.BATTLEFIELD_NO].platforms[1].y)),
-        new Coord(OmegaFight3.SCREEN_SIZE.x / 8, OmegaFight3.SCREEN_SIZE.y / 2)};
+        new Coord(OmegaFight3.SCREEN_SIZE.x / 8, OmegaFight3.SCREEN_CENTER.y)};
     public static final int[] STATE_TIME = {0, 60, 30, 300};
     public static final String[] STATE_NAME = {"spit", "laugh"};
 
     // Sprite constants
-    public static int[] STATE_SPRITE_START = new int[NO_OF_STATES];
+    public static int[] STATE_SPRITE_START = new int[NUM_STATES];
     public static final int[] STATE_SPRITE_SIGN = {OmegaFight3.RIGHT_SIGN, OmegaFight3.LEFT_SIGN, OmegaFight3.LEFT_SIGN, OmegaFight3.RIGHT_SIGN};
-    public static final int[] STATE_NO_SPRITES = {2, 2, 3, 4};
-    public static final int NO_OF_SPRITES = 11;
+    public static final int[] STATE_NUM_SPRITES = {2, 2, 3, 4};
+    public static final int TOT_NUM_SPRITES = 11;
 
     // Spit Constants
-    public static final double SPIT_SPEED = 7;
+    public static final double SPIT_SPD = 7;
     public static final double SPIT_START_ANGLE = Math.PI / 3;
     public static final double SPIT_SPREAD = Math.PI / 6;
     public static final int SPIT_NUM_PROJS = 4;
     public static final int SPIT_HZ = 48;
-    public static final Coord COORD_TO_SPIT_COORD = new Coord(STATE_SIZE[SPIT].x / 4, STATE_SIZE[SPIT].y * 3 / 10);
+    public static final Coord COORD_TO_SPIT = new Coord(STATE_SIZE[SPIT].x / 4, STATE_SIZE[SPIT].y * 3 / 10);
 
     // Laugh constants
-    public static final int LAUGH_NO_PROJS = 5;
+    public static final int LAUGH_NUM_PROJS = 5;
     public static final int LAUGH_HZ = 60;
-    public static final Coord COORD_TO_GEM_COORD = new Coord(STATE_SIZE[LAUGH].x * 23 / 80, STATE_SIZE[LAUGH].y * 7 / 20);
+    public static final double ANGLE_BETWEEN_ENERGY = Math.PI / (LAUGH_NUM_PROJS - 1) * STATE_SPRITE_SIGN[LAUGH];
+    public static final Coord COORD_TO_GEM = new Coord(STATE_SIZE[LAUGH].x * 23 / 80, STATE_SIZE[LAUGH].y * 7 / 20);
 
     // Background attack constants
     public static final double PINCER_AMT_SCALING_TO_HEALTH = 0.3;
@@ -49,66 +49,27 @@ public class Doctor extends Boss {
     public static final int BOMBOT_HZ = 600;
     public static final int MIN_BOMBOT_HZ = 300;
     public static final double BOMBOT_THRESHOLD = 0.4;
-    public static final int BOMBOT_NUM_SPAWN_LOCS = 2;
-    public static final int LEFT_SPAWN = 0;
-    public static final int RIGHT_SPAWN = 1;
 
     // Background attack variables
     public int pincerCounter;
     public int bombotCounter;
 
     // Images
-    public static BufferedImage[] sprite = new BufferedImage[NO_OF_SPRITES];
+    public static BufferedImage[] docSprite = new BufferedImage[TOT_NUM_SPRITES];
 
     // Constructor
     public Doctor() {
-        super(STATE_COORD[IDLE].copy(), STATE_SPRITE_START[IDLE], STATE_SPRITE_SIGN[IDLE], STATE_TIME[IDLE], STATE_SIZE[IDLE].copy(), IDLE, INITIAL_HEALTH, SIZE_TO_HITBOX);
-    }
-
-    // Description: This method transitions the boss from state to state (from each attack's location to another attack's location)
-    public void transition() {
-        // Sprite change
-        frameCounter--;
-        if (frameCounter % STATE_SPRITE_CHANGE_HZ[IDLE] == 0) {
-            spriteNo = STATE_SPRITE_START[IDLE] + (spriteNo - STATE_SPRITE_START[IDLE] + 1) % STATE_NO_SPRITES[IDLE];
-        }
-
-        // Change position
-        coord.x = OmegaFight3.lerp(STATE_COORD[transitionTo].x, STATE_COORD[state].x, (double) frameCounter / TRANSITION_TIME);
-        coord.y = OmegaFight3.lerp(STATE_COORD[transitionTo].y, STATE_COORD[state].y, (double) frameCounter / TRANSITION_TIME);
-
-        // Change state if finished transition
-        if (frameCounter == 0) {
-            state = transitionTo;
-            transitionTo = NO_TRANSITION;
-            frameCounter = STATE_TIME[state];
-            spriteNo = STATE_SPRITE_START[state];
-            spriteSign = STATE_SPRITE_SIGN[state];
-            size = STATE_SIZE[state].copy();
-        }
+        super(docSprite, STATE_COORD, STATE_SIZE, STATE_SPRITE_HZ, STATE_TIME, STATE_SPRITE_START, STATE_SPRITE_SIGN, STATE_NUM_SPRITES, INITIAL_HEALTH * OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty], SIZE_TO_HITBOX, IDLE, NUM_STATES, TRANS_TIME);
     }
 
     // Description: This method calculates the attacks of the Doctor
     public void attack() {
-        // Calculate frames
-        frameCounter--;
-
-        // Idle
-        if (state == IDLE) {
-            if (frameCounter % STATE_SPRITE_CHANGE_HZ[IDLE] == 0) {
-                spriteNo = STATE_SPRITE_START[IDLE] + (spriteNo - STATE_SPRITE_START[IDLE] + 1) % STATE_NO_SPRITES[IDLE];
-            }
-        }
+        calcSprites();
 
         // Spit nuts and bolts attack
-        else if (state == SPIT) {
-            // Sprite change
-            if (frameCounter % STATE_SPRITE_CHANGE_HZ[SPIT] == 0) {
-                spriteNo = STATE_SPRITE_START[SPIT] + (spriteNo - STATE_SPRITE_START[SPIT] + 1) % STATE_NO_SPRITES[SPIT];
-            }
-
+        if (state == SPIT) {
             // Movement
-            coord.x += (spriteSign * SPIT_SPEED);
+            coord.x += (spriteSign * SPIT_SPD);
             if (coord.x < size.x / 2) {
                 spriteSign = OmegaFight3.RIGHT_SIGN;
             }
@@ -121,7 +82,7 @@ public class Doctor extends Boss {
             else if (frameCounter == 0) {
                 frameCounter = SPIT_HZ;
                 for (int i = 0; i != SPIT_NUM_PROJS; i++) {
-                    OmegaFight3.projectiles.add(new Fastener(this, new Coord(coord.x + COORD_TO_SPIT_COORD.x * spriteSign, coord.y + COORD_TO_SPIT_COORD.y),
+                    OmegaFight3.projectiles.add(new Fastener(this, new Coord(coord.x + COORD_TO_SPIT.x * spriteSign, coord.y + COORD_TO_SPIT.y),
                     -Math.PI / 2 + (SPIT_START_ANGLE + Math.random() * SPIT_SPREAD) * spriteSign));
                 }
             }
@@ -129,106 +90,42 @@ public class Doctor extends Boss {
 
         // Laughing gem attack
         else if (state == LAUGH) {
-            // Sprite change
-            if (frameCounter % STATE_SPRITE_CHANGE_HZ[LAUGH] == 0) {
-                spriteNo = STATE_SPRITE_START[LAUGH] + (spriteNo - STATE_SPRITE_START[LAUGH] + 1) % STATE_NO_SPRITES[LAUGH];
-            }
-            
-            // Alternate between LAUGH_NO_PROJS and LAUGH_NO_PROJS - 1 so that players can't just stay in one place to dodge
+            // Alternate between LAUGH_NUM_PROJS and LAUGH_NUM_PROJS - 1 so that players can't just stay in one place to dodge
             if (frameCounter % (LAUGH_HZ * 2) == 0) {
-                for (int i = 0; i != LAUGH_NO_PROJS - 1; i++) {
-                    OmegaFight3.projectiles.add(new Energy(this, new Coord(coord.x + COORD_TO_GEM_COORD.x * spriteSign, coord.y + COORD_TO_GEM_COORD.y),
-                    -Math.PI / 2 + Math.PI / (LAUGH_NO_PROJS - 1) / 2 + Math.PI / (LAUGH_NO_PROJS - 1) * i * spriteSign));
+                for (int i = 0; i != LAUGH_NUM_PROJS - 1; i++) { // Might add spritesign when adding COORD_TO_GEM if needed
+                    OmegaFight3.projectiles.add(new Energy(this, coord.add(COORD_TO_GEM), -Math.PI / 2 + ANGLE_BETWEEN_ENERGY * (i + 0.5)));
                 }
             }
             else if (frameCounter % LAUGH_HZ == 0) {
-                for (int i = 0; i != LAUGH_NO_PROJS; i++) {
-                    OmegaFight3.projectiles.add(new Energy(this, new Coord(coord.x + COORD_TO_GEM_COORD.x * spriteSign, coord.y + COORD_TO_GEM_COORD.y),
-                    -Math.PI / 2 + Math.PI / (LAUGH_NO_PROJS - 1) * i * spriteSign));
+                for (int i = 0; i != LAUGH_NUM_PROJS; i++) {
+                    OmegaFight3.projectiles.add(new Energy(this, coord.add(COORD_TO_GEM), -Math.PI / 2 + ANGLE_BETWEEN_ENERGY * i));
                 }
             }
         }
 
-        // Attack has finished, transition to same or new attack
-        if (frameCounter == 0) {
-            transitionTo = (int) (Math.random() * (NO_OF_STATES - 1)) + 1;
-
-            // Transition to same attack
-            if (transitionTo == state) {
-                transitionTo = NO_TRANSITION;
-                frameCounter = STATE_TIME[state];
-                spriteNo = STATE_SPRITE_START[state];
-            }
-
-            // Transition to different attack
-            else {
-                frameCounter = TRANSITION_TIME;
-                spriteNo = STATE_SPRITE_START[IDLE];
-                spriteSign = (int) Math.signum(STATE_COORD[transitionTo].x - STATE_COORD[state].x);
-                if (spriteSign == 0) spriteSign = STATE_SPRITE_SIGN[transitionTo];
-                size = STATE_SIZE[IDLE];
-            }
-        }
+        checkFinish();
     }
 
     // Description: This method calculates all of the background attacks of the doctor
     public void backgroundAttack() {
+        double maxHealth = INITIAL_HEALTH * OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty];
         // Pincer attack
-        if (health <= INITIAL_HEALTH * OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty] * PINCER_THRESHOLD) {
+        if (health <= maxHealth * PINCER_THRESHOLD) {
             pincerCounter++;
-            if (pincerCounter >= Math.max(MIN_PINCER_HZ, PINCER_HZ * health / (INITIAL_HEALTH * OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty] * PINCER_THRESHOLD) / PINCER_AMT_SCALING_TO_HEALTH)) {
+            if (pincerCounter >= Math.max(MIN_PINCER_HZ, PINCER_HZ * health / (maxHealth * PINCER_THRESHOLD) / PINCER_AMT_SCALING_TO_HEALTH)) {
                 OmegaFight3.projectiles.add(new Pincer(this, new Coord((int) (Math.random() * 2) * OmegaFight3.SCREEN_SIZE.x, (int) (Math.random() * 2) * OmegaFight3.SCREEN_SIZE.y)));
                 pincerCounter = 0;
             }
         }
 
         // Homing missile attack
-        if (health <= INITIAL_HEALTH * OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty] * BOMBOT_THRESHOLD) {
+        if (health <= maxHealth * BOMBOT_THRESHOLD) {
             bombotCounter++;
-            if (bombotCounter >= Math.max(MIN_BOMBOT_HZ, BOMBOT_HZ * health / (INITIAL_HEALTH * OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty] * BOMBOT_THRESHOLD) / BOMBOT_AMT_SCALING_TO_HEALTH)) {
-                int spawn = (int) (Math.random() * BOMBOT_NUM_SPAWN_LOCS);
-                if (spawn == LEFT_SPAWN) {
-                    OmegaFight3.projectiles.add(new Bombot(this, new Coord(-Bombot.SIZE.x / 2, OmegaFight3.SCREEN_SIZE.y * Math.random()), 0, OmegaFight3.RIGHT_SIGN));
-                }
-                else if (spawn == RIGHT_SPAWN) {
-                    OmegaFight3.projectiles.add(new Bombot(this, new Coord(OmegaFight3.SCREEN_SIZE.x + Bombot.SIZE.x / 2, OmegaFight3.SCREEN_SIZE.y * Math.random()), Math.PI, OmegaFight3.LEFT_SIGN));
-                }
+            if (bombotCounter >= Math.max(MIN_BOMBOT_HZ, BOMBOT_HZ * health / (maxHealth * BOMBOT_THRESHOLD) / BOMBOT_AMT_SCALING_TO_HEALTH)) {
+                int sign = OmegaFight3.randomSign();
+                OmegaFight3.projectiles.add(new Bombot(this, new Coord(OmegaFight3.SCREEN_CENTER.x - (OmegaFight3.SCREEN_CENTER.x + Bombot.SIZE.x / 2) * sign, OmegaFight3.SCREEN_SIZE.y * Math.random()), OmegaFight3.signToRadians(sign), sign));
                 bombotCounter = 0;
             }
         }
-    }
-
-    // Description: This method draws the doctor using the graphics object provided
-    public void draw(Graphics g) {
-        if (!hurt || hurtCounter >= Boss.HURT_BLINK_HZ) {
-            g.drawImage(sprite[spriteNo], (int) (coord.x - size.x / 2 * spriteSign), (int) (coord.y - size.y / 2), (int) size.x * spriteSign, (int) size.y, null);
-        }
-    }
-
-    // Description: This method calculates the doctor falling to his death 
-    public void fall() {
-        // Move doctor
-        super.fall();
-        
-        // Sprite changes
-        frameCounter = (frameCounter + 1) % STATE_SPRITE_CHANGE_HZ[DEAD];
-        if (frameCounter == 0) {
-            spriteNo = (spriteNo + 1) % STATE_NO_SPRITES[DEAD];
-        }
-
-        // Start surge animation
-        if (coord.y > OmegaFight3.SCREEN_SIZE.y + size.y / 2) {
-            frameCounter = 0;
-            spriteNo = 0;
-            OmegaFight3.screenShakeCounter += DIE_SCREENSHAKE;
-            OmegaFight3.play(OmegaFight3.boom);
-        }
-    }
-
-    // Description: This method changes the doctors stats to prepare him for death
-    public void prepareToDie() {
-        super.prepareToDie();
-        spriteNo = STATE_SPRITE_START[DEAD];
-        size = STATE_SIZE[DEAD];
     }
 }

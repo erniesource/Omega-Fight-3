@@ -6,7 +6,7 @@ import java.awt.image.BufferedImage;
 public class Bullet extends Projectile {
     // Damage constants
     public static final double DMG = 2 * Omegaman.PERC_MULT;
-    public static final double DURABILITY = 2;
+    public static final double DURA = 2;
     public static final double KB = 5;
     public static final double KB_SPREAD = Math.PI / 3;
 
@@ -28,13 +28,13 @@ public class Bullet extends Projectile {
     public static BufferedImage image;
 
     // Constructor
-    public Bullet(Omegaman player, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double kbSpread, double durability, int frameCounter, boolean canHitProj, boolean isOnTop) {
-        super(player, coord, size, hitBoxSize, velocity, dir, damage, knockback, kbSpread, durability, frameCounter, canHitProj, isOnTop);
+    public Bullet(Omegaman player, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double kbSpread, double dura, int frameCounter, boolean canHitProj, boolean isOnTop) {
+        super(player, coord, size, hitBoxSize, velocity, dir, damage, knockback, kbSpread, dura, frameCounter, canHitProj, isOnTop);
     }
 
     // Overloaded constructor with default stats
     public Bullet(Omegaman player, Coord coord, double dir) {
-        this(player, coord, SIZE.copy(), SIZE.scaledBy(SIZE_TO_HITBOX), VELOCITY, dir, DMG, KB, KB_SPREAD, DURABILITY, LIFE, CAN_HIT_PROJ, IS_ON_TOP);
+        this(player, coord, SIZE.copy(), SIZE.scaledBy(SIZE_TO_HITBOX), VELOCITY, dir, DMG, KB, KB_SPREAD, DURA, LIFE, CAN_HIT_PROJ, IS_ON_TOP);
     }
 
     // Description: Draws the bullet on the screen
@@ -42,38 +42,39 @@ public class Bullet extends Projectile {
         g2.drawImage(image, (int) (coord.x - size.x / 2), (int) (coord.y - size.y / 2), (int) size.x, (int) size.y, null);
     }
 
-    public void hitPlayer(Omegaman omega) {
-        super.hitPlayer(omega);
-        ((Omegaman) character).addSkillPts(SKILL_PT_GAIN);
-        ((Omegaman) character).stats[Omegaman.DMG_TO_OMEGAMAN] += damage;
+    public void hitPlayer(Omegaman enemy) {
+        super.hitPlayer(enemy);
+        Omegaman omega = ((Omegaman) character);
+        omega.addSkillPts(SKILL_PT_GAIN);
+        omega.stats[Omegaman.DMG_TO_OMEGAMAN] += damage;
     }
 
     public void hitBoss(Boss boss) {
         super.hitBoss(boss);
-        ((Omegaman) character).addSkillPts(SKILL_PT_GAIN);
-        ((Omegaman) character).stats[Omegaman.DMG_TO_BOSS] += damage;
+        Omegaman omega = ((Omegaman) character);
+        omega.addSkillPts(SKILL_PT_GAIN);
+        omega.stats[Omegaman.DMG_TO_BOSS] += damage;
     }
 }
 
 class Rocket extends Projectile {
     // Size constants
     public static final double HITBOX_TO_SIZE = 2.5;
-    public static final double MIN_SIZE_PERCENT = 0.2;
+    public static final double MIN_PERC = 0.2;
     public static final Coord SIZE = new Coord(50, 50);
 
     // Damage constants
     public static final double DMG = 15 * Omegaman.PERC_MULT;
-    public static final double DURABILITY = INFINITE_DURABILITY;
+    public static final double DURA = INF_DURA;
     public static final double KB = 20;
     public static final double KB_SPREAD = Math.PI / 3;
-    public static final double EXPLOSION_SIZE_MULTIPLIER = 4;
+    public static final double EXPLOSION_SIZE_MULT = 4;
 
     // Velocity constants
     public static final double VELOCITY = 15;
     public static final int LIFE = 40;
 
     // Misc constants
-    public static final double MINIMUM_STAT_PERCENTAGE = 0.5;
     public static final double RECOIL = 8;
     public static final int SCREENSHAKE = 15;
     public static final boolean CAN_HIT_PROJ = true;
@@ -86,20 +87,20 @@ class Rocket extends Projectile {
     public BufferedImage image;
 
     // Constructor
-    public Rocket(Omegaman player, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double kbSpread, double durability, int frameCounter, boolean canHitProj, boolean isOnTop) {
-        super(player, coord, size, hitBoxSize, velocity, dir, damage, knockback, kbSpread, durability, frameCounter, canHitProj, isOnTop);
+    public Rocket(Omegaman player, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double kbSpread, double dura, int frameCounter, boolean canHitProj, boolean isOnTop) {
+        super(player, coord, size, hitBoxSize, velocity, dir, damage, knockback, kbSpread, dura, frameCounter, canHitProj, isOnTop);
         image = images[player.playerNo];
     }
 
     public Rocket(Omegaman player, Coord coord, double dir, double percentCharged) {
-        this(player, coord, SIZE.scaledBy(percentCharged), SIZE.scaledBy(percentCharged).scaledBy(HITBOX_TO_SIZE), VELOCITY * percentCharged, dir, DMG * percentCharged, KB * percentCharged, KB_SPREAD, DURABILITY, (int) (LIFE * percentCharged), CAN_HIT_PROJ, IS_ON_TOP);
+        this(player, coord, SIZE.scaledBy(percentCharged), SIZE.scaledBy(percentCharged).scaledBy(HITBOX_TO_SIZE), VELOCITY * percentCharged, dir, DMG * percentCharged, KB * percentCharged, KB_SPREAD, DURA, (int) (LIFE * percentCharged), CAN_HIT_PROJ, IS_ON_TOP);
     }
 
     // Description:
     // This overridden method makes the rocket explode
     public void die() {
         if (!dead) {
-            OmegaFight3.explosionQ.add(new Explosion(coord, size.scaledBy(EXPLOSION_SIZE_MULTIPLIER)));
+            OmegaFight3.explosionQ.add(new Explosion(coord, size.scaledBy(EXPLOSION_SIZE_MULT)));
         }
         super.die();
     }
@@ -111,12 +112,12 @@ class Rocket extends Projectile {
     }
 
     // Description: This returns the fact that rocket dies to any projectile
-    public boolean shouldDieTo(double enemyDurability) {
+    public boolean shouldDieTo(double enemyDura) {
         return true;
     }
 
-    public void hitPlayer(Omegaman omega) {
-        super.hitPlayer(omega);
+    public void hitPlayer(Omegaman enemy) {
+        super.hitPlayer(enemy);
         OmegaFight3.screenShakeCounter += (int) (SCREENSHAKE * (size.x / SIZE.x));
         ((Omegaman) character).stats[Omegaman.DMG_TO_OMEGAMAN] += damage;
     }
@@ -131,7 +132,7 @@ class Rocket extends Projectile {
 class Shotgun extends Projectile {
     // Damage constants
     public static final double DMG = 2 * Omegaman.PERC_MULT;
-    public static final double DURABILITY = 1;
+    public static final double DURA = 1;
     public static final double KB = 3;
     public static final double KB_SPREAD = Math.PI / 3;
 
@@ -158,12 +159,12 @@ class Shotgun extends Projectile {
 
     // Constructor with default stats
     public Shotgun(Omegaman player, Coord coord, double dir) {
-        this(player, coord, SIZE.copy(), SIZE.scaledBy(SIZE_TO_HITBOX), VELOCITY, dir, DMG, KB, KB_SPREAD, DURABILITY, LIFE, CAN_HIT_PROJ, IS_ON_TOP);
+        this(player, coord, SIZE.copy(), SIZE.scaledBy(SIZE_TO_HITBOX), VELOCITY, dir, DMG, KB, KB_SPREAD, DURA, LIFE, CAN_HIT_PROJ, IS_ON_TOP);
     }
 
     // Constructor with custom stats
-    public Shotgun(Omegaman player, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double kbSpread, double durability, int frameCounter, boolean canHitProj, boolean isOnTop) {
-        super(player, coord, size, hitBoxSize, velocity, dir, damage, knockback, kbSpread, durability, frameCounter, canHitProj, isOnTop);
+    public Shotgun(Omegaman player, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double kbSpread, double dura, int frameCounter, boolean canHitProj, boolean isOnTop) {
+        super(player, coord, size, hitBoxSize, velocity, dir, damage, knockback, kbSpread, dura, frameCounter, canHitProj, isOnTop);
     }
 
     // Description: Draws the shotgun bullet on the screen
@@ -173,28 +174,30 @@ class Shotgun extends Projectile {
         g2.rotate(-dir, coord.x, coord.y);
     }
 
-    public void hitPlayer(Omegaman omega) {
-        super.hitPlayer(omega);
-        ((Omegaman) character).addSkillPts(SKILL_PT_GAIN);
-        ((Omegaman) character).stats[Omegaman.DMG_TO_OMEGAMAN] += damage;
+    public void hitPlayer(Omegaman enemy) {
+        super.hitPlayer(enemy);
+        Omegaman omega = ((Omegaman) character);
+        omega.addSkillPts(SKILL_PT_GAIN);
+        omega.stats[Omegaman.DMG_TO_OMEGAMAN] += damage;
     }
 
     public void hitBoss(Boss boss) {
         super.hitBoss(boss);
-        ((Omegaman) character).addSkillPts(SKILL_PT_GAIN);
-        ((Omegaman) character).stats[Omegaman.DMG_TO_BOSS] += damage;
+        Omegaman omega = ((Omegaman) character);
+        omega.addSkillPts(SKILL_PT_GAIN);
+        omega.stats[Omegaman.DMG_TO_BOSS] += damage;
     }
 }
 
 class Firework extends Projectile {
     // Size constants
-    public static final double MIN_SIZE_PERCENT = 0.2;
+    public static final double MIN_PERC = 0.2;
     public static final Coord SIZE = new Coord(50, 50);
     public static final double SIZE_TO_HITBOX = 1.0;
 
     // Damage constants
     public static final double DMG = 3.5 * Omegaman.PERC_MULT;
-    public static final double DURABILITY = INFINITE_DURABILITY;
+    public static final double DURA = INF_DURA;
     public static final double KB = 3;
     public static final double KB_SPREAD = Math.PI / 3;
 
@@ -203,7 +206,6 @@ class Firework extends Projectile {
     public static final int LIFE = 15;
 
     // Misc constants
-    public static final double MINIMUM_STAT_PERCENTAGE = 0.5;
     public static final int NUM_SHOTS = 8;
     public static final boolean CAN_HIT_PROJ = true;
     public static final boolean IS_ON_TOP = true;
@@ -216,13 +218,13 @@ class Firework extends Projectile {
     public BufferedImage image;
 
     // Constructor
-    public Firework(Omegaman player, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double kbSpread, double durability, int frameCounter, boolean canHitProj, boolean isOnTop) {
-        super(player, coord, size, hitBoxSize, velocity, dir, damage, knockback, kbSpread, durability, frameCounter, canHitProj, isOnTop);
+    public Firework(Omegaman player, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double kbSpread, double dura, int frameCounter, boolean canHitProj, boolean isOnTop) {
+        super(player, coord, size, hitBoxSize, velocity, dir, damage, knockback, kbSpread, dura, frameCounter, canHitProj, isOnTop);
         image = images[player.playerNo];
     }
 
     public Firework(Omegaman player, Coord coord, double dir, double percentCharged) {
-        this(player, coord, SIZE.scaledBy(percentCharged), SIZE.scaledBy(percentCharged).scaledBy(SIZE_TO_HITBOX), VELOCITY * percentCharged, dir, DMG * percentCharged, KB * percentCharged, KB_SPREAD, DURABILITY, (int) (LIFE * percentCharged), CAN_HIT_PROJ, IS_ON_TOP);
+        this(player, coord, SIZE.scaledBy(percentCharged), SIZE.scaledBy(percentCharged).scaledBy(SIZE_TO_HITBOX), VELOCITY * percentCharged, dir, DMG * percentCharged, KB * percentCharged, KB_SPREAD, DURA, (int) (LIFE * percentCharged), CAN_HIT_PROJ, IS_ON_TOP);
     }
 
     // Description: Draws the firework projectile
@@ -232,8 +234,8 @@ class Firework extends Projectile {
         g2.rotate(-dir, coord.x, coord.y);
     }
 
-    public void hitPlayer(Omegaman omega) {
-        super.hitPlayer(omega);
+    public void hitPlayer(Omegaman enemy) {
+        super.hitPlayer(enemy);
         ((Omegaman) character).stats[Omegaman.DMG_TO_OMEGAMAN] += damage;
     }
 
@@ -243,7 +245,7 @@ class Firework extends Projectile {
     }
 
     // This returns the fact that Firework dies to any projectile
-    public boolean shouldDieTo(double enemyDurability) {
+    public boolean shouldDieTo(double enemyDura) {
         return false;
     }
 }
@@ -251,7 +253,7 @@ class Firework extends Projectile {
 class Spammer extends Projectile {
     // Damage constants
     public static final double DMG = 1.5 * Omegaman.PERC_MULT;
-    public static final double DURABILITY = 1;
+    public static final double DURA = 1;
     public static final double KB = 4;
     public static final double KB_SPREAD = Math.PI / 3;
 
@@ -277,12 +279,12 @@ class Spammer extends Projectile {
 
     // Constructor with default stats
     public Spammer(Omegaman player, Coord coord, double dir) {
-        this(player, coord, SIZE.copy(), SIZE.scaledBy(SIZE_TO_HITBOX), VELOCITY, dir, DMG, KB, KB_SPREAD, DURABILITY, LIFE, CAN_HIT_PROJ, IS_ON_TOP);
+        this(player, coord, SIZE.copy(), SIZE.scaledBy(SIZE_TO_HITBOX), VELOCITY, dir, DMG, KB, KB_SPREAD, DURA, LIFE, CAN_HIT_PROJ, IS_ON_TOP);
     }
 
     // Constructor with custom stats
-    public Spammer(Omegaman player, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double kbSpread, double durability, int frameCounter, boolean canHitProj, boolean isOnTop) {
-        super(player, coord, size, hitBoxSize, velocity, dir, damage, knockback, kbSpread, durability, frameCounter, canHitProj, isOnTop);
+    public Spammer(Omegaman player, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double kbSpread, double dura, int frameCounter, boolean canHitProj, boolean isOnTop) {
+        super(player, coord, size, hitBoxSize, velocity, dir, damage, knockback, kbSpread, dura, frameCounter, canHitProj, isOnTop);
     }
 
     // Description: Draws the spammer bullet on the screen
@@ -292,39 +294,40 @@ class Spammer extends Projectile {
         g2.rotate(-dir, coord.x, coord.y);
     }
 
-    public void hitPlayer(Omegaman omega) {
-        super.hitPlayer(omega);
-        ((Omegaman) character).addSkillPts(SKILL_PT_GAIN);
-        ((Omegaman) character).stats[Omegaman.DMG_TO_OMEGAMAN] += damage;
+    public void hitPlayer(Omegaman enemy) {
+        super.hitPlayer(enemy);
+        Omegaman omega = ((Omegaman) character);
+        omega.addSkillPts(SKILL_PT_GAIN);
+        omega.stats[Omegaman.DMG_TO_OMEGAMAN] += damage;
     }
 
     public void hitBoss(Boss boss) {
         super.hitBoss(boss);
-        ((Omegaman) character).addSkillPts(SKILL_PT_GAIN);
-        ((Omegaman) character).stats[Omegaman.DMG_TO_BOSS] += damage;
+        Omegaman omega = ((Omegaman) character);
+        omega.addSkillPts(SKILL_PT_GAIN);
+        omega.stats[Omegaman.DMG_TO_BOSS] += damage;
     }
 }
 
 class Missile extends Projectile {
     // Size constants
     public static final double HITBOX_TO_SIZE = 1.5;
-    public static final double MIN_SIZE_PERCENT = 0.2;
+    public static final double MIN_PERC = 0.2;
     public static final Coord SIZE = new Coord(60, 60);
 
     // Damage constants
     public static final double DMG = 12 * Omegaman.PERC_MULT;
-    public static final double DURABILITY = INFINITE_DURABILITY;
+    public static final double DURA = INF_DURA;
     public static final double KB = 16;
     public static final double KB_SPREAD = Math.PI / 3;
-    public static final double EXPLOSION_SIZE_MULTIPLIER = 3;
+    public static final double EXPLOSION_SIZE_MULT = 3;
 
     // Velocity constants
     public static final double VELOCITY = 10;
     public static final int LIFE = 70;
-    public static final double TURN_SPEED = Math.PI * (90.0 / LIFE / 180.0);
+    public static final double TURN_SPD = Math.PI * (90.0 / LIFE / 180.0);
 
     // Misc constants
-    public static final double MINIMUM_STAT_PERCENTAGE = 0.5;
     public static final double RECOIL = 8;
     public static final int SCREENSHAKE = 15;
     public static final boolean CAN_HIT_PROJ = true;
@@ -338,21 +341,21 @@ class Missile extends Projectile {
     public int sign;
 
     // Constructor
-    public Missile(Omegaman player, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double kbSpread, double durability, int frameCounter, int sign, boolean canHitProj, boolean isOnTop) {
-        super(player, coord, size, hitBoxSize, velocity, dir, damage, knockback, kbSpread, durability, frameCounter, canHitProj, isOnTop);
+    public Missile(Omegaman player, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double kbSpread, double dura, int frameCounter, int sign, boolean canHitProj, boolean isOnTop) {
+        super(player, coord, size, hitBoxSize, velocity, dir, damage, knockback, kbSpread, dura, frameCounter, canHitProj, isOnTop);
         image = images[player.playerNo];
         this.sign = sign;
     }
 
     public Missile(Omegaman player, Coord coord, double dir, int sign, double percentCharged) {
-        this(player, coord, SIZE.scaledBy(percentCharged), SIZE.scaledBy(percentCharged).scaledBy(HITBOX_TO_SIZE), VELOCITY * percentCharged, dir, DMG * percentCharged, KB * percentCharged, KB_SPREAD, DURABILITY, (int) (LIFE * percentCharged), sign, CAN_HIT_PROJ, IS_ON_TOP);
+        this(player, coord, SIZE.scaledBy(percentCharged), SIZE.scaledBy(percentCharged).scaledBy(HITBOX_TO_SIZE), VELOCITY * percentCharged, dir, DMG * percentCharged, KB * percentCharged, KB_SPREAD, DURA, (int) (LIFE * percentCharged), sign, CAN_HIT_PROJ, IS_ON_TOP);
     }
 
     // Description:
     // This overridden method makes the missile explode
     public void die() {
         if (!dead) {
-            OmegaFight3.explosionQ.add(new Explosion(coord, size.scaledBy(EXPLOSION_SIZE_MULTIPLIER)));
+            OmegaFight3.explosionQ.add(new Explosion(coord, size.scaledBy(EXPLOSION_SIZE_MULT)));
         }
         super.die();
     }
@@ -395,18 +398,18 @@ class Missile extends Projectile {
             double targetDir = Math.atan2(target.coord.y - coord.y, target.coord.x - coord.x);
             double angleDif = targetDir - dir;
             angleDif = Math.atan2(Math.sin(angleDif), Math.cos(angleDif));
-            if (Math.abs(angleDif) <= TURN_SPEED) dir = targetDir;
-            else dir += Math.signum(angleDif) * TURN_SPEED;
+            if (Math.abs(angleDif) <= TURN_SPD) dir = targetDir;
+            else dir += Math.signum(angleDif) * TURN_SPD;
         }
     }
 
     // Description: This returns the fact that missile dies to any projectile
-    public boolean shouldDieTo(double enemyDurability) {
+    public boolean shouldDieTo(double enemyDura) {
         return true;
     }
 
-    public void hitPlayer(Omegaman omega) {
-        super.hitPlayer(omega);
+    public void hitPlayer(Omegaman enemy) {
+        super.hitPlayer(enemy);
         OmegaFight3.screenShakeCounter += (int) (SCREENSHAKE * (size.x / SIZE.x));
         ((Omegaman) character).stats[Omegaman.DMG_TO_OMEGAMAN] += damage;
     }
@@ -421,7 +424,7 @@ class Missile extends Projectile {
 class Sniper extends Projectile {
     // Damage constants
     public static final double DMG = 2.5 * Omegaman.PERC_MULT;
-    public static final double DURABILITY = 3;
+    public static final double DURA = 3;
     public static final double KB = 1.5;
     public static final double KB_SPREAD = Math.PI / 3;
 
@@ -446,12 +449,12 @@ class Sniper extends Projectile {
 
     // Constructor with default stats
     public Sniper(Omegaman player, Coord coord, double dir) {
-        this(player, coord, SIZE.copy(), SIZE.scaledBy(SIZE_TO_HITBOX), VELOCITY, dir, DMG, KB, KB_SPREAD, DURABILITY, LIFE, CAN_HIT_PROJ, IS_ON_TOP);
+        this(player, coord, SIZE.copy(), SIZE.scaledBy(SIZE_TO_HITBOX), VELOCITY, dir, DMG, KB, KB_SPREAD, DURA, LIFE, CAN_HIT_PROJ, IS_ON_TOP);
     }
 
     // Constructor with custom stats
-    public Sniper(Omegaman player, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double kbSpread, double durability, int frameCounter, boolean canHitProj, boolean isOnTop) {
-        super(player, coord, size, hitBoxSize, velocity, dir, damage, knockback, kbSpread, durability, frameCounter, canHitProj, isOnTop);
+    public Sniper(Omegaman player, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double kbSpread, double dura, int frameCounter, boolean canHitProj, boolean isOnTop) {
+        super(player, coord, size, hitBoxSize, velocity, dir, damage, knockback, kbSpread, dura, frameCounter, canHitProj, isOnTop);
     }
 
     // Description: Draws the sniper bullet on the screen
@@ -466,31 +469,35 @@ class Sniper extends Projectile {
         velocity += ACCEL;
     }
 
-    public void hitPlayer(Omegaman omega) {
-        omega.hurt(damage * velocity / VELOCITY, knockback * velocity / VELOCITY, coord, dir, kbSpread);
+    public void hitPlayer(Omegaman enemy) {
+        double mult = velocity / VELOCITY;
+        enemy.hurt(damage * mult, knockback * mult, coord, dir, kbSpread);
         die();
-        ((Omegaman) character).addSkillPts(SKILL_PT_GAIN);
-        ((Omegaman) character).stats[Omegaman.DMG_TO_OMEGAMAN] += damage * velocity / VELOCITY;
+        Omegaman omega = ((Omegaman) character);
+        omega.addSkillPts(SKILL_PT_GAIN);
+        omega.stats[Omegaman.DMG_TO_OMEGAMAN] += damage * mult;
     }
 
     public void hitBoss(Boss boss) {
-        boss.hurt(damage * velocity / VELOCITY);
+        double mult = velocity / VELOCITY;
+        boss.hurt(damage * mult);
         die();
-        ((Omegaman) character).addSkillPts(SKILL_PT_GAIN);
-        ((Omegaman) character).stats[Omegaman.DMG_TO_BOSS] += damage * velocity / VELOCITY;
+        Omegaman omega = ((Omegaman) character);
+        omega.addSkillPts(SKILL_PT_GAIN);
+        omega.stats[Omegaman.DMG_TO_BOSS] += damage * mult;
     }
 }
 
 class Laser extends Projectile {
     // Size constants
-    public static final double MIN_SIZE_PERCENT = 0.2;
+    public static final double MIN_PERC = 0.2;
     public static final double SIZE_Y = 80; // x-size not impacted by charge, must be calculated
-    public static final Coord BEAM_SIZE_Y_TO_BALL_SIZE = new Coord(50 / SIZE_Y, 50 / SIZE_Y);
+    public static final Coord BEAM_SIZE_Y_TO_BALL = new Coord(50 / SIZE_Y, 50 / SIZE_Y);
     public static final double SIZE_TO_HITBOX = 1.0;
 
     // Damage constants
     public static final double DMG = 1 * Omegaman.PERC_MULT;
-    public static final double DURABILITY = INFINITE_DURABILITY;
+    public static final double DURA = INF_DURA;
     public static final double KB = 5;
     public static final double BASE_KB_DIR = Math.PI * 1.5;
     public static final double KB_DIR_TILT = Math.PI / 4;
@@ -501,11 +508,10 @@ class Laser extends Projectile {
 
     // Animation constants
     public static final int RESIZE_LEN = 4;
-    public static final double SIZE_Y_TO_PULSE_SIZE_Y = 1.1;
+    public static final double SIZE_Y_TO_PULSE = 1.1;
     public static final int PULSE_HZ = 2;
 
     // Misc constants
-    public static final double MINIMUM_STAT_PERCENTAGE = 0.5;
     public static final double RECOIL = 16;
     public static final boolean CAN_HIT_PROJ = false;
     public static final boolean IS_ON_TOP = true;
@@ -515,29 +521,29 @@ class Laser extends Projectile {
     public static BufferedImage beam;
 
     // Constructor
-    public Laser(Omegaman player, Coord coord, Coord size, Coord hitBoxSize, double dir, double damage, double knockback, double kbSpread, double durability, int frameCounter, boolean canHitProj, boolean isOnTop) {
-        super(player, coord, size, hitBoxSize, 0, dir, damage, knockback, kbSpread, durability, frameCounter, canHitProj, isOnTop);
+    public Laser(Omegaman player, Coord coord, Coord size, Coord hitBoxSize, double dir, double damage, double knockback, double kbSpread, double dura, int frameCounter, boolean canHitProj, boolean isOnTop) {
+        super(player, coord, size, hitBoxSize, 0, dir, damage, knockback, kbSpread, dura, frameCounter, canHitProj, isOnTop);
     }
 
     public Laser(Omegaman player, Coord coord, double sizeX, double dir, double percentCharged) {
-        this(player, coord, new Coord(sizeX, SIZE_Y * percentCharged), (new Coord(sizeX, SIZE_Y * percentCharged)).scaledBy(SIZE_TO_HITBOX), dir, DMG * percentCharged, KB * percentCharged, KB_SPREAD, DURABILITY, LIFE, CAN_HIT_PROJ, IS_ON_TOP);
+        this(player, coord, new Coord(sizeX, SIZE_Y * percentCharged), (new Coord(sizeX, SIZE_Y * percentCharged)).scaledBy(SIZE_TO_HITBOX), dir, DMG * percentCharged, KB * percentCharged, KB_SPREAD, DURA, LIFE, CAN_HIT_PROJ, IS_ON_TOP);
     }
 
     // Description: this method draws the laser beam and ball on the screen
     public void draw(Graphics2D g2) {
         double sizeY = size.y * Math.min(Math.min(frameCounter, LIFE - frameCounter), RESIZE_LEN) / RESIZE_LEN;
-        if (frameCounter % (PULSE_HZ * 2) < PULSE_HZ) sizeY *= SIZE_Y_TO_PULSE_SIZE_Y;
+        if (frameCounter % (PULSE_HZ * 2) < PULSE_HZ) sizeY *= SIZE_Y_TO_PULSE;
         g2.drawImage(beam, (int) (coord.x - size.x / 2 * Math.cos(dir)), (int) (coord.y - sizeY / 2), (int) (size.x * Math.cos(dir)), (int) sizeY, null);
-        g2.drawImage(ball, (int) (coord.x - (size.x / 2 + size.y * BEAM_SIZE_Y_TO_BALL_SIZE.x / 2) * Math.cos(dir)), (int) (coord.y - size.y * BEAM_SIZE_Y_TO_BALL_SIZE.y / 2), (int) (size.y * BEAM_SIZE_Y_TO_BALL_SIZE.x * Math.cos(dir)), (int) (size.y * BEAM_SIZE_Y_TO_BALL_SIZE.y), null);
+        g2.drawImage(ball, (int) (coord.x - (size.x / 2 + size.y * BEAM_SIZE_Y_TO_BALL.x / 2) * Math.cos(dir)), (int) (coord.y - size.y * BEAM_SIZE_Y_TO_BALL.y / 2), (int) (size.y * BEAM_SIZE_Y_TO_BALL.x * Math.cos(dir)), (int) (size.y * BEAM_SIZE_Y_TO_BALL.y), null);
     }
 
     // Description: this method returns that the laser should never die to a projectile
-    public boolean shouldDieTo(double enemyDurability) {
+    public boolean shouldDieTo(double enemyDura) {
         return false;
     }
 
-    public void hitPlayer(Omegaman omega) {
-        omega.hurt(damage, knockback, coord, BASE_KB_DIR + KB_DIR_TILT * Math.cos(dir), kbSpread);
+    public void hitPlayer(Omegaman enemy) {
+        enemy.hurt(damage, knockback, coord, BASE_KB_DIR + KB_DIR_TILT * Math.cos(dir), kbSpread);
         ((Omegaman) character).stats[Omegaman.DMG_TO_OMEGAMAN] += damage;
     }
 
@@ -550,7 +556,7 @@ class Laser extends Projectile {
 class Boomer extends Projectile {
     // Damage constants
     public static final double DMG = 3.5 * Omegaman.PERC_MULT;
-    public static final double DURABILITY = 2;
+    public static final double DURA = 2;
     public static final double KB = 5;
     public static final double KB_SPREAD = Math.PI / 3;
 
@@ -577,12 +583,12 @@ class Boomer extends Projectile {
 
     // Constructor with default stats
     public Boomer(Omegaman player, Coord coord, double dir) {
-        this(player, coord, SIZE.copy(), SIZE.scaledBy(SIZE_TO_HITBOX), VELOCITY, dir, DMG, KB, KB_SPREAD, DURABILITY, LIFE, CAN_HIT_PROJ, IS_ON_TOP);
+        this(player, coord, SIZE.copy(), SIZE.scaledBy(SIZE_TO_HITBOX), VELOCITY, dir, DMG, KB, KB_SPREAD, DURA, LIFE, CAN_HIT_PROJ, IS_ON_TOP);
     }
 
     // Constructor with custom stats
-    public Boomer(Omegaman player, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double kbSpread, double durability, int frameCounter, boolean canHitProj, boolean isOnTop) {
-        super(player, coord, size, hitBoxSize, velocity, dir, damage, knockback, kbSpread, durability, frameCounter, canHitProj, isOnTop);
+    public Boomer(Omegaman player, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double kbSpread, double dura, int frameCounter, boolean canHitProj, boolean isOnTop) {
+        super(player, coord, size, hitBoxSize, velocity, dir, damage, knockback, kbSpread, dura, frameCounter, canHitProj, isOnTop);
         image = images[player.playerNo];
     }
 
@@ -598,44 +604,45 @@ class Boomer extends Projectile {
         velocity += ACCEL;
     }
 
-    public void hitPlayer(Omegaman omega) {
-        int multiplier = velocity < 0? 2: 1;
-        omega.hurt(damage * multiplier, knockback * multiplier, coord, dir + multiplier / 2 * Math.PI, kbSpread);
+    public void hitPlayer(Omegaman enemy) {
+        int mult = velocity < 0? 2: 1;
+        enemy.hurt(damage * mult, knockback * mult, coord, dir + mult / 2 * Math.PI, kbSpread);
         die();
-        ((Omegaman) character).addSkillPts(SKILL_PT_GAIN * multiplier);
-        ((Omegaman) character).stats[Omegaman.DMG_TO_OMEGAMAN] += damage * multiplier;
+        Omegaman omega = ((Omegaman) character);
+        omega.addSkillPts(SKILL_PT_GAIN * mult);
+        omega.stats[Omegaman.DMG_TO_OMEGAMAN] += damage * mult;
     }
 
     public void hitBoss(Boss boss) {
-        int multiplier = velocity < 0? 2: 1;
-        boss.hurt(damage * multiplier);
+        int mult = velocity < 0? 2: 1;
+        boss.hurt(damage * mult);
         die();
-        ((Omegaman) character).stats[Omegaman.DMG_TO_BOSS] += damage * multiplier;
-        ((Omegaman) character).addSkillPts(SKILL_PT_GAIN * multiplier);
+        Omegaman omega = ((Omegaman) character);
+        omega.stats[Omegaman.DMG_TO_BOSS] += damage * mult;
+        omega.addSkillPts(SKILL_PT_GAIN * mult);
     }
 }
 
 class Bouncer extends Projectile {
     // Size constants
-    public static final double MIN_SIZE_PERCENT = 0.2;
+    public static final double MIN_PERC = 0.2;
     public static final Coord SIZE = new Coord(80, 80);
     public static final double SIZE_TO_HITBOX = 1.0;
 
     // Damage constants
     public static final double DMG = 0.5 * Omegaman.PERC_MULT;
-    public static final double DURABILITY = INFINITE_DURABILITY;
+    public static final double DURA = INF_DURA;
     public static final double KB = 10;
     public static final double KB_SPREAD = Math.PI / 3;
 
     // Velocity constants
     public static final double VELOCITY = 25;
     public static final int LIFE = 160;
-    public static final double ROTATION_HZ = 1;
-    public static final double ROTATION_SPEED = Math.PI * 2 / OmegaFight3.FPS * ROTATION_HZ;
-    public static final double ROTATION_MAX = Math.PI / 2;
+    public static final double ROT_HZ = 1;
+    public static final double ROT_SPEED = Math.PI * 2 / OmegaFight3.FPS * ROT_HZ;
+    public static final double ROT_MAX = Math.PI / 2;
 
     // Misc constants
-    public static final double MINIMUM_STAT_PERCENTAGE = 0.5;
     public static final boolean CAN_HIT_PROJ = true;
     public static final boolean IS_ON_TOP = true;
 
@@ -647,13 +654,13 @@ class Bouncer extends Projectile {
     public double rotation = 0;
 
     // Constructor
-    public Bouncer(Omegaman player, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double kbSpread, double durability, int frameCounter, boolean canHitProj, boolean isOnTop) {
-        super(player, coord, size, hitBoxSize, velocity, dir, damage, knockback, kbSpread, durability, frameCounter, canHitProj, isOnTop);
+    public Bouncer(Omegaman player, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double kbSpread, double dura, int frameCounter, boolean canHitProj, boolean isOnTop) {
+        super(player, coord, size, hitBoxSize, velocity, dir, damage, knockback, kbSpread, dura, frameCounter, canHitProj, isOnTop);
         image = images[player.playerNo];
     }
 
     public Bouncer(Omegaman player, Coord coord, double dir, double percentCharged) {
-        this(player, coord, SIZE.scaledBy(percentCharged), SIZE.scaledBy(percentCharged).scaledBy(SIZE_TO_HITBOX), VELOCITY * percentCharged, dir, DMG * percentCharged, KB * percentCharged, KB_SPREAD, DURABILITY, (int) (LIFE * percentCharged), CAN_HIT_PROJ, IS_ON_TOP);
+        this(player, coord, SIZE.scaledBy(percentCharged), SIZE.scaledBy(percentCharged).scaledBy(SIZE_TO_HITBOX), VELOCITY * percentCharged, dir, DMG * percentCharged, KB * percentCharged, KB_SPREAD, DURA, (int) (LIFE * percentCharged), CAN_HIT_PROJ, IS_ON_TOP);
     }
 
     // Description: This method draws the bouncer projectile on the screen
@@ -675,16 +682,16 @@ class Bouncer extends Projectile {
             dir = Math.PI;
         }
         super.process();
-        rotation = (rotation + ROTATION_SPEED * Math.cos(dir)) % ROTATION_MAX;
+        rotation = (rotation + ROT_SPEED * Math.cos(dir)) % ROT_MAX;
     }
 
     // Description: This method returns that the bouncer should never die to a projectile
-    public boolean shouldDieTo(double enemyDurability) {
+    public boolean shouldDieTo(double enemyDura) {
         return false;
     }
 
-    public void hitPlayer(Omegaman omega) {
-        omega.hurt(damage, knockback, coord, dir, kbSpread);
+    public void hitPlayer(Omegaman enemy) {
+        enemy.hurt(damage, knockback, coord, dir, kbSpread);
         ((Omegaman) character).stats[Omegaman.DMG_TO_OMEGAMAN] += damage;
     }
 
@@ -697,7 +704,7 @@ class Bouncer extends Projectile {
 class Spike extends Projectile {
     // Damage constants
     public static final double THORN_DMG = 1 * Omegaman.PERC_MULT;
-    public static final double DURABILITY = 1;
+    public static final double DURA = 1;
     public static final double THORN_KB = 3;
     public static final int NUM_THORNS = 6;
     public static final boolean CURVED_BABY_PROJS = true;
@@ -709,9 +716,9 @@ class Spike extends Projectile {
     // Movement constants
     public static final double VELOCITY = 10;
     public static final int LIFE = 35;
-    public static final double ROTATION_HZ = 1;
-    public static final double ROTATION_SPEED = Math.PI * 2 / OmegaFight3.FPS * ROTATION_HZ;
-    public static final double ROTATION_MAX = Math.PI * 2 / 3;
+    public static final double ROT_HZ = 1;
+    public static final double ROT_SPEED = Math.PI * 2 / OmegaFight3.FPS * ROT_HZ;
+    public static final double ROT_MAX = Math.PI * 2 / 3;
 
     // Misc constants
     public static final int BUTTONO = 9;
@@ -727,12 +734,12 @@ class Spike extends Projectile {
 
     // Constructor with default stats
     public Spike(Omegaman player, Coord coord, double dir) {
-        this(player, coord, SIZE.copy(), SIZE.scaledBy(SIZE_TO_HITBOX), VELOCITY, dir, DURABILITY, LIFE, CAN_HIT_PROJ, IS_ON_TOP);
+        this(player, coord, SIZE.copy(), SIZE.scaledBy(SIZE_TO_HITBOX), VELOCITY, dir, DURA, LIFE, CAN_HIT_PROJ, IS_ON_TOP);
     }
 
     // Constructor with custom stats
-    public Spike(Omegaman player, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double durability, int frameCounter, boolean canHitProj, boolean isOnTop) {
-        super(player, coord, size, hitBoxSize, velocity, dir, 0, 0, 0, durability, frameCounter, canHitProj, isOnTop);
+    public Spike(Omegaman player, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double dura, int frameCounter, boolean canHitProj, boolean isOnTop) {
+        super(player, coord, size, hitBoxSize, velocity, dir, 0, 0, 0, dura, frameCounter, canHitProj, isOnTop);
     }
 
     // Description: This method draws the spike projectile on the screen
@@ -746,7 +753,7 @@ class Spike extends Projectile {
     public void process() {
         // Move the spike and rotate it and expire it
         super.process();
-        rotation = (rotation + ROTATION_SPEED * Math.cos(dir)) % ROTATION_MAX;
+        rotation = (rotation + ROT_SPEED * Math.cos(dir)) % ROT_MAX;
     }
 
     // Description: This method handles the death of the spike projectile
@@ -762,11 +769,11 @@ class Spike extends Projectile {
     }
 
     // Description: This method returns that the spike should die to any projectile
-    public boolean shouldDieTo(double enemyDurability) {
+    public boolean shouldDieTo(double enemyDura) {
         return true;
     }
 
-    public void hitPlayer(Omegaman omega) {
+    public void hitPlayer(Omegaman enemy) {
         die();
     }
 
@@ -777,7 +784,7 @@ class Spike extends Projectile {
 
 class Thorn extends Projectile {
     // Damage constants
-    public static final double DURABILITY = 1;
+    public static final double DURA = 1;
     public static final double KB_SPREAD = Math.PI / 3;
 
     // Size constants
@@ -788,7 +795,7 @@ class Thorn extends Projectile {
     public static final double VELOCITY = 15;
     public static final int LIFE = 20;
     public static final double TURN_AMT = Math.PI / 3;
-    public static final double TURN_SPEED = TURN_AMT / LIFE;
+    public static final double TURN_SPD = TURN_AMT / LIFE;
 
     // Misc constants
     public static final int SKILL_PT_GAIN = 1;
@@ -802,13 +809,13 @@ class Thorn extends Projectile {
     public static BufferedImage image;
 
     // Constructor
-    public Thorn(Omegaman player, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double kbSpread, double durability, int frameCounter, boolean curved, boolean canHitProj, boolean isOnTop) {
-        super(player, coord, size, hitBoxSize, velocity, dir, damage, knockback, kbSpread, durability, frameCounter, canHitProj, isOnTop);
+    public Thorn(Omegaman player, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double kbSpread, double dura, int frameCounter, boolean curved, boolean canHitProj, boolean isOnTop) {
+        super(player, coord, size, hitBoxSize, velocity, dir, damage, knockback, kbSpread, dura, frameCounter, canHitProj, isOnTop);
         this.curved = curved;
     }
 
     public Thorn(Omegaman player, Coord coord, double dir, double damage, double knockback, int frameCounter, boolean curved) {
-        this(player, coord, SIZE.copy(), SIZE.scaledBy(SIZE_TO_HITBOX), VELOCITY, dir, damage, knockback, KB_SPREAD, DURABILITY, frameCounter, curved, CAN_HIT_PROJ, IS_ON_TOP);
+        this(player, coord, SIZE.copy(), SIZE.scaledBy(SIZE_TO_HITBOX), VELOCITY, dir, damage, knockback, KB_SPREAD, DURA, frameCounter, curved, CAN_HIT_PROJ, IS_ON_TOP);
     }
 
     // Draws the thorn projectile on the screen
@@ -822,31 +829,33 @@ class Thorn extends Projectile {
     public void process() {
         // Move the thorn and turn it and expire it
         super.process();
-        if (curved) dir += TURN_SPEED;
+        if (curved) dir += TURN_SPD;
     }
 
-    public void hitPlayer(Omegaman omega) {
-        super.hitPlayer(omega);
-        ((Omegaman) character).addSkillPts(SKILL_PT_GAIN);
-        ((Omegaman) character).stats[Omegaman.DMG_TO_OMEGAMAN] += damage;
+    public void hitPlayer(Omegaman enemy) {
+        super.hitPlayer(enemy);
+        Omegaman omega = ((Omegaman) character);
+        omega.addSkillPts(SKILL_PT_GAIN);
+        omega.stats[Omegaman.DMG_TO_OMEGAMAN] += damage;
     }
 
     public void hitBoss(Boss boss) {
         super.hitBoss(boss);
-        ((Omegaman) character).addSkillPts(SKILL_PT_GAIN);
-        ((Omegaman) character).stats[Omegaman.DMG_TO_BOSS] += damage;
+        Omegaman omega = ((Omegaman) character);
+        omega.addSkillPts(SKILL_PT_GAIN);
+        omega.stats[Omegaman.DMG_TO_BOSS] += damage;
     }
 }
 
 class Splitter extends Projectile {
     // Size constants
-    public static final double MIN_SIZE_PERCENT = 0.2;
+    public static final double MIN_PERC = 0.2;
     public static final Coord SIZE = new Coord(60, 50);
     public static final double SIZE_TO_HITBOX = 1.0;
 
     // Damage constants
     public static final double THORN_DMG = 2 * Omegaman.PERC_MULT;
-    public static final double DURABILITY = INFINITE_DURABILITY;
+    public static final double DURA = INF_DURA;
     public static final double THORN_KB = 5;
     public static final int NUM_SPLITS = 3;
     public static final int PROJS_PER_SPLIT = 4;
@@ -858,7 +867,6 @@ class Splitter extends Projectile {
     public static final int LIFE = 30;
 
     // Misc constants
-    public static final double MINIMUM_STAT_PERCENTAGE = 0.5;
     public static final boolean CAN_HIT_PROJ = true;
     public static final boolean IS_ON_TOP = true;
 
@@ -869,13 +877,13 @@ class Splitter extends Projectile {
     public static BufferedImage[] images = new BufferedImage[Omegaman.NUM_PLAYERS];
 
     // Constructor
-    public Splitter(Omegaman player, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double durability, int frameCounter, boolean canHitProj, boolean isOnTop) {
-        super(player, coord, size, hitBoxSize, velocity, dir, 0, 0, 0, durability, frameCounter, canHitProj, isOnTop);
+    public Splitter(Omegaman player, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double dura, int frameCounter, boolean canHitProj, boolean isOnTop) {
+        super(player, coord, size, hitBoxSize, velocity, dir, 0, 0, 0, dura, frameCounter, canHitProj, isOnTop);
         image = images[player.playerNo];
     }
 
     public Splitter(Omegaman player, Coord coord, double dir, double percentCharged) {
-        this(player, coord, SIZE.scaledBy(percentCharged), SIZE.scaledBy(percentCharged).scaledBy(SIZE_TO_HITBOX), VELOCITY * percentCharged, dir, DURABILITY, (int) (LIFE * percentCharged), CAN_HIT_PROJ, IS_ON_TOP);
+        this(player, coord, SIZE.scaledBy(percentCharged), SIZE.scaledBy(percentCharged).scaledBy(SIZE_TO_HITBOX), VELOCITY * percentCharged, dir, DURA, (int) (LIFE * percentCharged), CAN_HIT_PROJ, IS_ON_TOP);
     }
 
     // Description: Draws the splitter projectile on the screen
@@ -897,10 +905,10 @@ class Splitter extends Projectile {
     }
 
     // Description: This method returns that the splitter should never die to a projectile
-    public boolean shouldDieTo(double enemyDurability) {
+    public boolean shouldDieTo(double enemyDura) {
         return false;
     }
 
-    public void hitPlayer(Omegaman omega) {}
+    public void hitPlayer(Omegaman enemy) {}
     public void hitBoss(Boss boss) {}
 }

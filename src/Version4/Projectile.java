@@ -4,7 +4,7 @@ import java.awt.*;
 
 abstract public class Projectile {
     // Misc Variables
-    public static final double INFINITE_DURABILITY = 100;
+    public static final double INF_DURA = 100;
     public static final int NO_OF_PLAYER_PROJECTILES = 6;
     public static final int INF_LIFE = 0;
     
@@ -27,10 +27,10 @@ abstract public class Projectile {
     public double damage;
     public double knockback;
     public double kbSpread;
-    public double durability;
+    public double dura;
 
     // Constructor
-    public Projectile(Char character, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double kbSpread, double durability, int frameCounter, boolean canHitProj, boolean isOnTop) {
+    public Projectile(Char character, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double kbSpread, double dura, int frameCounter, boolean canHitProj, boolean isOnTop) {
         this.character = character;
         this.coord = coord;
         this.size = size;
@@ -40,7 +40,7 @@ abstract public class Projectile {
         this.damage = damage;
         this.knockback = knockback;
         this.kbSpread = kbSpread;
-        this.durability = durability;
+        this.dura = dura;
         this.frameCounter = frameCounter;
         this.canHitProj = canHitProj;
         this.isOnTop = isOnTop;
@@ -76,13 +76,13 @@ abstract public class Projectile {
     }
 
     public void hitPlayerProj(Projectile proj) {
-        if (shouldDieTo(proj.durability)) die();
-        if (proj.shouldDieTo(durability)) proj.die();
+        if (shouldDieTo(proj.dura)) die();
+        if (proj.shouldDieTo(dura)) proj.die();
     }
 
     public void hitBossProj(Projectile proj) {
-        if (shouldDieTo(proj.durability)) die();
-        if (proj.shouldDieTo(durability)) proj.die();
+        if (shouldDieTo(proj.dura)) die();
+        if (proj.shouldDieTo(dura)) proj.die();
     }
 
     public void hitPlayer(Omegaman omega) {
@@ -95,9 +95,9 @@ abstract public class Projectile {
         die();
     }
 
-    // Description: This method determines whether or not this projectile should die to another projectile with the specified durability
-    public boolean shouldDieTo(double enemyDurability) {
-        return durability <= enemyDurability;
+    // Description: This method determines whether or not this projectile should die to another projectile with the specified dura
+    public boolean shouldDieTo(double enemyDura) {
+        return dura <= enemyDura;
     }
 
     // Abstract method(s)

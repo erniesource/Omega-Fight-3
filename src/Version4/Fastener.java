@@ -6,7 +6,7 @@ import java.awt.image.BufferedImage;
 public class Fastener extends Projectile {
     // Damage constants
     public static final double DMG = 7.5 * Omegaman.PERC_MULT;
-    public static final double DURABILITY = 2;
+    public static final double DURA = 2;
     public static final double KB = 10;
     public static final double KB_SPREAD = Math.PI / 3;
 
@@ -38,15 +38,15 @@ public class Fastener extends Projectile {
     public int type;
 
     // Constructor with custom stats
-    public Fastener(Boss boss, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double kbSpread, double durability, boolean canHitProj, boolean isOnTop) {
-        super(boss, coord, size, hitBoxSize, velocity, dir, damage, knockback, kbSpread, durability, INF_LIFE, canHitProj, isOnTop);
+    public Fastener(Boss boss, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double kbSpread, double dura, boolean canHitProj, boolean isOnTop) {
+        super(boss, coord, size, hitBoxSize, velocity, dir, damage, knockback, kbSpread, dura, INF_LIFE, canHitProj, isOnTop);
         fastenerVelocity = new Coord(velocity * Math.cos(dir), velocity * Math.sin(dir));
         type = (int) (Math.random() * NO_OF_TYPES);
     }
 
     // Constructor with default stats
     public Fastener(Boss boss, Coord coord, double dir) {
-        this(boss, coord, SIZE.copy(), SIZE.scaledBy(SIZE_TO_HITBOX), VELOCITY, dir, DMG, KB, KB_SPREAD, DURABILITY, CAN_HIT_PROJ, IS_ON_TOP);
+        this(boss, coord, SIZE.copy(), SIZE.scaledBy(SIZE_TO_HITBOX), VELOCITY, dir, DMG, KB, KB_SPREAD, DURA, CAN_HIT_PROJ, IS_ON_TOP);
     }
 
     // Description: Draws the fastener object
@@ -82,7 +82,7 @@ public class Fastener extends Projectile {
 class Energy extends Projectile {
     // Damage constants
     public static final double DMG = 10 * Omegaman.PERC_MULT;
-    public static final double DURABILITY = 2;
+    public static final double DURA = 2;
     public static final double KB = 10;
     public static final double KB_SPREAD = Math.PI / 3;
 
@@ -108,13 +108,13 @@ class Energy extends Projectile {
     public static BufferedImage[] images = new BufferedImage[NO_OF_SPRITES];
 
     // Constructor with custom stats
-    public Energy(Boss boss, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double kbSpread, double durability, boolean canHitProj, boolean isOnTop) {
-        super(boss, coord, size, hitBoxSize, velocity, dir, damage, knockback, kbSpread, durability, INF_LIFE, canHitProj, isOnTop);
+    public Energy(Boss boss, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double kbSpread, double dura, boolean canHitProj, boolean isOnTop) {
+        super(boss, coord, size, hitBoxSize, velocity, dir, damage, knockback, kbSpread, dura, INF_LIFE, canHitProj, isOnTop);
     }
 
     // Constructor with default stats
     public Energy(Boss boss, Coord coord, double dir) {
-        this(boss, coord, SIZE.copy(), SIZE.scaledBy(SIZE_TO_HITBOX), VELOCITY, dir, DMG, KB, KB_SPREAD, DURABILITY, CAN_HIT_PROJ, IS_ON_TOP);
+        this(boss, coord, SIZE.copy(), SIZE.scaledBy(SIZE_TO_HITBOX), VELOCITY, dir, DMG, KB, KB_SPREAD, DURA, CAN_HIT_PROJ, IS_ON_TOP);
     }
 
     // Description: THis method draws the pellet of energy on screen
@@ -138,7 +138,7 @@ class Energy extends Projectile {
 class Pincer extends Projectile {
     // Damage constants
     public static final double DMG = 10 * Omegaman.PERC_MULT;
-    public static final double DURABILITY = 2;
+    public static final double DURA = 2;
     public static final double KB = 15;
     public static final double KB_SPREAD = Math.PI / 3;
 
@@ -164,14 +164,14 @@ class Pincer extends Projectile {
     public static BufferedImage[] images = new BufferedImage[NO_OF_SPRITES];
 
     // Customized constructor
-    public Pincer(Boss boss, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double kbSpread, double durability, boolean canHitProj, boolean isOnTop) {
-        super(boss, coord, size, hitBoxSize, velocity, dir, damage, knockback, kbSpread, durability, INF_LIFE, canHitProj, isOnTop);
+    public Pincer(Boss boss, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double kbSpread, double dura, boolean canHitProj, boolean isOnTop) {
+        super(boss, coord, size, hitBoxSize, velocity, dir, damage, knockback, kbSpread, dura, INF_LIFE, canHitProj, isOnTop);
         this.trueDir = dir;
     }
 
     // General constructor
     public Pincer(Boss boss, Coord coord) {
-        this(boss, coord, SIZE.copy(), SIZE.scaledBy(SIZE_TO_HITBOX), VELOCITY, coord.x < OmegaFight3.SCREEN_SIZE.x / 2? 0: Math.PI, DMG, KB, KB_SPREAD, DURABILITY, CAN_HIT_PROJ, IS_ON_TOP);
+        this(boss, coord, SIZE.copy(), SIZE.scaledBy(SIZE_TO_HITBOX), VELOCITY, coord.x < OmegaFight3.SCREEN_SIZE.x / 2? 0: Math.PI, DMG, KB, KB_SPREAD, DURA, CAN_HIT_PROJ, IS_ON_TOP);
     }
 
     // Description: This method draws the pincer
@@ -227,7 +227,7 @@ class Bombot extends Projectile {
 
     // Damage constants
     public static final double DMG = 15 * Omegaman.PERC_MULT;
-    public static final double DURABILITY = INFINITE_DURABILITY;
+    public static final double DURA = INF_DURA;
     public static final double KB = 15;
     public static final double KB_SPREAD = Math.PI / 3;
 
@@ -250,14 +250,14 @@ class Bombot extends Projectile {
     public static BufferedImage[] images = new BufferedImage[NO_OF_SPRITES];
 
     // Constructor with custom stats
-    public Bombot(Boss boss, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double kbSpread, double durability, int frameCounter, int sign, boolean canHitProj, boolean isOnTop) {
-        super(boss, coord, size, hitBoxSize, velocity, dir, damage, knockback, kbSpread, durability, frameCounter, canHitProj, isOnTop);
+    public Bombot(Boss boss, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double kbSpread, double dura, int frameCounter, int sign, boolean canHitProj, boolean isOnTop) {
+        super(boss, coord, size, hitBoxSize, velocity, dir, damage, knockback, kbSpread, dura, frameCounter, canHitProj, isOnTop);
         this.sign = sign;
     }
 
     // General constructor with default stats
     public Bombot(Boss boss, Coord coord, double dir, int sign) {
-        this(boss, coord, SIZE.copy(), SIZE.scaledBy(SIZE_TO_HITBOX), VELOCITY, dir, DMG, KB, KB_SPREAD, DURABILITY, LIFE, sign, CAN_HIT_PROJ, IS_ON_TOP);
+        this(boss, coord, SIZE.copy(), SIZE.scaledBy(SIZE_TO_HITBOX), VELOCITY, dir, DMG, KB, KB_SPREAD, DURA, LIFE, sign, CAN_HIT_PROJ, IS_ON_TOP);
     }
 
     // Description: This method explodes the bombot
@@ -308,7 +308,7 @@ class Bombot extends Projectile {
     }
 
     // Description: This method returns that the missile should die to anything
-    public boolean shouldDieTo(double enemyDurability) {
+    public boolean shouldDieTo(double enemyDura) {
         return true;
     }
 

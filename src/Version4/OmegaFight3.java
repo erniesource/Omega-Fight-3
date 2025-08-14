@@ -18,7 +18,8 @@ import java.awt.image.BufferedImage;
 import java.util.*;
 import javax.sound.sampled.*;
 import javafx.util.Pair;
-// Ernest Todo: bird, check over code... for basically everything
+// Ernest Todo: check over code... for everything not so good
+// List of things to loot out for when double checking: why code this way, make methods helper methods, make more methods and use OOP to reduce code, variable names
 
 public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionListener, KeyListener, Runnable {
     // Screen Settings
@@ -32,6 +33,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     // Screen Shake Settings
     public static final int SCREEN_SHAKE_HZ = 2;
     public static final double SCREEN_SHAKE_MULT = 0.75;
+    public static final int SCREEN_SHAKE_MAX = 60;
 
     // Sound settings
     public static final boolean SOUND_ON = false;
@@ -308,7 +310,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static boolean fpsCntVis = false;
     public static boolean fpsCntKeyPressed = false;
 
-    // Stage statistics
+    // Stage stats
     public static int stageNo = BATTLEFIELD_NO;
     public static Stage[] stage = new Stage[NO_OF_STAGES];
     public static int stageFlashCounter = 0;
@@ -400,7 +402,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     // Slideshow stats
     public static int slideNo;
 
-    // General game statistics
+    // General game stats
     public static int screenShakeCounter = 0;
     public static BufferedImage placeHolder;
     public static int gameMode = HOME_GS;
@@ -636,50 +638,50 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
 
         // Boss Image importing
         for (int i = 0; i != 2; i++) {
-            for (int j = 0; j != Doctor.STATE_NO_SPRITES[Boss.DEAD] + Doctor.STATE_NO_SPRITES[Boss.IDLE]; j++) {
-                Doctor.sprite[j] = ImageIO.read(new File(DOCTOR_DIR + (j < Doctor.STATE_NO_SPRITES[Boss.DEAD] ? "dead" + j : "idle" + (j - Doctor.STATE_NO_SPRITES[Boss.DEAD])) +  ".png"));
+            for (int j = 0; j != Doctor.STATE_NUM_SPRITES[Boss.DEAD] + Doctor.STATE_NUM_SPRITES[Boss.IDLE]; j++) {
+                Doctor.docSprite[j] = ImageIO.read(new File(DOCTOR_DIR + (j < Doctor.STATE_NUM_SPRITES[Boss.DEAD] ? "dead" + j : "idle" + (j - Doctor.STATE_NUM_SPRITES[Boss.DEAD])) +  ".png"));
             }
-            for (int j = 0; j != Dragon.STATE_NO_SPRITES[Boss.DEAD] + Dragon.STATE_NO_SPRITES[Boss.IDLE]; j++) {
-                Dragon.sprite[j] = ImageIO.read(new File(DRAGON_DIR + (j < Dragon.STATE_NO_SPRITES[Boss.DEAD] ? "dead" + j : "idle" + (j - Dragon.STATE_NO_SPRITES[Boss.DEAD])) + ".png"));
+            for (int j = 0; j != Dragon.STATE_NUM_SPRITES[Boss.DEAD] + Dragon.STATE_NUM_SPRITES[Boss.IDLE]; j++) {
+                Dragon.dragonSprite[j] = ImageIO.read(new File(DRAGON_DIR + (j < Dragon.STATE_NUM_SPRITES[Boss.DEAD] ? "dead" + j : "idle" + (j - Dragon.STATE_NUM_SPRITES[Boss.DEAD])) + ".png"));
             }
-            for (int j = 0; j != Bird.STATE_NO_SPRITES[Boss.DEAD] + Bird.STATE_NO_SPRITES[Boss.IDLE]; j++) {
-                Bird.sprite[j] = ImageIO.read(new File(BIRD_DIR + (j < Bird.STATE_NO_SPRITES[Boss.DEAD] ? "dead" + j : "idle" + (j - Bird.STATE_NO_SPRITES[Boss.DEAD])) + ".png"));
+            for (int j = 0; j != Bird.STATE_NUM_SPRITES[Boss.DEAD] + Bird.STATE_NUM_SPRITES[Boss.IDLE]; j++) {
+                Bird.birdSprite[j] = ImageIO.read(new File(BIRD_DIR + (j < Bird.STATE_NUM_SPRITES[Boss.DEAD] ? "dead" + j : "idle" + (j - Bird.STATE_NUM_SPRITES[Boss.DEAD])) + ".png"));
             }
-            for (int j = 0; j != Punk.STATE_NO_SPRITES[Boss.DEAD] + Punk.STATE_NO_SPRITES[Boss.IDLE]; j++) {
-                Punk.sprite[j] = ImageIO.read(new File(PUNK_DIR + (j < Punk.STATE_NO_SPRITES[Boss.DEAD] ? "dead" + j : "idle" + (j - Punk.STATE_NO_SPRITES[Boss.DEAD])) + ".png"));
+            for (int j = 0; j != Punk.STATE_NUM_SPRITES[Boss.DEAD] + Punk.STATE_NUM_SPRITES[Boss.IDLE]; j++) {
+                Punk.punkSprite[j] = ImageIO.read(new File(PUNK_DIR + (j < Punk.STATE_NUM_SPRITES[Boss.DEAD] ? "dead" + j : "idle" + (j - Punk.STATE_NUM_SPRITES[Boss.DEAD])) + ".png"));
             }
         }
         
         // Doctor image importing
-        for (int i = 1; i != Doctor.NO_OF_STATES; i++) {
-            Doctor.STATE_SPRITE_START[i] = Doctor.STATE_SPRITE_START[i - 1] + Doctor.STATE_NO_SPRITES[i - 1];
+        for (int i = 1; i != Doctor.NUM_STATES; i++) {
+            Doctor.STATE_SPRITE_START[i] = Doctor.STATE_SPRITE_START[i - 1] + Doctor.STATE_NUM_SPRITES[i - 1];
         }
-        for (int i = Doctor.STATE_SPRITE_START[Boss.IDLE] + Doctor.STATE_NO_SPRITES[Boss.IDLE], j = 3; i != Doctor.NO_OF_SPRITES; i++) {
-            if (j != Doctor.NO_OF_STATES && Doctor.STATE_SPRITE_START[j] == i) j++;
-            Doctor.sprite[i] = ImageIO.read(new File(DOCTOR_DIR + Doctor.STATE_NAME[j - 3] + (i - Doctor.STATE_SPRITE_START[j - 1]) + ".png"));
+        for (int i = Doctor.STATE_SPRITE_START[Boss.IDLE] + Doctor.STATE_NUM_SPRITES[Boss.IDLE], j = 3; i != Doctor.TOT_NUM_SPRITES; i++) {
+            if (j != Doctor.NUM_STATES && Doctor.STATE_SPRITE_START[j] == i) j++;
+            Doctor.docSprite[i] = ImageIO.read(new File(DOCTOR_DIR + Doctor.STATE_NAME[j - 3] + (i - Doctor.STATE_SPRITE_START[j - 1]) + ".png"));
         }
 
         // Dragon image importing
-        for (int i = 1; i != Dragon.NO_OF_STATES; i++) {
-            Dragon.STATE_SPRITE_START[i] = Dragon.STATE_SPRITE_START[i - 1] + Dragon.STATE_NO_SPRITES[i - 1];
+        for (int i = 1; i != Dragon.NUM_STATES; i++) {
+            Dragon.STATE_SPRITE_START[i] = Dragon.STATE_SPRITE_START[i - 1] + Dragon.STATE_NUM_SPRITES[i - 1];
         }
-        for (int i = Dragon.STATE_SPRITE_START[Boss.IDLE] + Dragon.STATE_NO_SPRITES[Boss.IDLE], j = 3; i != Dragon.NO_OF_SPRITES; i++) {
-            if (j != Dragon.NO_OF_STATES && Dragon.STATE_SPRITE_START[j] == i) j++;
-            Dragon.sprite[i] = ImageIO.read(new File(DRAGON_DIR + Dragon.STATE_NAME[j - 3] + (i - Dragon.STATE_SPRITE_START[j - 1]) + ".png"));
+        for (int i = Dragon.STATE_SPRITE_START[Boss.IDLE] + Dragon.STATE_NUM_SPRITES[Boss.IDLE], j = 3; i != Dragon.TOT_NUM_SPRITES; i++) {
+            if (j != Dragon.NUM_STATES && Dragon.STATE_SPRITE_START[j] == i) j++;
+            Dragon.dragonSprite[i] = ImageIO.read(new File(DRAGON_DIR + Dragon.STATE_NAME[j - 3] + (i - Dragon.STATE_SPRITE_START[j - 1]) + ".png"));
         }
 
         // Bird image importing
-        for (int i = 1; i != Bird.NO_OF_STATES; i++) {
-            Bird.STATE_SPRITE_START[i] = Bird.STATE_SPRITE_START[i - 1] + Bird.STATE_NO_SPRITES[i - 1];
+        for (int i = 1; i != Bird.NUM_STATES; i++) {
+            Bird.STATE_SPRITE_START[i] = Bird.STATE_SPRITE_START[i - 1] + Bird.STATE_NUM_SPRITES[i - 1];
         }
-        for (int i = Bird.STATE_SPRITE_START[Boss.IDLE] + Bird.STATE_NO_SPRITES[Boss.IDLE], j = 3; i != Bird.NO_OF_SPRITES; i++) {
-            if (j != Bird.NO_OF_STATES && Bird.STATE_SPRITE_START[j] == i) j++;
-            Bird.sprite[i] = ImageIO.read(new File(BIRD_DIR + Bird.STATE_NAME[j - 3] + (i - Bird.STATE_SPRITE_START[j - 1]) + ".png"));
+        for (int i = Bird.STATE_SPRITE_START[Boss.IDLE] + Bird.STATE_NUM_SPRITES[Boss.IDLE], j = 3; i != Bird.TOT_NUM_SPRITES; i++) {
+            if (j != Bird.NUM_STATES && Bird.STATE_SPRITE_START[j] == i) j++;
+            Bird.birdSprite[i] = ImageIO.read(new File(BIRD_DIR + Bird.STATE_NAME[j - 3] + (i - Bird.STATE_SPRITE_START[j - 1]) + ".png"));
         }
 
         // Punk image importing
-        for (int i = 1; i != Punk.NO_OF_STATES; i++) {
-            Punk.STATE_SPRITE_START[i] = Punk.STATE_SPRITE_START[i - 1] + Punk.STATE_NO_SPRITES[i - 1];
+        for (int i = 1; i != Punk.NUM_STATES; i++) {
+            Punk.STATE_SPRITE_START[i] = Punk.STATE_SPRITE_START[i - 1] + Punk.STATE_NUM_SPRITES[i - 1];
         }
 
         // Buttons
@@ -823,6 +825,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         super.paintComponent(g);
         // Screen shake
         if (screenShakeCounter != 0) {
+            screenShakeCounter = Math.min(SCREEN_SHAKE_MAX, screenShakeCounter);
             screenShakeCounter--;
             if (screenShakeCounter % SCREEN_SHAKE_HZ == 0) {
                 screenCoord.x = randomSign() * screenShakeCounter * Math.random() * SCREEN_SHAKE_MULT;
@@ -1133,7 +1136,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
             battleDone.drawEmoMan(g);
 
             // Draw stats
-            if (transitiono != RESULTS_COUNTING) battleDone.drawScoreBoard(new Coord((SCREEN_SIZE.x - Battle.SCOREBOARD_SIZE.x) / 2, RESULTS_EDGE_SPACING + RESULTS_TITLE_SIZE.y + RESULTS_SPACING), Battle.FULL_STATS, g);
+            if (transitiono != RESULTS_COUNTING) battleDone.drawScoreBoard(new Coord((SCREEN_SIZE.x - Battle.SCOREBOARD_SIZE.x) / 2, RESULTS_EDGE_SPACING + RESULTS_TITLE_SIZE.y + RESULTS_SPACING), g);
 
             // Draw buttons and textBoxes
             drawButtons(gameEndButtons.values(), g);
@@ -1194,14 +1197,14 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                 g.drawImage(noBattle, (int) BATTLE_LOG_SCOREBOARD_COORD.x, (int) BATTLE_LOG_SCOREBOARD_COORD.y, null);
             }
             else {
-                battleLog.get(battleNo).drawScoreBoard(BATTLE_LOG_SCOREBOARD_COORD, Battle.FULL_STATS, g);
+                battleLog.get(battleNo).drawScoreBoard(BATTLE_LOG_SCOREBOARD_COORD, g);
                 battleLog.get(battleNo).drawEmoMan(g);
                 battleLog.get(battleNo).drawBattleInfo(BATTLE_LOG_BATTLE_INFO_COORD, g);
             }
 
             // Draw Battle number
             g.setColor(Color.WHITE);
-            g.setFont(Battle.SCOREBOARD_FONT);
+            g.setFont(Battle.SCORE_FONT);
             g.drawString((battleNo + 1) + "/" + battleLog.size(), (int) (SCREEN_SIZE.x - g.getFontMetrics().stringWidth((battleNo + 1) + "/" + battleLog.size())) / 2, BATTLE_NO_Y_COORD);
 
             // Draw buttons
@@ -1772,9 +1775,8 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
             stats[i][Omegaman.LIVES_LEFT_NO] = omegaman[i].livesLeft;
             omegaman[i] = null;
             for (int j = 0; j != Omegaman.NO_OF_STATS; j++) {
-                if (Battle.IS_PERCENT[j]) stats[i][j] /= Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
+                if (Battle.IS_PERC[j]) stats[i][j] /= Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
             }
-            stats[i][Omegaman.SKILL_PTS_USED_NO] /= Omegaman.ONES_PER_SKILL_PT;
         }
         babyBosses.clear();
         bosses.clear();
@@ -2036,7 +2038,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
             // Check bosses
             boolean allBossDead = true;
             for (Boss boss: bosses) {
-                if (boss.health > 0 || (boss.frameCounter < SURGE_FRAME_HZ * SURGE_SPRITE_WIN_CHECK && boss.health <= 0)) {
+                if (boss.health > 0 || boss.frameCounter < SURGE_FRAME_HZ * SURGE_SPRITE_WIN_CHECK) {
                     allBossDead = false;
                 }
             }
