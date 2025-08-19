@@ -148,7 +148,7 @@ public class Omegaman extends Char {
     public int stunCounter;
 
     // Combat stats
-    public int livesLeft = 3; // PArt of the constructor do this when adding settings
+    public int livesLeft = 3; // make part of the constructor do this when adding settings
     public int percent;
     public int percentShakeCounter;
     public Coord[] percentDigitShake = new Coord[4];
