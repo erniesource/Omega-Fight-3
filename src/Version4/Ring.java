@@ -20,11 +20,11 @@ public class Ring extends Projectile{
     // Misc constants
     public static final boolean CAN_HIT_PROJ = true;
     public static final boolean IS_ON_TOP = true;
-    public static final int NO_OF_SPRITES = 3;
+    public static final int NUM_SPRITES = 3;
     public static final int SPRITE_CHANGE_HZ = 7;
 
     // Static images
-    public static BufferedImage[] images = new BufferedImage[NO_OF_SPRITES];
+    public static BufferedImage[] images = new BufferedImage[NUM_SPRITES];
 
     // Constructor with custom stats
     public Ring(Boss boss, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double kbSpread, double dura, boolean canHitProj, boolean isOnTop) {
@@ -47,7 +47,7 @@ public class Ring extends Projectile{
     // Description: this method processes the laser ring
     public void process() {
         super.process();
-        if (frameCounter == -SPRITE_CHANGE_HZ * NO_OF_SPRITES) frameCounter = 0;
+        if (frameCounter == -SPRITE_CHANGE_HZ * NUM_SPRITES) frameCounter = 0;
     }
 
     public void hitBoss(Boss boss) {}
@@ -64,7 +64,7 @@ class Meteor extends Projectile {
     // Size constants
     public static final Coord SIZE = (new Coord(220, 170)).scaledBy(0.75);
     public static final double SIZE_TO_HITBOX = 0.7;
-    public static final double SIZE_TO_SMOKE_SIZE = 0.5;
+    public static final double SIZE_TO_SMOKE = 0.5;
 
     // Movement constants
     public static final double VELOCITY = 8;
@@ -73,14 +73,14 @@ class Meteor extends Projectile {
     // Misc constants
     public static final boolean CAN_HIT_PROJ = false;
     public static final boolean IS_ON_TOP = true;
-    public static final int NO_OF_SPRITES = 3;
+    public static final int NUM_SPRITES = 3;
     public static final int SPRITE_CHANGE_HZ = 7;
 
     // Instance variables
     public int sign;
 
     // Static images
-    public static BufferedImage[] images = new BufferedImage[NO_OF_SPRITES];
+    public static BufferedImage[] images = new BufferedImage[NUM_SPRITES];
 
     // Constructor with custom stats
     public Meteor(Boss boss, Coord size, Coord hitBoxSize, double xCoord, double velocity, double dir, double damage, double knockback, double dura, double kbSpread, int sign, boolean canHitProj, boolean isOnTop) {
@@ -109,10 +109,10 @@ class Meteor extends Projectile {
         func();
 
         // Smoke
-        character.smokeQ.add(new Smoke(coord.copy(), new Coord(Math.max(size.x, size.y) * SIZE_TO_SMOKE_SIZE), Math.random() * Math.PI * 2));
+        character.smokeQ.add(new Smoke(coord.copy(), new Coord(Math.max(size.x, size.y) * SIZE_TO_SMOKE), Math.random() * Math.PI * 2));
 
         // Sprite change
-        frameCounter = (frameCounter + 1) % (NO_OF_SPRITES * SPRITE_CHANGE_HZ);
+        frameCounter = (frameCounter + 1) % (NUM_SPRITES * SPRITE_CHANGE_HZ);
 
         // Check if meteor is out of screen
         checkLeave();
@@ -120,7 +120,7 @@ class Meteor extends Projectile {
 
     // Description: This method uses a function and it's derivative to calculate the meteor's direction and y coordinate (First time I've ever actually applied differential calculus).
     // It's called func because it uses a function
-    public void func() {
+    private void func() {
         coord.y = Math.abs(OmegaFight3.SCREEN_SIZE.y - SIZE.y / 2 - (Dragon.STATE_COORD[Dragon.BARF].y + Dragon.COORD_TO_BARF.y)) / 2 * -Math.cos(Math.PI * 2 / ((Dragon.STATE_COORD[Dragon.BARF].x + Dragon.COORD_TO_BARF.x * Dragon.STATE_SPRITE_SIGN[Dragon.BARF]) / PERIODS) * (coord.x - (Dragon.STATE_COORD[Dragon.BARF].x + Dragon.COORD_TO_BARF.x * sign))) + (OmegaFight3.SCREEN_SIZE.y - SIZE.y / 2 + (Dragon.STATE_COORD[Dragon.BARF].y + Dragon.COORD_TO_BARF.y)) / 2;
         dir = Math.atan(Math.abs(OmegaFight3.SCREEN_SIZE.y - SIZE.y / 2 - (Dragon.STATE_COORD[Dragon.BARF].y + Dragon.COORD_TO_BARF.y)) / 2 * (Math.PI * 2 / ((Dragon.STATE_COORD[Dragon.BARF].x + Dragon.COORD_TO_BARF.x * Dragon.STATE_SPRITE_SIGN[Dragon.BARF]) / PERIODS)) * Math.sin(Math.PI * 2 / ((Dragon.STATE_COORD[Dragon.BARF].x + Dragon.COORD_TO_BARF.x * Dragon.STATE_SPRITE_SIGN[Dragon.BARF]) / PERIODS) * (coord.x - (Dragon.STATE_COORD[Dragon.BARF].x + Dragon.COORD_TO_BARF.x * sign)))) + (sign == OmegaFight3.LFT_SIGN? Math.PI: 0);
     }
@@ -149,7 +149,7 @@ class Bubble extends Projectile {
     public static final double ACCEL = 2;
     public static final double ACCEL_TO_BIG_JUMP_VEL = -22;
     public static final double ACCEL_TO_SML_JUMP_VEL = -8;
-    public static final double CHANGE_OF_BIG_JUMP = 0.33;
+    public static final double CHANCE_OF_BIG_JUMP = 0.33;
 
     // Misc constants
     public static final boolean CAN_HIT_PROJ = true;
@@ -157,14 +157,14 @@ class Bubble extends Projectile {
     public static final int SCREENSHAKE = 15;
 
     // Sprite constants
-    public static final int NO_OF_SPRITES = 3;
+    public static final int NUM_SPRITES = 3;
     public static final int SPRITE_CHANGE_HZ = 7;
 
     // Instance variables
     public Coord bubbleVelocity;
 
     // Static images
-    public static BufferedImage[] images = new BufferedImage[NO_OF_SPRITES];
+    public static BufferedImage[] images = new BufferedImage[NUM_SPRITES];
 
     // Constructor with custom stats
     public Bubble(Boss boss, Coord coord, Coord size, Coord hitBoxSize, double velocity, double damage, double knockback, double kbSpread, double dura, boolean canHitProj, boolean isOnTop) {
@@ -194,13 +194,13 @@ class Bubble extends Projectile {
     // Description: This method processes the fire bubble
     public void process() {
         // Sprit change
-        frameCounter = (frameCounter + 1) % (NO_OF_SPRITES * SPRITE_CHANGE_HZ);
+        frameCounter = (frameCounter + 1) % (NUM_SPRITES * SPRITE_CHANGE_HZ);
 
         // Movement
         coord.x += bubbleVelocity.x;
         coord.y += bubbleVelocity.y;
         if (coord.y > OmegaFight3.SCREEN_SIZE.y - size.y / 2) {
-            bubbleVelocity.y = ACCEL * (Math.random() < CHANGE_OF_BIG_JUMP? ACCEL_TO_BIG_JUMP_VEL: ACCEL_TO_SML_JUMP_VEL);
+            bubbleVelocity.y = ACCEL * (Math.random() < CHANCE_OF_BIG_JUMP? ACCEL_TO_BIG_JUMP_VEL: ACCEL_TO_SML_JUMP_VEL);
             coord.y = OmegaFight3.SCREEN_SIZE.y - size.y / 2;
         }
         bubbleVelocity.y += ACCEL;
@@ -242,14 +242,14 @@ class Fire extends Projectile {
     public static final boolean IS_ON_TOP = true;
 
     // Sprite constants
-    public static final int NO_OF_SPRITES = 2;
+    public static final int NUM_SPRITES = 2;
     public static final int SPRITE_CHANGE_HZ = 10;
 
     // Instance variables
     public double trueDir;
 
     // Static images
-    public static BufferedImage[] images = new BufferedImage[NO_OF_SPRITES];
+    public static BufferedImage[] images = new BufferedImage[NUM_SPRITES];
 
     // Constructor with custom stats
     public Fire(Boss boss, Coord coord, double sizeX, double velocity, double dir, double damage, double knockback, double kbSpread, double dura, boolean canHitProj, boolean isOnTop) {
@@ -264,13 +264,13 @@ class Fire extends Projectile {
 
     // Description: This method draws the Fire from the ceiling
     public void draw(Graphics2D g2) {
-        g2.drawImage(images[frameCounter / SPRITE_CHANGE_HZ], (int) (coord.x - size.x / 2), (int) (coord.y - size.y / 2 * Math.signum(trueDir)), (int) size.x, (int) (size.y * Math.signum(trueDir)), null);
+        g2.drawImage(images[frameCounter / SPRITE_CHANGE_HZ], (int) (coord.x - size.x / 2), (int) (coord.y - size.y / 2 * Math.sin(trueDir)), (int) size.x, (int) (size.y * Math.sin(trueDir)), null);
     }
 
     // Description: This method processes the fire from the ceiling
     public void process() {
         // Sprite change
-        frameCounter = (frameCounter + 1) % (NO_OF_SPRITES * SPRITE_CHANGE_HZ);
+        frameCounter = (frameCounter + 1) % (NUM_SPRITES * SPRITE_CHANGE_HZ);
 
         // Locational changes
         coord.y += velocity * Math.sin(dir);
@@ -282,7 +282,7 @@ class Fire extends Projectile {
         }
 
         // Check if fire from the ceiling is out of the screen
-        if (coord.y <= 0) {
+        if (coord.y <= 0 || coord.x >= OmegaFight3.SCREEN_SIZE.y) {
             die();
         }
     }

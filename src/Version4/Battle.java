@@ -49,7 +49,7 @@ public class Battle {
     public String stageName;
     public int gameMode;
     public int winner; // -2: Both players, -1: Boss, 0+: Players
-    public double[][] playerStats = new double[Omegaman.NUM_PLAYERS][Omegaman.NO_OF_STATS];
+    public double[][] playerStats = new double[Omegaman.NUM_PLAYERS][Omegaman.NUM_STATS];
     public double grade;
     public String result;
     // Settings (difficulty, lives)
@@ -65,7 +65,7 @@ public class Battle {
         // Calculate grade
         if (gameMode == OmegaFight3.TWOPVE) {
             for (int i = 0; i != Omegaman.NUM_PLAYERS; i++) {
-                for (int j = NUM_FORMATIVE_STATS; j != Omegaman.NO_OF_STATS; j++) {
+                for (int j = NUM_FORMATIVE_STATS; j != Omegaman.NUM_STATS; j++) {
                     grade += WEIGHT[j - NUM_FORMATIVE_STATS] * Math.min(1, playerStats[i][j] / MAX_SCORE[j - NUM_FORMATIVE_STATS]);
                 }
             }
@@ -88,7 +88,7 @@ public class Battle {
             // Draw each stat (truncate it if needed)
             for (int i = 0; i != Omegaman.NUM_PLAYERS; i++) {
                 Coord firstStatCoord = coord.add(SCOREBOARD_TO_STATS_COORDS[i]);
-                for (int j = 0; j != Omegaman.NO_OF_STATS; j++) {
+                for (int j = 0; j != Omegaman.NUM_STATS; j++) {
                     String stringStat;
                     if (IS_TRUNC[j]) {
                         stringStat = (int) (playerStats[i][j] * progress) + "";

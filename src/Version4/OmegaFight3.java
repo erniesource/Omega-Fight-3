@@ -42,7 +42,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static final boolean CHEATS = true;
     public static final boolean DEV_MODE = true;
     public static final int KILL_KEY = KeyEvent.VK_K;
-    public static final double KILL_DMG = 2 * Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
+    public static final double KILL_DMG = 2 * Omegaman.PERC_MULT;
     public static final int FPS_CNT_KEY = KeyEvent.VK_F;
     public static int FPS_TEXT_SPACING = 7;
     public static Font FPS_FONT = new Font("Courier New", Font.PLAIN, 15);
@@ -169,7 +169,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static final int RIT_SIGN = 1;
 
     // Stage constants
-    public static final int NO_OF_STAGES = 3;
+    public static final int NUM_STAGES = 3;
     public static final int BATTLEFIELD_NO = 0;
     public static final int FINAL_DEST_NO = 1;
     public static final int NORTH_CAVE_NO = 2;
@@ -324,7 +324,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
 
     // Stage stats
     public static int stageNo = BATTLEFIELD_NO;
-    public static Stage[] stage = new Stage[NO_OF_STAGES];
+    public static Stage[] stage = new Stage[NUM_STAGES];
     public static int stageFlashCounter = 0;
 
     // Home menu buttons
@@ -335,7 +335,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static int buttonPressed = NO_BUTTON_HIT;
     public static Button selectedIcon;
     public static HashMap<Integer, Integer> buttonoToWeaponNo = new HashMap<>();
-    public static BufferedImage[] icon = new BufferedImage[Projectile.NO_OF_PLAYER_PROJECTILES];
+    public static BufferedImage[] icon = new BufferedImage[Projectile.NUM_PLAYER_PROJS];
     public static int iconFlashCounter = 0;
     public static int readyCounter = NOT_READY;
 
@@ -605,16 +605,16 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         }
 
         // Dragon projectile image importing
-        for (int i = 0; i != Ring.NO_OF_SPRITES; i++) {
+        for (int i = 0; i != Ring.NUM_SPRITES; i++) {
             Ring.images[i] = ImageIO.read(new File(DRAGON_PROJS_DIR + "ring" + i + ".png"));
         }
-        for (int i = 0; i != Meteor.NO_OF_SPRITES; i++) {
+        for (int i = 0; i != Meteor.NUM_SPRITES; i++) {
             Meteor.images[i] = ImageIO.read(new File(DRAGON_PROJS_DIR + "meteor" + i + ".png"));
         }
-        for (int i = 0; i != Bubble.NO_OF_SPRITES; i++) {
+        for (int i = 0; i != Bubble.NUM_SPRITES; i++) {
             Bubble.images[i] = ImageIO.read(new File(DRAGON_PROJS_DIR + "bubble" + i + ".png"));
         }
-        for (int i = 0; i != Fire.NO_OF_SPRITES; i++) {
+        for (int i = 0; i != Fire.NUM_SPRITES; i++) {
             Fire.images[i] = ImageIO.read(new File(DRAGON_PROJS_DIR + "fire" + i + ".png"));
         }
 
@@ -642,7 +642,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         }
 
         // Stages
-        for (int i = 0; i != NO_OF_STAGES; i++) {
+        for (int i = 0; i != NUM_STAGES; i++) {
             stage[i] = new Stage(STAGE_NAME[i], PLATFORMS[i], SPAWN_COORDS[i], SPAWN_SIGN[i], SPAWN_PLATFORM_NO[i], STAGE_BUTTONO[i]);
         }
 
@@ -702,7 +702,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
 
         // Choose your fight menu buttons 
         chooseButtons.put(CHOOSE_BACK_BUTTONO, newBackButton(CHOOSE_BACK_BUTTONO));
-        for (int i = 0; i != NO_OF_STAGES; i++) {
+        for (int i = 0; i != NUM_STAGES; i++) {
             chooseButtons.put(stage[i].buttono, new Button(stage[i].image, STAGE_FONT, new Coord(SPACING * (i + 1) + STAGE_BUTTON_SIZE.x * (i + 0.5), (BLACK_BAR_TOP + BLACK_BAR_BOTTOM) / 2), STAGE_BUTTON_SIZE.copy(), stage[i].stageName.toUpperCase(), stage[i].buttono, Button.HIGHLIGHT));
         } 
         // THESE WILL CHANGE SOON use vars then. Use a for loop and a final array wiht values here in the future
@@ -761,10 +761,10 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
             stageName = br.readLine();
             gameMode = Integer.parseInt(br.readLine());
             winner = Integer.parseInt(br.readLine());
-            stats = new double[Omegaman.NUM_PLAYERS][Omegaman.NO_OF_STATS];
+            stats = new double[Omegaman.NUM_PLAYERS][Omegaman.NUM_STATS];
             for (int j = 0; j != Omegaman.NUM_PLAYERS; j++) {
                 stringStats = br.readLine().split(" ");
-                for (int k = 0; k != Omegaman.NO_OF_STATS; k++) {
+                for (int k = 0; k != Omegaman.NUM_STATS; k++) {
                     stats[j][k] = Double.parseDouble(stringStats[k]);
                 }
             }
@@ -1562,7 +1562,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
             for (Battle b: battleLog) {
                 pw.printf("%s\n%d\n%d\n", b.stageName, b.gameMode, b.winner);
                 for (int i = 0; i != Omegaman.NUM_PLAYERS; i++) {
-                    for (int j = 0; j != Omegaman.NO_OF_STATS; j++) {
+                    for (int j = 0; j != Omegaman.NUM_STATS; j++) {
                         pw.print(b.playerStats[i][j] + " ");
                     }
                     pw.println();
@@ -1585,8 +1585,8 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
             stats[i] = omegaman[i].stats;
             stats[i][Omegaman.LIVES_LEFT_NO] = omegaman[i].livesLeft;
             omegaman[i] = null;
-            for (int j = 0; j != Omegaman.NO_OF_STATS; j++) {
-                if (Battle.IS_PERC[j]) stats[i][j] /= Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
+            for (int j = 0; j != Omegaman.NUM_STATS; j++) {
+                if (Battle.IS_PERC[j]) stats[i][j] /= Omegaman.PERC_MULT;
             }
         }
         babyBosses.clear();
@@ -1997,7 +1997,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     // Return: Whether all loadouts are ready
     // Description:
     // This method checks if all loadouts are ready by ensuring that no loadout contains NO_WEAPON
-    public static boolean isReady() {
+    private static boolean isReady() {
         for (int[] loadout : loadouts) {
             for (int weapon : loadout) {
                 if (weapon == NO_WEAPON) return false;
@@ -2234,7 +2234,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                 // Loadout or weapon icon buttons
                 else {
                     // Stage buttons
-                    for (int i = 0; i != NO_OF_STAGES; i++) {
+                    for (int i = 0; i != NUM_STAGES; i++) {
                         if (buttonPressed == stage[i].buttono) {
                             stageNo = i;
                             break;

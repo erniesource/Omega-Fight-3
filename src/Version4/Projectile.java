@@ -5,7 +5,7 @@ import java.awt.*;
 abstract public class Projectile {
     // Misc Variables
     public static final double INF_DURA = 100;
-    public static final int NO_OF_PLAYER_PROJECTILES = 6;
+    public static final int NUM_PLAYER_PROJS = 6;
     public static final int INF_LIFE = 0;
     
     // General variables

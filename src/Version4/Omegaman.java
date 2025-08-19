@@ -20,6 +20,8 @@ public class Omegaman extends Char {
     public static final int JUMP_COOLDOWN = 3;
     public static final int JUMPS_ALLOWED = 2;
     public static final int COYOTE_TIME = 5;
+    public static final double MOVE_DECEL_DEC = 0.75;
+    public static final double MIN_ACCEL_DWN = 0.5;
 
     // Shooting Constants
     public static final int BULLET_WEAPON_NO = 0;
@@ -55,36 +57,36 @@ public class Omegaman extends Char {
     public static final double DIR_INP_VEL = 2;
 
     // Kamikaze constants
-    public static final double KAMIKAZE_DMG = 1 * Math.pow(10, Omegaman.PERCENT_NUM_DECIMALS);
+    public static final double KAMIKAZE_DMG = 1 * Math.pow(10, Omegaman.PERC_NUM_DECIMALS);
     public static final double KAMIKAZE_KB = 10;
 
     // HUD Constants
-    public static final int PERCENT_DISPLAY_Y_COORD = 790;
-    public static final Coord PERCENT_DISPLAY_SIZE = new Coord(400, 150);
-    public static final int PERCENT_NUM_DECIMALS = 1;
-    public static final int PERC_MULT = (int) Math.pow(10, PERCENT_NUM_DECIMALS);
-    public static final int MAX_PERCENT_COLOR_THRESHOLD = 150 * PERC_MULT;
-    public static final int PERCENT_SHAKE_HZ = 2;
-    public static final int PERCENT_SHADOW_OFFSET = 3;
+    public static final int PERC_DISPLAY_Y_COORD = 790;
+    public static final Coord PERC_DISPLAY_SIZE = new Coord(400, 150);
+    public static final int PERC_NUM_DECIMALS = 1;
+    public static final int PERC_MULT = (int) Math.pow(10, PERC_NUM_DECIMALS);
+    public static final int MAX_PERC_COLOR_THRESHOLD = 150 * PERC_MULT;
+    public static final int PERC_SHAKE_HZ = 2;
+    public static final int PERC_SHADOW_OFFSET = 3;
     public static final int NUM_PLAYERS = 2;
-    public static final int PERCENT_DISPLAY_DIST = (int) ((OmegaFight3.SCREEN_SIZE.x - PERCENT_DISPLAY_SIZE.x * NUM_PLAYERS) / (NUM_PLAYERS + 1));
-    public static final Coord PERCENT_DISPLAY_SIZE_TO_SKILL_PTS_COORD = new Coord(0.5 * PERCENT_DISPLAY_SIZE.x, 19.0 / 30.0 * PERCENT_DISPLAY_SIZE.y);
-    public static final double SKILL_PTS_SPACE = 0.0125 * PERCENT_DISPLAY_SIZE.x;
-    public static final Coord SKILL_PTS_SIZE = new Coord((0.475 * PERCENT_DISPLAY_SIZE.x - SKILL_PTS_SPACE * (MAX_SKILL_PTS / ONES_PER_SKILL_PT - 1)) / (MAX_SKILL_PTS / ONES_PER_SKILL_PT), (1.0 / 6.0) * PERCENT_DISPLAY_SIZE.y);
-    public static final Coord PERCENT_DISPLAY_SIZE_TO_PERCENT_COORD = new Coord(0.5 * PERCENT_DISPLAY_SIZE.x, 0.5 * PERCENT_DISPLAY_SIZE.y);
-    public static final int PERCENT_SHAKE_TIME = 24;
-    public static final double PERCENT_SHAKE_MULTIPLIER = 2;
+    public static final int PERC_DISPLAY_DIST = (int) ((OmegaFight3.SCREEN_SIZE.x - PERC_DISPLAY_SIZE.x * NUM_PLAYERS) / (NUM_PLAYERS + 1));
+    public static final Coord PERC_DISPLAY_SIZE_TO_SKILL_PTS_COORD = PERC_DISPLAY_SIZE.scaledBy(new Coord(0.5, 19.0 / 30));
+    public static final double SKILL_PTS_SPACE = 0.0125 * PERC_DISPLAY_SIZE.x;
+    public static final Coord SKILL_PTS_SIZE = new Coord((0.475 * PERC_DISPLAY_SIZE.x - SKILL_PTS_SPACE * (MAX_SKILL_PTS / ONES_PER_SKILL_PT - 1)) / (MAX_SKILL_PTS / ONES_PER_SKILL_PT), (1.0 / 6.0) * PERC_DISPLAY_SIZE.y);
+    public static final Coord PERC_DISPLAY_SIZE_TO_PERC_COORD = PERC_DISPLAY_SIZE.scaledBy(0.5);
+    public static final int PERC_SHAKE_TIME = 24;
+    public static final double PERC_SHAKE_MULT = 2;
     public static final Coord FACE_SIZE = new Coord(42, 46);
     public static final int FACE_SPACING = 10;
 
     // Respawn Constants
     public static final int RESPAWN_PAUSE = 120;
-    public static final int RESPAWN_INITIAL_VELOCITY = 25;
+    public static final int RESPAWN_INIT_VELOCITY = 25;
     public static final int RESPAWN_TIME_LIMIT = 120;
 
     // Death States
     public static final int ALIVE_STATE = 0;
-    public static final int DIED_BOTTOM = 1;
+    public static final int DIED_BOT = 1;
     public static final int DIED_LFT = 2;
     public static final int DIED_TOP = 3;
     public static final int DIED_RIT = 4;
@@ -95,9 +97,9 @@ public class Omegaman extends Char {
     public static final int DIE_SCREENSHAKE = 30;
 
     // Fonts and Colors
-    public static final Font BIG_PERCENT_FONT = new Font("Impact", Font.PLAIN, (int) (PERCENT_DISPLAY_SIZE.y * 8 / 15));
-    public static final Font SML_PERCENT_FONT = new Font("Impact", Font.PLAIN, BIG_PERCENT_FONT.getSize() * 2 / 5);
-    public static final Color MAX_PERCENT_COLOR = new Color(205, 46, 43);
+    public static final Font BIG_PERC_FONT = new Font("Impact", Font.PLAIN, (int) (PERC_DISPLAY_SIZE.y * 8 / 15));
+    public static final Font SML_PERC_FONT = new Font("Impact", Font.PLAIN, BIG_PERC_FONT.getSize() * 2 / 5);
+    public static final Color MAX_PERC_COLOR = new Color(205, 46, 43);
 
     // Invincibility Constants
     public static final int INV_BLINK_CYCLE_LEN = 10;
@@ -106,10 +108,10 @@ public class Omegaman extends Char {
     public static final int VULNERABLE = 0;
 
     // Stat constants
-    public static final int NO_OF_STATS = 7;
+    public static final int NUM_STATS = 7;
     public static final int DIST_MOVED_NO = 0;
     public static final int TIMES_JUMPED_NO = 1;
-    public static final int HIGHEST_PERCENT_NO = 2;
+    public static final int MAX_PERC_NO = 2;
     public static final int LIVES_LEFT_NO = 3;
     public static final int SKILL_PTS_USED_NO = 4;
     public static final int DMG_TO_OMEGAMAN = 5;
@@ -120,7 +122,7 @@ public class Omegaman extends Char {
 
     // Movement stats
     public int runSign = 1; // 1: Positive, -1: Negative
-    public int lftKey, ritKey, upKey, dwnKey, shtKeys[], swtKey;
+    public int lftKey, ritKey, upKey, dwnKey, shtKeys[];
     public Coord maxVelocity = new Coord(8, 22);
     public Coord accel = new Coord(1, 2);
     public int runFrameFreq = 6;
@@ -146,7 +148,7 @@ public class Omegaman extends Char {
     public int stunCounter;
 
     // Combat stats
-    public int livesLeft = 8;
+    public int livesLeft = 8; // PArt of the constructor do this when adding settings
     public int percent;
     public int percentShakeCounter;
     public Coord[] percentDigitShake = new Coord[4];
@@ -160,7 +162,7 @@ public class Omegaman extends Char {
     public static BufferedImage[][] surge = new BufferedImage[NUM_PLAYERS][OmegaFight3.NUM_SURGE_IMAGES];
 
     // Other stats
-    public double[] stats = new double[NO_OF_STATS];
+    public double[] stats = new double[NUM_STATS];
     public int playerNo;
 
     // Constructor
@@ -182,7 +184,7 @@ public class Omegaman extends Char {
         dwnKey = controls[3];
 
         // Percent related stuff
-        percentDisplayX = PERCENT_DISPLAY_DIST + (int) (PERCENT_DISPLAY_SIZE.x + PERCENT_DISPLAY_DIST) * playerNo;
+        percentDisplayX = PERC_DISPLAY_DIST + (int) (PERC_DISPLAY_SIZE.x + PERC_DISPLAY_DIST) * playerNo;
     }
 
     // Description: This methods calculates the control in the x-direction
@@ -195,7 +197,7 @@ public class Omegaman extends Char {
             // Acceleration
             else {
                 if (velocity.x > -maxVelocity.x) velocity.x = Math.max(-maxVelocity.x, velocity.x - accel.x);
-                else if (velocity.x < -maxVelocity.x) velocity.x = Math.min(-maxVelocity.x, velocity.x + accel.x);
+                else if (velocity.x < -maxVelocity.x) decelerate(MOVE_DECEL_DEC * accel.x);
 
                 animateRun();
 
@@ -208,7 +210,7 @@ public class Omegaman extends Char {
         else if (ritPressed) {
             // Acceleration
             if (velocity.x < maxVelocity.x) velocity.x = Math.min(maxVelocity.x, velocity.x + accel.x);
-            else if (velocity.x > maxVelocity.x) velocity.x = Math.max(maxVelocity.x, velocity.x - accel.x);
+            else if (velocity.x > maxVelocity.x) decelerate(MOVE_DECEL_DEC * accel.x);
 
             animateRun();
 
@@ -386,13 +388,15 @@ public class Omegaman extends Char {
             // Rocket
             if (loadout[chargingWeapon] == BULLET_WEAPON_NO) {
                 chargeSize = Rocket.SIZE.scaledBy(OmegaFight3.lerp(Rocket.MIN_PERC, 1, getPercentCharged(BULLET_WEAPON_NO)));
-                g.drawImage(Rocket.images[playerNo], (int) (chargeCoord.x - chargeSize.x / 2), (int) (chargeCoord.y - chargeSize.y / 2), (int) chargeSize.x, (int) chargeSize.y, null);
+                chargeCoord = chargeCoord.add(chargeSize.scaledBy(-0.5));
+                g.drawImage(Rocket.images[playerNo], (int) (chargeCoord.x), (int) (chargeCoord.y), (int) chargeSize.x, (int) chargeSize.y, null);
             }
 
             // Firework
             else if (loadout[chargingWeapon] == SHOTGUN_WEAPON_NO) {
                 chargeSize = Firework.SIZE.scaledBy(OmegaFight3.lerp(Firework.MIN_PERC, 1, getPercentCharged(SHOTGUN_WEAPON_NO)));
-                g.drawImage(Firework.chargingImages[playerNo], (int) (chargeCoord.x - chargeSize.x / 2), (int) (chargeCoord.y - chargeSize.y / 2), (int) chargeSize.x, (int) chargeSize.y, null);
+                chargeCoord = chargeCoord.add(chargeSize.scaledBy(-0.5));
+                g.drawImage(Firework.chargingImages[playerNo], (int) (chargeCoord.x), (int) (chargeCoord.y), (int) chargeSize.x, (int) chargeSize.y, null);
             }
 
             // Missile
@@ -410,7 +414,8 @@ public class Omegaman extends Char {
             // Bouncer
             else if (loadout[chargingWeapon] == BOOMER_WEAPON_NO) {
                 chargeSize = Bouncer.SIZE.scaledBy(OmegaFight3.lerp(Bouncer.MIN_PERC, 1, getPercentCharged(BOOMER_WEAPON_NO)));
-                g.drawImage(Bouncer.images[playerNo], (int) (chargeCoord.x - chargeSize.x / 2), (int) (chargeCoord.y - chargeSize.y / 2), (int) chargeSize.x, (int) chargeSize.y, null);
+                chargeCoord = chargeCoord.add(chargeSize.scaledBy(-0.5));
+                g.drawImage(Bouncer.images[playerNo], (int) (chargeCoord.x), (int) (chargeCoord.y), (int) chargeSize.x, (int) chargeSize.y, null);
             }
 
             // Splitter
@@ -442,7 +447,7 @@ public class Omegaman extends Char {
             }
 
             // Acceleration with speed limit
-            if (upPressed && velocity.y < 0) velocity.y = Math.min(maxVelocity.y, velocity.y + 0.5 - velocity.y / maxVelocity.y);
+            if (upPressed && velocity.y < 0) velocity.y = Math.min(maxVelocity.y, velocity.y + MIN_ACCEL_DWN - velocity.y / maxVelocity.y);
             else velocity.y = Math.min(maxVelocity.y, velocity.y + accel.y);
 
             // Platform Collision
@@ -474,7 +479,7 @@ public class Omegaman extends Char {
     }
 
     // Description: This method calculates the sprite change for a running player
-    public void animateRun() {
+    private void animateRun() {
         // Change of Sprites
         if (onPlatform != AIRBORNE) {
             frameCounter++;
@@ -493,15 +498,15 @@ public class Omegaman extends Char {
     }
 
     // Description: This method decelerates the player and changes the sprite of the player
-    public void decelerateRun() {
+    private void decelerateRun() {
         if (onPlatform != AIRBORNE && spriteNo != IDLE_SPRITE) spriteNo = IDLE_SPRITE;
-        decelerate();
+        decelerate(accel.x);
     }
 
     // Description: This method calcuates the deceleration of the player
-    public void decelerate() {
-        if (velocity.x < 0) velocity.x = Math.min(0, velocity.x + 1);
-        else if (velocity.x != 0) velocity.x = Math.max(0, velocity.x - 1);
+    public void decelerate(double decel) {
+        if (velocity.x < 0) velocity.x = Math.min(0, velocity.x + decel);
+        else if (velocity.x != 0) velocity.x = Math.max(0, velocity.x - decel);
     }
 
     // Description: This method return which platform number the player is landing on and AIRBORNE if they are not landing
@@ -525,7 +530,7 @@ public class Omegaman extends Char {
     public void checkState() {
         // Bottom
         if (coord.y > OmegaFight3.SCREEN_SIZE.y + size.y / 2) {
-            state = DIED_BOTTOM;
+            state = DIED_BOT;
             resetStats(DIED_STAT_RESET);
         }
 
@@ -566,14 +571,14 @@ public class Omegaman extends Char {
             spriteNo = IDLE_SPRITE;
             spriteSign = OmegaFight3.stage[OmegaFight3.stageNo].spawnSpriteSign[playerNo];
             velocity.x = 0;
-            velocity.y= RESPAWN_INITIAL_VELOCITY;
+            velocity.y= RESPAWN_INIT_VELOCITY;
             onPlatform = AIRBORNE;
             OmegaFight3.screenShakeCounter += DIE_SCREENSHAKE;
             percentShakeCounter = 0;
             skillPts = 0;
             skillPtCounter = 0;
             stunCounter = 0;
-            invCounter = RESPAWN_INITIAL_VELOCITY + RESPAWN_TIME_LIMIT + 2;
+            invCounter = RESPAWN_INIT_VELOCITY + RESPAWN_TIME_LIMIT + 2;
             OmegaFight3.play(OmegaFight3.boom);
             // fireCounter = 0;
         }
@@ -590,10 +595,10 @@ public class Omegaman extends Char {
     // Description: This method draws the surge of the dying player
     public void drawSurge(Graphics2D g2) {
         double rotation = Math.PI / 2 * (state - 1);
-        BufferedImage surgeImage = surge[playerNo][frameCounter / OmegaFight3.SURGE_FRAME_HZ]; // MAKE ROTATE TOWARDS CENTER??? but surge size problem...
+        BufferedImage surgeImage = surge[playerNo][frameCounter / OmegaFight3.SURGE_FRAME_HZ];
 
         // Bottom death
-        if (state == DIED_BOTTOM) {
+        if (state == DIED_BOT) {
             g2.rotate(rotation, coord.x, OmegaFight3.SCREEN_SIZE.y - OmegaFight3.SURGE_SIZE.y / 2);
             g2.drawImage(surgeImage, (int) (coord.x - OmegaFight3.SURGE_SIZE.x / 2), (int) (OmegaFight3.SCREEN_SIZE.y - OmegaFight3.SURGE_SIZE.y), null);
             g2.rotate(-rotation, coord.x, OmegaFight3.SCREEN_SIZE.y - OmegaFight3.SURGE_SIZE.y / 2);
@@ -623,12 +628,12 @@ public class Omegaman extends Char {
 
     // Description: This method draws the dying/falling percent of the player
     public void drawDiePercent(Graphics g) {
-        drawStillPercent((int) OmegaFight3.lerp(PERCENT_DISPLAY_Y_COORD + (int) PERCENT_DISPLAY_SIZE_TO_PERCENT_COORD.y, OmegaFight3.SCREEN_SIZE.y + BIG_PERCENT_FONT.getSize(), (double) frameCounter / OmegaFight3.SURGE_TIME), g);
+        drawStillPercent((int) OmegaFight3.lerp(PERC_DISPLAY_Y_COORD + (int) PERC_DISPLAY_SIZE_TO_PERC_COORD.y, OmegaFight3.SCREEN_SIZE.y + BIG_PERC_FONT.getSize(), (double) frameCounter / OmegaFight3.SURGE_TIME), g);
     }
 
     // Description: This method draws teh respawning/rising percent of the player
     public void drawRespawnPercent(Graphics g) {
-        drawStillPercent((int) OmegaFight3.lerp(PERCENT_DISPLAY_Y_COORD + (int) PERCENT_DISPLAY_SIZE_TO_PERCENT_COORD.y, OmegaFight3.SCREEN_SIZE.y + BIG_PERCENT_FONT.getSize(), velocity.y / RESPAWN_INITIAL_VELOCITY), g);
+        drawStillPercent((int) OmegaFight3.lerp(PERC_DISPLAY_Y_COORD + (int) PERC_DISPLAY_SIZE_TO_PERC_COORD.y, OmegaFight3.SCREEN_SIZE.y + BIG_PERC_FONT.getSize(), velocity.y / RESPAWN_INIT_VELOCITY), g);
     }
 
     // Description: This method calculates teh respawn of the player
@@ -640,7 +645,7 @@ public class Omegaman extends Char {
         }
 
         // Check for respawn button press and respawn if so
-        else if (dwnPressed || frameCounter == OmegaFight3.SURGE_TIME + RESPAWN_PAUSE + RESPAWN_INITIAL_VELOCITY + RESPAWN_TIME_LIMIT) {
+        else if (dwnPressed || frameCounter == OmegaFight3.SURGE_TIME + RESPAWN_PAUSE + RESPAWN_INIT_VELOCITY + RESPAWN_TIME_LIMIT) {
             state = ALIVE_STATE;
             frameCounter = 0;
             spriteNo = JUMP_SPRITE;
@@ -662,9 +667,9 @@ public class Omegaman extends Char {
 
     // Description: This method hurts the player and shakes their percent but doesn't knock them back
     public void hurt(double damage) {
-        percentShakeCounter = PERCENT_SHAKE_TIME;
+        percentShakeCounter = PERC_SHAKE_TIME;
         percent += damage;
-        stats[HIGHEST_PERCENT_NO] = Math.max(stats[HIGHEST_PERCENT_NO], percent);
+        stats[MAX_PERC_NO] = Math.max(stats[MAX_PERC_NO], percent);
     }
 
     // Description: This method hurts the player and prepares them for knockback
@@ -682,12 +687,17 @@ public class Omegaman extends Char {
         resetStats(GENERAL_STAT_RESET);
     }
 
+    private void hurtSpriteSign() {
+        int potSpriteSign = (int) -Math.signum(velocity.x);
+        if (potSpriteSign != 0) spriteSign = potSpriteSign;
+    }
+
     // Description: This method hurts the player and knocks them back in the directions specified with the amount of spread specified based on the enemy coordinates
     public void hurt(double damage, double knockback, Coord enemyCoord, double dir, double kbSpread) {
         hurtWithKb(damage, knockback, enemyCoord);
 
-        // knockback calculations
-        knockback *= (percent / Math.pow(10, PERCENT_NUM_DECIMALS) / 100 + 1);
+        // knockback calculations. Can't put this with hurtWithKb cuz knockback is a local variable
+        knockback *= (percent / Math.pow(10, PERC_NUM_DECIMALS) / 100 + 1);
         stunCounter = (int) Math.pow(knockback, STUN_REDUCTION);
 
         // Angle and speed calculations
@@ -705,8 +715,7 @@ public class Omegaman extends Char {
         velocity.y += Math.sin(angle) * knockback;
 
         // Sprite direction change
-        spriteSign = (int) -Math.signum(Math.cos(angle));
-        if (spriteSign == 0) spriteSign = OmegaFight3.RIT_SIGN;
+        hurtSpriteSign();
     }
 
     // Description: This method hurts the player and knocks them back in any direction based on the enemy coordinates
@@ -714,7 +723,7 @@ public class Omegaman extends Char {
         hurtWithKb(damage, knockback, enemyCoord);
 
         // knockback calculations
-        knockback *= (percent / Math.pow(10, PERCENT_NUM_DECIMALS) / 100 + 1);
+        knockback *= (percent / Math.pow(10, PERC_NUM_DECIMALS) / 100 + 1);
         stunCounter = (int) Math.pow(knockback, STUN_REDUCTION);
 
         // ANgle and speed calculations
@@ -724,13 +733,12 @@ public class Omegaman extends Char {
         velocity.y += Math.sin(angle) * knockback;
 
         // Sprite direction change
-        spriteSign = (int) -Math.signum(Math.cos(angle));
-        if (spriteSign == 0) spriteSign = OmegaFight3.RIT_SIGN;
+        hurtSpriteSign();
     }
 
     // Description: THis method calculates the knockback of the player
     public void knockback(boolean upPressed, boolean lftPressed, boolean dwnPressed, boolean ritPressed) {
-        decelerate();
+        decelerate(accel.x);
         
         // velocity calculations
         int platformNo;
@@ -763,9 +771,6 @@ public class Omegaman extends Char {
             }
             else velocity.y = 0;
         }
-        else {
-
-        }
 
         // Kb time calculations
         stunCounter--;
@@ -782,12 +787,13 @@ public class Omegaman extends Char {
             else {
                 spriteNo = IDLE_SPRITE;
                 onPlatform = platformNo;
+                velocity.y = 0;
                 jumpState = 1;
             }
         }
 
         // Smoke trails
-        smokeQ.add(new Smoke(coord.copy(), Smoke.SMOKE_SIZE.scaledBy(Math.pow(Math.hypot(velocity.x, velocity.y), Smoke.SMOKE_VEL_SCALE) * Math.min(size.x, size.y) / Smoke.SMOKE_DESIGNED_SIZE), Math.random() * Math.PI * 2)); // Fix this for Size
+        smokeQ.add(new Smoke(coord.copy(), Smoke.SMOKE_SIZE.scaledBy(Math.pow(Math.hypot(velocity.x, velocity.y), Smoke.SMOKE_VEL_SCALE) * Math.min(size.x, size.y) / Smoke.SMOKE_DESIGNED_SIZE), Math.random() * Math.PI * 2));
     }
 
     // Description: This method calculates the invincibility frames of the player
@@ -796,19 +802,21 @@ public class Omegaman extends Char {
     }
 
     // Description: This method gets the y-coordinate of the platform number specified
-    public double getPlatformY(int platformNo) {
+    private double getPlatformY(int platformNo) {
         return OmegaFight3.stage[OmegaFight3.stageNo].platforms[platformNo].y - size.y / 2;
     }
 
     // Description: This method calculates the shaking percent of the player
     public void shakePercent() {
         if (percentShakeCounter != 0) {
-            if (percentShakeCounter % PERCENT_SHAKE_HZ == 0) {
-                if (percentDigitShake.length < ((percent / PERC_MULT) + "." + (percent % PERC_MULT) + "%").length())
-                    percentDigitShake = new Coord[((percent / PERC_MULT) + "." + (percent % PERC_MULT) + "%").length()];
+            if (percentShakeCounter % PERC_SHAKE_HZ == 0) {
+                String percStr = (percent / PERC_MULT) + "." + (percent % PERC_MULT) + "%";
+                if (percentDigitShake.length < percStr.length())
+                    percentDigitShake = new Coord[percStr.length()];
+                double curPercShakeMult = percentShakeCounter * PERC_SHAKE_MULT;
                 for (int i = 0; i < percentDigitShake.length; i++) {
-                    percentDigitShake[i] = new Coord(OmegaFight3.randomSign() * percentShakeCounter * Math.random() * PERCENT_SHAKE_MULTIPLIER,
-                    OmegaFight3.randomSign() * percentShakeCounter * Math.random() * PERCENT_SHAKE_MULTIPLIER);
+                    percentDigitShake[i] = new Coord(OmegaFight3.randomSign() * Math.random() * curPercShakeMult,
+                    OmegaFight3.randomSign() * Math.random() * curPercShakeMult);
                 }
             }
             percentShakeCounter--;
@@ -817,35 +825,35 @@ public class Omegaman extends Char {
 
     // Description: This method draws a skill point for the player
     public void drawSkillPt(int skillPtNo, double amt, Graphics g) {
-        g.fillRect(percentDisplayX + (int) (PERCENT_DISPLAY_SIZE_TO_SKILL_PTS_COORD.x + skillPtNo * (SKILL_PTS_SPACE + SKILL_PTS_SIZE.x)),
-            PERCENT_DISPLAY_Y_COORD + (int) (PERCENT_DISPLAY_SIZE_TO_SKILL_PTS_COORD.y), (int) (SKILL_PTS_SIZE.x * amt), (int) (SKILL_PTS_SIZE.y));
+        g.fillRect(percentDisplayX + (int) (PERC_DISPLAY_SIZE_TO_SKILL_PTS_COORD.x + skillPtNo * (SKILL_PTS_SPACE + SKILL_PTS_SIZE.x)),
+            PERC_DISPLAY_Y_COORD + (int) (PERC_DISPLAY_SIZE_TO_SKILL_PTS_COORD.y), (int) (SKILL_PTS_SIZE.x * amt), (int) (SKILL_PTS_SIZE.y));
     }
 
     // Description: This method draws the bigger text portion of the player's still percent
     public int drawBigPercent(int offSet, int y, Graphics g) {
-        g.setFont(BIG_PERCENT_FONT);
-        g.drawString((percent / PERC_MULT) + "", percentDisplayX + (int) PERCENT_DISPLAY_SIZE_TO_PERCENT_COORD.x + offSet, y + offSet);
+        g.setFont(BIG_PERC_FONT);
+        g.drawString((percent / PERC_MULT) + "", percentDisplayX + (int) PERC_DISPLAY_SIZE_TO_PERC_COORD.x + offSet, y + offSet);
         return g.getFontMetrics().stringWidth((percent / PERC_MULT) + "");
     }
 
     // Description: This method draws the smaller text portion of the player's still percent
     public void drawSmlPercent(int offSet, int bigPercentWidth, int y, Graphics g) {
-        g.setFont(SML_PERCENT_FONT);
-        g.drawString("." + (percent % PERC_MULT) + "%", percentDisplayX + (int) PERCENT_DISPLAY_SIZE_TO_PERCENT_COORD.x + offSet + bigPercentWidth, y + offSet);
+        g.setFont(SML_PERC_FONT);
+        g.drawString("." + (percent % PERC_MULT) + "%", percentDisplayX + (int) PERC_DISPLAY_SIZE_TO_PERC_COORD.x + offSet + bigPercentWidth, y + offSet);
     }
 
     // Description: This method draws the entire still percent of the player
     public void drawStillPercent(int y, Graphics g) {
         // Text Shadow
         g.setColor(Color.BLACK);
-        int bigPercentWidth = drawBigPercent(PERCENT_SHADOW_OFFSET, y, g);
-        drawSmlPercent(PERCENT_SHADOW_OFFSET, bigPercentWidth, y, g);
+        int bigPercentWidth = drawBigPercent(PERC_SHADOW_OFFSET, y, g);
+        drawSmlPercent(PERC_SHADOW_OFFSET, bigPercentWidth, y, g);
 
         // Actual percent
-        double percentColor = Math.min(percent, (double) MAX_PERCENT_COLOR_THRESHOLD) / MAX_PERCENT_COLOR_THRESHOLD;
-        g.setColor(new Color(OmegaFight3.MAX_RGB_VAL - (int) ((OmegaFight3.MAX_RGB_VAL - MAX_PERCENT_COLOR.getRed()) * percentColor),
-        OmegaFight3.MAX_RGB_VAL - (int) ((OmegaFight3.MAX_RGB_VAL - MAX_PERCENT_COLOR.getGreen()) * percentColor),
-        OmegaFight3.MAX_RGB_VAL - (int) ((OmegaFight3.MAX_RGB_VAL - MAX_PERCENT_COLOR.getBlue()) * percentColor)));
+        double percentColor = Math.min(percent, (double) MAX_PERC_COLOR_THRESHOLD) / MAX_PERC_COLOR_THRESHOLD;
+        g.setColor(new Color(OmegaFight3.MAX_RGB_VAL - (int) ((OmegaFight3.MAX_RGB_VAL - MAX_PERC_COLOR.getRed()) * percentColor),
+        OmegaFight3.MAX_RGB_VAL - (int) ((OmegaFight3.MAX_RGB_VAL - MAX_PERC_COLOR.getGreen()) * percentColor),
+        OmegaFight3.MAX_RGB_VAL - (int) ((OmegaFight3.MAX_RGB_VAL - MAX_PERC_COLOR.getBlue()) * percentColor)));
         drawBigPercent(0, y, g);
         drawSmlPercent(0, bigPercentWidth, y, g);
     }
@@ -856,26 +864,30 @@ public class Omegaman extends Char {
         int percentWidth = 0;
 
         // Big text part of percent
-        g.setFont(BIG_PERCENT_FONT);
+        g.setFont(BIG_PERC_FONT);
         for (int i = 0; i != bigPercent.length(); i++) {
-            g.drawString(bigPercent.substring(i, i + 1), percentDisplayX + (int) (PERCENT_DISPLAY_SIZE_TO_PERCENT_COORD.x + percentDigitShake[i].x) + percentWidth,
-            PERCENT_DISPLAY_Y_COORD + (int) (PERCENT_DISPLAY_SIZE_TO_PERCENT_COORD.y + percentDigitShake[i].y));
-            percentWidth += g.getFontMetrics().stringWidth(bigPercent.substring(i, i + 1));
+            Coord digitCoord = PERC_DISPLAY_SIZE_TO_PERC_COORD.add(percentDigitShake[i]);
+            String digitStr = bigPercent.substring(i, i + 1);
+            g.drawString(digitStr, percentDisplayX + (int) (digitCoord.x) + percentWidth,
+            PERC_DISPLAY_Y_COORD + (int) (digitCoord.y));
+            percentWidth += g.getFontMetrics().stringWidth(digitStr);
         }
 
         // Small text part of percent
-        g.setFont(SML_PERCENT_FONT);
+        g.setFont(SML_PERC_FONT);
         for (int i = bigPercent.length(); i != bigPercent.length() + smlPercent.length(); i++) {
-            g.drawString(smlPercent.substring(i - bigPercent.length(), i + 1 - bigPercent.length()), percentDisplayX + (int) (PERCENT_DISPLAY_SIZE_TO_PERCENT_COORD.x + percentDigitShake[i].x) + percentWidth,
-            PERCENT_DISPLAY_Y_COORD + (int) (PERCENT_DISPLAY_SIZE_TO_PERCENT_COORD.y + percentDigitShake[i].y));
-            percentWidth += g.getFontMetrics().stringWidth(smlPercent.substring(i - bigPercent.length(), i + 1 - bigPercent.length()));
+            Coord digitCoord = PERC_DISPLAY_SIZE_TO_PERC_COORD.add(percentDigitShake[i]);
+            String digitStr = smlPercent.substring(i - bigPercent.length(), i + 1 - bigPercent.length());
+            g.drawString(digitStr, percentDisplayX + (int) (digitCoord.x) + percentWidth,
+            PERC_DISPLAY_Y_COORD + (int) (digitCoord.y));
+            percentWidth += g.getFontMetrics().stringWidth(digitStr);
         }
     }
 
     // Description: This method draws the HUD that displays all of the player's information at the bottom of the screen
     public void drawHUD(Graphics g) {
         // HUD
-        g.drawImage(percentDisplay[playerNo], percentDisplayX, PERCENT_DISPLAY_Y_COORD, null);
+        g.drawImage(percentDisplay[playerNo], percentDisplayX, PERC_DISPLAY_Y_COORD, null);
         
         // Full skill points
         g.setColor(Color.WHITE);
@@ -888,14 +900,14 @@ public class Omegaman extends Char {
 
         // Lives
         for (int i = 0; i != livesLeft; i++) {
-            g.drawImage(face[playerNo], percentDisplayX + (i * (int) (FACE_SIZE.x + FACE_SPACING)), PERCENT_DISPLAY_Y_COORD - FACE_SPACING - (int) FACE_SIZE.y, null);
+            g.drawImage(face[playerNo], percentDisplayX + (i * (int) (FACE_SIZE.x + FACE_SPACING)), PERC_DISPLAY_Y_COORD - FACE_SPACING - (int) FACE_SIZE.y, null);
         }
     }
 
     // Description: THis method calculates which type of percent to draw and draws it
     public void drawPercent(Graphics g) {
         if (percentShakeCounter == 0) {
-            drawStillPercent(PERCENT_DISPLAY_Y_COORD + (int) PERCENT_DISPLAY_SIZE_TO_PERCENT_COORD.y, g);
+            drawStillPercent(PERC_DISPLAY_Y_COORD + (int) PERC_DISPLAY_SIZE_TO_PERC_COORD.y, g);
         }
         else {
             drawShakingPercent((percent / PERC_MULT) + "", "." + (percent % PERC_MULT) + "%", g);
@@ -905,8 +917,7 @@ public class Omegaman extends Char {
     // Description: This method draws the player
     public void draw(Graphics g) {
         if (invCounter % INV_BLINK_CYCLE_LEN < INV_BLINK_CYCLE_LEN - INV_BLINK_LEN) {
-            if (spriteSign == 1) g.drawImage(sprite[playerNo][spriteNo], (int) (coord.x - size.x / 2), (int) (coord.y - size.y / 2), null);
-            else g.drawImage(sprite[playerNo][spriteNo], (int) (coord.x - size.x / 2 + size.x), (int) (coord.y - size.y / 2), (int) -size.x, (int) size.y, null);
+            g.drawImage(sprite[playerNo][spriteNo], (int) (coord.x - size.x / 2 * spriteSign), (int) (coord.y - size.y / 2), (int) (size.x * spriteSign), (int) (size.y), null);
         }
     }
 }

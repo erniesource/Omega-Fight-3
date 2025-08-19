@@ -252,7 +252,7 @@ class Punk extends Boss {
     // Description: This method calculates all of the background attacks of the punk
     public void backgroundAttack() {}
 
-    public void calculatePlushes() {
+    private void calculatePlushes() {
         for (int i = 0; i < INIT_HEALTH; i++) {
             double angle = rotation + Math.PI * 2 / INIT_HEALTH * i;
             Coord temp = (new Coord(Math.cos(angle), Math.sin(angle))).scaledBy(circleRad);

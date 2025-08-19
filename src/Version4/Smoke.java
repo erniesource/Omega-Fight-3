@@ -32,7 +32,8 @@ public class Smoke {
     // Description: This method draws the smoke
     public void draw(Graphics2D g2) {
         g2.rotate(rotation, coord.x, coord.y);
-        g2.drawImage(smokes[(SMOKE_LEN - frameCounter) / SMOKE_CHANGE_HZ], (int) (coord.x - size.x / 2), (int) (coord.y - size.y / 2), (int) size.x, (int) size.y, null);
+        Coord drawCoord = coord.add(size.scaledBy(-0.5));
+        g2.drawImage(smokes[(SMOKE_LEN - frameCounter) / SMOKE_CHANGE_HZ], (int) (drawCoord.x), (int) (drawCoord.y), (int) size.x, (int) size.y, null);
         g2.rotate(-rotation, coord.x, coord.y);
     }
 
@@ -95,6 +96,7 @@ class Explosion {
 
     // Description: This method draws the explosion
     public void draw(Graphics g) {
-        g.drawImage(explosions[(EXPLOSION_LEN - frameCounter) / EXPLOSION_CHANGE_HZ], (int) (coord.x - size.x / 2), (int) (coord.y - size.y / 2), (int) size.x, (int) size.y, null);
+        Coord drawCoord = coord.add(size.scaledBy(-0.5));
+        g.drawImage(explosions[(EXPLOSION_LEN - frameCounter) / EXPLOSION_CHANGE_HZ], (int) (drawCoord.x), (int) (drawCoord.y), (int) size.x, (int) size.y, null);
     }
 }
