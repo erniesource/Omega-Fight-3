@@ -9,7 +9,7 @@ public class Battle {
     public static BufferedImage[] scoreBoard = new BufferedImage[1];
     public static final Font SCORE_FONT = new Font("Consolas", Font.BOLD, 30);
     public static final int SCORE_SPACING = 43;
-    public static final Coord[] SCORE_TO_STATS_COORDS = {new Coord(314, 133), new Coord(457, 133)}; // Maybe array? prolly...
+    public static final Coord[] SCOREBOARD_TO_STATS_COORDS = {new Coord(314, 133), new Coord(457, 133)}; // Maybe array? prolly...
 
     public static final int NUM_FORMATIVE_STATS = 3; // Specific to coop
 
@@ -87,6 +87,7 @@ public class Battle {
         if (gameMode == OmegaFight3.TWOPVE) {
             // Draw each stat (truncate it if needed)
             for (int i = 0; i != Omegaman.NUM_PLAYERS; i++) {
+                Coord firstStatCoord = coord.add(SCOREBOARD_TO_STATS_COORDS[i]);
                 for (int j = 0; j != Omegaman.NO_OF_STATS; j++) {
                     String stringStat;
                     if (IS_TRUNC[j]) {
@@ -95,7 +96,7 @@ public class Battle {
                     else {
                         stringStat = roundStat(playerStats[i][j] * progress) + "";
                     }
-                    g.drawString(stringStat, (int) (coord.x + SCORE_TO_STATS_COORDS[i].x), (int) (coord.y + SCORE_TO_STATS_COORDS[i].y + (j + (j < NUM_FORMATIVE_STATS? 0: 1)) * SCORE_SPACING));
+                    g.drawString(stringStat, (int) (firstStatCoord.x), (int) (firstStatCoord.y + (j + (j < NUM_FORMATIVE_STATS? 0: 1)) * SCORE_SPACING));
                 }
             }
 
@@ -114,7 +115,8 @@ public class Battle {
             }
             
             // Draw result
-            g.drawString(progress == 1.0? result: (roundStat(grade * progress) + "%"), (int) (coord.x + SCOREBOARD_TO_GRADE_COORD.x), (int) (coord.y + SCOREBOARD_TO_GRADE_COORD.y));
+            Coord gradeCoord = coord.add(SCOREBOARD_TO_GRADE_COORD);
+            g.drawString(progress == 1.0? result: (roundStat(grade * progress) + "%"), (int) (gradeCoord.x), (int) (gradeCoord.y));
         }
     }
 
@@ -130,27 +132,32 @@ public class Battle {
     // This method draws the emotional Omegamen on the two sides of the screen
     public void drawEmoMan(Graphics g) {
         // Both win
+        Coord[] premoManCoord = {new Coord(EMO_MAN_EDGE_OFFSET, OmegaFight3.SCREEN_SIZE.y), OmegaFight3.SCREEN_SIZE.copy()}; premoManCoord[1].x -= EMO_MAN_EDGE_OFFSET;
         if (winner == Battle.BOTH_WIN) {
-            g.drawImage(happyMan[0], EMO_MAN_EDGE_OFFSET, (int) (OmegaFight3.SCREEN_SIZE.y - HAPPY_MAN_SIZE.y), null);
-            g.drawImage(happyMan[1], (int) (OmegaFight3.SCREEN_SIZE.x - EMO_MAN_EDGE_OFFSET - HAPPY_MAN_SIZE.x), (int) (OmegaFight3.SCREEN_SIZE.y - HAPPY_MAN_SIZE.y), null);
+            g.drawImage(happyMan[0], (int) premoManCoord[0].x, (int) (premoManCoord[0].y - HAPPY_MAN_SIZE.y), null);
+            premoManCoord[1] = premoManCoord[1].add(HAPPY_MAN_SIZE.scaledBy(-1));
+            g.drawImage(happyMan[1], (int) (premoManCoord[1].x), (int) (premoManCoord[1].y), null);
         }
         
         // Boss win
         else if (winner == Battle.BOSS_WIN) {
-            g.drawImage(sadMan[0], EMO_MAN_EDGE_OFFSET, (int) (OmegaFight3.SCREEN_SIZE.y - SAD_MAN_SIZE.y), null);
-            g.drawImage(sadMan[1], (int) (OmegaFight3.SCREEN_SIZE.x - EMO_MAN_EDGE_OFFSET - SAD_MAN_SIZE.x), (int) (OmegaFight3.SCREEN_SIZE.y - SAD_MAN_SIZE.y), null);
+            g.drawImage(sadMan[0], (int) premoManCoord[0].x, (int) (premoManCoord[0].y - SAD_MAN_SIZE.y), null);
+            premoManCoord[1] = premoManCoord[1].add(SAD_MAN_SIZE.scaledBy(-1));
+            g.drawImage(sadMan[1], (int) (premoManCoord[1].x), (int) (premoManCoord[1].y), null);
         }
 
         // P0 win
         else if (winner == 0) {
-            g.drawImage(happyMan[0], EMO_MAN_EDGE_OFFSET, (int) (OmegaFight3.SCREEN_SIZE.y - HAPPY_MAN_SIZE.y), null);
-            g.drawImage(sadMan[1], (int) (OmegaFight3.SCREEN_SIZE.x - EMO_MAN_EDGE_OFFSET - SAD_MAN_SIZE.x), (int) (OmegaFight3.SCREEN_SIZE.y - SAD_MAN_SIZE.y), null);
+            g.drawImage(happyMan[0], (int) premoManCoord[0].x, (int) (premoManCoord[0].y - HAPPY_MAN_SIZE.y), null);
+            premoManCoord[1] = premoManCoord[1].add(SAD_MAN_SIZE.scaledBy(-1));
+            g.drawImage(sadMan[1], (int) (premoManCoord[1].x), (int) (premoManCoord[1].y), null);
         }
 
         // P1 win
         else if (winner == 1) {
-            g.drawImage(sadMan[0], EMO_MAN_EDGE_OFFSET, (int) (OmegaFight3.SCREEN_SIZE.y - SAD_MAN_SIZE.y), null);
-            g.drawImage(happyMan[1], (int) (OmegaFight3.SCREEN_SIZE.x - EMO_MAN_EDGE_OFFSET - HAPPY_MAN_SIZE.x), (int) (OmegaFight3.SCREEN_SIZE.y - HAPPY_MAN_SIZE.y), null);
+            g.drawImage(sadMan[0], (int) premoManCoord[0].x, (int) (premoManCoord[0].y - SAD_MAN_SIZE.y), null);
+            premoManCoord[1] = premoManCoord[1].add(HAPPY_MAN_SIZE.scaledBy(-1));
+            g.drawImage(happyMan[1], (int) (premoManCoord[1].x), (int) (premoManCoord[1].y), null);
         }
     }
 

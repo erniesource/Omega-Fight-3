@@ -5,7 +5,7 @@ import javafx.util.Pair;
 
 public class Bird extends Boss {
     // Combat constants
-    public static final double INITIAL_HEALTH = 600 * Omegaman.PERC_MULT;
+    public static final double INIT_HEALTH = (OmegaFight3.DEV_MODE? 100: 600) * Omegaman.PERC_MULT;
     public static final double SIZE_TO_HITBOX = 0.5;
 
     // State constants
@@ -23,7 +23,7 @@ public class Bird extends Boss {
 
     // Sprite constants
     public static int[] STATE_SPRITE_START = new int[NUM_STATES];
-    public static final int[] STATE_SPRITE_SIGN = {OmegaFight3.RIGHT_SIGN, OmegaFight3.LEFT_SIGN, OmegaFight3.RIGHT_SIGN, OmegaFight3.RIGHT_SIGN};
+    public static final int[] STATE_SPRITE_SIGN = {OmegaFight3.RIT_SIGN, OmegaFight3.LFT_SIGN, OmegaFight3.RIT_SIGN, OmegaFight3.RIT_SIGN};
     public static final int[] STATE_NUM_SPRITES = {2, 4, 4, 3};
     public static final int TOT_NUM_SPRITES = 13;
 
@@ -48,8 +48,8 @@ public class Bird extends Boss {
     public static final int DIVER_PER_WAVE = 3;
     public static final int WAVE_TIME = 90;
     public static final int NOT_WAVING = 0;
-    public static final int WAVING_LEFT = -1;
-    public static final int WAVING_RIGHT = 1;
+    public static final int WAVING_LFT = -1;
+    public static final int WAVING_RIT = 1;
     public static final double DIVER_ALTITUDE = 25 + Diver.SIZE.y / 2;
     public static final double PUNK_AMT_SCALING_TO_HEALTH = 0.25;
     public static final int PUNK_HZ = 600;
@@ -68,7 +68,7 @@ public class Bird extends Boss {
 
     // Constructor
     public Bird() {
-        super(birdSprite, STATE_COORD, STATE_SIZE, STATE_SPRITE_HZ, STATE_TIME, STATE_SPRITE_START, STATE_SPRITE_SIGN, STATE_NUM_SPRITES, INITIAL_HEALTH * OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty], SIZE_TO_HITBOX, IDLE, NUM_STATES, TRANS_TIME);
+        super(birdSprite, STATE_COORD, STATE_SIZE, STATE_SPRITE_HZ, STATE_TIME, STATE_SPRITE_START, STATE_SPRITE_SIGN, STATE_NUM_SPRITES, INIT_HEALTH * OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty], SIZE_TO_HITBOX, IDLE, NUM_STATES, TRANS_TIME);
     }
 
     // Description: This method calculates the attacks of the bird
@@ -100,13 +100,13 @@ public class Bird extends Boss {
 
     // Description: This method calculates all of the background attacks of the bird
     public void backgroundAttack() {
-        double maxHealth = INITIAL_HEALTH * OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty];
+        double maxHealth = INIT_HEALTH * OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty];
         // Diver attack
         if (health <= maxHealth * WAVE_THRESHOLD) {
             waveCounter++;
             if (waving != NOT_WAVING) {
                 if (waveCounter % (WAVE_TIME / DIVER_PER_WAVE) == 0) {
-                    OmegaFight3.projectiles.add(new Diver(this, new Coord(OmegaFight3.SCREEN_CENTER.x - (OmegaFight3.SCREEN_SIZE.x / 2 + Diver.SIZE.x / 2) * waving, DIVER_ALTITUDE), (waving == WAVING_RIGHT? 0: Math.PI), waving));
+                    OmegaFight3.projectiles.add(new Diver(this, new Coord(OmegaFight3.SCREEN_CENTER.x - (OmegaFight3.SCREEN_SIZE.x / 2 + Diver.SIZE.x / 2) * waving, DIVER_ALTITUDE), (waving == WAVING_RIT? 0: Math.PI), waving));
                 }
                 if (waveCounter == WAVE_TIME) {
                     waving = NOT_WAVING;
@@ -135,14 +135,14 @@ public class Bird extends Boss {
         super.prepareToDie();
         for (Boss boss : OmegaFight3.bosses) {
             if (boss instanceof Punk && ((Punk) boss).mommy == this) {
-                boss.prepareToDie();
+                ((Punk) boss).trueHurt(Punk.INIT_HEALTH);
             }
         }
     }
 }
 
 class Punk extends Boss {
-    public static final double INITIAL_HEALTH = 3;
+    public static final double INIT_HEALTH = 3;
     public static final double SIZE_TO_HITBOX = 0.5;
     public static final double DEATH_DMG = 20 * Omegaman.PERC_MULT;
 
@@ -172,13 +172,13 @@ class Punk extends Boss {
     public double circleRad = CIRCLE_RAD_MIN;
     public double rotation;
     public Bird mommy;
-    public Plush[] plushes = new Plush[(int) INITIAL_HEALTH];
+    public Plush[] plushes = new Plush[(int) INIT_HEALTH];
 
     // Constructor
     public Punk(Bird mommy, Coord coord, int sign) {
-        super(punkSprite, new Coord[] {null, coord}, STATE_SIZE, STATE_SPRITE_HZ, new int[] {0, 0}, STATE_SPRITE_START, new int[] {OmegaFight3.RIGHT_SIGN, sign}, STATE_NUM_SPRITES, INITIAL_HEALTH, SIZE_TO_HITBOX, IDLE, NUM_STATES, 0);
+        super(punkSprite, new Coord[] {null, coord}, STATE_SIZE, STATE_SPRITE_HZ, new int[] {0, 0}, STATE_SPRITE_START, new int[] {OmegaFight3.RIT_SIGN, sign}, STATE_NUM_SPRITES, INIT_HEALTH, SIZE_TO_HITBOX, IDLE, NUM_STATES, 0);
         this.mommy = mommy;
-        for (int i = 0; i < INITIAL_HEALTH; i++) {
+        for (int i = 0; i < INIT_HEALTH; i++) {
             plushes[i] = new Plush(this);
             OmegaFight3.projectiles.add(plushes[i]);
         }
@@ -242,7 +242,7 @@ class Punk extends Boss {
     public void setVelX(double velX) {
         velocity.x = velX;
         spriteSign = (int) Math.signum(velX);
-        if (spriteSign == 0) spriteSign = OmegaFight3.RIGHT_SIGN;
+        if (spriteSign == 0) spriteSign = OmegaFight3.RIT_SIGN;
     }
 
     private static double getNewPunkVel() {
@@ -253,8 +253,8 @@ class Punk extends Boss {
     public void backgroundAttack() {}
 
     public void calculatePlushes() {
-        for (int i = 0; i < INITIAL_HEALTH; i++) {
-            double angle = rotation + Math.PI * 2 / INITIAL_HEALTH * i;
+        for (int i = 0; i < INIT_HEALTH; i++) {
+            double angle = rotation + Math.PI * 2 / INIT_HEALTH * i;
             Coord temp = (new Coord(Math.cos(angle), Math.sin(angle))).scaledBy(circleRad);
             plushes[i].coord = coord.add(temp);
             plushes[i].dir = Math.atan2(temp.y, temp.x) + Math.PI / 2;

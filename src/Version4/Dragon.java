@@ -4,7 +4,7 @@ import java.awt.image.BufferedImage;
 
 public class Dragon extends Boss{
     // Combat constants
-    public static final double INITIAL_HEALTH = 100 * Omegaman.PERC_MULT;//600 * Omegaman.PERC_MULT;
+    public static final double INIT_HEALTH = (OmegaFight3.DEV_MODE? 100: 600) * Omegaman.PERC_MULT;
     public static final double SIZE_TO_HITBOX = 0.2;
 
     // State constants
@@ -22,7 +22,7 @@ public class Dragon extends Boss{
 
     // Sprite constants
     public static int[] STATE_SPRITE_START = new int[NUM_STATES];
-    public static final int[] STATE_SPRITE_SIGN = {OmegaFight3.RIGHT_SIGN, OmegaFight3.RIGHT_SIGN, OmegaFight3.RIGHT_SIGN, OmegaFight3.LEFT_SIGN};
+    public static final int[] STATE_SPRITE_SIGN = {OmegaFight3.RIT_SIGN, OmegaFight3.RIT_SIGN, OmegaFight3.RIT_SIGN, OmegaFight3.LFT_SIGN};
     public static final int[] STATE_NUM_SPRITES = {4, 4, 4, 3};
     public static final int TOT_NUM_SPRITES = 15;
 
@@ -57,7 +57,7 @@ public class Dragon extends Boss{
 
     // Constructor
     public Dragon() {
-        super(dragonSprite, STATE_COORD, STATE_SIZE, STATE_SPRITE_HZ, STATE_TIME, STATE_SPRITE_START, STATE_SPRITE_SIGN, STATE_NUM_SPRITES, INITIAL_HEALTH * OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty], SIZE_TO_HITBOX, IDLE, NUM_STATES, TRANS_TIME);
+        super(dragonSprite, STATE_COORD, STATE_SIZE, STATE_SPRITE_HZ, STATE_TIME, STATE_SPRITE_START, STATE_SPRITE_SIGN, STATE_NUM_SPRITES, INIT_HEALTH * OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty], SIZE_TO_HITBOX, IDLE, NUM_STATES, TRANS_TIME);
     }
 
     // Description: This method calculates the dragon attacking
@@ -81,7 +81,7 @@ public class Dragon extends Boss{
                                 }
                             }
                         }
-                        dizzyAngle = Math.atan2(target.coord.y - (coord.y + COORD_TO_DIZZY.y), target.coord.x - (coord.x + COORD_TO_DIZZY.x * spriteSign));
+                        if (target != null) dizzyAngle = Math.atan2(target.coord.y - (coord.y + COORD_TO_DIZZY.y), target.coord.x - (coord.x + COORD_TO_DIZZY.x * spriteSign));
                     }
 
                     OmegaFight3.projectiles.add(new Ring(this, coord.add(COORD_TO_DIZZY), dizzyAngle));
@@ -102,7 +102,7 @@ public class Dragon extends Boss{
 
     // Description: This method calculates the background attacks of the dragon
     public void backgroundAttack() {
-        double maxHealth = INITIAL_HEALTH * OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty];
+        double maxHealth = INIT_HEALTH * OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty];
         // Bubble attack
         if (health <= maxHealth * BUBBLE_THRESHOLD) {
             bubbleCounter++;

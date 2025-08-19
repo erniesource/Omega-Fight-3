@@ -28,9 +28,7 @@ public class Stage {
         this.buttono = buttono;
 
         try {
-            music = AudioSystem.getClip();
-            music.open(AudioSystem.getAudioInputStream(new File("music/" + stageName + " music.wav").toURI().toURL()));
-            music.setFramePosition(0);
+            music = OmegaFight3.loadClip("music/" + stageName + " music.wav");
         }
         catch (Exception e) {}
     }
@@ -96,6 +94,10 @@ class Coord { // Note: Coord is actually more of a Vector, but Vector has alread
 
     public Coord scaledBy(Coord coord) {
         return new Coord(x * coord.x, y * coord.y);
+    }
+
+    public Coord add(double adder) {
+        return new Coord(x + adder, y + adder);
     }
 
     public Coord add(Coord coord) {

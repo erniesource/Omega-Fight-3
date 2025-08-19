@@ -4,7 +4,7 @@ import java.awt.image.BufferedImage;
 
 public class Doctor extends Boss {
     // Combat constants
-    public static final double INITIAL_HEALTH = 100 * Omegaman.PERC_MULT;//600 * Omegaman.PERC_MULT;
+    public static final double INIT_HEALTH = (OmegaFight3.DEV_MODE? 100: 600) * Omegaman.PERC_MULT;
     public static final double SIZE_TO_HITBOX = 0.4;
 
     // State constants
@@ -22,7 +22,7 @@ public class Doctor extends Boss {
 
     // Sprite constants
     public static int[] STATE_SPRITE_START = new int[NUM_STATES];
-    public static final int[] STATE_SPRITE_SIGN = {OmegaFight3.RIGHT_SIGN, OmegaFight3.LEFT_SIGN, OmegaFight3.LEFT_SIGN, OmegaFight3.RIGHT_SIGN};
+    public static final int[] STATE_SPRITE_SIGN = {OmegaFight3.RIT_SIGN, OmegaFight3.LFT_SIGN, OmegaFight3.LFT_SIGN, OmegaFight3.RIT_SIGN};
     public static final int[] STATE_NUM_SPRITES = {2, 2, 3, 4};
     public static final int TOT_NUM_SPRITES = 11;
 
@@ -59,7 +59,7 @@ public class Doctor extends Boss {
 
     // Constructor
     public Doctor() {
-        super(docSprite, STATE_COORD, STATE_SIZE, STATE_SPRITE_HZ, STATE_TIME, STATE_SPRITE_START, STATE_SPRITE_SIGN, STATE_NUM_SPRITES, INITIAL_HEALTH * OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty], SIZE_TO_HITBOX, IDLE, NUM_STATES, TRANS_TIME);
+        super(docSprite, STATE_COORD, STATE_SIZE, STATE_SPRITE_HZ, STATE_TIME, STATE_SPRITE_START, STATE_SPRITE_SIGN, STATE_NUM_SPRITES, INIT_HEALTH * OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty], SIZE_TO_HITBOX, IDLE, NUM_STATES, TRANS_TIME);
     }
 
     // Description: This method calculates the attacks of the Doctor
@@ -71,10 +71,10 @@ public class Doctor extends Boss {
             // Movement
             coord.x += (spriteSign * SPIT_SPD);
             if (coord.x < size.x / 2) {
-                spriteSign = OmegaFight3.RIGHT_SIGN;
+                spriteSign = OmegaFight3.RIT_SIGN;
             }
             if (coord.x == STATE_COORD[SPIT].x) {
-                spriteSign = OmegaFight3.LEFT_SIGN;
+                spriteSign = OmegaFight3.LFT_SIGN;
                 frameCounter = 0;
             }
 
@@ -108,7 +108,7 @@ public class Doctor extends Boss {
 
     // Description: This method calculates all of the background attacks of the doctor
     public void backgroundAttack() {
-        double maxHealth = INITIAL_HEALTH * OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty];
+        double maxHealth = INIT_HEALTH * OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty];
         // Pincer attack
         if (health <= maxHealth * PINCER_THRESHOLD) {
             pincerCounter++;

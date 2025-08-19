@@ -39,7 +39,8 @@ public class Ring extends Projectile{
     // Description: This method draws the laser ring
     public void draw(Graphics2D g2) {
         g2.rotate(dir, coord.x, coord.y);
-        g2.drawImage(images[-frameCounter / SPRITE_CHANGE_HZ], (int) (coord.x - size.x / 2), (int) (coord.y - size.y / 2), (int) size.x, (int) size.y, null);
+        Coord drawCoord = coord.add(size.scaledBy(-0.5));
+        g2.drawImage(images[-frameCounter / SPRITE_CHANGE_HZ], (int) (drawCoord.x), (int) (drawCoord.y), (int) size.x, (int) size.y, null);
         g2.rotate(-dir, coord.x, coord.y);
     }
 
@@ -96,7 +97,8 @@ class Meteor extends Projectile {
     // Description: This method draws the meteor
     public void draw(Graphics2D g2) {
         g2.rotate(dir, coord.x, coord.y);
-        g2.drawImage(images[frameCounter / SPRITE_CHANGE_HZ], (int) (coord.x - size.x / 2), (int) (coord.y - size.y / 2), (int) size.x, (int) size.y, null);
+        Coord drawCoord = coord.add(size.scaledBy(-0.5));
+        g2.drawImage(images[frameCounter / SPRITE_CHANGE_HZ], (int) (drawCoord.x), (int) (drawCoord.y), (int) size.x, (int) size.y, null);
         g2.rotate(-dir, coord.x, coord.y);
     }
 
@@ -120,7 +122,7 @@ class Meteor extends Projectile {
     // It's called func because it uses a function
     public void func() {
         coord.y = Math.abs(OmegaFight3.SCREEN_SIZE.y - SIZE.y / 2 - (Dragon.STATE_COORD[Dragon.BARF].y + Dragon.COORD_TO_BARF.y)) / 2 * -Math.cos(Math.PI * 2 / ((Dragon.STATE_COORD[Dragon.BARF].x + Dragon.COORD_TO_BARF.x * Dragon.STATE_SPRITE_SIGN[Dragon.BARF]) / PERIODS) * (coord.x - (Dragon.STATE_COORD[Dragon.BARF].x + Dragon.COORD_TO_BARF.x * sign))) + (OmegaFight3.SCREEN_SIZE.y - SIZE.y / 2 + (Dragon.STATE_COORD[Dragon.BARF].y + Dragon.COORD_TO_BARF.y)) / 2;
-        dir = Math.atan(Math.abs(OmegaFight3.SCREEN_SIZE.y - SIZE.y / 2 - (Dragon.STATE_COORD[Dragon.BARF].y + Dragon.COORD_TO_BARF.y)) / 2 * (Math.PI * 2 / ((Dragon.STATE_COORD[Dragon.BARF].x + Dragon.COORD_TO_BARF.x * Dragon.STATE_SPRITE_SIGN[Dragon.BARF]) / PERIODS)) * Math.sin(Math.PI * 2 / ((Dragon.STATE_COORD[Dragon.BARF].x + Dragon.COORD_TO_BARF.x * Dragon.STATE_SPRITE_SIGN[Dragon.BARF]) / PERIODS) * (coord.x - (Dragon.STATE_COORD[Dragon.BARF].x + Dragon.COORD_TO_BARF.x * sign)))) + (sign == OmegaFight3.LEFT_SIGN? Math.PI: 0);
+        dir = Math.atan(Math.abs(OmegaFight3.SCREEN_SIZE.y - SIZE.y / 2 - (Dragon.STATE_COORD[Dragon.BARF].y + Dragon.COORD_TO_BARF.y)) / 2 * (Math.PI * 2 / ((Dragon.STATE_COORD[Dragon.BARF].x + Dragon.COORD_TO_BARF.x * Dragon.STATE_SPRITE_SIGN[Dragon.BARF]) / PERIODS)) * Math.sin(Math.PI * 2 / ((Dragon.STATE_COORD[Dragon.BARF].x + Dragon.COORD_TO_BARF.x * Dragon.STATE_SPRITE_SIGN[Dragon.BARF]) / PERIODS) * (coord.x - (Dragon.STATE_COORD[Dragon.BARF].x + Dragon.COORD_TO_BARF.x * sign)))) + (sign == OmegaFight3.LFT_SIGN? Math.PI: 0);
     }
 
     public void hitPlayer(Omegaman omega) {
@@ -185,7 +187,8 @@ class Bubble extends Projectile {
 
     // Description: This method draws the Fire bubble
     public void draw(Graphics2D g2) {
-        g2.drawImage(images[frameCounter / SPRITE_CHANGE_HZ], (int) (coord.x - size.x / 2), (int) (coord.y - size.y / 2), (int) size.x, (int) size.y, null);
+        Coord drawCoord = coord.add(size.scaledBy(-0.5));
+        g2.drawImage(images[frameCounter / SPRITE_CHANGE_HZ], (int) (drawCoord.x), (int) (drawCoord.y), (int) size.x, (int) size.y, null);
     }
 
     // Description: This method processes the fire bubble

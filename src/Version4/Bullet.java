@@ -39,7 +39,8 @@ public class Bullet extends Projectile {
 
     // Description: Draws the bullet on the screen
     public void draw(Graphics2D g2) {
-        g2.drawImage(image, (int) (coord.x - size.x / 2), (int) (coord.y - size.y / 2), (int) size.x, (int) size.y, null);
+        Coord drawCoord = coord.add(size.scaledBy(-0.5));
+        g2.drawImage(image, (int) (drawCoord.x), (int) (drawCoord.y), (int) size.x, (int) size.y, null);
     }
 
     public void hitPlayer(Omegaman enemy) {
@@ -108,7 +109,8 @@ class Rocket extends Projectile {
     // Description:
     // This overridden method draws the rocket or explosion image based on its state
     public void draw(Graphics2D g2) {
-        g2.drawImage(image, (int) (coord.x - size.x / 2), (int) (coord.y - size.y / 2), (int) size.x, (int) size.y, null);
+        Coord drawCoord = coord.add(size.scaledBy(-0.5));
+        g2.drawImage(image, (int) (drawCoord.x), (int) (drawCoord.y), (int) size.x, (int) size.y, null);
     }
 
     // Description: This returns the fact that rocket dies to any projectile
@@ -170,7 +172,8 @@ class Shotgun extends Projectile {
     // Description: Draws the shotgun bullet on the screen
     public void draw(Graphics2D g2) {
         g2.rotate(dir, coord.x, coord.y);
-        g2.drawImage(image, (int) (coord.x - size.x / 2), (int) (coord.y - size.y / 2), (int) size.x, (int) size.y, null);
+        Coord drawCoord = coord.add(size.scaledBy(-0.5));
+        g2.drawImage(image, (int) (drawCoord.x), (int) (drawCoord.y), (int) size.x, (int) size.y, null);
         g2.rotate(-dir, coord.x, coord.y);
     }
 
@@ -230,7 +233,8 @@ class Firework extends Projectile {
     // Description: Draws the firework projectile
     public void draw(Graphics2D g2) {
         g2.rotate(dir, coord.x, coord.y);
-        g2.drawImage(image, (int) (coord.x - size.x / 2), (int) (coord.y - size.y / 2), (int) size.x, (int) size.y, null);
+        Coord drawCoord = coord.add(size.scaledBy(-0.5));
+        g2.drawImage(image, (int) (drawCoord.x), (int) (drawCoord.y), (int) size.x, (int) size.y, null);
         g2.rotate(-dir, coord.x, coord.y);
     }
 
@@ -290,7 +294,8 @@ class Spammer extends Projectile {
     // Description: Draws the spammer bullet on the screen
     public void draw(Graphics2D g2) {
         g2.rotate(dir, coord.x, coord.y);
-        g2.drawImage(image, (int) (coord.x - size.x / 2), (int) (coord.y - size.y / 2), (int) size.x, (int) size.y, null);
+        Coord drawCoord = coord.add(size.scaledBy(-0.5));
+        g2.drawImage(image, (int) (drawCoord.x), (int) (drawCoord.y), (int) size.x, (int) size.y, null);
         g2.rotate(-dir, coord.x, coord.y);
     }
 
@@ -363,7 +368,7 @@ class Missile extends Projectile {
     // Description: This method draws the missile or explosion image based on its state
     public void draw(Graphics2D g2) {
         g2.rotate(dir, coord.x, coord.y);
-        g2.drawImage(image, (int) (coord.x - size.x / 2), (int) (coord.y - size.y / 2 + size.y * ((sign - 1) / -2)), (int) size.x, (int) size.y * sign, null);
+        g2.drawImage(image, (int) (coord.x - size.x / 2), (int) (coord.y - size.y / 2 * sign), (int) size.x, (int) size.y * sign, null);
         g2.rotate(-dir, coord.x, coord.y);
     }
 
@@ -594,7 +599,8 @@ class Boomer extends Projectile {
 
     // Description: Draws the boomerang projectile on the screen
     public void draw(Graphics2D g2) {
-        g2.drawImage(image, (int) (coord.x - size.x / 2), (int) (coord.y - size.y / 2), (int) size.x, (int) size.y, null);
+        Coord drawCoord = coord.add(size.scaledBy(-0.5));
+        g2.drawImage(image, (int) (drawCoord.x), (int) (drawCoord.y), (int) size.x, (int) size.y, null);
     }
 
     // Description: Processes the boomerang projectile's movement and interactions
@@ -666,7 +672,8 @@ class Bouncer extends Projectile {
     // Description: This method draws the bouncer projectile on the screen
     public void draw(Graphics2D g2) {
         g2.rotate(rotation, coord.x, coord.y);
-        g2.drawImage(image, (int) (coord.x - size.x / 2), (int) (coord.y - size.y / 2), (int) size.x, (int) size.y, null);
+        Coord drawCoord = coord.add(size.scaledBy(-0.5));
+        g2.drawImage(image, (int) (drawCoord.x), (int) (drawCoord.y), (int) size.x, (int) size.y, null);
         g2.rotate(-rotation, coord.x, coord.y);
     }
 
@@ -745,7 +752,8 @@ class Spike extends Projectile {
     // Description: This method draws the spike projectile on the screen
     public void draw(Graphics2D g2) {
         g2.rotate(rotation, coord.x, coord.y);
-        g2.drawImage(image, (int) (coord.x - size.x / 2), (int) (coord.y - size.y / 2), (int) size.x, (int) size.y, null);
+        Coord drawCoord = coord.add(size.scaledBy(-0.5));
+        g2.drawImage(image, (int) (drawCoord.x), (int) (drawCoord.y), (int) size.x, (int) size.y, null);
         g2.rotate(-rotation, coord.x, coord.y);    
     }
 
@@ -821,8 +829,9 @@ class Thorn extends Projectile {
     // Draws the thorn projectile on the screen
     public void draw(Graphics2D g2) {
         g2.rotate(dir, coord.x, coord.y);
-        g2.drawImage(image, (int) (coord.x - size.x / 2), (int) (coord.y - size.y / 2), (int) size.x, (int) size.y, null);
-        g2.rotate(-dir, coord.x, coord.y);    
+        Coord drawCoord = coord.add(size.scaledBy(-0.5));
+        g2.drawImage(image, (int) (drawCoord.x), (int) (drawCoord.y), (int) size.x, (int) size.y, null);
+        g2.rotate(-dir, coord.x, coord.y);
     }
 
     // Processes the thorn projectile's movement and interactions
@@ -888,7 +897,10 @@ class Splitter extends Projectile {
 
     // Description: Draws the splitter projectile on the screen
     public void draw(Graphics2D g2) {
-        g2.drawImage(image, (int) (coord.x - size.x / 2 * Math.cos(dir)), (int) (coord.y - size.y / 2), (int) (size.x * Math.cos(dir)), (int) size.y, null);
+        g2.rotate(dir, coord.x, coord.y);
+        Coord drawCoord = coord.add(size.scaledBy(-0.5));
+        g2.drawImage(image, (int) (drawCoord.x), (int) (drawCoord.y), (int) size.x, (int) size.y, null);
+        g2.rotate(-dir, coord.x, coord.y);
     }
 
     // Description: Processes the splitter projectile's movement and interactions

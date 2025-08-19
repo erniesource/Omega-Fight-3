@@ -26,12 +26,13 @@ public class Fastener extends Projectile {
     // Sprite constants
     public static final int NUT = 0;
     public static final int BOLT = 1;
-    public static final int NO_OF_TYPES = 2;
+    public static final int NUM_TYPES = 2;
     public static final int[] NUM_SPRITES = {3, 4};
     public static final int SPRITE_CHANGE_HZ = 5;
+    public static final String[] TYPE_NAME = {"nut", "bolt"};
 
     // Static images
-    public static BufferedImage[][] images = new BufferedImage[NO_OF_TYPES][];
+    public static BufferedImage[][] images = new BufferedImage[NUM_TYPES][];
 
     // Instance variables
     public Coord fastenerVelocity;
@@ -41,7 +42,7 @@ public class Fastener extends Projectile {
     public Fastener(Boss boss, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double kbSpread, double dura, boolean canHitProj, boolean isOnTop) {
         super(boss, coord, size, hitBoxSize, velocity, dir, damage, knockback, kbSpread, dura, INF_LIFE, canHitProj, isOnTop);
         fastenerVelocity = new Coord(velocity * Math.cos(dir), velocity * Math.sin(dir));
-        type = (int) (Math.random() * NO_OF_TYPES);
+        type = (int) (Math.random() * NUM_TYPES);
     }
 
     // Constructor with default stats
@@ -51,7 +52,8 @@ public class Fastener extends Projectile {
 
     // Description: Draws the fastener object
     public void draw(Graphics2D g2) {
-        g2.drawImage(images[type][frameCounter / SPRITE_CHANGE_HZ], (int) (coord.x - size.x / 2), (int) (coord.y - size.y / 2), (int) size.x, (int) size.y, null);
+        Coord drawCoord = coord.add(size.scaledBy(-0.5));
+        g2.drawImage(images[type][frameCounter / SPRITE_CHANGE_HZ], (int) (drawCoord.x), (int) (drawCoord.y), (int) size.x, (int) size.y, null);
     }
 
     // Description: Processes the fastener
@@ -60,8 +62,7 @@ public class Fastener extends Projectile {
         frameCounter = (frameCounter + 1) % (NUM_SPRITES[type] * SPRITE_CHANGE_HZ);
 
         // Movement
-        coord.x += fastenerVelocity.x;
-        coord.y += fastenerVelocity.y;
+        coord = coord.add(fastenerVelocity);
         if (fastenerVelocity.x < 0) {
             fastenerVelocity.x += DECCEL;
             if (fastenerVelocity.x > 0) fastenerVelocity.x = 0;
@@ -92,20 +93,20 @@ class Energy extends Projectile {
 
     // Movement constants
     public static final double VELOCITY = 4;
-    public static final double ROTATION_PER_SECOND = 2;
-    public static final double ROTATION_SPEED = Math.PI * 2 / OmegaFight3.FPS * ROTATION_PER_SECOND;
+    public static final double ROT_PER_SECOND = 2;
+    public static final double ROT_SPEED = Math.PI * 2 / OmegaFight3.FPS * ROT_PER_SECOND;
 
     // Misc constants
     public static final boolean CAN_HIT_PROJ = false;
     public static final boolean IS_ON_TOP = false;
-    public static final int NO_OF_SPRITES = 2;
+    public static final int NUM_SPRITES = 2;
     public static final int SPRITE_CHANGE_HZ = 10;
 
     // Instance variables
     public double rotation;
 
     // Static images
-    public static BufferedImage[] images = new BufferedImage[NO_OF_SPRITES];
+    public static BufferedImage[] images = new BufferedImage[NUM_SPRITES];
 
     // Constructor with custom stats
     public Energy(Boss boss, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double kbSpread, double dura, boolean canHitProj, boolean isOnTop) {
@@ -120,15 +121,16 @@ class Energy extends Projectile {
     // Description: THis method draws the pellet of energy on screen
     public void draw(Graphics2D g2) {
         g2.rotate(rotation, coord.x, coord.y);
-        g2.drawImage(images[-frameCounter / SPRITE_CHANGE_HZ], (int) (coord.x - size.x / 2), (int) (coord.y - size.y / 2), (int) size.x, (int) size.y, null);
+        Coord drawCoord = coord.add(size.scaledBy(-0.5));
+        g2.drawImage(images[-frameCounter / SPRITE_CHANGE_HZ], (int) (drawCoord.x), (int) (drawCoord.y), (int) size.x, (int) size.y, null);
         g2.rotate(-rotation, coord.x, coord.y);
     }
 
     // Description: This method processes the pellet
     public void process() {
         super.process();
-        if (frameCounter == -SPRITE_CHANGE_HZ * NO_OF_SPRITES) frameCounter = 0;
-        rotation = (rotation + ROTATION_SPEED) % (Math.PI * 2);
+        if (frameCounter == -SPRITE_CHANGE_HZ * NUM_SPRITES) frameCounter = 0;
+        rotation = (rotation + ROT_SPEED) % (Math.PI * 2);
     }
 
     public void hitBoss(Boss boss) {}
@@ -153,15 +155,15 @@ class Pincer extends Projectile {
     // Misc constants
     public static final boolean CAN_HIT_PROJ = true;
     public static final boolean IS_ON_TOP = true;
-    public static final int NO_OF_SPRITES = 3;
+    public static final int NUM_SPRITES = 3;
     public static final int SPRITE_CHANGE_HZ = 7;
 
     // Instance variables
     public double trueDir;
-    public int xMovementCounter = 10;
+    public int xMoveCounter = 10;
 
     // static images
-    public static BufferedImage[] images = new BufferedImage[NO_OF_SPRITES];
+    public static BufferedImage[] images = new BufferedImage[NUM_SPRITES];
 
     // Customized constructor
     public Pincer(Boss boss, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double kbSpread, double dura, boolean canHitProj, boolean isOnTop) {
@@ -177,20 +179,21 @@ class Pincer extends Projectile {
     // Description: This method draws the pincer
     public void draw(Graphics2D g2) {
         g2.rotate(dir, coord.x, coord.y);
-        g2.drawImage(images[frameCounter / SPRITE_CHANGE_HZ], (int) (coord.x - size.x / 2), (int) (coord.y - size.y / 2), (int) size.x, (int) size.y, null);
+        Coord drawCoord = coord.add(size.scaledBy(-0.5));
+        g2.drawImage(images[frameCounter / SPRITE_CHANGE_HZ], (int) (drawCoord.x), (int) (drawCoord.y), (int) size.x, (int) size.y, null);
         g2.rotate(-dir, coord.x, coord.y);
     }
 
     // Description: THis method processes the pincer
     public void process() {
         // Sprite change
-        frameCounter = (frameCounter + 1) % (NO_OF_SPRITES * SPRITE_CHANGE_HZ);
+        frameCounter = (frameCounter + 1) % (NUM_SPRITES * SPRITE_CHANGE_HZ);
 
         // X-movement
-        if (xMovementCounter != 0) {
+        if (xMoveCounter != 0) {
             coord.x += velocity * Math.cos(dir);
-            xMovementCounter--;
-            if (xMovementCounter == 0) {
+            xMoveCounter--;
+            if (xMoveCounter == 0) {
                 if (coord.y < OmegaFight3.SCREEN_SIZE.y / 2) {
                     dir = Math.PI / 2; // down
                 } else {
@@ -203,7 +206,7 @@ class Pincer extends Projectile {
         else {
             if (coord.y + velocity * Math.sin(dir) > OmegaFight3.SCREEN_SIZE.y || coord.y + velocity * Math.sin(dir) < 0) {
                 dir = trueDir;
-                xMovementCounter = X_MOVEMENT_LEN;
+                xMoveCounter = X_MOVEMENT_LEN;
             }
             coord.y += velocity * Math.sin(dir);
         }
@@ -221,33 +224,33 @@ class Pincer extends Projectile {
 class Bombot extends Projectile {
     // Size constants
     public static final Coord SIZE = new Coord(150, 75);
-    public static final double SIZE_TO_SMOKE_SIZE = 0.35;
+    public static final double SIZE_TO_SMOKE = 0.35;
     public static final double SIZE_TO_HITBOX = 1.0;
     public static final Coord EXPLOSION_SIZE_MULT = new Coord(2, 4);
 
     // Damage constants
     public static final double DMG = 15 * Omegaman.PERC_MULT;
     public static final double DURA = INF_DURA;
-    public static final double KB = 15;
+    public static final double KB = 20;
     public static final double KB_SPREAD = Math.PI / 3;
 
     // Velocity constants
     public static final double VELOCITY = 6;
-    public static final int LIFE = 200;
+    public static final int LIFE = 300;
     public static final double TURN_SPEED = Math.PI * (180.0 / LIFE / 180.0);
 
     // Misc constants
     public static final int SCREENSHAKE = 15;
     public static final boolean CAN_HIT_PROJ = true;
     public static final boolean IS_ON_TOP = true;
-    public static final int NO_OF_SPRITES = 2;
+    public static final int NUM_SPRITES = 2;
     public static final int SPRITE_CHANGE_HZ = 10;
 
     // Instance variables
     public int sign;
 
     // Static images
-    public static BufferedImage[] images = new BufferedImage[NO_OF_SPRITES];
+    public static BufferedImage[] images = new BufferedImage[NUM_SPRITES];
 
     // Constructor with custom stats
     public Bombot(Boss boss, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double kbSpread, double dura, int frameCounter, int sign, boolean canHitProj, boolean isOnTop) {
@@ -271,7 +274,7 @@ class Bombot extends Projectile {
     // Description: This method draws the bombot
     public void draw(Graphics2D g2) {
         g2.rotate(dir, coord.x, coord.y);
-        g2.drawImage(images[frameCounter % (SPRITE_CHANGE_HZ * NO_OF_SPRITES) / SPRITE_CHANGE_HZ], (int) (coord.x - size.x / 2), (int) (coord.y - size.y / 2 + size.y * ((sign - 1) / -2)), (int) size.x, (int) size.y * sign, null);
+        g2.drawImage(images[frameCounter % (SPRITE_CHANGE_HZ * NUM_SPRITES) / SPRITE_CHANGE_HZ], (int) (coord.x - size.x / 2), (int) (coord.y - size.y / 2 * sign), (int) size.x, (int) size.y * sign, null);
         g2.rotate(-dir, coord.x, coord.y);
     }
 
@@ -304,7 +307,7 @@ class Bombot extends Projectile {
         }
 
         // Smoke
-        character.smokeQ.add(new Smoke(coord.copy(), new Coord(Math.max(size.x, size.y) * SIZE_TO_SMOKE_SIZE), Math.random() * Math.PI * 2));
+        character.smokeQ.add(new Smoke(coord.copy(), new Coord(Math.max(size.x, size.y) * SIZE_TO_SMOKE), Math.random() * Math.PI * 2));
     }
 
     // Description: This method returns that the missile should die to anything

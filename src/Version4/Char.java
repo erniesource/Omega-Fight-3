@@ -52,7 +52,7 @@ abstract class Char {
 abstract class Boss extends Char {
     // Constants
     public static final double BOSS_HITBOX_LEEWAY = 0.2;
-    public static final int NO_TRANSITION = -1;
+    public static final int NO_TRANS = -1;
     public static final int NOT_HURT = -1;
     public static final int HURT_BLINK_HZ = 1;
 
@@ -66,10 +66,6 @@ abstract class Boss extends Char {
 
     // Static surge images for bosses
     public static BufferedImage[] surge = new BufferedImage[OmegaFight3.NUM_SURGE_IMAGES];
-
-    // public static int[] STATE_SPRITE_START = new int[NUM_STATES];
-    // public static final int[] STATE_SPRITE_SIGN = {OmegaFight3.RIGHT_SIGN, OmegaFight3.LEFT_SIGN, OmegaFight3.RIGHT_SIGN, OmegaFight3.RIGHT_SIGN};
-    // public static final int[] STATE_NUM_SPRITES = {2, 4, 4, 3};
 
     // State stats
     public int numStates;
@@ -103,7 +99,7 @@ abstract class Boss extends Char {
     // Combat stats
     public double health;
     public double sizeToHitbox;
-    public int transitionTo = NO_TRANSITION;
+    public int transTo = NO_TRANS;
     public int hurtCounter = NOT_HURT;
     public boolean hurt;
 
@@ -194,13 +190,13 @@ abstract class Boss extends Char {
         }
 
         // Change position
-        coord.x = OmegaFight3.lerp(stateCoord[transitionTo].x, stateCoord[state].x, (double) frameCounter / transTime);
-        coord.y = OmegaFight3.lerp(stateCoord[transitionTo].y, stateCoord[state].y, (double) frameCounter / transTime);
+        coord.x = OmegaFight3.lerp(stateCoord[transTo].x, stateCoord[state].x, (double) frameCounter / transTime);
+        coord.y = OmegaFight3.lerp(stateCoord[transTo].y, stateCoord[state].y, (double) frameCounter / transTime);
 
-        // Change state if finished transition
+        // Change state if finished trans
         if (frameCounter == 0) {
-            state = transitionTo;
-            transitionTo = NO_TRANSITION;
+            state = transTo;
+            transTo = NO_TRANS;
             frameCounter = stateTime[state];
             spriteNo = stateSpriteStart[state];
             spriteSign = stateSpriteSign[state];
@@ -209,7 +205,7 @@ abstract class Boss extends Char {
     }
 
     public void calcSprites() {
-        frameCounter--; // Seperate this and last thing into two different methods
+        frameCounter--;
         if (frameCounter % stateSpriteHz[state] == 0) {
             spriteNo = stateSpriteStart[state] + (spriteNo - stateSpriteStart[state] + 1) % stateNumSprites[state];
         }
@@ -217,11 +213,11 @@ abstract class Boss extends Char {
 
     public void checkFinish() {
         if (frameCounter == 0) {
-            transitionTo = (int) (Math.random() * (numStates - 1)) + 1;
+            transTo = (int) (Math.random() * (numStates - 1)) + 1;
 
             // Transition to same attack
-            if (transitionTo == state) {
-                transitionTo = NO_TRANSITION;
+            if (transTo == state) {
+                transTo = NO_TRANS;
                 frameCounter = stateTime[state];
                 spriteNo = stateSpriteStart[state];
             }
@@ -230,8 +226,8 @@ abstract class Boss extends Char {
             else {
                 frameCounter = transTime;
                 spriteNo = stateSpriteStart[IDLE];
-                spriteSign = (int) Math.signum(stateCoord[transitionTo].x - stateCoord[state].x);
-                if (spriteSign == 0) spriteSign = stateSpriteSign[transitionTo];
+                spriteSign = (int) Math.signum(stateCoord[transTo].x - stateCoord[state].x);
+                if (spriteSign == 0) spriteSign = stateSpriteSign[transTo];
                 size = stateSize[IDLE];
             }
         }

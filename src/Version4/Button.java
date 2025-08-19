@@ -69,7 +69,8 @@ public class Button {
     public void draw(Graphics g) {
         if (canSee) {
             // Draw image
-            g.drawImage(image, (int) (coord.x - (int) size[state].x / 2), (int) (coord.y - (int) size[state].y / 2), (int) size[state].x, (int) size[state].y, null);
+            Coord imageCoord = coord.add(size[state].scaledBy(-0.5));
+            g.drawImage(image, (int) Math.round(imageCoord.x), (int) Math.round(imageCoord.y), (int) size[state].x, (int) size[state].y, null);
 
             // Draw text
             if (text != null) {

@@ -85,9 +85,9 @@ public class Omegaman extends Char {
     // Death States
     public static final int ALIVE_STATE = 0;
     public static final int DIED_BOTTOM = 1;
-    public static final int DIED_LEFT = 2;
+    public static final int DIED_LFT = 2;
     public static final int DIED_TOP = 3;
-    public static final int DIED_RIGHT = 4;
+    public static final int DIED_RIT = 4;
 
     // Stat reset constants
     public static final int DIED_STAT_RESET = 0;
@@ -200,7 +200,7 @@ public class Omegaman extends Char {
                 animateRun();
 
                 // Change to correct direction
-                if (spriteSign == OmegaFight3.RIGHT_SIGN) spriteSign = OmegaFight3.LEFT_SIGN;
+                if (spriteSign == OmegaFight3.RIT_SIGN) spriteSign = OmegaFight3.LFT_SIGN;
             }
         }
 
@@ -213,7 +213,7 @@ public class Omegaman extends Char {
             animateRun();
 
             // Change to correct direction
-            if (spriteSign == OmegaFight3.LEFT_SIGN) spriteSign = OmegaFight3.RIGHT_SIGN;
+            if (spriteSign == OmegaFight3.LFT_SIGN) spriteSign = OmegaFight3.RIT_SIGN;
         }
 
         // Idle
@@ -531,7 +531,7 @@ public class Omegaman extends Char {
 
         // Left
         else if (coord.x < -size.x / 2) {
-            state = DIED_LEFT;
+            state = DIED_LFT;
             resetStats(DIED_STAT_RESET);
         }
 
@@ -543,7 +543,7 @@ public class Omegaman extends Char {
 
         // Right
         else if (coord.x > OmegaFight3.SCREEN_SIZE.x + size.x / 2) {
-            state = DIED_RIGHT;
+            state = DIED_RIT;
             resetStats(DIED_STAT_RESET);
         }
     }
@@ -600,7 +600,7 @@ public class Omegaman extends Char {
         }
 
         // Left death
-        else if (state == DIED_LEFT) {
+        else if (state == DIED_LFT) {
             g2.rotate(rotation, OmegaFight3.SURGE_SIZE.y / 2, coord.y);
             g2.drawImage(surgeImage, (int) ((OmegaFight3.SURGE_SIZE.y - OmegaFight3.SURGE_SIZE.x) / 2), (int) (coord.y - OmegaFight3.SURGE_SIZE.y / 2), null);
             g2.rotate(-rotation, OmegaFight3.SURGE_SIZE.y / 2, coord.y);
@@ -614,7 +614,7 @@ public class Omegaman extends Char {
         }
 
         // Right death
-        else if (state == DIED_RIGHT) {
+        else if (state == DIED_RIT) {
             g2.rotate(rotation, OmegaFight3.SCREEN_SIZE.x - OmegaFight3.SURGE_SIZE.y / 2, coord.y);
             g2.drawImage(surgeImage, (int) (OmegaFight3.SCREEN_SIZE.x - (OmegaFight3.SURGE_SIZE.x + OmegaFight3.SURGE_SIZE.y) / 2), (int) (coord.y - OmegaFight3.SURGE_SIZE.y / 2), null);
             g2.rotate(-rotation, OmegaFight3.SCREEN_SIZE.x - OmegaFight3.SURGE_SIZE.y / 2, coord.y);
@@ -656,8 +656,8 @@ public class Omegaman extends Char {
 
     // Description: This method recoils the player based on the direction they're facing
     public void recoil(double amount) {
-        if (spriteSign == OmegaFight3.LEFT_SIGN) velocity.x += amount;
-        else if (spriteSign == OmegaFight3.RIGHT_SIGN) velocity.x -= amount;
+        if (spriteSign == OmegaFight3.LFT_SIGN) velocity.x += amount;
+        else if (spriteSign == OmegaFight3.RIT_SIGN) velocity.x -= amount;
     }
 
     // Description: This method hurts the player and shakes their percent but doesn't knock them back
@@ -706,7 +706,7 @@ public class Omegaman extends Char {
 
         // Sprite direction change
         spriteSign = (int) -Math.signum(Math.cos(angle));
-        if (spriteSign == 0) spriteSign = OmegaFight3.RIGHT_SIGN;
+        if (spriteSign == 0) spriteSign = OmegaFight3.RIT_SIGN;
     }
 
     // Description: This method hurts the player and knocks them back in any direction based on the enemy coordinates
@@ -725,7 +725,7 @@ public class Omegaman extends Char {
 
         // Sprite direction change
         spriteSign = (int) -Math.signum(Math.cos(angle));
-        if (spriteSign == 0) spriteSign = OmegaFight3.RIGHT_SIGN;
+        if (spriteSign == 0) spriteSign = OmegaFight3.RIT_SIGN;
     }
 
     // Description: THis method calculates the knockback of the player

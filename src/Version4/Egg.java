@@ -14,27 +14,27 @@ public class Egg extends Projectile{
     // Size constants
     public static final Coord[] SIZE = {new Coord(70, 60), new Coord(120, 95), new Coord(200, 160)};
     public static final double SIZE_TO_HITBOX = 0.7;
-    public static final double SIZE_TO_SMOKE_SIZE = 0.5;
+    public static final double SIZE_TO_SMOKE = 0.5;
 
     // Movement constants
     public static final double[] VELOCITY = {16, 22, 40};
     public static final double ACCEL = 1;
-    public static final double ROTATION_PER_SECOND = 2;
-    public static final double ROTATION_SPEED = Math.PI * 2 / OmegaFight3.FPS * ROTATION_PER_SECOND;
+    public static final double ROT_PER_SECOND = 2;
+    public static final double ROT_SPEED = Math.PI * 2 / OmegaFight3.FPS * ROT_PER_SECOND;
 
     // Misc constants
     public static final boolean CAN_HIT_PROJ = true;
     public static final boolean IS_ON_TOP = true;
 
     // Sprite constants
-    public static final int NO_OF_STATES = 3;
+    public static final int NUM_STATES = 3;
     public static final int[] NUM_TYPES = {3, 1, 1};
     public static final int[] NUM_SPRITES = {1, 1, 1};
     public static final String[] STATE_NAMES = {"bit", "shell", "egg"};
     public static final int SPRITE_CHANGE_HZ = -1;
 
     // Static images
-    public static BufferedImage[][][] images = new BufferedImage[NO_OF_STATES][][];
+    public static BufferedImage[][][] images = new BufferedImage[NUM_STATES][][];
 
     // Instance variables
     public Coord eggVelocity;
@@ -55,13 +55,14 @@ public class Egg extends Projectile{
         this(boss, coord, SIZE[state].copy(), SIZE[state].scaledBy(SIZE_TO_HITBOX), VELOCITY[state], dir, DMG[state], KB[state], KB_SPREAD, DURA, state, (int) (Math.random() * NUM_TYPES[state]), CAN_HIT_PROJ, IS_ON_TOP);
     }
     public Egg(Boss boss, Coord coord, double dir) {
-        this(boss, coord, dir, NO_OF_STATES - 1);
+        this(boss, coord, dir, NUM_STATES - 1);
     }
 
     // Description: Draws the egg object
     public void draw(Graphics2D g2) {
         g2.rotate(rotation, coord.x, coord.y);
-        g2.drawImage(images[state][type][frameCounter / SPRITE_CHANGE_HZ], (int) (coord.x - size.x / 2), (int) (coord.y - size.y / 2), (int) size.x, (int) size.y, null);
+        Coord drawCoord = coord.add(size.scaledBy(-0.5));
+        g2.drawImage(images[state][type][frameCounter / SPRITE_CHANGE_HZ], (int) (drawCoord.x), (int) (drawCoord.y), (int) size.x, (int) size.y, null);
         g2.rotate(-rotation, coord.x, coord.y);
     }
 
@@ -69,15 +70,14 @@ public class Egg extends Projectile{
     public void process() {
         // Sprite change
         frameCounter = (frameCounter + 1) % (NUM_SPRITES[type] * SPRITE_CHANGE_HZ);
-        rotation = (rotation + ROTATION_SPEED) % (Math.PI * 2);
+        rotation = (rotation + ROT_SPEED) % (Math.PI * 2);
 
         // Movement
-        coord.x += eggVelocity.x;
-        coord.y += eggVelocity.y;
+        coord = coord.add(eggVelocity);
         eggVelocity.y += ACCEL;
 
         // Smokes (Does every state need smoke?)
-        character.smokeQ.add(new Smoke(coord.copy(), new Coord(Math.max(size.x, size.y) * SIZE_TO_SMOKE_SIZE), Math.random() * Math.PI * 2));
+        character.smokeQ.add(new Smoke(coord.copy(), new Coord(Math.max(size.x, size.y) * SIZE_TO_SMOKE), Math.random() * Math.PI * 2));
 
         // Check if out of screen
         if (coord.x < -size.x / 2 || coord.x > OmegaFight3.SCREEN_SIZE.x + size.x / 2 || coord.y > OmegaFight3.SCREEN_SIZE.y + size.y / 2) {
@@ -132,11 +132,11 @@ class Feather extends Projectile {
     // Misc constants
     public static final boolean CAN_HIT_PROJ = false;
     public static final boolean IS_ON_TOP = false;
-    public static final int NO_OF_SPRITES = 3;
+    public static final int NUM_SPRITES = 3;
     public static final int SPRITE_CHANGE_HZ = 7;
 
     // Static images
-    public static BufferedImage[] images = new BufferedImage[NO_OF_SPRITES];
+    public static BufferedImage[] images = new BufferedImage[NUM_SPRITES];
 
     // Constructor with custom stats
     public Feather(Boss boss, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double kbSpread, double dura, boolean canHitProj, boolean isOnTop) {
@@ -151,14 +151,15 @@ class Feather extends Projectile {
     // Description: THis method draws the pellet of energy on screen
     public void draw(Graphics2D g2) {
         g2.rotate(dir, coord.x, coord.y);
-        g2.drawImage(images[-frameCounter / SPRITE_CHANGE_HZ], (int) (coord.x - size.x / 2), (int) (coord.y - size.y / 2), (int) size.x, (int) size.y, null);
+        Coord drawCoord = coord.add(size.scaledBy(-0.5));
+        g2.drawImage(images[-frameCounter / SPRITE_CHANGE_HZ], (int) (drawCoord.x), (int) (drawCoord.y), (int) size.x, (int) size.y, null);
         g2.rotate(-dir, coord.x, coord.y);
     }
 
     // Description: This method processes the pellet
     public void process() {
         super.process();
-        if (frameCounter == -SPRITE_CHANGE_HZ * NO_OF_SPRITES) frameCounter = 0;
+        if (frameCounter == -SPRITE_CHANGE_HZ * NUM_SPRITES) frameCounter = 0;
     }
 
     public void hitBoss(Boss boss) {}
@@ -168,7 +169,7 @@ class Feather extends Projectile {
 class Diver extends Projectile {
     // Size constants
     public static final Coord SIZE = new Coord(160, 110);
-    public static final double SIZE_TO_SMOKE_SIZE = 0.35;
+    public static final double SIZE_TO_SMOKE = 0.35;
     public static final double SIZE_TO_HITBOX = 1.25;
     public static final Coord EXPLOSION_SIZE_MULT = new Coord(33.0/20, 48.0/20);
 
@@ -177,7 +178,7 @@ class Diver extends Projectile {
     public static final double DURA = INF_DURA;
     public static final double KB = 10;
     public static final double KB_SPREAD = Math.PI / 3;
-    public static final double DMG_KB_MULT = 0.35; // FIDDLE WITH THIS
+    public static final double MULT = 0.35;
 
     // Velocity constants
     public static final double VELOCITY = 6;
@@ -190,10 +191,10 @@ class Diver extends Projectile {
     public static final int DIVING = 1;
 
     // Misc constants
-    public static final int SCREENSHAKE = 2;
+    public static final int SCREENSHAKE = 7;
     public static final boolean CAN_HIT_PROJ = true;
     public static final boolean IS_ON_TOP = true;
-    public static final int NO_OF_SPRITES = 4;
+    public static final int NUM_SPRITES = 4;
     public static final int SPRITE_CHANGE_HZ = 5;
 
     // Instance variables
@@ -201,7 +202,7 @@ class Diver extends Projectile {
     public int sign;
 
     // Static images
-    public static BufferedImage[] images = new BufferedImage[NO_OF_SPRITES];
+    public static BufferedImage[] images = new BufferedImage[NUM_SPRITES];
 
     // Constructor with custom stats
     public Diver(Boss boss, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double kbSpread, double dura, int sign, boolean canHitProj, boolean isOnTop) {
@@ -225,7 +226,7 @@ class Diver extends Projectile {
     // Description: This method draws the bombot
     public void draw(Graphics2D g2) {
         g2.rotate(dir, coord.x, coord.y);
-        g2.drawImage(images[-frameCounter / SPRITE_CHANGE_HZ], (int) (coord.x - size.x / 2), (int) (coord.y - size.y / 2 + size.y * ((sign - 1) / -2)), (int) size.x, (int) size.y * sign, null);
+        g2.drawImage(images[-frameCounter / SPRITE_CHANGE_HZ], (int) (coord.x - size.x / 2), (int) (coord.y - size.y / 2 * sign), (int) size.x, (int) size.y * sign, null);
         g2.rotate(-dir, coord.x, coord.y);
     }
 
@@ -233,14 +234,15 @@ class Diver extends Projectile {
     public void process() {
         // Movement
         super.process();
-        if (frameCounter == -SPRITE_CHANGE_HZ * NO_OF_SPRITES) frameCounter = 0;
+        if (frameCounter == -SPRITE_CHANGE_HZ * NUM_SPRITES) frameCounter = 0;
 
         if (state == TRAVELLING) {
             // Loop through all players and their projectiles
+            double diveAngle = (sign == OmegaFight3.RIT_SIGN? DIVE_ANGLE: Math.PI - DIVE_ANGLE);
             for (Omegaman enemy: OmegaFight3.omegaman) {
                 // Check if should dive (maybe check if state alr diving just in case?) I just check the angle and see if it's within a few degrees of diving angle
-                if (Math.abs(Math.atan2(enemy.coord.y - coord.y, enemy.coord.x - coord.x) - (sign == OmegaFight3.RIGHT_SIGN? DIVE_ANGLE: Math.PI - DIVE_ANGLE)) <= DIVE_ANGLE_LEEWAY) {
-                    dir = (sign == OmegaFight3.RIGHT_SIGN? DIVE_ANGLE: Math.PI - DIVE_ANGLE);
+                if (Math.abs(Math.atan2(enemy.coord.y - coord.y, enemy.coord.x - coord.x) - diveAngle) <= DIVE_ANGLE_LEEWAY && enemy.state == Omegaman.ALIVE_STATE) {
+                    dir = diveAngle;
                     state = DIVING;
                 }
             }
@@ -260,7 +262,7 @@ class Diver extends Projectile {
             }
 
             // Smoke
-            character.smokeQ.add(new Smoke(coord.copy(), new Coord(Math.max(size.x, size.y) * SIZE_TO_SMOKE_SIZE), Math.random() * Math.PI * 2));
+            character.smokeQ.add(new Smoke(coord.copy(), new Coord(Math.max(size.x, size.y) * SIZE_TO_SMOKE), Math.random() * Math.PI * 2));
         }
     }
 
@@ -269,8 +271,9 @@ class Diver extends Projectile {
     }
 
     public void hitPlayer(Omegaman omega) {
-        omega.hurt(damage * Math.sqrt(velocity) * DMG_KB_MULT, knockback * Math.sqrt(velocity) * DMG_KB_MULT, coord, dir, KB_SPREAD);
-        OmegaFight3.screenShakeCounter += (int) (SCREENSHAKE * Math.sqrt(velocity));
+        double mult = Math.sqrt(velocity) * MULT;
+        omega.hurt(damage * mult, knockback * mult, coord, dir, KB_SPREAD);
+        OmegaFight3.screenShakeCounter += (int) (SCREENSHAKE * mult);
         die();
     }
     public void hitBoss(Boss boss) {}
@@ -291,15 +294,15 @@ class Plush extends Projectile {
     // Misc constants
     public static final boolean CAN_HIT_PROJ = true;
     public static final boolean IS_ON_TOP = false;
-    public static final int NO_OF_STATES = 3;
-    public static final int NO_OF_SPRITES = 1;
+    public static final int NUM_STATES = 3;
+    public static final int NUM_SPRITES = 1;
     public static final int SPRITE_CHANGE_HZ = 1;
     public static final int DEAD = -1;
 
     // Static images
-    public static BufferedImage[][] images = new BufferedImage[NO_OF_STATES][NO_OF_SPRITES];
+    public static BufferedImage[][] images = new BufferedImage[NUM_STATES][NUM_SPRITES];
 
-    public int state = NO_OF_STATES - 1; // rotate on it's own?
+    public int state = NUM_STATES - 1;
 
     // Constructor with custom stats
     public Plush(Boss boss, Coord size, Coord hitBoxSize, double damage, double knockback, double kbSpread, double dura, boolean canHitProj, boolean isOnTop) {
@@ -315,14 +318,15 @@ class Plush extends Projectile {
     public void draw(Graphics2D g2) {
         if (state != DEAD) {
             g2.rotate(dir, coord.x, coord.y);
-            g2.drawImage(images[state][frameCounter / SPRITE_CHANGE_HZ], (int) (coord.x - size.x / 2), (int) (coord.y - size.y / 2), (int) size.x, (int) size.y, null);
+            Coord drawCoord = coord.add(size.scaledBy(-0.5));
+            g2.drawImage(images[state][frameCounter / SPRITE_CHANGE_HZ], (int) (drawCoord.x), (int) (drawCoord.y), (int) size.x, (int) size.y, null);
             g2.rotate(-dir, coord.x, coord.y);
         }
     }
 
     // Description: This method processes the pellet
     public void process() {
-        frameCounter = (frameCounter + 1) % (NO_OF_SPRITES * SPRITE_CHANGE_HZ);
+        frameCounter = (frameCounter + 1) % (NUM_SPRITES * SPRITE_CHANGE_HZ);
     }
 
     public void die() {
