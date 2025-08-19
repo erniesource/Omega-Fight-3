@@ -135,7 +135,7 @@ class Shotgun extends Projectile {
     // Damage constants
     public static final double DMG = 2 * Omegaman.PERC_MULT;
     public static final double DURA = 1;
-    public static final double KB = 3;
+    public static final double KB = 10;
     public static final double KB_SPREAD = Math.PI / 3;
 
     // Size constants
@@ -201,7 +201,7 @@ class Firework extends Projectile {
     // Damage constants
     public static final double DMG = 3.5 * Omegaman.PERC_MULT;
     public static final double DURA = INF_DURA;
-    public static final double KB = 3;
+    public static final double KB = 15;
     public static final double KB_SPREAD = Math.PI / 3;
 
     // Velocity constants
@@ -258,7 +258,7 @@ class Spammer extends Projectile {
     // Damage constants
     public static final double DMG = 1.5 * Omegaman.PERC_MULT;
     public static final double DURA = 1;
-    public static final double KB = 4;
+    public static final double KB = 5;
     public static final double KB_SPREAD = Math.PI / 3;
 
     // Size constants
@@ -323,7 +323,7 @@ class Missile extends Projectile {
     // Damage constants
     public static final double DMG = 12 * Omegaman.PERC_MULT;
     public static final double DURA = INF_DURA;
-    public static final double KB = 16;
+    public static final double KB = 20;
     public static final double KB_SPREAD = Math.PI / 3;
     public static final double EXPLOSION_SIZE_MULT = 3;
 
@@ -430,7 +430,7 @@ class Sniper extends Projectile {
     // Damage constants
     public static final double DMG = 2.5 * Omegaman.PERC_MULT;
     public static final double DURA = 3;
-    public static final double KB = 1.5;
+    public static final double KB = 7;
     public static final double KB_SPREAD = Math.PI / 3;
 
     // Size constants
@@ -562,7 +562,7 @@ class Boomer extends Projectile {
     // Damage constants
     public static final double DMG = 3.5 * Omegaman.PERC_MULT;
     public static final double DURA = 2;
-    public static final double KB = 5;
+    public static final double KB = 7;
     public static final double KB_SPREAD = Math.PI / 3;
 
     // Size constants
@@ -712,7 +712,7 @@ class Spike extends Projectile {
     // Damage constants
     public static final double THORN_DMG = 1 * Omegaman.PERC_MULT;
     public static final double DURA = 1;
-    public static final double THORN_KB = 3;
+    public static final double THORN_KB = 5;
     public static final int NUM_THORNS = 6;
     public static final boolean CURVED_BABY_PROJS = true;
 
@@ -865,7 +865,7 @@ class Splitter extends Projectile {
     // Damage constants
     public static final double THORN_DMG = 2 * Omegaman.PERC_MULT;
     public static final double DURA = INF_DURA;
-    public static final double THORN_KB = 5;
+    public static final double THORN_KB = 15;
     public static final int NUM_SPLITS = 3;
     public static final int PROJS_PER_SPLIT = 4;
     public static final double SPLIT_PROJS_START_ANGLE = (2 * Math.PI) / (PROJS_PER_SPLIT) / 2;

@@ -18,8 +18,7 @@ import java.awt.image.BufferedImage;
 import java.util.*;
 import javax.sound.sampled.*;
 import javafx.util.Pair;
-// Ernest Todo: check over code... for everything not so good
-// List of things to loot out for when double checking: why code this way, make methods helper methods, make more methods and use OOP to reduce code, variable names
+// Ernest Todo: new gamemodes
 
 public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionListener, KeyListener, Runnable {
     // Screen Settings
@@ -36,7 +35,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static final int SCREEN_SHAKE_MAX = 60;
 
     // Sound settings
-    public static final boolean SOUND_ON = false;
+    public static final boolean SOUND_ON = true;
 
     // Cheat constants
     public static final boolean CHEATS = true;
@@ -196,7 +195,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static final double EPSILON = 1e-15;
 
     // Gamemode constants
-    public static final int NUM_GAMEMODES = 1;
+    public static final int NUM_GAMEMODES = 1; // Here we go...
     public static final int TWOPVE = 0;
 
     // Surge constants
