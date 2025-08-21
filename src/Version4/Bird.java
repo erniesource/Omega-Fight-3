@@ -269,7 +269,9 @@ class Punk extends Boss {
         }
     }
 
-    public void hurt(double damage) {}
+    public double hurt(double damage) {
+        return 0;
+    }
     
     public void trueHurt(double damage) {
         super.hurt(damage);

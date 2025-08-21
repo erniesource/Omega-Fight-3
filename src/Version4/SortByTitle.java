@@ -37,9 +37,10 @@ class SortByGrade implements Comparator<Battle> {
 
     // Description: This method compares two battles by their grade. If they have the same grade, the are compared by name
     public int compare(Battle b1, Battle b2) {
-        if (Double.compare(b1.grade, b2.grade) != 0) {
-            return Double.compare(b1.grade, b2.grade);
+        int cmp = Double.compare(b1.grade, b2.grade);
+        if (cmp != 0) {
+            return cmp;
         }  
-        else return b1.name.compareTo(b2.name);
+        else return (new SortByTitle()).compare(b1, b2);
     }
 }

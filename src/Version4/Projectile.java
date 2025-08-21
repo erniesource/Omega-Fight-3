@@ -85,8 +85,8 @@ abstract public class Projectile {
         if (proj.shouldDieTo(dura)) proj.die();
     }
 
-    public void hitPlayer(Omegaman omega) {
-        omega.hurt(damage, knockback, coord, dir, kbSpread);
+    public void hitPlayer(Omegaman enemy) {
+        enemy.hurt(damage, knockback, coord, dir, kbSpread);
         die();
     }
 

@@ -45,7 +45,7 @@ abstract class Char {
     }
 
     // Abstract methods for each char
-    abstract public void hurt(double damage);
+    abstract public double hurt(double damage);
     abstract public void draw(Graphics g);
 }
 
@@ -107,10 +107,16 @@ abstract class Boss extends Char {
     public BufferedImage[] sprite;
 
     // Description: This method hurts and prepares the boss to die if they're gonna die
-    public void hurt(double damage) {
-        health -= damage;
+    public double hurt(double damage) {
         if (!hurt) hurt = true;
-        if (health <= 0 && state != DEAD) prepareToDie();
+        if (OmegaFight3.transitiono != OmegaFight3.GAME_SET && OmegaFight3.transitiono != OmegaFight3.GAME_OVER) {
+            health -= damage;
+            if (health <= 0 && state != DEAD) prepareToDie();
+            return damage;
+        }
+        else {
+            return 0;
+        }
     }
 
     // Description: This method calculates the hurt blinking of the boss

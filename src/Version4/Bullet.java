@@ -21,6 +21,7 @@ public class Bullet extends Projectile {
     // Misc constants
     public static final int BUTTONO = 4;
     public static final int SKILL_PT_GAIN = 4;
+    public static final int SKILL_PT_COST = 6;
     public static final boolean CAN_HIT_PROJ = true;
     public static final boolean IS_ON_TOP = true;
 
@@ -44,17 +45,19 @@ public class Bullet extends Projectile {
     }
 
     public void hitPlayer(Omegaman enemy) {
-        super.hitPlayer(enemy);
+        double trueDmg = enemy.hurt(damage, knockback, coord, dir, kbSpread);
+        die();
         Omegaman omega = ((Omegaman) character);
         omega.addSkillPts(SKILL_PT_GAIN);
-        omega.stats[Omegaman.DMG_TO_OMEGAMAN] += damage;
+        omega.addToStat(Omegaman.DMG_TO_OMEGAMAN, trueDmg);
     }
 
     public void hitBoss(Boss boss) {
-        super.hitBoss(boss);
+        double trueDmg = boss.hurt(damage);
+        die();
         Omegaman omega = ((Omegaman) character);
         omega.addSkillPts(SKILL_PT_GAIN);
-        omega.stats[Omegaman.DMG_TO_BOSS] += damage;
+        omega.addToStat(Omegaman.DMG_TO_BOSS, trueDmg);
     }
 }
 
@@ -119,15 +122,19 @@ class Rocket extends Projectile {
     }
 
     public void hitPlayer(Omegaman enemy) {
-        super.hitPlayer(enemy);
+        double trueDmg = enemy.hurt(damage, knockback, coord, dir, kbSpread);
+        die();
         OmegaFight3.screenShakeCounter += (int) (SCREENSHAKE * (size.x / SIZE.x));
-        ((Omegaman) character).stats[Omegaman.DMG_TO_OMEGAMAN] += damage;
+        Omegaman omega = ((Omegaman) character);
+        omega.addToStat(Omegaman.DMG_TO_OMEGAMAN, trueDmg);
     }
 
     public void hitBoss(Boss boss) {
-        super.hitBoss(boss);
+        double trueDmg = boss.hurt(damage);
+        die();
         OmegaFight3.screenShakeCounter += (int) (SCREENSHAKE * (size.x / SIZE.x));
-        ((Omegaman) character).stats[Omegaman.DMG_TO_BOSS] += damage;
+        Omegaman omega = ((Omegaman) character);
+        omega.addToStat(Omegaman.DMG_TO_BOSS, trueDmg);
     }
 }
 
@@ -153,6 +160,7 @@ class Shotgun extends Projectile {
     // Misc constants
     public static final int BUTTONO = 5;
     public static final int SKILL_PT_GAIN = 1;
+    public static final int SKILL_PT_COST = (int) (1.0 * NUM_SHOTS);
     public static final boolean CAN_HIT_PROJ = true;
     public static final boolean IS_ON_TOP = true;
 
@@ -178,17 +186,19 @@ class Shotgun extends Projectile {
     }
 
     public void hitPlayer(Omegaman enemy) {
-        super.hitPlayer(enemy);
+        double trueDmg = enemy.hurt(damage, knockback, coord, dir, kbSpread);
+        die();
         Omegaman omega = ((Omegaman) character);
         omega.addSkillPts(SKILL_PT_GAIN);
-        omega.stats[Omegaman.DMG_TO_OMEGAMAN] += damage;
+        omega.addToStat(Omegaman.DMG_TO_OMEGAMAN, trueDmg);
     }
 
     public void hitBoss(Boss boss) {
-        super.hitBoss(boss);
+        double trueDmg = boss.hurt(damage);
+        die();
         Omegaman omega = ((Omegaman) character);
         omega.addSkillPts(SKILL_PT_GAIN);
-        omega.stats[Omegaman.DMG_TO_BOSS] += damage;
+        omega.addToStat(Omegaman.DMG_TO_BOSS, trueDmg);
     }
 }
 
@@ -239,13 +249,17 @@ class Firework extends Projectile {
     }
 
     public void hitPlayer(Omegaman enemy) {
-        super.hitPlayer(enemy);
-        ((Omegaman) character).stats[Omegaman.DMG_TO_OMEGAMAN] += damage;
+        double trueDmg = enemy.hurt(damage, knockback, coord, dir, kbSpread);
+        die();
+        Omegaman omega = ((Omegaman) character);
+        omega.addToStat(Omegaman.DMG_TO_OMEGAMAN, trueDmg);
     }
 
     public void hitBoss(Boss boss) {
-        super.hitBoss(boss);
-        ((Omegaman) character).stats[Omegaman.DMG_TO_BOSS] += damage;
+        double trueDmg = boss.hurt(damage);
+        die();
+        Omegaman omega = ((Omegaman) character);
+        omega.addToStat(Omegaman.DMG_TO_BOSS, trueDmg);
     }
 
     // This returns the fact that Firework dies to any projectile
@@ -275,6 +289,7 @@ class Spammer extends Projectile {
     // Misc constants
     public static final int BUTTONO = 6;
     public static final int SKILL_PT_GAIN = 1;
+    public static final int SKILL_PT_COST = 2;
     public static final boolean CAN_HIT_PROJ = false;
     public static final boolean IS_ON_TOP = true;
 
@@ -300,17 +315,19 @@ class Spammer extends Projectile {
     }
 
     public void hitPlayer(Omegaman enemy) {
-        super.hitPlayer(enemy);
+        double trueDmg = enemy.hurt(damage, knockback, coord, dir, kbSpread);
+        die();
         Omegaman omega = ((Omegaman) character);
         omega.addSkillPts(SKILL_PT_GAIN);
-        omega.stats[Omegaman.DMG_TO_OMEGAMAN] += damage;
+        omega.addToStat(Omegaman.DMG_TO_OMEGAMAN, trueDmg);
     }
 
     public void hitBoss(Boss boss) {
-        super.hitBoss(boss);
+        double trueDmg = boss.hurt(damage);
+        die();
         Omegaman omega = ((Omegaman) character);
         omega.addSkillPts(SKILL_PT_GAIN);
-        omega.stats[Omegaman.DMG_TO_BOSS] += damage;
+        omega.addToStat(Omegaman.DMG_TO_BOSS, trueDmg);
     }
 }
 
@@ -414,15 +431,19 @@ class Missile extends Projectile {
     }
 
     public void hitPlayer(Omegaman enemy) {
-        super.hitPlayer(enemy);
+        double trueDmg = enemy.hurt(damage, knockback, coord, dir, kbSpread);
+        die();
         OmegaFight3.screenShakeCounter += (int) (SCREENSHAKE * (size.x / SIZE.x));
-        ((Omegaman) character).stats[Omegaman.DMG_TO_OMEGAMAN] += damage;
+        Omegaman omega = ((Omegaman) character);
+        omega.addToStat(Omegaman.DMG_TO_OMEGAMAN, trueDmg);
     }
 
     public void hitBoss(Boss boss) {
-        super.hitBoss(boss);
+        double trueDmg = boss.hurt(damage);
+        die();
         OmegaFight3.screenShakeCounter += (int) (SCREENSHAKE * (size.x / SIZE.x));
-        ((Omegaman) character).stats[Omegaman.DMG_TO_BOSS] += damage;
+        Omegaman omega = ((Omegaman) character);
+        omega.addToStat(Omegaman.DMG_TO_BOSS, trueDmg);
     }
 }
 
@@ -445,6 +466,7 @@ class Sniper extends Projectile {
     // Misc constants
     public static final int BUTTONO = 7;
     public static final int SKILL_PT_GAIN = 10;
+    public static final int SKILL_PT_COST = 10;
     public static final double RECOIL = 4;
     public static final boolean CAN_HIT_PROJ = true;
     public static final boolean IS_ON_TOP = true;
@@ -476,20 +498,20 @@ class Sniper extends Projectile {
 
     public void hitPlayer(Omegaman enemy) {
         double mult = velocity / VELOCITY;
-        enemy.hurt(damage * mult, knockback * mult, coord, dir, kbSpread);
+        double trueDmg = enemy.hurt(damage * mult, knockback * mult, coord, dir, kbSpread);
         die();
         Omegaman omega = ((Omegaman) character);
         omega.addSkillPts(SKILL_PT_GAIN);
-        omega.stats[Omegaman.DMG_TO_OMEGAMAN] += damage * mult;
+        omega.addToStat(Omegaman.DMG_TO_OMEGAMAN, trueDmg);
     }
 
     public void hitBoss(Boss boss) {
         double mult = velocity / VELOCITY;
-        boss.hurt(damage * mult);
+        double trueDmg = boss.hurt(damage * mult);
         die();
         Omegaman omega = ((Omegaman) character);
         omega.addSkillPts(SKILL_PT_GAIN);
-        omega.stats[Omegaman.DMG_TO_BOSS] += damage * mult;
+        omega.addToStat(Omegaman.DMG_TO_BOSS, trueDmg);
     }
 }
 
@@ -548,13 +570,13 @@ class Laser extends Projectile {
     }
 
     public void hitPlayer(Omegaman enemy) {
-        enemy.hurt(damage, knockback, coord, BASE_KB_DIR + KB_DIR_TILT * Math.cos(dir), kbSpread);
-        ((Omegaman) character).stats[Omegaman.DMG_TO_OMEGAMAN] += damage;
+        double trueDmg = enemy.hurt(damage, knockback, coord, BASE_KB_DIR + KB_DIR_TILT * Math.cos(dir), kbSpread);
+        ((Omegaman) character).addToStat(Omegaman.DMG_TO_OMEGAMAN, trueDmg);
     }
 
     public void hitBoss(Boss boss) {
-        boss.hurt(damage);
-        ((Omegaman) character).stats[Omegaman.DMG_TO_BOSS] += damage;
+        double trueDmg = boss.hurt(damage);
+        ((Omegaman) character).addToStat(Omegaman.DMG_TO_BOSS, trueDmg);
     }
 }
 
@@ -577,6 +599,7 @@ class Boomer extends Projectile {
     // Misc constants
     public static final int BUTTONO = 8;
     public static final int SKILL_PT_GAIN = 3;
+    public static final int SKILL_PT_COST = 5;
     public static final boolean CAN_HIT_PROJ = false;
     public static final boolean IS_ON_TOP = true;
 
@@ -612,19 +635,19 @@ class Boomer extends Projectile {
 
     public void hitPlayer(Omegaman enemy) {
         int mult = velocity < 0? 2: 1;
-        enemy.hurt(damage * mult, knockback * mult, coord, dir + mult / 2 * Math.PI, kbSpread);
+        double trueDmg = enemy.hurt(damage * mult, knockback * mult, coord, dir + mult / 2 * Math.PI, kbSpread);
         die();
         Omegaman omega = ((Omegaman) character);
         omega.addSkillPts(SKILL_PT_GAIN * mult);
-        omega.stats[Omegaman.DMG_TO_OMEGAMAN] += damage * mult;
+        omega.addToStat(Omegaman.DMG_TO_OMEGAMAN, trueDmg);
     }
 
     public void hitBoss(Boss boss) {
         int mult = velocity < 0? 2: 1;
-        boss.hurt(damage * mult);
+        double trueDmg = boss.hurt(damage * mult);
         die();
         Omegaman omega = ((Omegaman) character);
-        omega.stats[Omegaman.DMG_TO_BOSS] += damage * mult;
+        omega.addToStat(Omegaman.DMG_TO_BOSS, trueDmg);
         omega.addSkillPts(SKILL_PT_GAIN * mult);
     }
 }
@@ -698,13 +721,13 @@ class Bouncer extends Projectile {
     }
 
     public void hitPlayer(Omegaman enemy) {
-        enemy.hurt(damage, knockback, coord, dir, kbSpread);
-        ((Omegaman) character).stats[Omegaman.DMG_TO_OMEGAMAN] += damage;
+        double trueDmg = enemy.hurt(damage, knockback, coord, dir, kbSpread);
+        ((Omegaman) character).addToStat(Omegaman.DMG_TO_OMEGAMAN, trueDmg);
     }
 
     public void hitBoss(Boss boss) {
-        boss.hurt(damage);
-        ((Omegaman) character).stats[Omegaman.DMG_TO_BOSS] += damage;
+        double trueDmg = boss.hurt(damage);
+        ((Omegaman) character).addToStat(Omegaman.DMG_TO_BOSS, trueDmg);
     }
 }
 
@@ -729,7 +752,7 @@ class Spike extends Projectile {
 
     // Misc constants
     public static final int BUTTONO = 9;
-    public static final int SKILL_PT_GAIN = 0;
+    public static final int SKILL_PT_COST = (int) (1.5 * NUM_THORNS * Thorn.SKILL_PT_GAIN);
     public static final boolean CAN_HIT_PROJ = true;
     public static final boolean IS_ON_TOP = true;
 
@@ -842,17 +865,19 @@ class Thorn extends Projectile {
     }
 
     public void hitPlayer(Omegaman enemy) {
-        super.hitPlayer(enemy);
+        double trueDmg = enemy.hurt(damage, knockback, coord, dir, kbSpread);
+        die();
         Omegaman omega = ((Omegaman) character);
         omega.addSkillPts(SKILL_PT_GAIN);
-        omega.stats[Omegaman.DMG_TO_OMEGAMAN] += damage;
+        omega.addToStat(Omegaman.DMG_TO_OMEGAMAN, trueDmg);
     }
 
     public void hitBoss(Boss boss) {
-        super.hitBoss(boss);
+        double trueDmg = boss.hurt(damage);
+        die();
         Omegaman omega = ((Omegaman) character);
         omega.addSkillPts(SKILL_PT_GAIN);
-        omega.stats[Omegaman.DMG_TO_BOSS] += damage;
+        omega.addToStat(Omegaman.DMG_TO_BOSS, trueDmg);
     }
 }
 
@@ -910,7 +935,7 @@ class Splitter extends Projectile {
 
         // Spit out thorns periodically
         if (frameCounter % (LIFE / NUM_SPLITS) == 0) {
-            for (int i = 0; i != PROJS_PER_SPLIT; i++) {
+            for (int i = 0; i != PROJS_PER_SPLIT; i++) { // Make these thorns not have skill pts?
                 OmegaFight3.babyProjectiles.add(new Thorn((Omegaman) character, coord.copy(), SPLIT_PROJS_START_ANGLE + i * Math.PI * 2 / PROJS_PER_SPLIT, THORN_DMG, THORN_KB, (int) (Thorn.LIFE * ((double) frameCounter / LIFE + 1.0 / NUM_SPLITS)), CURVED_BABY_PROJS));
             }
         }
