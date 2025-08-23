@@ -73,7 +73,6 @@ public class Battle {
     public double bossHealth;
     public double[][] playerStats = new double[Omegaman.NUM_PLAYERS][Omegaman.NUM_STATS];
     public double grade;
-    public String result;
 
     // Constructor
     public Battle(String stageName, int winner, int gameMode, int lives, int difficulty, double bossHealth, double[][] playerStats) {
@@ -87,11 +86,11 @@ public class Battle {
         this.playerStats = playerStats;
 
         // Calculate grade
-        if (gameMode == OmegaFight3.TWOPVE) {
+        if (gameMode == OmegaFight3.ALLPVE) {
             for (int i = 0; i != Omegaman.NUM_PLAYERS; i++) {
                 for (int j = 0, k = 0; j != Omegaman.NUM_STATS; j++) {
-                    if (STATS_STATE[OmegaFight3.TWOPVE][j] == SUMMATIVE) {
-                        grade += WEIGHT[k] * Math.min(1, playerStats[i][j] / MAX_SCORE[k]);
+                    if (STATS_STATE[OmegaFight3.ALLPVE][j] == SUMMATIVE) {
+                        grade += WEIGHT[k] * Math.min(1, playerStats[i][j] / (j == Omegaman.LIVES_LEFT_NO? Math.min(lives, MAX_SCORE[k]): MAX_SCORE[k]));
                         k++;
                     }
                 }
@@ -99,7 +98,6 @@ public class Battle {
             grade *= STATS_WEIGHT / TOT_POS_WEIGHT / Omegaman.NUM_PLAYERS;
             if (winner != BOTH_LOSE) grade += 1 - STATS_WEIGHT;
             grade = roundStat(grade * 100);
-            result = grade + "%";
         }
     }
 
@@ -130,7 +128,7 @@ public class Battle {
             }
         }
 
-        if (gameMode == OmegaFight3.TWOPVE) {
+        if (gameMode == OmegaFight3.ALLPVE) {
             drawBossHealth(coord.add(SCOREBOARD_TO_BOSS_HEALTH_COORD), progress, g);
 
             // Set grade color
@@ -150,7 +148,7 @@ public class Battle {
             
             // Draw result
             Coord gradeCoord = coord.add(SCOREBOARD_TO_GRADE_COORD);
-            g.drawString(progress == 1.0? result: (roundStat(grade * progress) + "%"), (int) (gradeCoord.x), (int) (gradeCoord.y));
+            g.drawString((roundStat(grade * progress) + "%"), (int) (gradeCoord.x), (int) (gradeCoord.y));
         }
         else if (gameMode == OmegaFight3.PVP) {
             drawWinnerStr(coord.add(PVP_SCOREBOARD_TO_WINNER_STR_COORD), PVP_WINNER_FONT, g);
@@ -260,11 +258,22 @@ public class Battle {
     }
 
     // Description:
-    // This method draws the battle information (name and stage) at the specified coordinates using the provided Graphics object.
+    // This method draws the battle information (name, stage, mode, and settings) at the specified coordinates using the provided Graphics object.
     public void drawBattleInfo(Coord coord, Graphics g) {
         g.setColor(Color.WHITE);
         g.setFont(STATS_FONT);
         g.drawString(name, (int) coord.x, (int) coord.y);
-        g.drawString("ON " + stageName.toUpperCase(), (int) coord.x, (int) coord.y + BATTLE_INFO_SPACING);
+        g.drawString(String.format("ON %s IN %s MODE", stageName.toUpperCase(), OmegaFight3.GAMEMODES_NAME[gameMode]), (int) coord.x, (int) coord.y + BATTLE_INFO_SPACING);
+        String thirdStr = "";
+        if (gameMode == OmegaFight3.ALLPVE) {
+            thirdStr = String.format("WITH %d " + (lives == 1? "LIFE": "LIVES") + " AND %s BOSSES", lives, OmegaFight3.DIFFICULTY_NAME[difficulty]);
+        }
+        else if (gameMode == OmegaFight3.PVP) {
+            thirdStr = String.format("WITH %d " + (lives == 1? "LIFE": "LIVES"), lives);
+        }
+        else if (gameMode == OmegaFight3.PVPVE) {
+            thirdStr = String.format("WITH %s BOSSES", OmegaFight3.DIFFICULTY_NAME[difficulty]);
+        }
+        g.drawString(thirdStr, (int) coord.x, (int) coord.y + BATTLE_INFO_SPACING * 2);
     }
 }

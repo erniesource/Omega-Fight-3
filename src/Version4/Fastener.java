@@ -47,7 +47,8 @@ public class Fastener extends Projectile {
 
     // Constructor with default stats
     public Fastener(Boss boss, Coord coord, double dir) {
-        this(boss, coord, SIZE.copy(), SIZE.scaledBy(SIZE_TO_HITBOX), VELOCITY, dir, DMG, KB, KB_SPREAD, DURA, CAN_HIT_PROJ, IS_ON_TOP);
+        this(boss, coord, SIZE.copy(), SIZE.scaledBy(SIZE_TO_HITBOX), VELOCITY, dir,
+        DMG * OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty], KB * OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty], KB_SPREAD, DURA, CAN_HIT_PROJ, IS_ON_TOP);
     }
 
     // Description: Draws the fastener object
@@ -115,7 +116,8 @@ class Energy extends Projectile {
 
     // Constructor with default stats
     public Energy(Boss boss, Coord coord, double dir) {
-        this(boss, coord, SIZE.copy(), SIZE.scaledBy(SIZE_TO_HITBOX), VELOCITY, dir, DMG, KB, KB_SPREAD, DURA, CAN_HIT_PROJ, IS_ON_TOP);
+        this(boss, coord, SIZE.copy(), SIZE.scaledBy(SIZE_TO_HITBOX), VELOCITY, dir,
+        DMG * OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty], KB * OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty], KB_SPREAD, DURA, CAN_HIT_PROJ, IS_ON_TOP);
     }
 
     // Description: THis method draws the pellet of energy on screen
@@ -173,7 +175,8 @@ class Pincer extends Projectile {
 
     // General constructor
     public Pincer(Boss boss, Coord coord) {
-        this(boss, coord, SIZE.copy(), SIZE.scaledBy(SIZE_TO_HITBOX), VELOCITY, coord.x < OmegaFight3.SCREEN_SIZE.x / 2? 0: Math.PI, DMG, KB, KB_SPREAD, DURA, CAN_HIT_PROJ, IS_ON_TOP);
+        this(boss, coord, SIZE.copy(), SIZE.scaledBy(SIZE_TO_HITBOX), VELOCITY, coord.x < OmegaFight3.SCREEN_SIZE.x / 2? 0: Math.PI,
+        DMG * OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty], KB * OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty], KB_SPREAD, DURA, CAN_HIT_PROJ, IS_ON_TOP);
     }
 
     // Description: This method draws the pincer
@@ -260,7 +263,8 @@ class Bombot extends Projectile {
 
     // General constructor with default stats
     public Bombot(Boss boss, Coord coord, double dir, int sign) {
-        this(boss, coord, SIZE.copy(), SIZE.scaledBy(SIZE_TO_HITBOX), VELOCITY, dir, DMG, KB, KB_SPREAD, DURA, LIFE, sign, CAN_HIT_PROJ, IS_ON_TOP);
+        this(boss, coord, SIZE.copy(), SIZE.scaledBy(SIZE_TO_HITBOX), VELOCITY, dir,
+        DMG * OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty], KB * OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty], KB_SPREAD, DURA, LIFE, sign, CAN_HIT_PROJ, IS_ON_TOP);
     }
 
     // Description: This method explodes the bombot

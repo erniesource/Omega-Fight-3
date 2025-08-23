@@ -41,8 +41,7 @@ public class Bird extends Boss {
     public static final double TWEAKS_PER_CYCLE = 2;
 
     // Background attack constants
-    public static final double WAVE_AMT_SCALING_TO_HEALTH = 0.3;
-    public static final int WAVE_HZ = 360;
+    public static final int WAVE_HZ = 1080;
     public static final int MIN_WAVE_HZ = 180;
     public static final double WAVE_THRESHOLD = 0.7;
     public static final int DIVER_PER_WAVE = 3;
@@ -51,8 +50,7 @@ public class Bird extends Boss {
     public static final int WAVING_LFT = -1;
     public static final int WAVING_RIT = 1;
     public static final double DIVER_ALTITUDE = 25 + Diver.SIZE.y / 2;
-    public static final double PUNK_AMT_SCALING_TO_HEALTH = 0.25;
-    public static final int PUNK_HZ = 600;
+    public static final int PUNK_HZ = 2400;
     public static final int MIN_PUNK_HZ = 300;
     public static final double PUNK_THRESHOLD = 0.5;
     public static final int MAX_PUNK = 2;
@@ -100,7 +98,8 @@ public class Bird extends Boss {
 
     // Description: This method calculates all of the background attacks of the bird
     public void backgroundAttack() {
-        double maxHealth = INIT_HEALTH * OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty];
+        double difficultyMult = OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty];
+        double maxHealth = INIT_HEALTH * difficultyMult;
         // Diver attack
         if (health <= maxHealth * WAVE_THRESHOLD) {
             waveCounter++;
@@ -113,7 +112,7 @@ public class Bird extends Boss {
                     waveCounter = 0;
                 }
             }
-            else if (waveCounter >= Math.max(MIN_WAVE_HZ, WAVE_HZ * health / (maxHealth * WAVE_THRESHOLD) / WAVE_AMT_SCALING_TO_HEALTH)) {
+            else if (waveCounter >= Math.max(MIN_WAVE_HZ, WAVE_HZ * health / (maxHealth * WAVE_THRESHOLD) / difficultyMult)) {
                 waving = OmegaFight3.randomSign();
                 waveCounter = 0;
             }
@@ -122,7 +121,7 @@ public class Bird extends Boss {
         // Punk attack
         if (health <= maxHealth * PUNK_THRESHOLD && numPunks != MAX_PUNK) {
             punkCounter++;
-            if (punkCounter >= Math.max(MIN_PUNK_HZ, PUNK_HZ * health / (maxHealth * PUNK_THRESHOLD) / PUNK_AMT_SCALING_TO_HEALTH)) {
+            if (punkCounter >= Math.max(MIN_PUNK_HZ, PUNK_HZ * health / (maxHealth * PUNK_THRESHOLD) / difficultyMult)) {
                 OmegaFight3.babyBosses.addLast(new Pair<>(0, new Punk(this, coord.copy(), -spriteSign)));
                 punkCounter = 0;
                 numPunks++;

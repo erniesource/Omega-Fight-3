@@ -52,7 +52,9 @@ public class Egg extends Projectile{
 
     // Constructors with default stats
     public Egg(Boss boss, Coord coord, double dir, int state) {
-        this(boss, coord, SIZE[state].copy(), SIZE[state].scaledBy(SIZE_TO_HITBOX), VELOCITY[state], dir, DMG[state], KB[state], KB_SPREAD, DURA, state, (int) (Math.random() * NUM_TYPES[state]), CAN_HIT_PROJ, IS_ON_TOP);
+        this(boss, coord, SIZE[state].copy(), SIZE[state].scaledBy(SIZE_TO_HITBOX), VELOCITY[state], dir,
+        DMG[state] * OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty], KB[state] * OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty],
+        KB_SPREAD, DURA, state, (int) (Math.random() * NUM_TYPES[state]), CAN_HIT_PROJ, IS_ON_TOP);
     }
     public Egg(Boss boss, Coord coord, double dir) {
         this(boss, coord, dir, NUM_STATES - 1);
@@ -145,7 +147,8 @@ class Feather extends Projectile {
 
     // Constructor with default stats
     public Feather(Boss boss, Coord coord, double dir) {
-        this(boss, coord, SIZE.copy(), (new Coord(Math.min(SIZE.x, SIZE.y))).scaledBy(SIZE_TO_HITBOX), VELOCITY, dir, DMG, KB, KB_SPREAD, DURA, CAN_HIT_PROJ, IS_ON_TOP);
+        this(boss, coord, SIZE.copy(), (new Coord(Math.min(SIZE.x, SIZE.y))).scaledBy(SIZE_TO_HITBOX), VELOCITY, dir,
+        DMG * OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty], KB * OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty], KB_SPREAD, DURA, CAN_HIT_PROJ, IS_ON_TOP);
     }
 
     // Description: THis method draws the pellet of energy on screen
@@ -212,7 +215,8 @@ class Diver extends Projectile {
 
     // General constructor with default stats
     public Diver(Boss boss, Coord coord, double dir, int sign) {
-        this(boss, coord, SIZE.copy(), SIZE.scaledBy(SIZE_TO_HITBOX), VELOCITY, dir, DMG, KB, KB_SPREAD, DURA, sign, CAN_HIT_PROJ, IS_ON_TOP);
+        this(boss, coord, SIZE.copy(), SIZE.scaledBy(SIZE_TO_HITBOX), VELOCITY, dir,
+        DMG * OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty], KB * OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty], KB_SPREAD, DURA, sign, CAN_HIT_PROJ, IS_ON_TOP);
     }
 
     // Description: This method explodes the bombot
@@ -311,7 +315,8 @@ class Plush extends Projectile {
 
     // Constructor with default stats
     public Plush(Boss boss) {
-        this(boss, SIZE.copy(), SIZE.scaledBy(SIZE_TO_HITBOX), DMG, KB, KB_SPREAD, DURA, CAN_HIT_PROJ, IS_ON_TOP);
+        this(boss, SIZE.copy(), SIZE.scaledBy(SIZE_TO_HITBOX),
+        DMG * OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty], KB * OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty], KB_SPREAD, DURA, CAN_HIT_PROJ, IS_ON_TOP);
     }
 
     // Description: THis method draws the plush on screen

@@ -33,7 +33,8 @@ public class Ring extends Projectile{
 
     // Constructor with default stats
     public Ring(Boss boss, Coord coord, double dir) {
-        this(boss, coord, SIZE.copy(), SIZE.scaledBy(SIZE_TO_HITBOX), VELOCITY, dir, DMG, KB, KB_SPREAD, DURA, CAN_HIT_PROJ, IS_ON_TOP);
+        this(boss, coord, SIZE.copy(), SIZE.scaledBy(SIZE_TO_HITBOX), VELOCITY, dir,
+        DMG * OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty], KB * OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty], KB_SPREAD, DURA, CAN_HIT_PROJ, IS_ON_TOP);
     }
 
     // Description: This method draws the laser ring
@@ -91,7 +92,8 @@ class Meteor extends Projectile {
 
     // Constructor with default stats
     public Meteor(Boss boss, double xCoord, int sign) {
-        this(boss, SIZE.copy(), SIZE.scaledBy(SIZE_TO_HITBOX), xCoord, VELOCITY, 0, DMG, KB, KB_SPREAD, DURA, sign, CAN_HIT_PROJ, IS_ON_TOP);
+        this(boss, SIZE.copy(), SIZE.scaledBy(SIZE_TO_HITBOX), xCoord, VELOCITY, 0,
+        DMG * OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty], KB * OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty], KB_SPREAD, DURA, sign, CAN_HIT_PROJ, IS_ON_TOP);
     }
 
     // Description: This method draws the meteor
@@ -174,7 +176,8 @@ class Bubble extends Projectile {
 
     // Constructor with default stats
     public Bubble(Boss boss, Coord coord) {
-        this(boss, coord, SIZE.copy(), SIZE.scaledBy(SIZE_TO_HITBOX), VELOCITY, DMG, KB, KB_SPREAD, DURA, CAN_HIT_PROJ, IS_ON_TOP);
+        this(boss, coord, SIZE.copy(), SIZE.scaledBy(SIZE_TO_HITBOX), VELOCITY,
+        DMG * OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty], KB * OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty], KB_SPREAD, DURA, CAN_HIT_PROJ, IS_ON_TOP);
     }
 
     // Description: This method explodes the bombot
@@ -259,7 +262,8 @@ class Fire extends Projectile {
 
     // Constructor with default stats
     public Fire(Boss boss, Coord coord, double dir) {
-        this(boss, coord, SIZE.x, VELOCITY, dir, DMG, KB, KB_SPREAD, DURA, CAN_HIT_PROJ, IS_ON_TOP);
+        this(boss, coord, SIZE.x, VELOCITY, dir,
+        DMG * OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty], KB * OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty], KB_SPREAD, DURA, CAN_HIT_PROJ, IS_ON_TOP);
     }
 
     // Description: This method draws the Fire from the ceiling
@@ -288,7 +292,7 @@ class Fire extends Projectile {
     }
 
     public void hitPlayer(Omegaman omega) {
-        omega.hurt(damage, knockback, coord, dir, kbSpread);
+        omega.hurt(damage, knockback, coord, trueDir, kbSpread);
     }
     public void hitBoss(Boss boss) {}
     public void hitBossProj(Projectile proj) {}
