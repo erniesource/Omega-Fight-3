@@ -66,6 +66,7 @@ public class Egg extends Projectile{
         Coord drawCoord = coord.add(size.scaledBy(-0.5));
         g2.drawImage(images[state][type][frameCounter / SPRITE_CHANGE_HZ], (int) (drawCoord.x), (int) (drawCoord.y), (int) size.x, (int) size.y, null);
         g2.rotate(-rotation, coord.x, coord.y);
+        super.draw(g2);
     }
 
     // Description: Processes the egg
@@ -79,7 +80,7 @@ public class Egg extends Projectile{
         eggVelocity.y += ACCEL;
 
         // Smokes (Does every state need smoke?)
-        character.smokeQ.add(new Smoke(coord.copy(), new Coord(Math.max(size.x, size.y) * SIZE_TO_SMOKE), Math.random() * Math.PI * 2));
+        owner.smokeQ.add(new Smoke(coord.copy(), new Coord(Math.max(size.x, size.y) * SIZE_TO_SMOKE)));
 
         // Check if out of screen
         if (coord.x < -size.x / 2 || coord.x > OmegaFight3.SCREEN_SIZE.x + size.x / 2 || coord.y > OmegaFight3.SCREEN_SIZE.y + size.y / 2) {
@@ -96,25 +97,29 @@ public class Egg extends Projectile{
         }
     }
 
-    public void die() { // Change this to be like spike
+    public void die() {
         if (!dead) {
             super.die();
 
             // Split if not at final state
             if (state != 0) {
                 for (int i = 0; i != PROJS_PER_SPLIT[state - 1]; i++) {
-                    OmegaFight3.babyProjectiles.add(new Egg((Boss) character, coord.copy(), -Math.PI / (PROJS_PER_SPLIT[state - 1] + 1) * (i + 1), state - 1));
+                    OmegaFight3.babyProjectiles.add(new Egg((Boss) owner, coord.copy(), -Math.PI / (PROJS_PER_SPLIT[state - 1] + 1) * (i + 1), state - 1));
                 }
             }
         }
     }
 
-    public void hitPlayer(Omegaman omega) {
-        omega.hurt(damage, knockback, coord, Math.atan2(eggVelocity.y, eggVelocity.x), kbSpread);
-        super.die();
+    public void dieTo(Char enemy) {
+        if (enemy instanceof Omegaman) {
+            ((Omegaman) enemy).hurt(damage, knockback, coord, Math.atan2(eggVelocity.y, eggVelocity.x), kbSpread);
+            super.die();
+        }
     }
-    public void hitBoss(Boss boss) {}
-    public void hitBossProj(Projectile proj) {}
+
+    public void dieTo(Projectile proj) {
+        if (!(proj.owner instanceof Boss)) super.dieTo(proj);
+    }
 }
 
 class Feather extends Projectile {
@@ -157,6 +162,7 @@ class Feather extends Projectile {
         Coord drawCoord = coord.add(size.scaledBy(-0.5));
         g2.drawImage(images[-frameCounter / SPRITE_CHANGE_HZ], (int) (drawCoord.x), (int) (drawCoord.y), (int) size.x, (int) size.y, null);
         g2.rotate(-dir, coord.x, coord.y);
+        super.draw(g2);
     }
 
     // Description: This method processes the pellet
@@ -165,15 +171,23 @@ class Feather extends Projectile {
         if (frameCounter == -SPRITE_CHANGE_HZ * NUM_SPRITES) frameCounter = 0;
     }
 
-    public void hitBoss(Boss boss) {}
-    public void hitBossProj(Projectile proj) {}
+    public void dieTo(Char enemy) {
+        if (enemy instanceof Omegaman) {
+            ((Omegaman) enemy).hurt(damage, knockback, coord, dir, kbSpread);
+            die();
+        }
+    }
+
+    public void dieTo(Projectile proj) {
+        if (!(proj.owner instanceof Boss)) super.dieTo(proj);
+    }
 }
 
 class Diver extends Projectile {
     // Size constants
     public static final Coord SIZE = new Coord(160, 110);
     public static final double SIZE_TO_SMOKE = 0.35;
-    public static final double SIZE_TO_HITBOX = 1.25;
+    public static final double SIZE_TO_HITBOX = 1.2;
     public static final Coord EXPLOSION_SIZE_MULT = new Coord(33.0/20, 48.0/20);
 
     // Damage constants
@@ -232,6 +246,7 @@ class Diver extends Projectile {
         g2.rotate(dir, coord.x, coord.y);
         g2.drawImage(images[-frameCounter / SPRITE_CHANGE_HZ], (int) (coord.x - size.x / 2), (int) (coord.y - size.y / 2 * sign), (int) size.x, (int) size.y * sign, null);
         g2.rotate(-dir, coord.x, coord.y);
+        super.draw(g2);
     }
 
     // Description: this method processes the bombot
@@ -266,22 +281,22 @@ class Diver extends Projectile {
             }
 
             // Smoke
-            character.smokeQ.add(new Smoke(coord.copy(), new Coord(Math.max(size.x, size.y) * SIZE_TO_SMOKE), Math.random() * Math.PI * 2));
+            owner.smokeQ.add(new Smoke(coord.copy(), new Coord(Math.max(size.x, size.y) * SIZE_TO_SMOKE)));
         }
     }
 
-    public boolean shouldDieTo(Projectile proj) {
-        return true;
+    public void dieTo(Char enemy) {
+        if (enemy instanceof Omegaman) {
+            double mult = Math.sqrt(velocity) * MULT;
+            ((Omegaman) enemy).hurt(damage * mult, knockback * mult, coord, dir, KB_SPREAD);
+            OmegaFight3.screenShakeCounter += (int) (SCREENSHAKE * mult);
+            die();
+        }
     }
 
-    public void hitPlayer(Omegaman omega) {
-        double mult = Math.sqrt(velocity) * MULT;
-        omega.hurt(damage * mult, knockback * mult, coord, dir, KB_SPREAD);
-        OmegaFight3.screenShakeCounter += (int) (SCREENSHAKE * mult);
-        die();
+    public void dieTo(Projectile proj) {
+        if (!(proj.owner instanceof Boss)) die();
     }
-    public void hitBoss(Boss boss) {}
-    public void hitBossProj(Projectile proj) {}
 }
 
 class Plush extends Projectile {
@@ -326,6 +341,7 @@ class Plush extends Projectile {
             Coord drawCoord = coord.add(size.scaledBy(-0.5));
             g2.drawImage(images[state][frameCounter / SPRITE_CHANGE_HZ], (int) (drawCoord.x), (int) (drawCoord.y), (int) size.x, (int) size.y, null);
             g2.rotate(-dir, coord.x, coord.y);
+            super.draw(g2);
         }
     }
 
@@ -336,18 +352,29 @@ class Plush extends Projectile {
 
     public void die() {
         if (state != DEAD) {
-            state--;
+            state--; // Incremement counter for hitPlayer and divvy up damage once punk falls
             if (state == DEAD) {
                 hitBoxActive = false;
-                ((Punk) character).trueHurt(1);
+                ((Punk) owner).trueHurt(1);
             }
         }
     }
 
-    public boolean shouldDieTo(double enemyDura) {
-        return true;
+    public void dieTo(Char enemy) {
+        if (enemy instanceof Omegaman) {
+            Omegaman omega = ((Omegaman) enemy);
+            omega.hurt(damage, knockback, coord, dir, kbSpread);
+            die();
+            ((Punk) owner).hits[omega.playerNo]++;
+        }
     }
 
-    public void hitBoss(Boss boss) {}
-    public void hitBossProj(Projectile proj) {}
+    public void dieTo(Projectile proj) {
+        if (!(proj.owner instanceof Boss)) {
+            die();
+            if (proj.owner instanceof Omegaman) {
+                ((Punk) owner).hits[((Omegaman) proj.owner).playerNo]++;
+            }
+        }
+    }
 }

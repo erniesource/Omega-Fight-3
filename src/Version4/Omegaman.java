@@ -140,7 +140,6 @@ public class Omegaman extends Char {
     public int heatCounter;
     public int chargingWeapon = NOT_CHARGING;
     public int[] loadout;
-    public int[] loadoutButtono;
 
     // Skill point stats
     public int skillPts = ONES_PER_SKILL_PT * 3 / 2;
@@ -168,7 +167,7 @@ public class Omegaman extends Char {
     public int playerNo;
 
     // Constructor
-    public Omegaman(int playerNo, Coord coord, Coord size, int spriteSign, int onPlatform, int livesLeft,int[] controls, int[] shtKeys, int[] loadout, int[] loadoutButtono) throws IOException {
+    public Omegaman(int playerNo, Coord coord, Coord size, int spriteSign, int onPlatform, int livesLeft,int[] controls, int[] shtKeys, int[] loadout) throws IOException {
         // Initialize character variables
         super(coord, IDLE_SPRITE, spriteSign, 0, size, ALIVE_STATE);
 
@@ -178,7 +177,6 @@ public class Omegaman extends Char {
         this.livesLeft = livesLeft;
         this.loadout = loadout;
         this.shtKeys = shtKeys;
-        this.loadoutButtono = loadoutButtono;
 
         // Assign control keys
         lftKey = controls[0];
@@ -572,7 +570,6 @@ public class Omegaman extends Char {
         coyoteCounter = 0;
         shootCharge = 0;
         chargingWeapon = NOT_CHARGING;
-        heatCounter = 0;
         runSign = 1;
 
         // Died stats resets
@@ -590,6 +587,7 @@ public class Omegaman extends Char {
             skillPtCounter = 0;
             stunCounter = 0;
             invCounter = RESPAWN_INIT_VELOCITY + RESPAWN_TIME_LIMIT + 2;
+            heatCounter = 0;
             OmegaFight3.play(OmegaFight3.boom);
             // fireCounter = 0;
         }
@@ -809,7 +807,7 @@ public class Omegaman extends Char {
         }
 
         // Smoke trails
-        smokeQ.add(new Smoke(coord.copy(), Smoke.SMOKE_SIZE.scaledBy(Math.pow(Math.hypot(velocity.x, velocity.y), Smoke.SMOKE_VEL_SCALE) * Math.min(size.x, size.y) / Smoke.SMOKE_DESIGNED_SIZE), Math.random() * Math.PI * 2));
+        smokeQ.add(new Smoke(coord.copy(), Smoke.SMOKE_SIZE.scaledBy(Math.pow(Math.hypot(velocity.x, velocity.y), Smoke.SMOKE_VEL_SCALE) * Math.min(size.x, size.y) / Smoke.SMOKE_DESIGNED_SIZE)));
     }
 
     // Description: This method calculates the invincibility frames of the player
@@ -945,5 +943,6 @@ public class Omegaman extends Char {
         if (invCounter % INV_BLINK_CYCLE_LEN < INV_BLINK_CYCLE_LEN - INV_BLINK_LEN) {
             g.drawImage(sprite[playerNo][spriteNo], (int) (coord.x - size.x / 2 * spriteSign), (int) (coord.y - size.y / 2), (int) (size.x * spriteSign), (int) (size.y), null);
         }
+        super.draw(g);
     }
 }

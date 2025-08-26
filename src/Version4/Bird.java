@@ -172,6 +172,7 @@ class Punk extends Boss {
     public double rotation;
     public Bird mommy;
     public Plush[] plushes = new Plush[(int) INIT_HEALTH];
+    public int[] hits = new int[Omegaman.NUM_PLAYERS];
 
     // Constructor
     public Punk(Bird mommy, Coord coord, int sign) {
@@ -279,7 +280,10 @@ class Punk extends Boss {
     public void surge() {
         super.surge();
         if (frameCounter == OmegaFight3.SURGE_FRAME_HZ * OmegaFight3.SURGE_SPRITE_WIN_CHECK) {
-            mommy.hurt(DEATH_DMG);
+            double trueDmg = mommy.hurt(DEATH_DMG);
+            for (int i = 0; i != Omegaman.NUM_PLAYERS; i++) {
+                OmegaFight3.omegaman[i].addToStat(Omegaman.DMG_TO_BOSS, hits[i] / (INIT_HEALTH * Plush.NUM_STATES) * trueDmg);
+            }
         }
         else if (frameCounter == OmegaFight3.SURGE_FRAME_HZ * OmegaFight3.NUM_SURGE_IMAGES) {
             OmegaFight3.deadBosses.addLast(this);

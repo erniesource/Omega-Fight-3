@@ -43,6 +43,7 @@ public class Ring extends Projectile{
         Coord drawCoord = coord.add(size.scaledBy(-0.5));
         g2.drawImage(images[-frameCounter / SPRITE_CHANGE_HZ], (int) (drawCoord.x), (int) (drawCoord.y), (int) size.x, (int) size.y, null);
         g2.rotate(-dir, coord.x, coord.y);
+        super.draw(g2);
     }
 
     // Description: this method processes the laser ring
@@ -51,8 +52,16 @@ public class Ring extends Projectile{
         if (frameCounter == -SPRITE_CHANGE_HZ * NUM_SPRITES) frameCounter = 0;
     }
 
-    public void hitBoss(Boss boss) {}
-    public void hitBossProj(Projectile proj) {}
+    public void dieTo(Char enemy) {
+        if (enemy instanceof Omegaman) {
+            ((Omegaman) enemy).hurt(damage, knockback, coord, dir, kbSpread);
+            die();
+        }
+    }
+
+    public void dieTo(Projectile proj) {
+        if (!(proj.owner instanceof Boss)) super.dieTo(proj);
+    }
 }
 
 class Meteor extends Projectile {
@@ -102,6 +111,7 @@ class Meteor extends Projectile {
         Coord drawCoord = coord.add(size.scaledBy(-0.5));
         g2.drawImage(images[frameCounter / SPRITE_CHANGE_HZ], (int) (drawCoord.x), (int) (drawCoord.y), (int) size.x, (int) size.y, null);
         g2.rotate(-dir, coord.x, coord.y);
+        super.draw(g2);
     }
 
     // Description: This method processes the meteor
@@ -111,7 +121,7 @@ class Meteor extends Projectile {
         func();
 
         // Smoke
-        character.smokeQ.add(new Smoke(coord.copy(), new Coord(Math.max(size.x, size.y) * SIZE_TO_SMOKE), Math.random() * Math.PI * 2));
+        owner.smokeQ.add(new Smoke(coord.copy(), new Coord(Math.max(size.x, size.y) * SIZE_TO_SMOKE)));
 
         // Sprite change
         frameCounter = (frameCounter + 1) % (NUM_SPRITES * SPRITE_CHANGE_HZ);
@@ -127,11 +137,15 @@ class Meteor extends Projectile {
         dir = Math.atan(Math.abs(OmegaFight3.SCREEN_SIZE.y - SIZE.y / 2 - (Dragon.STATE_COORD[Dragon.BARF].y + Dragon.COORD_TO_BARF.y)) / 2 * (Math.PI * 2 / ((Dragon.STATE_COORD[Dragon.BARF].x + Dragon.COORD_TO_BARF.x * Dragon.STATE_SPRITE_SIGN[Dragon.BARF]) / PERIODS)) * Math.sin(Math.PI * 2 / ((Dragon.STATE_COORD[Dragon.BARF].x + Dragon.COORD_TO_BARF.x * Dragon.STATE_SPRITE_SIGN[Dragon.BARF]) / PERIODS) * (coord.x - (Dragon.STATE_COORD[Dragon.BARF].x + Dragon.COORD_TO_BARF.x * sign)))) + (sign == OmegaFight3.LFT_SIGN? Math.PI: 0);
     }
 
-    public void hitPlayer(Omegaman omega) {
-        omega.hurt(damage, knockback, coord, dir, kbSpread);
+    public void dieTo(Char enemy) {
+        if (enemy instanceof Omegaman) {
+            ((Omegaman) enemy).hurt(damage, knockback, coord, dir, kbSpread);
+        }
     }
-    public void hitBoss(Boss boss) {}
-    public void hitBossProj(Projectile proj) {}
+
+    public void dieTo(Projectile proj) {
+        if (!(proj.owner instanceof Boss)) super.dieTo(proj);
+    }
 }
 
 class Bubble extends Projectile {
@@ -192,6 +206,7 @@ class Bubble extends Projectile {
     public void draw(Graphics2D g2) {
         Coord drawCoord = coord.add(size.scaledBy(-0.5));
         g2.drawImage(images[frameCounter / SPRITE_CHANGE_HZ], (int) (drawCoord.x), (int) (drawCoord.y), (int) size.x, (int) size.y, null);
+        super.draw(g2);
     }
 
     // Description: This method processes the fire bubble
@@ -217,13 +232,17 @@ class Bubble extends Projectile {
         return true;
     }
 
-    public void hitPlayer(Omegaman omega) {
-        omega.hurt(damage, knockback, coord, Math.atan2(bubbleVelocity.y, bubbleVelocity.x), kbSpread);
-        OmegaFight3.screenShakeCounter += (int) (SCREENSHAKE * (size.x / SIZE.x));
-        die();
+    public void dieTo(Char enemy) {
+        if (enemy instanceof Omegaman) {
+            ((Omegaman) enemy).hurt(damage, knockback, coord, Math.atan2(bubbleVelocity.y, bubbleVelocity.x), kbSpread);
+            die();
+            OmegaFight3.screenShakeCounter += (int) (SCREENSHAKE * (size.x / SIZE.x));
+        }
     }
-    public void hitBoss(Boss boss) {}
-    public void hitBossProj(Projectile proj) {}
+
+    public void dieTo(Projectile proj) {
+        if (!(proj.owner instanceof Boss)) super.dieTo(proj);
+    }
 }
 
 class Fire extends Projectile {
@@ -269,6 +288,7 @@ class Fire extends Projectile {
     // Description: This method draws the Fire from the ceiling
     public void draw(Graphics2D g2) {
         g2.drawImage(images[frameCounter / SPRITE_CHANGE_HZ], (int) (coord.x - size.x / 2), (int) (coord.y - size.y / 2 * Math.sin(trueDir)), (int) size.x, (int) (size.y * Math.sin(trueDir)), null);
+        super.draw(g2);
     }
 
     // Description: This method processes the fire from the ceiling
@@ -291,9 +311,13 @@ class Fire extends Projectile {
         }
     }
 
-    public void hitPlayer(Omegaman omega) {
-        omega.hurt(damage, knockback, coord, trueDir, kbSpread);
+    public void dieTo(Char enemy) {
+        if (enemy instanceof Omegaman) {
+            ((Omegaman) enemy).hurt(damage, knockback, coord, trueDir, kbSpread);
+        }
     }
-    public void hitBoss(Boss boss) {}
-    public void hitBossProj(Projectile proj) {}
+
+    public void dieTo(Projectile proj) {
+        if (!(proj.owner instanceof Boss)) super.dieTo(proj);
+    }
 }

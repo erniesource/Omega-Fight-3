@@ -263,16 +263,16 @@ public class Battle {
         g.setColor(Color.WHITE);
         g.setFont(STATS_FONT);
         g.drawString(name, (int) coord.x, (int) coord.y);
-        g.drawString(String.format("ON %s IN %s MODE", stageName.toUpperCase(), OmegaFight3.GAMEMODES_NAME[gameMode]), (int) coord.x, (int) coord.y + BATTLE_INFO_SPACING);
+        g.drawString(String.format("ON %s IN %s MODE", stageName.toUpperCase(), OmegaFight3.GAMEMODE_NAME[gameMode]), (int) coord.x, (int) coord.y + BATTLE_INFO_SPACING);
         String thirdStr = "";
         if (gameMode == OmegaFight3.ALLPVE) {
-            thirdStr = String.format("WITH %d " + (lives == 1? "LIFE": "LIVES") + " AND %s BOSSES", lives, OmegaFight3.DIFFICULTY_NAME[difficulty]);
+            thirdStr = String.format("WITH %d " + (lives == 1? "LIFE": "LIVES") + " AND BOSSES THAT WERE %s", lives, OmegaFight3.DIFFICULTY_NAME[difficulty]);
         }
         else if (gameMode == OmegaFight3.PVP) {
             thirdStr = String.format("WITH %d " + (lives == 1? "LIFE": "LIVES"), lives);
         }
         else if (gameMode == OmegaFight3.PVPVE) {
-            thirdStr = String.format("WITH %s BOSSES", OmegaFight3.DIFFICULTY_NAME[difficulty]);
+            thirdStr = String.format("WITH BOSSES THAT WERE %s", OmegaFight3.DIFFICULTY_NAME[difficulty]);
         }
         g.drawString(thirdStr, (int) coord.x, (int) coord.y + BATTLE_INFO_SPACING * 2);
     }
