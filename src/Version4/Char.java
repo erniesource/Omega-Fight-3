@@ -44,9 +44,16 @@ abstract class Char {
         }
     }
 
+    public void draw(Graphics g) {
+        if (OmegaFight3.hitBoxVis) {
+            Coord hitBoxCoord = coord.add(size.scaledBy(-0.5));
+            g.setColor(OmegaFight3.CHEAT_COLOR);
+            g.drawRect((int) (hitBoxCoord.x), (int) (hitBoxCoord.y), (int) (size.x), (int) (size.y));
+        }
+    }
+
     // Abstract methods for each char
-    abstract public void hurt(double damage);
-    abstract public void draw(Graphics g);
+    abstract public double hurt(double damage);
 }
 
 abstract class Boss extends Char {
@@ -107,10 +114,16 @@ abstract class Boss extends Char {
     public BufferedImage[] sprite;
 
     // Description: This method hurts and prepares the boss to die if they're gonna die
-    public void hurt(double damage) {
-        health -= damage;
+    public double hurt(double damage) {
         if (!hurt) hurt = true;
-        if (health <= 0 && state != DEAD) prepareToDie();
+        if (state != DEAD && OmegaFight3.transitiono != OmegaFight3.GAME_SET && OmegaFight3.transitiono != OmegaFight3.GAME_OVER) {
+            health -= damage;
+            if (health <= 0 && state != DEAD) prepareToDie();
+            return damage;
+        }
+        else {
+            return 0;
+        }
     }
 
     // Description: This method calculates the hurt blinking of the boss
@@ -179,6 +192,13 @@ abstract class Boss extends Char {
     public void draw(Graphics g) {
         if (!hurt || hurtCounter >= Boss.HURT_BLINK_HZ) {
             g.drawImage(sprite[spriteNo], (int) (coord.x - size.x / 2 * spriteSign), (int) (coord.y - size.y / 2), (int) size.x * spriteSign, (int) size.y, null);
+        }
+
+        if (OmegaFight3.hitBoxVis) {
+            Coord hitBoxSize = size.scaledBy(sizeToHitbox);
+            Coord hitBoxCoord = coord.add(hitBoxSize.scaledBy(-0.5));
+            g.setColor(OmegaFight3.CHEAT_COLOR);
+            g.drawRect((int) (hitBoxCoord.x), (int) (hitBoxCoord.y), (int) (hitBoxSize.x), (int) (hitBoxSize.y));
         }
     }
 

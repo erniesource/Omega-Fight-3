@@ -9,7 +9,7 @@ abstract public class Projectile {
     public static final int INF_LIFE = 0;
     
     // General variables
-    public Char character;
+    public Char owner;
     public Coord coord;
     public Coord size;
     public Coord hitBoxSize;
@@ -30,8 +30,8 @@ abstract public class Projectile {
     public double dura;
 
     // Constructor
-    public Projectile(Char character, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double kbSpread, double dura, int frameCounter, boolean canHitProj, boolean isOnTop) {
-        this.character = character;
+    public Projectile(Char owner, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double kbSpread, double dura, int frameCounter, boolean canHitProj, boolean isOnTop) {
+        this.owner = owner;
         this.coord = coord;
         this.size = size;
         this.hitBoxSize = hitBoxSize;
@@ -50,8 +50,17 @@ abstract public class Projectile {
     public void die() {
         if (!dead) {
             dead = true;
-            OmegaFight3.deadProjectiles.add(this);
+            OmegaFight3.deadProjectiles.add(this); // Make it so that all projs die in smoke or explosion?
         }
+    }
+
+    public void dieTo(Projectile proj) {
+        if (dura < proj.dura) die();
+    }
+
+    public void dieTo(Char enemy) {
+        enemy.hurt(damage);
+        die();
     }
 
     // Description: THis method processes the movement and expiry of the projectile
@@ -75,31 +84,12 @@ abstract public class Projectile {
         coord.y += velocity * Math.sin(dir);
     }
 
-    public void hitPlayerProj(Projectile proj) {
-        if (shouldDieTo(proj.dura)) die();
-        if (proj.shouldDieTo(dura)) proj.die();
-    }
-
-    public void hitBossProj(Projectile proj) {
-        if (shouldDieTo(proj.dura)) die();
-        if (proj.shouldDieTo(dura)) proj.die();
-    }
-
-    public void hitPlayer(Omegaman omega) {
-        omega.hurt(damage, knockback, coord, dir, kbSpread);
-        die();
-    }
-
-    public void hitBoss(Boss boss) {
-        boss.hurt(damage);
-        die();
-    }
-
-    // Description: This method determines whether or not this projectile should die to another projectile with the specified dura
-    public boolean shouldDieTo(double enemyDura) {
-        return dura <= enemyDura;
-    }
-
     // Abstract method(s)
-    abstract public void draw(Graphics2D g2);
+    public void draw(Graphics2D g2) {
+        if (OmegaFight3.hitBoxVis) {
+            Coord hitBoxCoord = coord.add(hitBoxSize.scaledBy(-0.5));
+            g2.setColor(OmegaFight3.CHEAT_COLOR);
+            g2.drawRect((int) (hitBoxCoord.x), (int) (hitBoxCoord.y), (int) (hitBoxSize.x), (int) (hitBoxSize.y)); // FIGURE THIS OUT
+        }
+    }
 }

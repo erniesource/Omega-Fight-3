@@ -22,10 +22,10 @@ public class Smoke {
     private Coord size;
 
     // Constructor
-    public Smoke(Coord coord, Coord size, double rotation) {
+    public Smoke(Coord coord, Coord size) {
         this.coord = coord;
         this.size = size;
-        this.rotation = rotation;
+        rotation = OmegaFight3.randomDir();
         frameCounter = SMOKE_LEN;
     }
 

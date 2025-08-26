@@ -42,11 +42,10 @@ public class Doctor extends Boss {
 
     // Background attack constants
     public static final double PINCER_AMT_SCALING_TO_HEALTH = 0.3;
-    public static final int PINCER_HZ = 480;
+    public static final int PINCER_HZ = 1200;
     public static final int MIN_PINCER_HZ = 240;
     public static final double PINCER_THRESHOLD = 0.7;
-    public static final double BOMBOT_AMT_SCALING_TO_HEALTH = 0.25;
-    public static final int BOMBOT_HZ = 600;
+    public static final int BOMBOT_HZ = 1800;
     public static final int MIN_BOMBOT_HZ = 300;
     public static final double BOMBOT_THRESHOLD = 0.4;
 
@@ -108,11 +107,12 @@ public class Doctor extends Boss {
 
     // Description: This method calculates all of the background attacks of the doctor
     public void backgroundAttack() {
-        double maxHealth = INIT_HEALTH * OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty];
+        double difficultyMult = OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty];
+        double maxHealth = INIT_HEALTH * difficultyMult;
         // Pincer attack
         if (health <= maxHealth * PINCER_THRESHOLD) {
             pincerCounter++;
-            if (pincerCounter >= Math.max(MIN_PINCER_HZ, PINCER_HZ * health / (maxHealth * PINCER_THRESHOLD) / PINCER_AMT_SCALING_TO_HEALTH)) {
+            if (pincerCounter >= Math.max(MIN_PINCER_HZ, PINCER_HZ * health / (maxHealth * PINCER_THRESHOLD)) / difficultyMult) {
                 OmegaFight3.projectiles.add(new Pincer(this, new Coord((int) (Math.random() * 2) * OmegaFight3.SCREEN_SIZE.x, (int) (Math.random() * 2) * OmegaFight3.SCREEN_SIZE.y)));
                 pincerCounter = 0;
             }
@@ -121,7 +121,7 @@ public class Doctor extends Boss {
         // Homing missile attack
         if (health <= maxHealth * BOMBOT_THRESHOLD) {
             bombotCounter++;
-            if (bombotCounter >= Math.max(MIN_BOMBOT_HZ, BOMBOT_HZ * health / (maxHealth * BOMBOT_THRESHOLD) / BOMBOT_AMT_SCALING_TO_HEALTH)) {
+            if (bombotCounter >= Math.max(MIN_BOMBOT_HZ, BOMBOT_HZ * health / (maxHealth * BOMBOT_THRESHOLD)) / difficultyMult) {
                 int sign = OmegaFight3.randomSign();
                 OmegaFight3.projectiles.add(new Bombot(this, new Coord(OmegaFight3.SCREEN_CENTER.x - (OmegaFight3.SCREEN_CENTER.x + Bombot.SIZE.x / 2) * sign, OmegaFight3.SCREEN_SIZE.y * Math.random()), OmegaFight3.signToRadians(sign), sign));
                 bombotCounter = 0;

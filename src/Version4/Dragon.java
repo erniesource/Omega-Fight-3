@@ -38,12 +38,10 @@ public class Dragon extends Boss{
     public static final Coord COORD_TO_BARF = new Coord(STATE_SIZE[BARF].x * 7 / 25, -STATE_SIZE[BARF].y / 5);
 
     // Background attack constants
-    public static final double BUBBLE_AMT_SCALING_TO_HEALTH = 0.3;
-    public static final int BUBBLE_HZ = 240;
+    public static final int BUBBLE_HZ = 720;
     public static final int MIN_BUBBLE_HZ = 120;
     public static final double BUBBLE_THRESHOLD = 0.7;
-    public static final double FIRE_AMT_SCALING_TO_HEALTH = 0.25;
-    public static final int FIRE_HZ = 240;
+    public static final int FIRE_HZ = 960;
     public static final int MIN_FIRE_HZ = 120;
     public static final double FIRE_THRESHOLD = 0.4;
 
@@ -102,11 +100,12 @@ public class Dragon extends Boss{
 
     // Description: This method calculates the background attacks of the dragon
     public void backgroundAttack() {
-        double maxHealth = INIT_HEALTH * OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty];
+        double difficultyMult = OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty];
+        double maxHealth = INIT_HEALTH * difficultyMult;
         // Bubble attack
         if (health <= maxHealth * BUBBLE_THRESHOLD) {
             bubbleCounter++;
-            if (bubbleCounter >= Math.max(MIN_BUBBLE_HZ, BUBBLE_HZ * health / (maxHealth * BUBBLE_THRESHOLD) / BUBBLE_AMT_SCALING_TO_HEALTH)) {
+            if (bubbleCounter >= Math.max(MIN_BUBBLE_HZ, BUBBLE_HZ * health / (maxHealth * BUBBLE_THRESHOLD) / difficultyMult)) {
                 OmegaFight3.projectiles.add(new Bubble(this, new Coord(OmegaFight3.randomSign() * (OmegaFight3.SCREEN_CENTER.x + Bubble.SIZE.x / 2) + OmegaFight3.SCREEN_CENTER.x, OmegaFight3.SCREEN_SIZE.y - Bubble.SIZE.y / 2)));
                 bubbleCounter = 0;
             }
@@ -115,7 +114,7 @@ public class Dragon extends Boss{
         // Flames from the ceiling attack
         if (health <= maxHealth * FIRE_THRESHOLD) {
             fireCounter++;
-            if (fireCounter >= Math.max(MIN_FIRE_HZ, FIRE_HZ * health / (maxHealth * FIRE_THRESHOLD) / FIRE_AMT_SCALING_TO_HEALTH)) {
+            if (fireCounter >= Math.max(MIN_FIRE_HZ, FIRE_HZ * health / (maxHealth * FIRE_THRESHOLD) / difficultyMult)) {
                 OmegaFight3.projectiles.add(new Fire(this, new Coord(Math.random() * (OmegaFight3.SCREEN_SIZE.x - Fire.SIZE.x) + Fire.SIZE.x / 2, 0), Math.PI / 2));
                 fireCounter = 0;
             }

@@ -47,13 +47,15 @@ public class Fastener extends Projectile {
 
     // Constructor with default stats
     public Fastener(Boss boss, Coord coord, double dir) {
-        this(boss, coord, SIZE.copy(), SIZE.scaledBy(SIZE_TO_HITBOX), VELOCITY, dir, DMG, KB, KB_SPREAD, DURA, CAN_HIT_PROJ, IS_ON_TOP);
+        this(boss, coord, SIZE.copy(), SIZE.scaledBy(SIZE_TO_HITBOX), VELOCITY, dir,
+        DMG * OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty], KB * OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty], KB_SPREAD, DURA, CAN_HIT_PROJ, IS_ON_TOP);
     }
 
     // Description: Draws the fastener object
     public void draw(Graphics2D g2) {
         Coord drawCoord = coord.add(size.scaledBy(-0.5));
         g2.drawImage(images[type][frameCounter / SPRITE_CHANGE_HZ], (int) (drawCoord.x), (int) (drawCoord.y), (int) size.x, (int) size.y, null);
+        super.draw(g2);
     }
 
     // Description: Processes the fastener
@@ -76,8 +78,16 @@ public class Fastener extends Projectile {
         checkLeave();
     }
 
-    public void hitBoss(Boss boss) {}
-    public void hitBossProj(Projectile proj) {}
+    public void dieTo(Char enemy) {
+        if (enemy instanceof Omegaman) {
+            ((Omegaman) enemy).hurt(damage, knockback, coord, Math.atan2(fastenerVelocity.y, fastenerVelocity.x), kbSpread);
+            die();
+        }
+    }
+
+    public void dieTo(Projectile proj) {
+        if (!(proj.owner instanceof Boss)) super.dieTo(proj);
+    }
 }
 
 class Energy extends Projectile {
@@ -115,7 +125,8 @@ class Energy extends Projectile {
 
     // Constructor with default stats
     public Energy(Boss boss, Coord coord, double dir) {
-        this(boss, coord, SIZE.copy(), SIZE.scaledBy(SIZE_TO_HITBOX), VELOCITY, dir, DMG, KB, KB_SPREAD, DURA, CAN_HIT_PROJ, IS_ON_TOP);
+        this(boss, coord, SIZE.copy(), SIZE.scaledBy(SIZE_TO_HITBOX), VELOCITY, dir,
+        DMG * OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty], KB * OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty], KB_SPREAD, DURA, CAN_HIT_PROJ, IS_ON_TOP);
     }
 
     // Description: THis method draws the pellet of energy on screen
@@ -124,6 +135,7 @@ class Energy extends Projectile {
         Coord drawCoord = coord.add(size.scaledBy(-0.5));
         g2.drawImage(images[-frameCounter / SPRITE_CHANGE_HZ], (int) (drawCoord.x), (int) (drawCoord.y), (int) size.x, (int) size.y, null);
         g2.rotate(-rotation, coord.x, coord.y);
+        super.draw(g2);
     }
 
     // Description: This method processes the pellet
@@ -133,8 +145,16 @@ class Energy extends Projectile {
         rotation = (rotation + ROT_SPEED) % (Math.PI * 2);
     }
 
-    public void hitBoss(Boss boss) {}
-    public void hitBossProj(Projectile proj) {}
+    public void dieTo(Char enemy) {
+        if (enemy instanceof Omegaman) {
+            ((Omegaman) enemy).hurt(damage, knockback, coord, dir, kbSpread);
+            die();
+        }
+    }
+
+    public void dieTo(Projectile proj) {
+        if (!(proj.owner instanceof Boss)) super.dieTo(proj);
+    }
 }
 
 class Pincer extends Projectile {
@@ -173,7 +193,8 @@ class Pincer extends Projectile {
 
     // General constructor
     public Pincer(Boss boss, Coord coord) {
-        this(boss, coord, SIZE.copy(), SIZE.scaledBy(SIZE_TO_HITBOX), VELOCITY, coord.x < OmegaFight3.SCREEN_SIZE.x / 2? 0: Math.PI, DMG, KB, KB_SPREAD, DURA, CAN_HIT_PROJ, IS_ON_TOP);
+        this(boss, coord, SIZE.copy(), SIZE.scaledBy(SIZE_TO_HITBOX), VELOCITY, coord.x < OmegaFight3.SCREEN_SIZE.x / 2? 0: Math.PI,
+        DMG * OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty], KB * OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty], KB_SPREAD, DURA, CAN_HIT_PROJ, IS_ON_TOP);
     }
 
     // Description: This method draws the pincer
@@ -182,6 +203,7 @@ class Pincer extends Projectile {
         Coord drawCoord = coord.add(size.scaledBy(-0.5));
         g2.drawImage(images[frameCounter / SPRITE_CHANGE_HZ], (int) (drawCoord.x), (int) (drawCoord.y), (int) size.x, (int) size.y, null);
         g2.rotate(-dir, coord.x, coord.y);
+        super.draw(g2);
     }
 
     // Description: THis method processes the pincer
@@ -217,8 +239,16 @@ class Pincer extends Projectile {
         }
     }
 
-    public void hitBoss(Boss boss) {}
-    public void hitBossProj(Projectile proj) {}
+    public void dieTo(Char enemy) {
+        if (enemy instanceof Omegaman) {
+            ((Omegaman) enemy).hurt(damage, knockback, coord, dir, kbSpread);
+            die();
+        }
+    }
+
+    public void dieTo(Projectile proj) {
+        if (!(proj.owner instanceof Boss)) super.dieTo(proj);
+    }
 }
 
 class Bombot extends Projectile {
@@ -260,7 +290,8 @@ class Bombot extends Projectile {
 
     // General constructor with default stats
     public Bombot(Boss boss, Coord coord, double dir, int sign) {
-        this(boss, coord, SIZE.copy(), SIZE.scaledBy(SIZE_TO_HITBOX), VELOCITY, dir, DMG, KB, KB_SPREAD, DURA, LIFE, sign, CAN_HIT_PROJ, IS_ON_TOP);
+        this(boss, coord, SIZE.copy(), SIZE.scaledBy(SIZE_TO_HITBOX), VELOCITY, dir,
+        DMG * OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty], KB * OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty], KB_SPREAD, DURA, LIFE, sign, CAN_HIT_PROJ, IS_ON_TOP);
     }
 
     // Description: This method explodes the bombot
@@ -276,6 +307,7 @@ class Bombot extends Projectile {
         g2.rotate(dir, coord.x, coord.y);
         g2.drawImage(images[frameCounter % (SPRITE_CHANGE_HZ * NUM_SPRITES) / SPRITE_CHANGE_HZ], (int) (coord.x - size.x / 2), (int) (coord.y - size.y / 2 * sign), (int) size.x, (int) size.y * sign, null);
         g2.rotate(-dir, coord.x, coord.y);
+        super.draw(g2);
     }
 
     // Description: this method processes the bombot
@@ -307,18 +339,18 @@ class Bombot extends Projectile {
         }
 
         // Smoke
-        character.smokeQ.add(new Smoke(coord.copy(), new Coord(Math.max(size.x, size.y) * SIZE_TO_SMOKE), Math.random() * Math.PI * 2));
+        owner.smokeQ.add(new Smoke(coord.copy(), new Coord(Math.max(size.x, size.y) * SIZE_TO_SMOKE)));
     }
 
-    // Description: This method returns that the missile should die to anything
-    public boolean shouldDieTo(double enemyDura) {
-        return true;
+    public void dieTo(Char enemy) {
+        if (enemy instanceof Omegaman) {
+            ((Omegaman) enemy).hurt(damage, knockback, coord, dir, kbSpread);
+            die();
+            OmegaFight3.screenShakeCounter += (int) (SCREENSHAKE * (size.x / SIZE.x));
+        }
     }
 
-    public void hitPlayer(Omegaman omega) {
-        super.hitPlayer(omega);
-        OmegaFight3.screenShakeCounter += (int) (SCREENSHAKE * (size.x / SIZE.x));
+    public void dieTo(Projectile proj) {
+        if (!(proj.owner instanceof Boss)) die();
     }
-    public void hitBoss(Boss boss) {}
-    public void hitBossProj(Projectile proj) {}
 }
