@@ -8,7 +8,7 @@ public class Egg extends Projectile{
     public static final double[] DMG = {2 * Omegaman.PERC_MULT, 4 * Omegaman.PERC_MULT, 8 * Omegaman.PERC_MULT};
     public static final double DURA = 1;
     public static final double[] KB = {3, 6, 12};
-    public static final double KB_SPREAD = Math.PI / 3;
+    public static final double KB_SPREAD = Math.PI / 4;
     public static final int[] PROJS_PER_SPLIT = {2, 2};
 
     // Size constants
@@ -20,7 +20,7 @@ public class Egg extends Projectile{
     public static final double[] VELOCITY = {16, 22, 40};
     public static final double ACCEL = 1;
     public static final double ROT_PER_SECOND = 2;
-    public static final double ROT_SPEED = Math.PI * 2 / OmegaFight3.FPS * ROT_PER_SECOND;
+    public static final double ROT_SPD = Math.PI * 2 / OmegaFight3.FPS * ROT_PER_SECOND;
 
     // Misc constants
     public static final boolean CAN_HIT_PROJ = true;
@@ -73,7 +73,7 @@ public class Egg extends Projectile{
     public void process() {
         // Sprite change
         frameCounter = (frameCounter + 1) % (NUM_SPRITES[type] * SPRITE_CHANGE_HZ);
-        rotation = (rotation + ROT_SPEED) % (Math.PI * 2);
+        rotation = (rotation + ROT_SPD) % (Math.PI * 2);
 
         // Movement
         coord = coord.add(eggVelocity);
@@ -127,7 +127,7 @@ class Feather extends Projectile {
     public static final double DMG = 10 * Omegaman.PERC_MULT;
     public static final double DURA = 2;
     public static final double KB = 10;
-    public static final double KB_SPREAD = Math.PI / 3;
+    public static final double KB_SPREAD = Math.PI / 4;
 
     // Size constants
     public static final Coord SIZE = new Coord(155, 40);
@@ -194,7 +194,7 @@ class Diver extends Projectile {
     public static final double DMG = 10 * Omegaman.PERC_MULT;
     public static final double DURA = INF_DURA;
     public static final double KB = 10;
-    public static final double KB_SPREAD = Math.PI / 3;
+    public static final double KB_SPREAD = Math.PI / 4;
     public static final double MULT = 0.35;
 
     // Velocity constants
@@ -260,7 +260,7 @@ class Diver extends Projectile {
             double diveAngle = (sign == OmegaFight3.RIT_SIGN? DIVE_ANGLE: Math.PI - DIVE_ANGLE);
             for (Omegaman enemy: OmegaFight3.omegaman) {
                 // Check if should dive (maybe check if state alr diving just in case?) I just check the angle and see if it's within a few degrees of diving angle
-                if (Math.abs(Math.atan2(enemy.coord.y - coord.y, enemy.coord.x - coord.x) - diveAngle) <= DIVE_ANGLE_LEEWAY && enemy.state == Omegaman.ALIVE_STATE) {
+                if (Math.abs(coord.angleTo(enemy.coord) - diveAngle) <= DIVE_ANGLE_LEEWAY && enemy.state == Omegaman.ALIVE_STATE) {
                     dir = diveAngle;
                     state = DIVING;
                 }
@@ -304,7 +304,7 @@ class Plush extends Projectile {
     public static final double DMG = 10 * Omegaman.PERC_MULT;
     public static final double DURA = INF_DURA;
     public static final double KB = 10;
-    public static final double KB_SPREAD = Math.PI / 3;
+    public static final double KB_SPREAD = Math.PI / 4;
 
     // Size constants
     public static final Coord SIZE = new Coord(134, 103);
@@ -325,7 +325,7 @@ class Plush extends Projectile {
 
     // Constructor with custom stats
     public Plush(Boss boss, Coord size, Coord hitBoxSize, double damage, double knockback, double kbSpread, double dura, boolean canHitProj, boolean isOnTop) {
-        super(boss, new Coord(OmegaFight3.SCREEN_CENTER.x, OmegaFight3.stage[OmegaFight3.NORTH_CAVE_NO].platforms[0].y - SIZE.y / 2), size, hitBoxSize, 0, 0, damage, knockback, kbSpread, dura, INF_LIFE, canHitProj, isOnTop);
+        super(boss, new Coord(), size, hitBoxSize, 0, 0, damage, knockback, kbSpread, dura, INF_LIFE, canHitProj, isOnTop);
     }
 
     // Constructor with default stats
@@ -345,7 +345,7 @@ class Plush extends Projectile {
         }
     }
 
-    // Description: This method processes the pellet
+    // Description: This method processes the plush
     public void process() {
         frameCounter = (frameCounter + 1) % (NUM_SPRITES * SPRITE_CHANGE_HZ);
     }

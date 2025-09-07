@@ -8,7 +8,7 @@ public class Ring extends Projectile{
     public static final double DMG = 10 * Omegaman.PERC_MULT;
     public static final double DURA = 2;
     public static final double KB = 10;
-    public static final double KB_SPREAD = Math.PI / 3;
+    public static final double KB_SPREAD = Math.PI / 4;
 
     // Size constants
     public static final Coord SIZE = new Coord(90, 135);
@@ -69,7 +69,8 @@ class Meteor extends Projectile {
     public static final double DMG = 5 * Omegaman.PERC_MULT;
     public static final double DURA = INF_DURA;
     public static final double KB = 20;
-    public static final double KB_SPREAD = Math.PI / 3;
+    public static final double KB_SPREAD = Math.PI / 4;
+    public static final int FIRE_TIME = 120;
 
     // Size constants
     public static final Coord SIZE = (new Coord(220, 170)).scaledBy(0.75);
@@ -140,6 +141,7 @@ class Meteor extends Projectile {
     public void dieTo(Char enemy) {
         if (enemy instanceof Omegaman) {
             ((Omegaman) enemy).hurt(damage, knockback, coord, dir, kbSpread);
+            enemy.fireCounter += FIRE_TIME;
         }
     }
 
@@ -150,10 +152,11 @@ class Meteor extends Projectile {
 
 class Bubble extends Projectile {
     // Damage constants
-    public static final double DMG = 10 * Omegaman.PERC_MULT;
+    public static final double DMG = 3 * Omegaman.PERC_MULT;
     public static final double DURA = INF_DURA;
     public static final double KB = 15;
-    public static final double KB_SPREAD = Math.PI / 3;
+    public static final double KB_SPREAD = Math.PI / 4;
+    public static final int FIRE_TIME = 120;
 
     // Size constants
     public static final Coord SIZE = new Coord(120, 120);
@@ -237,6 +240,7 @@ class Bubble extends Projectile {
             ((Omegaman) enemy).hurt(damage, knockback, coord, Math.atan2(bubbleVelocity.y, bubbleVelocity.x), kbSpread);
             die();
             OmegaFight3.screenShakeCounter += (int) (SCREENSHAKE * (size.x / SIZE.x));
+            enemy.fireCounter += FIRE_TIME;
         }
     }
 
@@ -247,10 +251,11 @@ class Bubble extends Projectile {
 
 class Fire extends Projectile {
     // Damage constants
-    public static final double DMG = 10 * Omegaman.PERC_MULT;
+    public static final double DMG = 6 * Omegaman.PERC_MULT;
     public static final double DURA = 2;
     public static final double KB = 20;
-    public static final double KB_SPREAD = Math.PI / 3;
+    public static final double KB_SPREAD = Math.PI / 4;
+    public static final int FIRE_TIME = 40;
 
     // Size constants
     public static final Coord SIZE = new Coord(150, 645);
@@ -314,6 +319,7 @@ class Fire extends Projectile {
     public void dieTo(Char enemy) {
         if (enemy instanceof Omegaman) {
             ((Omegaman) enemy).hurt(damage, knockback, coord, trueDir, kbSpread);
+            enemy.fireCounter += FIRE_TIME;
         }
     }
 

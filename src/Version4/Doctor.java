@@ -25,6 +25,7 @@ public class Doctor extends Boss {
     public static final int[] STATE_SPRITE_SIGN = {OmegaFight3.RIT_SIGN, OmegaFight3.LFT_SIGN, OmegaFight3.LFT_SIGN, OmegaFight3.RIT_SIGN};
     public static final int[] STATE_NUM_SPRITES = {2, 2, 3, 4};
     public static final int TOT_NUM_SPRITES = 11;
+    public static final double SIZE_TO_FIRE = 0.8;
 
     // Spit Constants
     public static final double SPIT_SPD = 7;
@@ -58,7 +59,7 @@ public class Doctor extends Boss {
 
     // Constructor
     public Doctor() {
-        super(docSprite, STATE_COORD, STATE_SIZE, STATE_SPRITE_HZ, STATE_TIME, STATE_SPRITE_START, STATE_SPRITE_SIGN, STATE_NUM_SPRITES, INIT_HEALTH * OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty], SIZE_TO_HITBOX, IDLE, NUM_STATES, TRANS_TIME);
+        super(docSprite, STATE_COORD, STATE_SIZE, STATE_SPRITE_HZ, STATE_TIME, STATE_SPRITE_START, STATE_SPRITE_SIGN, STATE_NUM_SPRITES, INIT_HEALTH , SIZE_TO_HITBOX, SIZE_TO_FIRE, IDLE, NUM_STATES, TRANS_TIME);
     }
 
     // Description: This method calculates the attacks of the Doctor
@@ -108,20 +109,19 @@ public class Doctor extends Boss {
     // Description: This method calculates all of the background attacks of the doctor
     public void backgroundAttack() {
         double difficultyMult = OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty];
-        double maxHealth = INIT_HEALTH * difficultyMult;
         // Pincer attack
-        if (health <= maxHealth * PINCER_THRESHOLD) {
+        if (health <= INIT_HEALTH  * PINCER_THRESHOLD) {
             pincerCounter++;
-            if (pincerCounter >= Math.max(MIN_PINCER_HZ, PINCER_HZ * health / (maxHealth * PINCER_THRESHOLD)) / difficultyMult) {
+            if (pincerCounter >= Math.max(MIN_PINCER_HZ, PINCER_HZ * health / (INIT_HEALTH  * PINCER_THRESHOLD)) / difficultyMult) {
                 OmegaFight3.projectiles.add(new Pincer(this, new Coord((int) (Math.random() * 2) * OmegaFight3.SCREEN_SIZE.x, (int) (Math.random() * 2) * OmegaFight3.SCREEN_SIZE.y)));
                 pincerCounter = 0;
             }
         }
 
         // Homing missile attack
-        if (health <= maxHealth * BOMBOT_THRESHOLD) {
+        if (health <= INIT_HEALTH  * BOMBOT_THRESHOLD) {
             bombotCounter++;
-            if (bombotCounter >= Math.max(MIN_BOMBOT_HZ, BOMBOT_HZ * health / (maxHealth * BOMBOT_THRESHOLD)) / difficultyMult) {
+            if (bombotCounter >= Math.max(MIN_BOMBOT_HZ, BOMBOT_HZ * health / (INIT_HEALTH  * BOMBOT_THRESHOLD)) / difficultyMult) {
                 int sign = OmegaFight3.randomSign();
                 OmegaFight3.projectiles.add(new Bombot(this, new Coord(OmegaFight3.SCREEN_CENTER.x - (OmegaFight3.SCREEN_CENTER.x + Bombot.SIZE.x / 2) * sign, OmegaFight3.SCREEN_SIZE.y * Math.random()), OmegaFight3.signToRadians(sign), sign));
                 bombotCounter = 0;

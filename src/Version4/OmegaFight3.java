@@ -18,7 +18,7 @@ import java.awt.image.BufferedImage;
 import java.util.*;
 import javax.sound.sampled.*;
 import javafx.util.Pair;
-// Ernest Todo: make background attacks part of boss, new gamemodes
+// Ernest Todo: new player projs
 
 public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionListener, KeyListener, Runnable {
     // Screen Settings
@@ -35,11 +35,11 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static final int SCREEN_SHAKE_MAX = 60;
 
     // Sound settings
-    public static final boolean SOUND_ON = true;
+    public static final boolean SOUND_ON = false;
 
     // Cheat constants
     public static final boolean CHEATS = true;
-    public static final boolean DEV_MODE = false;
+    public static final boolean DEV_MODE = true;
     public static final int KILL_KEY = KeyEvent.VK_K;
     public static final double KILL_DMG = 2 * Omegaman.PERC_MULT;
     public static final int FPS_CNT_KEY = KeyEvent.VK_F;
@@ -58,7 +58,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static final int SLIDESHOW_GS = 4;
     public static final int BATTLE_LOG_GS = 5;
 
-    // Button Numbers (Next avail: 38)
+    // Button Numbers (Next avail: 39)
     public static final int NO_BUTTON_HIT = -1;
 
     // Choose your fight menu
@@ -144,9 +144,9 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static final Coord READY_BAR_SIZE = new Coord(1920, 240);
     public static final int[] LOADOUT_ICON_X = {610, 1490};
     public static final int STAGE_SPACING = 22;
-    public static final int TOT_NUM_WEAPONS = 6; // Soon to change
+    public static final int TOT_NUM_WEAPONS = 7; // Soon to change
     public static final int RANDOM_WEAPON = TOT_NUM_WEAPONS;
-    public static final int[] WEAPON_BUTTONO = {Bullet.BUTTONO, Shotgun.BUTTONO, Spammer.BUTTONO, Sniper.BUTTONO, Boomer.BUTTONO, Spike.BUTTONO};
+    public static final int[] WEAPON_BUTTONO = {Bullet.BUTTONO, Shotgun.BUTTONO, Spammer.BUTTONO, Sniper.BUTTONO, Boomer.BUTTONO, Spike.BUTTONO, Fireball.BUTTONO};
     public static final int WEAPON_ICONS_PER_ROW = 3;
 
     // Rules menu constants
@@ -324,7 +324,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
 
     // Rules
     public static final int RULES = 10;
-    public static final int RULES_FADE_LEN = 10;
+    public static final int RULES_FADE_LEN = 6;
 
     // Color constants
     public static final Color PURPLE = new Color(186, 122, 255);
@@ -387,7 +387,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static HashMap<Integer, Button> chooseButtons = new HashMap<>();
     public static int buttonPressed = NO_BUTTON_HIT;
     public static Button selectedIcon;
-    public static BufferedImage[] icon = new BufferedImage[Projectile.NUM_PLAYER_PROJS];
+    public static BufferedImage[] icon = new BufferedImage[TOT_NUM_WEAPONS];
     public static int iconFlashCounter = 0;
     public static int readyCounter = NOT_READY;
 
@@ -615,6 +615,15 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         Spike.image = ImageIO.read(new File(PLAYER_PROJS_DIR + "/spike.png"));
         icon[Omegaman.SPIKE_WEAPON_NO] = ImageIO.read(new File(MENUS_DIR + "spike icon.png"));
         Thorn.image = ImageIO.read(new File(PLAYER_PROJS_DIR + "/thorn.png"));
+        icon[Omegaman.FIREBALL_WEAPON_NO] = ImageIO.read(new File(MENUS_DIR + "fireball icon.png"));
+        for (int i = 0; i != Fireball.NUM_SPRITES; i++) {
+            Fireball.image[i] = ImageIO.read(new File(PLAYER_PROJS_DIR + "/fireball" + i + ".png"));
+        }
+        for (int i = 0; i != Phoenix.NUM_SPRITES; i++) {
+            Phoenix.image[i] = ImageIO.read(new File(PLAYER_PROJS_DIR + "/phoenix" + i + ".png"));
+        }
+        Phoenix.chargingImage = ImageIO.read(new File(PLAYER_PROJS_DIR + "/phoenix egg.png"));
+        Star.image = ImageIO.read(new File(PLAYER_PROJS_DIR + "/star.png"));
         for (int i = 0; i != Omegaman.NUM_PLAYERS; i++) {
             Rocket.images[i] = ImageIO.read(new File(PLAYER_PROJS_DIR + "/" + i + "rocket.png"));
             Firework.images[i] = ImageIO.read(new File(PLAYER_PROJS_DIR + "/" + i + "firework.png"));
@@ -624,6 +633,9 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
             Bouncer.images[i] = ImageIO.read(new File(PLAYER_PROJS_DIR + "/" + i + "bouncer.png"));
             Splitter.images[i] = ImageIO.read(new File(PLAYER_PROJS_DIR + "/" + i + "splitter.png"));
         }
+
+        Char.fireImg = ImageIO.read(new File(MISC_DIR + "fire.png"));
+        Char.FIRE_DMG *= Omegaman.PERC_MULT;
 
         // Player sprite importing
         for (int playerNo = 0; playerNo != Omegaman.NUM_PLAYERS; playerNo++) {
@@ -1114,6 +1126,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
 
                 // Process alive players
                 for (Omegaman omega: omegaman) {
+                    omega.processFire();
                     omega.processSmokes();
                     if (omega.state == Omegaman.ALIVE_STATE) {
                         if (omega.stunCounter == Omegaman.NOT_STUNNED) {
@@ -1124,6 +1137,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                         }
                         else omega.knockback(pressedKeys);
 
+                        omega.checkBulletCombo();
                         omega.move();
                         omega.checkState();
                         omega.checkBossHitbox();
@@ -1151,6 +1165,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
 
                 // Process bosses
                 for (Boss boss: bosses) {
+                    boss.processFire();
                     boss.processSmokes();
                     // Process alive bosses
                     if (boss.state != Boss.DEAD) {
@@ -1827,7 +1842,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                 transCounter = RESULTS_COUNTING_LEN;
 
                 // Create battle object make a temp winner var
-                battleDone = new Battle(stage[stageNo].stageName, Battle.BOTH_LOSE, ALLPVE, lives, difficulty, getBossHealth(), getStatsAndClearEverything());
+                battleDone = new Battle(stage[stageNo].stageName, Battle.BOTH_LOSE, gameMode, lives, difficulty, getBossHealth(), getStatsAndClearEverything());
             }
         }
 
@@ -2519,7 +2534,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                         difficulty = DEFAULT_DIFFICULTY;
                         rulesButtons.get(BOSS_BUTTONO).text = "BOSS: " + DIFFICULTY_NAME[difficulty];
                     }
-                    else if (gameMode == PVPVE) {
+                    else if (gameMode == PVPVE && !DEV_MODE) {
                         lives = DEFAULT_LIVES;
                         rulesButtons.get(LIVES_BUTTONO).text = "LIVES: " + (lives == INF_LIVES? "INFINITY": lives);
                     }

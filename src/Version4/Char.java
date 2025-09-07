@@ -5,6 +5,12 @@ import java.awt.image.BufferedImage;
 import java.util.*;
 
 abstract class Char {
+    public static final int FIRE_HURT_HZ = 20;
+    public static final int FIRE_SPRITE_CHANGE_HZ = 5;
+    public static double FIRE_DMG = 2;
+
+    public static BufferedImage fireImg;
+
     // Instance variables
     public Coord coord;
     public int spriteNo;
@@ -14,15 +20,18 @@ abstract class Char {
     public Coord velocity = new Coord();
     public int state;
     public Deque<Smoke> smokeQ = new LinkedList<>();
+    public double sizeToFire;
+    public int fireCounter;
 
     // Constructor
-    public Char(Coord coord, int spriteNo, int spriteSign, int frameCounter, Coord size, int state) {
+    public Char(Coord coord, Coord size, double sizeToFire, int spriteNo, int spriteSign, int frameCounter, int state) {
         this.coord = coord;
         this.spriteNo = spriteNo;
         this.spriteSign = spriteSign;
         this.frameCounter = frameCounter;
         this.size = size;
         this.state = state;
+        this.sizeToFire = sizeToFire;
     }
 
     public void processSmokes() { // make an explosion class
@@ -37,6 +46,13 @@ abstract class Char {
         }
     }
 
+    public void processFire() {
+        if (fireCounter != 0) {
+            fireCounter--;
+            if (fireCounter % FIRE_HURT_HZ == 0) hurt(FIRE_DMG);
+        }
+    }
+
     // Description: This method draws the smoke trails of the player
     public void drawSmokes(Graphics2D g2) {
         for (Smoke smoke: smokeQ) {
@@ -45,10 +61,20 @@ abstract class Char {
     }
 
     public void draw(Graphics g) {
+        drawFire(g);
+
         if (OmegaFight3.hitBoxVis) {
             Coord hitBoxCoord = coord.add(size.scaledBy(-0.5));
             g.setColor(OmegaFight3.CHEAT_COLOR);
             g.drawRect((int) (hitBoxCoord.x), (int) (hitBoxCoord.y), (int) (size.x), (int) (size.y));
+        }
+    }
+
+    public void drawFire(Graphics g) {
+        if (fireCounter != 0) {
+            Coord fireSize = size.scaledBy(sizeToFire);
+            int sign = ((fireCounter % (2 * FIRE_SPRITE_CHANGE_HZ) < FIRE_SPRITE_CHANGE_HZ)? -1: 1);
+            g.drawImage(fireImg, (int) (coord.x - fireSize.x / 2 * sign), (int) (coord.y - fireSize.y / 2), (int) (fireSize.x * sign), (int) fireSize.y, null);
         }
     }
 
@@ -86,8 +112,8 @@ abstract class Boss extends Char {
     public int[] stateNumSprites;
 
     public Boss(BufferedImage[] sprite, Coord[] stateCoord, Coord[] stateSize, int[] stateSpriteHz, int[] stateTime,
-    int[] stateSpriteStart, int[] stateSpriteSign, int[] stateNumSprites, double health, double sizeToHitbox, int state, int numStates, int transTime) {
-        super(stateCoord[state].copy(), stateSpriteStart[state], stateSpriteSign[state], stateTime[state], stateSize[state], state);
+    int[] stateSpriteStart, int[] stateSpriteSign, int[] stateNumSprites, double health, double sizeToHitbox, double sizeToFire, int state, int numStates, int transTime) {
+        super(stateCoord[state].copy(), stateSize[state].copy(), sizeToFire, stateSpriteStart[state], stateSpriteSign[state], stateTime[state], state);
         this.sprite = sprite;
         this.stateCoord = stateCoord;
         this.stateSize = stateSize;
@@ -193,6 +219,8 @@ abstract class Boss extends Char {
         if (!hurt || hurtCounter >= Boss.HURT_BLINK_HZ) {
             g.drawImage(sprite[spriteNo], (int) (coord.x - size.x / 2 * spriteSign), (int) (coord.y - size.y / 2), (int) size.x * spriteSign, (int) size.y, null);
         }
+
+        drawFire(g);
 
         if (OmegaFight3.hitBoxVis) {
             Coord hitBoxSize = size.scaledBy(sizeToHitbox);

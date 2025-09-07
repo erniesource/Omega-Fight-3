@@ -8,7 +8,7 @@ public class Fastener extends Projectile {
     public static final double DMG = 7.5 * Omegaman.PERC_MULT;
     public static final double DURA = 2;
     public static final double KB = 10;
-    public static final double KB_SPREAD = Math.PI / 3;
+    public static final double KB_SPREAD = Math.PI / 4;
 
     // Size constants
     public static final Coord SIZE = new Coord(80, 75);
@@ -95,7 +95,7 @@ class Energy extends Projectile {
     public static final double DMG = 10 * Omegaman.PERC_MULT;
     public static final double DURA = 2;
     public static final double KB = 10;
-    public static final double KB_SPREAD = Math.PI / 3;
+    public static final double KB_SPREAD = Math.PI / 4;
 
     // Size constants
     public static final Coord SIZE = new Coord(75, 55);
@@ -104,7 +104,7 @@ class Energy extends Projectile {
     // Movement constants
     public static final double VELOCITY = 4;
     public static final double ROT_PER_SECOND = 2;
-    public static final double ROT_SPEED = Math.PI * 2 / OmegaFight3.FPS * ROT_PER_SECOND;
+    public static final double ROT_SPD = Math.PI * 2 / OmegaFight3.FPS * ROT_PER_SECOND;
 
     // Misc constants
     public static final boolean CAN_HIT_PROJ = false;
@@ -142,7 +142,7 @@ class Energy extends Projectile {
     public void process() {
         super.process();
         if (frameCounter == -SPRITE_CHANGE_HZ * NUM_SPRITES) frameCounter = 0;
-        rotation = (rotation + ROT_SPEED) % (Math.PI * 2);
+        rotation = (rotation + ROT_SPD) % (Math.PI * 2);
     }
 
     public void dieTo(Char enemy) {
@@ -162,7 +162,7 @@ class Pincer extends Projectile {
     public static final double DMG = 10 * Omegaman.PERC_MULT;
     public static final double DURA = 2;
     public static final double KB = 15;
-    public static final double KB_SPREAD = Math.PI / 3;
+    public static final double KB_SPREAD = Math.PI / 4;
 
     // Size constants
     public static final Coord SIZE = new Coord(80, 90);
@@ -262,12 +262,12 @@ class Bombot extends Projectile {
     public static final double DMG = 15 * Omegaman.PERC_MULT;
     public static final double DURA = INF_DURA;
     public static final double KB = 20;
-    public static final double KB_SPREAD = Math.PI / 3;
+    public static final double KB_SPREAD = Math.PI / 4;
 
     // Velocity constants
     public static final double VELOCITY = 6;
     public static final int LIFE = 300;
-    public static final double TURN_SPEED = Math.PI * (180.0 / LIFE / 180.0);
+    public static final double TURN_SPD = Math.PI * (180.0 / LIFE / 180.0);
 
     // Misc constants
     public static final int SCREENSHAKE = 15;
@@ -316,26 +316,9 @@ class Bombot extends Projectile {
         super.process();
 
         // Homing
-        // Loop thru all players and find closest target
-        Char target = null;
-        double closestDist = Double.MAX_VALUE;
-        for (Omegaman enemy : OmegaFight3.omegaman) {
-            if (enemy.state == Omegaman.ALIVE_STATE) {
-                double dist = Math.hypot(enemy.coord.x - coord.x, enemy.coord.y - coord.y);
-                if (dist < closestDist) {
-                    closestDist = dist;
-                    target = enemy;
-                }
-            }
-        }
-        
-        // Adjust direction and home
-        if (target != null) {
-            double targetDir = Math.atan2(target.coord.y - coord.y, target.coord.x - coord.x);
-            double angleDif = targetDir - dir;
-            angleDif = Math.atan2(Math.sin(angleDif), Math.cos(angleDif));
-            if (Math.abs(angleDif) <= TURN_SPEED) dir = targetDir;
-            else dir += Math.signum(angleDif) * TURN_SPEED;
+        Omegaman nearest = nearestOmegaman();
+        if (nearest != null) {
+            home(nearest, TURN_SPD);
         }
 
         // Smoke

@@ -14,6 +14,7 @@ public class Omegaman extends Char {
     public static final int JUMP_SPRITE = 4;
     public static final int HURT_SPRITE = 5;
     public static final Coord SIZE = new Coord(100);
+    public static final double SIZE_TO_FIRE = 0.8;
 
     // Movement Constants
     public static final int AIRBORNE = -1;
@@ -30,13 +31,15 @@ public class Omegaman extends Char {
     public static final int SNIPER_WEAPON_NO = 3;
     public static final int BOOMER_WEAPON_NO = 4;
     public static final int SPIKE_WEAPON_NO = 5;
-    public static final int[] BASIC_SHOT_HEAT = {10, 30, 5, 60, 10, 30};
-    public static final int[] CHARGED_SHOT_HEAT = {20, 60, 50, 80, 100, 60};
-    public static final int[] CHARGE_TIME = {50, 90, 80, 100, 120, 60};
+    public static final int FIREBALL_WEAPON_NO = 6;
+    public static final int[] BASIC_SHOT_HEAT = {20, 30, 60, 60, 20, 30, 30};
+    public static final int[] CHARGED_SHOT_HEAT = {50, 50, 50, 80, 100, 50, 80};
+    public static final int[] CHARGE_TIME = {50, 60, 50, 100, 100, 50, 70};
     public static final int BASIC_SHOOT_TIME_LIMIT = 20;
     public static final int LOADOUT_NUM_WEAPONS = 2;
     public static final int MAX_SHOOT_CHARGE = 300;
     public static final int NOT_CHARGING = -1;
+    public static final int NO_COOLING_WEAPON = -1;
 
     // Projectile Offsets
     public static final int IDLE_PROJ_Y_OFFSET = 7;
@@ -139,6 +142,7 @@ public class Omegaman extends Char {
     public int shootCharge;
     public int heatCounter;
     public int chargingWeapon = NOT_CHARGING;
+    public int coolingWeapon = NO_COOLING_WEAPON;
     public int[] loadout;
 
     // Skill point stats
@@ -169,7 +173,7 @@ public class Omegaman extends Char {
     // Constructor
     public Omegaman(int playerNo, Coord coord, Coord size, int spriteSign, int onPlatform, int livesLeft,int[] controls, int[] shtKeys, int[] loadout) throws IOException {
         // Initialize character variables
-        super(coord, IDLE_SPRITE, spriteSign, 0, size, ALIVE_STATE);
+        super(coord, size, SIZE_TO_FIRE, IDLE_SPRITE, spriteSign, 0, ALIVE_STATE);
 
         // Initialize player variables
         this.playerNo = playerNo;
@@ -256,8 +260,21 @@ public class Omegaman extends Char {
 
     // Description: This method calculates the shooting controls
     public void controlShoot(HashSet<Integer> pressedKeys) {
+        Coord newProjCoord = new Coord(coord.x + (size.x / 2 - PROJ_SPAWN_X_OFFSET) * spriteSign, coord.y + (onPlatform == -1? JUMP_PROJ_Y_OFFSET : IDLE_PROJ_Y_OFFSET));
+
         // Blaster cooling down (can't shoot)
-        if (heatCounter != 0) heatCounter--;
+        if (heatCounter != 0) {
+            heatCounter--;
+            if (coolingWeapon == SPAMMER_WEAPON_NO * 2) {
+                // Fire spammer based on Hz
+
+                if (heatCounter >= Spammer.LAST_PROJ_HEAT && (heatCounter - Spammer.LAST_PROJ_HEAT) % Spammer.PROJ_HZ == 0)
+                OmegaFight3.projectiles.add(new Spammer(this, newProjCoord, OmegaFight3.signToRadians(spriteSign) - Spammer.SPREAD + Math.random() * Spammer.SPREAD * 2));
+            }
+            if (heatCounter == 0) {
+                coolingWeapon = NO_COOLING_WEAPON;
+            }
+        }
 
         // Can shoot
         else {
@@ -266,53 +283,45 @@ public class Omegaman extends Char {
                     // If released key or time limit reach, fire weapon
                     if (!pressedKeys.contains(shtKeys[i]) || shootCharge == MAX_SHOOT_CHARGE) {
                         if (shootCharge != 0) {
-                            Coord newProjCoord = new Coord(coord.x + (size.x / 2 - PROJ_SPAWN_X_OFFSET) * spriteSign, coord.y + (onPlatform == -1? JUMP_PROJ_Y_OFFSET : IDLE_PROJ_Y_OFFSET));
-                            
                             // Fire basic
                             if (shootCharge <= BASIC_SHOOT_TIME_LIMIT || skillPts < ONES_PER_SKILL_PT) {
                                 // Bullet
-                                if (loadout[i] == BULLET_WEAPON_NO && (OmegaFight3.gameMode != OmegaFight3.PVP || skillPts >= Bullet.SKILL_PT_COST)) {
+                                if (loadout[i] == BULLET_WEAPON_NO) {
                                     OmegaFight3.projectiles.add(new Bullet(this, newProjCoord, OmegaFight3.signToRadians(spriteSign)));
-                                    if (OmegaFight3.gameMode == OmegaFight3.PVP) skillPts -= Bullet.SKILL_PT_COST;
                                 }
 
                                 // SHotgun
-                                else if (loadout[i] == SHOTGUN_WEAPON_NO && (OmegaFight3.gameMode != OmegaFight3.PVP || skillPts >= Shotgun.SKILL_PT_COST)) {
+                                else if (loadout[i] == SHOTGUN_WEAPON_NO) {
                                     for (int j = 0; j != Shotgun.NUM_SHOTS; j++) {
                                         OmegaFight3.projectiles.add(new Shotgun(this, newProjCoord.copy(), OmegaFight3.signToRadians(spriteSign) - Shotgun.SPREAD + j * (Shotgun.SPREAD * 2 / (Shotgun.NUM_SHOTS - 1))));
                                     }
-                                    if (OmegaFight3.gameMode == OmegaFight3.PVP) skillPts -= Shotgun.SKILL_PT_COST;
-                                }
-
-                                // Spammer
-                                else if (loadout[i] == SPAMMER_WEAPON_NO && (OmegaFight3.gameMode != OmegaFight3.PVP || skillPts >= Spammer.SKILL_PT_COST)) {
-                                    OmegaFight3.projectiles.add(new Spammer(this, newProjCoord, OmegaFight3.signToRadians(spriteSign) - Spammer.SPREAD + Math.random() * Spammer.SPREAD * 2));
-                                    if (OmegaFight3.gameMode == OmegaFight3.PVP) skillPts -= Spammer.SKILL_PT_COST;
                                 }
 
                                 // SNiper
-                                else if (loadout[i] == SNIPER_WEAPON_NO && (OmegaFight3.gameMode != OmegaFight3.PVP || skillPts >= Sniper.SKILL_PT_COST)) {
+                                else if (loadout[i] == SNIPER_WEAPON_NO) {
                                     OmegaFight3.projectiles.add(new Sniper(this, newProjCoord, OmegaFight3.signToRadians(spriteSign)));
-                                    if (OmegaFight3.gameMode == OmegaFight3.PVP) skillPts -= Sniper.SKILL_PT_COST;
                                     
                                     // Recoil
                                     recoil(Sniper.RECOIL);
                                 }
 
                                 // Boomer
-                                else if (loadout[i] == BOOMER_WEAPON_NO && (OmegaFight3.gameMode != OmegaFight3.PVP || skillPts >= Boomer.SKILL_PT_COST)) {
+                                else if (loadout[i] == BOOMER_WEAPON_NO) {
                                     OmegaFight3.projectiles.add(new Boomer(this, newProjCoord, OmegaFight3.signToRadians(spriteSign)));
-                                    if (OmegaFight3.gameMode == OmegaFight3.PVP) skillPts -= Boomer.SKILL_PT_COST;
                                 }
 
                                 // Spike
-                                else if (loadout[i] == SPIKE_WEAPON_NO && (OmegaFight3.gameMode != OmegaFight3.PVP || skillPts >= Spike.SKILL_PT_COST)) {
+                                else if (loadout[i] == SPIKE_WEAPON_NO) {
                                     OmegaFight3.projectiles.add(new Spike(this, newProjCoord, OmegaFight3.signToRadians(spriteSign)));
-                                    if (OmegaFight3.gameMode == OmegaFight3.PVP) skillPts -= Spike.SKILL_PT_COST;
+                                }
+
+                                else if (loadout[i] == FIREBALL_WEAPON_NO) {
+                                    OmegaFight3.projectiles.add(new Fireball(this, newProjCoord, OmegaFight3.signToRadians(spriteSign)));
                                 }
 
                                 // update shoot cooldown
                                 heatCounter = BASIC_SHOT_HEAT[loadout[i]];
+                                coolingWeapon = loadout[i] * 2;
                             }
 
                             // Fire charged
@@ -366,10 +375,17 @@ public class Omegaman extends Char {
                                     OmegaFight3.projectiles.add(new Splitter(this, newProjCoord, OmegaFight3.signToRadians(spriteSign), percentCharged));
                                 }
 
+                                // Phoenix
+                                else if (loadout[i] == FIREBALL_WEAPON_NO) {
+                                    percentCharged = OmegaFight3.lerp(Phoenix.MIN_PERC, 1, getPercentCharged(FIREBALL_WEAPON_NO));
+                                    OmegaFight3.projectiles.add(new Phoenix(this, OmegaFight3.signToRadians(spriteSign), percentCharged));
+                                }
+
                                 // Update stats
                                 skillPts -= (percentCharged < 0.5? ONES_PER_SKILL_PT / 2: ONES_PER_SKILL_PT);
                                 addToStat(SKILL_PTS_USED_NO, (percentCharged < 0.5? 0.5: 1));
                                 heatCounter = CHARGED_SHOT_HEAT[loadout[i]];
+                                coolingWeapon = loadout[i] * 2 + 1;
                             }
 
                             // Update some more stats
@@ -384,6 +400,16 @@ public class Omegaman extends Char {
                         shootCharge++;
                     }
                 }
+            }
+        }
+    } // Bullet combo count method here?
+
+    public void checkBulletCombo() {
+        if (Bullet.combo[playerNo] != 0) {
+            Bullet.comboEndCounter[playerNo]++;
+            if (Bullet.comboEndCounter[playerNo] == Bullet.TIME_TO_COMBO) {
+                Bullet.combo[playerNo] = 0;
+                Bullet.comboEndCounter[playerNo] = 0;
             }
         }
     }
@@ -403,7 +429,7 @@ public class Omegaman extends Char {
 
             // Firework
             else if (loadout[chargingWeapon] == SHOTGUN_WEAPON_NO) {
-                chargeSize = Firework.SIZE.scaledBy(OmegaFight3.lerp(Firework.MIN_PERC, 1, getPercentCharged(SHOTGUN_WEAPON_NO)));
+                chargeSize = Firework.CHARGE_SIZE.scaledBy(OmegaFight3.lerp(Firework.MIN_PERC, 1, getPercentCharged(SHOTGUN_WEAPON_NO)));
                 chargeCoord = chargeCoord.add(chargeSize.scaledBy(-0.5));
                 g.drawImage(Firework.chargingImages[playerNo], (int) (chargeCoord.x), (int) (chargeCoord.y), (int) chargeSize.x, (int) chargeSize.y, null);
             }
@@ -431,6 +457,13 @@ public class Omegaman extends Char {
             else if (loadout[chargingWeapon] == SPIKE_WEAPON_NO) {
                 chargeSize = Splitter.SIZE.scaledBy(OmegaFight3.lerp(Splitter.MIN_PERC, 1, getPercentCharged(SPIKE_WEAPON_NO)));
                 g.drawImage(Splitter.images[playerNo], (int) (chargeCoord.x - chargeSize.x / 2 * spriteSign), (int) (chargeCoord.y - chargeSize.y / 2), (int) chargeSize.x * spriteSign, (int) chargeSize.y, null);
+            }
+
+            // Phoenix
+            else if (loadout[chargingWeapon] == FIREBALL_WEAPON_NO) {
+                chargeSize = Phoenix.CHARGE_SIZE.scaledBy(OmegaFight3.lerp(Phoenix.MIN_PERC, 1, getPercentCharged(FIREBALL_WEAPON_NO)));
+                chargeCoord = chargeCoord.add(chargeSize.scaledBy(-0.5));
+                g.drawImage(Phoenix.chargingImage, (int) (chargeCoord.x), (int) (chargeCoord.y), (int) chargeSize.x, (int) chargeSize.y, null);
             }
         }
     }
@@ -570,6 +603,7 @@ public class Omegaman extends Char {
         coyoteCounter = 0;
         shootCharge = 0;
         chargingWeapon = NOT_CHARGING;
+        coolingWeapon = NO_COOLING_WEAPON;
         runSign = 1;
 
         // Died stats resets
@@ -588,8 +622,10 @@ public class Omegaman extends Char {
             stunCounter = 0;
             invCounter = RESPAWN_INIT_VELOCITY + RESPAWN_TIME_LIMIT + 2;
             heatCounter = 0;
+            Bullet.combo[playerNo] = 0;
+            Bullet.comboEndCounter[playerNo] = 0;
+            fireCounter = 0;
             OmegaFight3.play(OmegaFight3.boom);
-            // fireCounter = 0;
         }
     }
 
@@ -675,11 +711,16 @@ public class Omegaman extends Char {
     }
 
     // Description: This method hurts the player and shakes their percent but doesn't knock them back
-    public double hurt(double damage) {
-        percentShakeCounter = PERC_SHAKE_TIME;
-        percent += damage;
-        setStat(MAX_PERC_NO, Math.max(stats[MAX_PERC_NO], percent));
-        return damage;
+    public double hurt(double damage) { // Fix all the inv checks
+        if (invCounter == VULNERABLE) {
+            percentShakeCounter = PERC_SHAKE_TIME;
+            percent += damage;
+            setStat(MAX_PERC_NO, Math.max(stats[MAX_PERC_NO], percent));
+            return damage;
+        }
+        else {
+            return 0;
+        }
     }
 
     // Description: This method hurts the player and prepares them for knockback
