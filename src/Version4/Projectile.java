@@ -53,14 +53,18 @@ abstract public class Projectile {
         }
     }
 
-    public void dieTo(Projectile proj) {
-        dura -= proj.dura;
-        if (dura <= 0) die();
+    public boolean dieTo(Projectile proj) {
+        if (dura <= proj.dura) {
+            die();
+            return true;
+        }
+        return false;
     }
 
-    public void dieTo(Char enemy) {
+    public boolean dieTo(Char enemy) {
         enemy.hurt(damage);
         die();
+        return true;
     }
 
     // Description: THis method processes the movement and expiry of the projectile
@@ -149,7 +153,10 @@ abstract public class Projectile {
         if (OmegaFight3.hitBoxVis) {
             Coord hitBoxCoord = coord.add(hitBoxSize.scaledBy(-0.5));
             g2.setColor(OmegaFight3.CHEAT_COLOR);
-            g2.drawRect((int) (hitBoxCoord.x), (int) (hitBoxCoord.y), (int) (hitBoxSize.x), (int) (hitBoxSize.y)); // FIGURE THIS OUT
+            g2.drawRect((int) (hitBoxCoord.x), (int) (hitBoxCoord.y), (int) (hitBoxSize.x), (int) (hitBoxSize.y));
+            g2.setColor(Battle.PLAYER_COLOR[0]);
+            double hypot = Math.hypot(size.x, size.y) / 2;
+            g2.drawLine((int) coord.x, (int) coord.y, (int) (coord.x + hypot * Math.cos(dir)), (int) (coord.y + hypot * Math.sin(dir)));
         }
     }
 }

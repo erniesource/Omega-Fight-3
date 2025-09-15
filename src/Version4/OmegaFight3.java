@@ -27,7 +27,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static final int SPACING = 25;
 
     // Frame Settings
-    public static final int FPS = 60;
+    public static final int MAX_TICK_RATE = 60;
 
     // Screen Shake Settings
     public static final int SCREEN_SHAKE_HZ = 2;
@@ -39,7 +39,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
 
     // Cheat constants
     public static final boolean CHEATS = true;
-    public static final boolean DEV_MODE = true;
+    public static final boolean DEV_MODE = false;
     public static final int KILL_KEY = KeyEvent.VK_K;
     public static final double KILL_DMG = 2 * Omegaman.PERC_MULT;
     public static final int FPS_CNT_KEY = KeyEvent.VK_F;
@@ -48,6 +48,8 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static final Color CHEAT_COLOR = new Color(65, 190, 64);
     public static final int RANDOM_READY_KEY = KeyEvent.VK_R;
     public static final int HITBOX_KEY = KeyEvent.VK_H;
+    public static final int SLOW_MODE_KEY = KeyEvent.VK_S;
+    public static final int SLOW_MODE_TICK_RATE = 20;
 
     // Gamestates
     public static final int STUDIO_ANIM_GS = -1;
@@ -58,7 +60,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static final int SLIDESHOW_GS = 4;
     public static final int BATTLE_LOG_GS = 5;
 
-    // Button Numbers (Next avail: 39)
+    // Button Numbers (Next avail: 40)
     public static final int NO_BUTTON_HIT = -1;
 
     // Choose your fight menu
@@ -144,9 +146,9 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static final Coord READY_BAR_SIZE = new Coord(1920, 240);
     public static final int[] LOADOUT_ICON_X = {610, 1490};
     public static final int STAGE_SPACING = 22;
-    public static final int TOT_NUM_WEAPONS = 7; // Soon to change
+    public static final int TOT_NUM_WEAPONS = 8;
     public static final int RANDOM_WEAPON = TOT_NUM_WEAPONS;
-    public static final int[] WEAPON_BUTTONO = {Bullet.BUTTONO, Shotgun.BUTTONO, Spammer.BUTTONO, Sniper.BUTTONO, Boomer.BUTTONO, Spike.BUTTONO, Fireball.BUTTONO};
+    public static final int[] WEAPON_BUTTONO = {Bullet.BUTTONO, Shotgun.BUTTONO, Spammer.BUTTONO, Sniper.BUTTONO, Boomer.BUTTONO, Spike.BUTTONO, Fireball.BUTTONO, GlueBomb.BUTTONO};
     public static final int WEAPON_ICONS_PER_ROW = 3;
 
     // Rules menu constants
@@ -171,7 +173,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
 
     // Game end menu constants
     public static final double FLASH_ROTS_PER_S = 1.0 / 6;
-    public static final double FLASH_ROTATE_SPD = Math.PI * 2 / FPS * FLASH_ROTS_PER_S;
+    public static final double FLASH_ROTATE_SPD = Math.PI * 2 / MAX_TICK_RATE * FLASH_ROTS_PER_S;
     public static final Coord FLASH_COORD = SCREEN_CENTER.add(-Math.hypot(SCREEN_CENTER.x, SCREEN_CENTER.y));
     public static final Coord RESULTS_TITLE_SIZE = new Coord(1494, 134); 
     public static final int RESULTS_EDGE_SPACING = 100;
@@ -352,8 +354,8 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static LinkedList<Boss> deadBosses = new LinkedList<>();
 
     // Settings
-    public static int gameMode = ALLPVE;
-    public static int difficulty = DEFAULT_DIFFICULTY;
+    public static int gameMode = DEV_MODE? PVP: ALLPVE;
+    public static int difficulty = DEV_MODE? NO_DIFFICULTY: DEFAULT_DIFFICULTY;
     public static int lives = (DEV_MODE || gameMode == PVPVE)? INF_LIVES: DEFAULT_LIVES;
 
     // Explosions
@@ -370,10 +372,13 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static HashSet<Integer> pressedKeys = new HashSet<>();
 
     // Cheat stats
+    public static int tickRate = MAX_TICK_RATE;
     public static boolean fpsCntVis = false;
     public static boolean fpsCntKeyPressed = false;
     public static boolean hitBoxVis = false;
     public static boolean hitBoxKeyPressed = false;
+    public static boolean slowMode = false;
+    public static boolean slowModeKeyPressed = false;
 
     // Stage stats
     public static int stageNo = RANDOM_STAGE;
@@ -502,7 +507,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         while(true) {
             repaint();
             try {
-                Thread.sleep(1000 / FPS);
+                Thread.sleep(1000 / tickRate);
             }
             catch(Exception e) {}
         }
@@ -601,37 +606,46 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         
         // Player Weapon image importing
         addWeaponIcon = ImageIO.read(new File(MENUS_DIR + "no weapon.png"));
-        Bullet.image = ImageIO.read(new File(PLAYER_PROJS_DIR + "/bullet.png"));
+        Bullet.image = ImageIO.read(new File(PLAYER_PROJS_DIR + "bullet.png"));
         icon[Omegaman.BULLET_WEAPON_NO] = ImageIO.read(new File(MENUS_DIR + "bullet icon.png"));
-        Shotgun.image = ImageIO.read(new File(PLAYER_PROJS_DIR + "/shotgun.png"));
+        Shotgun.image = ImageIO.read(new File(PLAYER_PROJS_DIR + "shotgun.png"));
         icon[Omegaman.SHOTGUN_WEAPON_NO] = ImageIO.read(new File(MENUS_DIR + "shotgun icon.png"));
-        Spammer.image = ImageIO.read(new File(PLAYER_PROJS_DIR + "/spammer.png"));
+        Spammer.image = ImageIO.read(new File(PLAYER_PROJS_DIR + "spammer.png"));
         icon[Omegaman.SPAMMER_WEAPON_NO] = ImageIO.read(new File(MENUS_DIR + "spammer icon.png"));
-        Sniper.image = ImageIO.read(new File(PLAYER_PROJS_DIR + "/sniper.png"));
+        Sniper.image = ImageIO.read(new File(PLAYER_PROJS_DIR + "sniper.png"));
         icon[Omegaman.SNIPER_WEAPON_NO] = ImageIO.read(new File(MENUS_DIR + "sniper icon.png"));
-        Laser.ball = ImageIO.read(new File(PLAYER_PROJS_DIR + "/ball.png"));
-        Laser.beam = ImageIO.read(new File(PLAYER_PROJS_DIR + "/beam.png"));
+        Laser.ball = ImageIO.read(new File(PLAYER_PROJS_DIR + "ball.png"));
+        Laser.beam = ImageIO.read(new File(PLAYER_PROJS_DIR + "beam.png"));
         icon[Omegaman.BOOMER_WEAPON_NO] = ImageIO.read(new File(MENUS_DIR + "boomer icon.png"));
-        Spike.image = ImageIO.read(new File(PLAYER_PROJS_DIR + "/spike.png"));
+        Spike.image = ImageIO.read(new File(PLAYER_PROJS_DIR + "spike.png"));
         icon[Omegaman.SPIKE_WEAPON_NO] = ImageIO.read(new File(MENUS_DIR + "spike icon.png"));
-        Thorn.image = ImageIO.read(new File(PLAYER_PROJS_DIR + "/thorn.png"));
+        Thorn.image = ImageIO.read(new File(PLAYER_PROJS_DIR + "thorn.png"));
         icon[Omegaman.FIREBALL_WEAPON_NO] = ImageIO.read(new File(MENUS_DIR + "fireball icon.png"));
         for (int i = 0; i != Fireball.NUM_SPRITES; i++) {
-            Fireball.image[i] = ImageIO.read(new File(PLAYER_PROJS_DIR + "/fireball" + i + ".png"));
+            Fireball.image[i] = ImageIO.read(new File(PLAYER_PROJS_DIR + "fireball" + i + ".png"));
         }
         for (int i = 0; i != Phoenix.NUM_SPRITES; i++) {
-            Phoenix.image[i] = ImageIO.read(new File(PLAYER_PROJS_DIR + "/phoenix" + i + ".png"));
+            Phoenix.image[i] = ImageIO.read(new File(PLAYER_PROJS_DIR + "phoenix" + i + ".png"));
         }
-        Phoenix.chargingImage = ImageIO.read(new File(PLAYER_PROJS_DIR + "/phoenix egg.png"));
-        Star.image = ImageIO.read(new File(PLAYER_PROJS_DIR + "/star.png"));
+        Phoenix.chargingImage = ImageIO.read(new File(PLAYER_PROJS_DIR + "phoenix egg.png"));
+        Star.image = ImageIO.read(new File(PLAYER_PROJS_DIR + "star.png"));
+        for (int i = 0; i != GlueBomb.NUM_STATES; i++) {
+            GlueBomb.glueImage[i] = ImageIO.read(new File(PLAYER_PROJS_DIR + i + "glue.png"));
+        }
+        for (int i = 0; i != GlueBomb.BOMB_NUM_SPRITES; i++) {
+            GlueBomb.bombImage[i] = ImageIO.read(new File(PLAYER_PROJS_DIR + "C4" + i + ".png"));
+        }
+        icon[Omegaman.GLUE_BOMB_WEAPON_NO] = ImageIO.read(new File(MENUS_DIR + "glue bomb icon.png"));
+        Spark.image = ImageIO.read(new File(PLAYER_PROJS_DIR + "spark.png"));
+        Spark.reticleImg = ImageIO.read(new File(PLAYER_PROJS_DIR + "reticle.png"));
         for (int i = 0; i != Omegaman.NUM_PLAYERS; i++) {
-            Rocket.images[i] = ImageIO.read(new File(PLAYER_PROJS_DIR + "/" + i + "rocket.png"));
-            Firework.images[i] = ImageIO.read(new File(PLAYER_PROJS_DIR + "/" + i + "firework.png"));
-            Firework.chargingImages[i] = ImageIO.read(new File(PLAYER_PROJS_DIR + "/" + i + "fireworkCharge.png"));
-            Missile.images[i] = ImageIO.read(new File(PLAYER_PROJS_DIR + "/" + i + "missile.png"));
-            Boomer.images[i] = ImageIO.read(new File(PLAYER_PROJS_DIR + "/" + i + "boomer.png"));
-            Bouncer.images[i] = ImageIO.read(new File(PLAYER_PROJS_DIR + "/" + i + "bouncer.png"));
-            Splitter.images[i] = ImageIO.read(new File(PLAYER_PROJS_DIR + "/" + i + "splitter.png"));
+            Rocket.images[i] = ImageIO.read(new File(PLAYER_PROJS_DIR + i + "rocket.png"));
+            Firework.images[i] = ImageIO.read(new File(PLAYER_PROJS_DIR + i + "firework.png"));
+            Firework.chargingImages[i] = ImageIO.read(new File(PLAYER_PROJS_DIR + i + "fireworkCharge.png"));
+            Missile.images[i] = ImageIO.read(new File(PLAYER_PROJS_DIR + i + "missile.png"));
+            Boomer.images[i] = ImageIO.read(new File(PLAYER_PROJS_DIR + i + "boomer.png"));
+            Bouncer.images[i] = ImageIO.read(new File(PLAYER_PROJS_DIR + i + "bouncer.png"));
+            Splitter.images[i] = ImageIO.read(new File(PLAYER_PROJS_DIR + i + "splitter.png"));
         }
 
         Char.fireImg = ImageIO.read(new File(MISC_DIR + "fire.png"));
@@ -642,16 +656,17 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
             Omegaman.percentDisplay[playerNo] = ImageIO.read(new File(Omegaman.HUD_DIR + playerNo + "percentdisplay.png"));
 
             // Load sprites
-            Omegaman.sprite[playerNo][Omegaman.IDLE_SPRITE] = ImageIO.read(new File(OmegaFight3.PLAYER_SPRITES_DIR + playerNo + "idle.png"));
+            Omegaman.sprite[playerNo][Omegaman.IDLE_SPRITE] = ImageIO.read(new File(PLAYER_SPRITES_DIR + playerNo + "idle.png"));
             for (int i = 0; i != Omegaman.NUM_RUN_SPRITE; i++) {
-                Omegaman.sprite[playerNo][i + 1] = ImageIO.read(new File(OmegaFight3.PLAYER_SPRITES_DIR + playerNo + "run" + i + ".png"));
+                Omegaman.sprite[playerNo][i + 1] = ImageIO.read(new File(PLAYER_SPRITES_DIR + playerNo + "run" + i + ".png"));
             }
-            Omegaman.sprite[playerNo][Omegaman.JUMP_SPRITE] = ImageIO.read(new File(OmegaFight3.PLAYER_SPRITES_DIR + playerNo + "jump.png"));
-            Omegaman.sprite[playerNo][Omegaman.HURT_SPRITE] = ImageIO.read(new File(OmegaFight3.PLAYER_SPRITES_DIR + playerNo + "hurt.png"));
+            Omegaman.sprite[playerNo][Omegaman.JUMP_SPRITE] = ImageIO.read(new File(PLAYER_SPRITES_DIR + playerNo + "jump.png"));
+            Omegaman.sprite[playerNo][Omegaman.HURT_SPRITE] = ImageIO.read(new File(PLAYER_SPRITES_DIR + playerNo + "hurt.png"));
+            Omegaman.sprite[playerNo][Omegaman.DASH_SPRITE] = ImageIO.read(new File(PLAYER_SPRITES_DIR + playerNo + "dash.png"));
 
             // Load surge images
-            for (int i = 0; i != OmegaFight3.NUM_SURGE_IMAGES; i++) {
-                Omegaman.surge[playerNo][i] = ImageIO.read(new File(OmegaFight3.EXPLOSIONS_DIR + playerNo + "surge" + i + ".png"));
+            for (int i = 0; i != NUM_SURGE_IMAGES; i++) {
+                Omegaman.surge[playerNo][i] = ImageIO.read(new File(EXPLOSIONS_DIR + playerNo + "surge" + i + ".png"));
             }
 
             // Load Face
@@ -1129,13 +1144,19 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                     omega.processFire();
                     omega.processSmokes();
                     if (omega.state == Omegaman.ALIVE_STATE) {
-                        if (omega.stunCounter == Omegaman.NOT_STUNNED) {
+                        if (omega.stunCounter != Omegaman.NOT_STUNNED) {
+                            omega.knockback(pressedKeys);
+                        }
+                        else if (omega.dashing != Omegaman.NOT_DASHING) {
+                            omega.dash();
+                        }
+                        else {
                             omega.controlX(pressedKeys.contains(omega.lftKey), pressedKeys.contains(omega.ritKey));
                             omega.controlY(pressedKeys.contains(omega.upKey), pressedKeys.contains(omega.dwnKey));
                             omega.controlShoot(pressedKeys);
                             omega.moveAerial(pressedKeys.contains(omega.upKey));
+                            omega.controlDash(new boolean[] {pressedKeys.contains(omega.lftKey), pressedKeys.contains(omega.ritKey)});
                         }
-                        else omega.knockback(pressedKeys);
 
                         omega.checkBulletCombo();
                         omega.move();
@@ -1470,6 +1491,18 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                 hitBoxVis = !hitBoxVis;
             }
             hitBoxKeyPressed = pressedKeys.contains(HITBOX_KEY);
+
+            if (!slowModeKeyPressed && pressedKeys.contains(SLOW_MODE_KEY)) {
+                if (slowMode) {
+                    slowMode = false;
+                    tickRate = MAX_TICK_RATE;
+                }
+                else {
+                    slowMode = true;
+                    tickRate = SLOW_MODE_TICK_RATE;
+                }
+            }
+            slowModeKeyPressed = pressedKeys.contains(SLOW_MODE_KEY);
         }
 
         if (fpsCntVis) {
@@ -1504,30 +1537,65 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
             proj.process();
             // Check for collisions with other owners and their projectiles
             if (proj.hitBoxActive) {
-                for (Omegaman enemy: OmegaFight3.omegaman) {
+                for (Omegaman enemy: omegaman) {
                     if (enemy != proj.owner) {
                         // Enemy hitbox
-                        if (OmegaFight3.intersects(proj.coord, proj.hitBoxSize, enemy.coord, enemy.size, OmegaFight3.HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
-                            proj.dieTo(enemy);
+                        if (intersects(proj.coord, proj.hitBoxSize, enemy.coord, enemy.size, HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
+                            if (proj.dieTo(enemy)) {
+                                if (proj.size.x == proj.size.y) {
+                                    proj.owner.smokeQ.add(new Smoke(proj.coord.copy(), proj.size.copy()));
+                                }
+                                else {
+                                    proj.owner.smokeQ.add(new Smoke(proj.coord.copy(), proj.size.copy(), proj.dir));
+                                }
+                            }
                         }
                     }
                 }
 
                 // Check for collisions with bosses and their projectiles
-                for (Boss boss: OmegaFight3.bosses) {
+                for (Boss boss: bosses) {
                     if (boss != proj.owner) {
                         // Boss hitbox
-                        if (OmegaFight3.intersects(proj.coord, proj.hitBoxSize, boss.coord, boss.size, Boss.BOSS_HITBOX_LEEWAY * Math.min(boss.size.x, boss.size.y))) {
-                            proj.dieTo(boss);
+                        if (intersects(proj.coord, proj.hitBoxSize, boss.coord, boss.size, Boss.BOSS_HITBOX_LEEWAY * Math.min(boss.size.x, boss.size.y))) {
+                            if (proj.dieTo(boss)) {
+                                if (proj.size.x == proj.size.y) {
+                                    proj.owner.smokeQ.add(new Smoke(proj.coord.copy(), proj.size.copy()));
+                                }
+                                else {
+                                    proj.owner.smokeQ.add(new Smoke(proj.coord.copy(), proj.size.copy(), proj.dir));
+                                }
+                            }
                         }
                     }
                 }
 
                 if (proj.canHitProj) {
                     for (Projectile otherProj: processedProjectiles) {
-                        if (OmegaFight3.intersects(proj.coord, proj.hitBoxSize, otherProj.coord, otherProj.hitBoxSize) && otherProj.canHitProj && proj.owner != otherProj.owner) {
-                            proj.dieTo(otherProj);
-                            otherProj.dieTo(proj);
+                        if (intersects(proj.coord, proj.hitBoxSize, otherProj.coord, otherProj.hitBoxSize) && otherProj.canHitProj && proj.owner != otherProj.owner) {
+                            boolean projDied = proj.dieTo(otherProj);
+                            boolean otherProjDied = otherProj.dieTo(proj);
+                            if (projDied) {
+                                if (otherProjDied) {
+                                    proj.owner.smokeQ.add(new Smoke(proj.coord.add(otherProj.coord).scaledBy(0.5), proj.size.add(otherProj.size).scaledBy(0.5)));
+                                }
+                                else {
+                                    if (proj.size.x == proj.size.y) {
+                                        proj.owner.smokeQ.add(new Smoke(proj.coord.copy(), proj.size.copy()));
+                                    }
+                                    else {
+                                        proj.owner.smokeQ.add(new Smoke(proj.coord.copy(), proj.size.copy(), proj.dir));
+                                    }
+                                }
+                            }
+                            else if (otherProjDied) {
+                                if (otherProj.size.x == otherProj.size.y) {
+                                    otherProj.owner.smokeQ.add(new Smoke(otherProj.coord.copy(), otherProj.size.copy()));
+                                }
+                                else {
+                                    otherProj.owner.smokeQ.add(new Smoke(otherProj.coord.copy(), otherProj.size.copy(), otherProj.dir));
+                                }
+                            }
                         }
                     }
                     processedProjectiles.add(proj);
@@ -2183,7 +2251,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
             drawButtons(rulesButtons.values(), g2);
             g2.setFont(GAMEMODE_DESC_FONT);
             int descBarSizeX = SPACING * 2 + g2.getFontMetrics().stringWidth(GAMEMODE_DESC[gameMode]);
-            int descBarCoordX = (int) OmegaFight3.SCREEN_SIZE.x - descBarSizeX;
+            int descBarCoordX = (int) SCREEN_SIZE.x - descBarSizeX;
             g2.drawImage(gameModeDescBar, descBarCoordX, GAMEMODE_DESC_BAR_Y, descBarSizeX, GAMEMODE_DESC_BAR_SIZE_Y, null);
             g2.drawImage(gameModeDescEnd, descBarCoordX - GAMEMODE_DESC_END_SIZE_X, GAMEMODE_DESC_BAR_Y, null);
             g2.drawString(GAMEMODE_DESC[gameMode], descBarCoordX + SPACING, GAMEMODE_DESC_MID_Y + (int) Math.pow(GAMEMODE_DESC_FONT.getSize(), Button.FONT_SIZE_TO_ACC_SIZE) / 2);

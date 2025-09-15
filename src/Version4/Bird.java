@@ -51,7 +51,7 @@ public class Bird extends Boss {
     public static final int WAVING_LFT = -1;
     public static final int WAVING_RIT = 1;
     public static final double DIVER_ALTITUDE = 25 + Diver.SIZE.y / 2;
-    public static final int PUNK_HZ = 2400;
+    public static final int PUNK_HZ = 7200;
     public static final int MIN_PUNK_HZ = 300;
     public static final double PUNK_THRESHOLD = 0.5;
     public static final int MAX_PUNK = 2;
@@ -143,7 +143,7 @@ public class Bird extends Boss {
 class Punk extends Boss {
     public static final double INIT_HEALTH = 3;
     public static final double SIZE_TO_HITBOX = 0.5;
-    public static final double DEATH_DMG = 20 * Omegaman.PERC_MULT;
+    public static final double DEATH_DMG = 30 * Omegaman.PERC_MULT;
 
     // State constants
     public static final int NUM_STATES = 2;
@@ -157,7 +157,7 @@ class Punk extends Boss {
     public static final double SIZE_TO_FIRE = 0.7;
 
     // Idle constants
-    public static final double ROTATION_SPD = Math.PI / 4 / OmegaFight3.FPS;
+    public static final double ROTATION_SPD = Math.PI / 4 / OmegaFight3.MAX_TICK_RATE;
     public static final double CIRCLE_RAD_SPD = 1;
     public static final double CIRCLE_RAD_MIN = 90;
     public static final double CIRCLE_RAD_MAX = 240;

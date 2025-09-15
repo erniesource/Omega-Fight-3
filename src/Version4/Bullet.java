@@ -66,7 +66,7 @@ public class Bullet extends Projectile {
         }
     }
 
-    public void dieTo(Char enemy) {
+    public boolean dieTo(Char enemy) {
         die();
         Omegaman omega = ((Omegaman) owner);
         double trueDmg = 0;
@@ -87,13 +87,13 @@ public class Bullet extends Projectile {
             combo[omega.playerNo] = 0;
         }
         comboEndCounter[omega.playerNo] = 0;
+        return true;
     }
 }
 
 class Rocket extends Projectile {
     // Size constants
     public static final double HITBOX_TO_SIZE = 2.5;
-    public static final double MIN_PERC = 0.2;
     public static final Coord SIZE = new Coord(50);
 
     // Damage constants
@@ -106,6 +106,7 @@ class Rocket extends Projectile {
     // Velocity constants
     public static final double VELOCITY = 15;
     public static final int LIFE = 40;
+    public static final double LIFE_PERC_POW = 0.5;
 
     // Misc constants
     public static final double RECOIL = 8;
@@ -126,7 +127,7 @@ class Rocket extends Projectile {
     }
 
     public Rocket(Omegaman player, Coord coord, double dir, double percentCharged) {
-        this(player, coord, SIZE.scaledBy(percentCharged), SIZE.scaledBy(percentCharged).scaledBy(HITBOX_TO_SIZE), VELOCITY, dir, DMG * percentCharged, KB * percentCharged, KB_SPREAD, DURA, LIFE, CAN_HIT_PROJ, IS_ON_TOP);
+        this(player, coord, SIZE.scaledBy(percentCharged), SIZE.scaledBy(percentCharged).scaledBy(HITBOX_TO_SIZE), VELOCITY, dir, DMG * percentCharged, KB * percentCharged, KB_SPREAD, DURA, (int) (Math.pow(percentCharged, LIFE_PERC_POW) * LIFE), CAN_HIT_PROJ, IS_ON_TOP);
     }
 
     // Description:
@@ -134,8 +135,8 @@ class Rocket extends Projectile {
     public void die() {
         if (!dead) {
             OmegaFight3.explosionQ.add(new Explosion(coord, size.scaledBy(EXPLOSION_SIZE_MULT)));
+            super.die();
         }
-        super.die();
     }
 
     // Description:
@@ -146,11 +147,12 @@ class Rocket extends Projectile {
         super.draw(g2);
     }
 
-    public void dieTo(Projectile proj) {
+    public boolean dieTo(Projectile proj) {
         die();
+        return true;
     }
 
-    public void dieTo(Char enemy) {
+    public boolean dieTo(Char enemy) {
         die();
         Omegaman omega = ((Omegaman) owner);
         double trueDmg = 0;
@@ -164,6 +166,7 @@ class Rocket extends Projectile {
         }
         
         OmegaFight3.screenShakeCounter += (int) (SCREENSHAKE * (size.x / SIZE.x));
+        return true;
     }
 }
 
@@ -214,7 +217,7 @@ class Shotgun extends Projectile {
         super.draw(g2);
     }
 
-    public void dieTo(Char enemy) {
+    public boolean dieTo(Char enemy) {
         die();
         Omegaman omega = ((Omegaman) owner);
         double trueDmg = 0;
@@ -228,12 +231,12 @@ class Shotgun extends Projectile {
         }
 
         if (trueDmg != 0) omega.addSkillPts(SKILL_PT_GAIN);
+        return true;
     }
 }
 
 class Firework extends Projectile {
     // Size constants
-    public static final double MIN_PERC = 0.2;
     public static final Coord SIZE = new Coord(48, 40);
     public static final Coord CHARGE_SIZE = new Coord(50);
     public static final double SIZE_TO_HITBOX = 1.0;
@@ -247,6 +250,7 @@ class Firework extends Projectile {
     // Velocity constants
     public static final double VELOCITY = 15;
     public static final int LIFE = 15;
+    public static final double LIFE_PERC_POW = 0.5;
 
     // Misc constants
     public static final int NUM_SHOTS = 8;
@@ -267,7 +271,7 @@ class Firework extends Projectile {
     }
 
     public Firework(Omegaman player, Coord coord, double dir, double percentCharged) {
-        this(player, coord, SIZE.scaledBy(percentCharged), SIZE.scaledBy(percentCharged).scaledBy(SIZE_TO_HITBOX), VELOCITY, dir, DMG * percentCharged, KB * percentCharged, KB_SPREAD, DURA, LIFE, CAN_HIT_PROJ, IS_ON_TOP);
+        this(player, coord, SIZE.scaledBy(percentCharged), SIZE.scaledBy(percentCharged).scaledBy(SIZE_TO_HITBOX), VELOCITY, dir, DMG * percentCharged, KB * percentCharged, KB_SPREAD, DURA, (int) (Math.pow(percentCharged, LIFE_PERC_POW) * LIFE), CAN_HIT_PROJ, IS_ON_TOP);
     }
 
     // Description: Draws the firework projectile
@@ -279,9 +283,11 @@ class Firework extends Projectile {
         super.draw(g2);
     }
 
-    public void dieTo(Projectile proj) {}
+    public boolean dieTo(Projectile proj) {
+        return false;
+    }
 
-    public void dieTo(Char enemy) {
+    public boolean dieTo(Char enemy) {
         die();
         Omegaman omega = ((Omegaman) owner);
         double trueDmg = 0;
@@ -293,6 +299,7 @@ class Firework extends Projectile {
             trueDmg = ((Boss) enemy).hurt(damage);
             omega.addToStat(Omegaman.DMG_TO_BOSS, trueDmg);
         }
+        return true;
     }
 }
 
@@ -345,7 +352,7 @@ class Spammer extends Projectile {
         super.draw(g2);
     }
 
-    public void dieTo(Char enemy) {
+    public boolean dieTo(Char enemy) {
         die();
         Omegaman omega = ((Omegaman) owner);
         double trueDmg = 0;
@@ -359,13 +366,13 @@ class Spammer extends Projectile {
         }
 
         if (trueDmg != 0) omega.addSkillPts(SKILL_PT_GAIN);
+        return true;
     }
 }
 
 class Missile extends Projectile {
     // Size constants
     public static final double HITBOX_TO_SIZE = 1.5;
-    public static final double MIN_PERC = 0.2;
     public static final Coord SIZE = new Coord(60);
 
     // Damage constants
@@ -378,7 +385,8 @@ class Missile extends Projectile {
     // Velocity constants
     public static final double VELOCITY = 10;
     public static final int LIFE = 70;
-    public static final double TURN_SPD = Math.PI * (90.0 / LIFE / 180.0);
+    public static final double TURN_SPD = Math.PI * (120.0 / LIFE / 180.0);
+    public static final double LIFE_PERC_POW = 0.5;
 
     // Misc constants
     public static final double RECOIL = 8;
@@ -401,7 +409,7 @@ class Missile extends Projectile {
     }
 
     public Missile(Omegaman player, Coord coord, double dir, int sign, double percentCharged) {
-        this(player, coord, SIZE.scaledBy(percentCharged), SIZE.scaledBy(percentCharged).scaledBy(HITBOX_TO_SIZE), VELOCITY, dir, DMG * percentCharged, KB * percentCharged, KB_SPREAD, DURA, LIFE, sign, CAN_HIT_PROJ, IS_ON_TOP);
+        this(player, coord, SIZE.scaledBy(percentCharged), SIZE.scaledBy(percentCharged).scaledBy(HITBOX_TO_SIZE), VELOCITY, dir, DMG * percentCharged, KB * percentCharged, KB_SPREAD, DURA, (int) (Math.pow(percentCharged, LIFE_PERC_POW) * LIFE), sign, CAN_HIT_PROJ, IS_ON_TOP);
     }
 
     // Description:
@@ -409,8 +417,8 @@ class Missile extends Projectile {
     public void die() {
         if (!dead) {
             OmegaFight3.explosionQ.add(new Explosion(coord, size.scaledBy(EXPLOSION_SIZE_MULT)));
+            super.die();
         }
-        super.die();
     }
 
     // Description: This method draws the missile or explosion image based on its state
@@ -434,11 +442,12 @@ class Missile extends Projectile {
     }
 
     // Description: This returns the fact that missile dies to any projectile
-    public void dieTo(Projectile proj) {
+    public boolean dieTo(Projectile proj) {
         die();
+        return true;
     }
 
-    public void dieTo(Char enemy) {
+    public boolean dieTo(Char enemy) {
         die();
         Omegaman omega = ((Omegaman) owner);
         double trueDmg = 0;
@@ -452,6 +461,7 @@ class Missile extends Projectile {
         }
         
         OmegaFight3.screenShakeCounter += (int) (SCREENSHAKE * (size.x / SIZE.x));
+        return true;
     }
 }
 
@@ -504,7 +514,7 @@ class Sniper extends Projectile {
         velocity += ACCEL;
     }
 
-    public void dieTo(Char enemy) {
+    public boolean dieTo(Char enemy) {
         die();
         double mult = velocity / VELOCITY;
         Omegaman omega = ((Omegaman) owner);
@@ -519,18 +529,18 @@ class Sniper extends Projectile {
         }
 
         if (trueDmg != 0) omega.addSkillPts(SKILL_PT_GAIN);
+        return true;
     }
 }
 
 class Laser extends Projectile {
     // Size constants
-    public static final double MIN_PERC = 0.2;
     public static final double SIZE_Y = 80; // x-size not impacted by charge, must be calculated
     public static final Coord BEAM_SIZE_Y_TO_BALL = new Coord(50 / SIZE_Y);
     public static final double SIZE_TO_HITBOX = 1.0;
 
     // Damage constants
-    public static final double DMG = 1 * Omegaman.PERC_MULT;
+    public static final double DMG = 0.65 * Omegaman.PERC_MULT;
     public static final double DURA = INF_DURA;
     public static final double SOUR_KB = 2;
     public static final double SWEET_KB_MULT = 9;
@@ -580,9 +590,11 @@ class Laser extends Projectile {
     }
 
     // Description: this method returns that the laser should never die to a projectile
-    public void dieTo(Projectile proj) {}
+    public boolean dieTo(Projectile proj) {
+        return false;
+    }
 
-    public void dieTo(Char enemy) {
+    public boolean dieTo(Char enemy) {
         Omegaman omega = ((Omegaman) owner);
         double trueDmg = 0;
         if (enemy instanceof Omegaman) {
@@ -593,6 +605,7 @@ class Laser extends Projectile {
             trueDmg = ((Boss) enemy).hurt(damage);
             omega.addToStat(Omegaman.DMG_TO_BOSS, trueDmg);
         }
+        return false;
     }
 }
 
@@ -645,11 +658,12 @@ class Boomer extends Projectile {
     // Description: Processes the boomerang projectile's movement and interactions
     public void process() {
         // Move the boomerang and deccelerate it and expire it
-        super.process();
+        move();
+        expire();
         velocity += ACCEL;
     }
 
-    public void dieTo(Char enemy) {
+    public boolean dieTo(Char enemy) {
         die();
         double mult = velocity < 0? 2: 1;
         Omegaman omega = ((Omegaman) owner);
@@ -664,12 +678,12 @@ class Boomer extends Projectile {
         }
 
         if (trueDmg != 0) omega.addSkillPts(SKILL_PT_GAIN);
+        return true;
     }
 }
 
 class Bouncer extends Projectile {
     // Size constants
-    public static final double MIN_PERC = 0.2;
     public static final Coord SIZE = new Coord(80);
     public static final double SIZE_TO_HITBOX = 1.0;
 
@@ -683,8 +697,9 @@ class Bouncer extends Projectile {
     public static final double VELOCITY = 25;
     public static final int LIFE = 160;
     public static final double ROT_HZ = 1;
-    public static final double ROT_SPD = Math.PI * 2 / OmegaFight3.FPS * ROT_HZ;
+    public static final double ROT_SPD = Math.PI * 2 / 60 * ROT_HZ;
     public static final double ROT_MAX = Math.PI / 2;
+    public static final double LIFE_PERC_POW = 0.5;
 
     // Misc constants
     public static final boolean CAN_HIT_PROJ = true;
@@ -704,7 +719,7 @@ class Bouncer extends Projectile {
     }
 
     public Bouncer(Omegaman player, Coord coord, double dir, double percentCharged) {
-        this(player, coord, SIZE.scaledBy(percentCharged), SIZE.scaledBy(percentCharged).scaledBy(SIZE_TO_HITBOX), VELOCITY, dir, DMG * percentCharged, KB * percentCharged, KB_SPREAD, DURA, LIFE, CAN_HIT_PROJ, IS_ON_TOP);
+        this(player, coord, SIZE.scaledBy(percentCharged), SIZE.scaledBy(percentCharged).scaledBy(SIZE_TO_HITBOX), VELOCITY, dir, DMG * percentCharged, KB * percentCharged, KB_SPREAD, DURA, (int) (Math.pow(percentCharged, LIFE_PERC_POW) * LIFE), CAN_HIT_PROJ, IS_ON_TOP);
     }
 
     // Description: This method draws the bouncer projectile on the screen
@@ -732,9 +747,11 @@ class Bouncer extends Projectile {
     }
 
     // Description: This method returns that the bouncer should never die to a projectile
-    public void dieTo(Projectile proj) {}
+    public boolean dieTo(Projectile proj) {
+        return false;
+    }
 
-    public void dieTo(Char enemy) {
+    public boolean dieTo(Char enemy) {
         Omegaman omega = ((Omegaman) owner);
         double trueDmg = 0;
         if (enemy instanceof Omegaman) {
@@ -745,6 +762,7 @@ class Bouncer extends Projectile {
             trueDmg = ((Boss) enemy).hurt(damage);
             omega.addToStat(Omegaman.DMG_TO_BOSS, trueDmg);
         }
+        return false;
     }
 }
 
@@ -755,6 +773,7 @@ class Spike extends Projectile {
     public static final double THORN_KB = 10;
     public static final int NUM_THORNS = 6;
     public static final boolean CURVED_BABY_PROJS = true;
+    public static final double THORN_PERC_CHARGED = 1;
 
     // Size constants
     public static final Coord SIZE = new Coord(50);
@@ -764,7 +783,7 @@ class Spike extends Projectile {
     public static final double VELOCITY = 10;
     public static final int LIFE = 35;
     public static final double ROT_HZ = 1;
-    public static final double ROT_SPD = Math.PI * 2 / OmegaFight3.FPS * ROT_HZ;
+    public static final double ROT_SPD = Math.PI * 2 / OmegaFight3.MAX_TICK_RATE * ROT_HZ;
     public static final double ROT_MAX = Math.PI * 2 / 3;
 
     // Misc constants
@@ -811,18 +830,20 @@ class Spike extends Projectile {
 
             // Explodes into thorns
             for (int i = 0; i != NUM_THORNS; i++) {
-                OmegaFight3.babyProjectiles.add(new Thorn((Omegaman) owner, coord.copy(), i * Math.PI * 2 / NUM_THORNS, THORN_DMG, THORN_KB, Thorn.LIFE, CURVED_BABY_PROJS));
+                OmegaFight3.babyProjectiles.add(new Thorn((Omegaman) owner, coord.copy(), i * Math.PI * 2 / NUM_THORNS, THORN_DMG, THORN_KB, THORN_PERC_CHARGED, Thorn.LIFE, CURVED_BABY_PROJS));
             }
         }
     }
 
     // Description: This method returns that the spike should die to any projectile
-    public void dieTo(Projectile proj) {
-        die();
+    public boolean dieTo(Projectile proj) {
+        super.die();
+        return true;
     }
     
-    public void dieTo(Char enemy) {
+    public boolean dieTo(Char enemy) {
         die();
+        return true;
     }
 }
 
@@ -858,8 +879,8 @@ class Thorn extends Projectile {
         this.curved = curved;
     }
 
-    public Thorn(Omegaman player, Coord coord, double dir, double damage, double knockback, int frameCounter, boolean curved) {
-        this(player, coord, SIZE.copy(), SIZE.scaledBy(SIZE_TO_HITBOX), VELOCITY, dir, damage, knockback, KB_SPREAD, DURA, frameCounter, curved, CAN_HIT_PROJ, IS_ON_TOP);
+    public Thorn(Omegaman player, Coord coord, double dir, double damage, double knockback, double percentCharged, int frameCounter, boolean curved) {
+        this(player, coord, SIZE.scaledBy(percentCharged), SIZE.scaledBy(percentCharged * SIZE_TO_HITBOX), VELOCITY, dir, damage, knockback, KB_SPREAD, DURA, frameCounter, curved, CAN_HIT_PROJ, IS_ON_TOP);
     }
 
     // Draws the thorn projectile on the screen
@@ -878,7 +899,7 @@ class Thorn extends Projectile {
         if (curved) dir += TURN_SPD;
     }
 
-    public void dieTo(Char enemy) {
+    public boolean dieTo(Char enemy) {
         die();
         Omegaman omega = ((Omegaman) owner);
         double trueDmg = 0;
@@ -892,12 +913,12 @@ class Thorn extends Projectile {
         }
 
         if (trueDmg != 0) omega.addSkillPts(SKILL_PT_GAIN);
+        return true;
     }
 }
 
 class Splitter extends Projectile {
     // Size constants
-    public static final double MIN_PERC = 0.2;
     public static final Coord SIZE = new Coord(60, 50);
     public static final double SIZE_TO_HITBOX = 1.0;
 
@@ -913,6 +934,7 @@ class Splitter extends Projectile {
     // Velocity constants
     public static final double VELOCITY = 15;
     public static final int LIFE = 30;
+    public static final double LIFE_PERC_POW = 0.5;
 
     // Misc constants
     public static final boolean CAN_HIT_PROJ = true;
@@ -931,7 +953,7 @@ class Splitter extends Projectile {
     }
 
     public Splitter(Omegaman player, Coord coord, double dir, double percentCharged) {
-        this(player, coord, SIZE.scaledBy(percentCharged), SIZE.scaledBy(percentCharged).scaledBy(SIZE_TO_HITBOX), VELOCITY, dir, DURA, LIFE, CAN_HIT_PROJ, IS_ON_TOP);
+        this(player, coord, SIZE.scaledBy(percentCharged), SIZE.scaledBy(percentCharged).scaledBy(SIZE_TO_HITBOX), VELOCITY, dir, DURA, (int) (Math.pow(percentCharged, LIFE_PERC_POW) * LIFE), CAN_HIT_PROJ, IS_ON_TOP);
     }
 
     // Description: Draws the splitter projectile on the screen
@@ -951,14 +973,18 @@ class Splitter extends Projectile {
         // Spit out thorns periodically
         if (frameCounter % (LIFE / NUM_SPLITS) == 0) {
             for (int i = 0; i != PROJS_PER_SPLIT; i++) { // Make these thorns not have skill pts?
-                OmegaFight3.babyProjectiles.add(new Thorn((Omegaman) owner, coord.copy(), SPLIT_PROJS_START_ANGLE + i * Math.PI * 2 / PROJS_PER_SPLIT, THORN_DMG, THORN_KB, (int) (Thorn.LIFE * ((double) frameCounter / LIFE + 1.0 / NUM_SPLITS)), CURVED_BABY_PROJS));
+                OmegaFight3.babyProjectiles.add(new Thorn((Omegaman) owner, coord.copy(), SPLIT_PROJS_START_ANGLE + i * Math.PI * 2 / PROJS_PER_SPLIT, THORN_DMG, THORN_KB, size.x / SIZE.x, (int) (Thorn.LIFE * ((double) frameCounter / LIFE + 1.0 / NUM_SPLITS)), CURVED_BABY_PROJS));
             }
         }
     }
 
     // Description: This method returns that the splitter should never die to a projectile
-    public void dieTo(Projectile proj) {}
-    public void dieTo(Char enemy) {}
+    public boolean dieTo(Projectile proj) {
+        return false;
+    }
+    public boolean dieTo(Char enemy) {
+        return false;
+    }
 }
 
 class Fireball extends Projectile {
@@ -1008,11 +1034,11 @@ class Fireball extends Projectile {
     public void die() {
         if (!dead) {
             OmegaFight3.explosionQ.add(new Explosion(coord, size.scaledBy(SIZE_TO_EXPLOSION)));
+            super.die();
         }
-        super.die();
     }
 
-    public void dieTo(Char enemy) {
+    public boolean dieTo(Char enemy) {
         die();
         Omegaman omega = ((Omegaman) owner);
         double trueDmg = 0;
@@ -1031,13 +1057,14 @@ class Fireball extends Projectile {
             enemy.fireCounter += FIRE_TIME;
             omega.addSkillPts(SKILL_PT_GAIN);
         }
+
+        return true;
     }
 }
 
 class Phoenix extends Projectile {
     // Size constants
     public static final double HITBOX_TO_SIZE = 0.9;
-    public static final double MIN_PERC = 0.5;
     public static final Coord SIZE = new Coord(60);
     public static final Coord CHARGE_SIZE = new Coord(50, 65);
     public static final Coord COORD_TO_STAR = new Coord(0, -SIZE.y / 6); // FIX THIS
@@ -1053,6 +1080,7 @@ class Phoenix extends Projectile {
 
     // Velocity constants
     public static final int LIFE = 300;
+    public static final double LIFE_PERC_POW = 0.5;
 
     // Misc constants
     public static final int SCREENSHAKE = 15;
@@ -1077,7 +1105,7 @@ class Phoenix extends Projectile {
     }
 
     public Phoenix(Omegaman player, double dir, double percentCharged) {
-        this(player, SIZE.scaledBy(percentCharged), SIZE.scaledBy(percentCharged).scaledBy(HITBOX_TO_SIZE), dir, DMG * percentCharged, KB * percentCharged, KB_SPREAD, DURA, LIFE, CAN_HIT_PROJ, IS_ON_TOP);
+        this(player, SIZE.scaledBy(percentCharged), SIZE.scaledBy(percentCharged).scaledBy(HITBOX_TO_SIZE), dir, DMG * percentCharged, KB * percentCharged, KB_SPREAD, DURA, (int) (Math.pow(percentCharged, LIFE_PERC_POW) * LIFE), CAN_HIT_PROJ, IS_ON_TOP);
     }
 
     // Description:
@@ -1085,8 +1113,8 @@ class Phoenix extends Projectile {
     public void die() {
         if (!dead) {
             OmegaFight3.explosionQ.add(new Explosion(coord, size.scaledBy(EXPLOSION_SIZE_MULT)));
+            super.die();
         }
-        super.die();
     }
 
     public void process() {
@@ -1095,10 +1123,10 @@ class Phoenix extends Projectile {
         Omegaman omega = ((Omegaman) owner);
         if (omega.state != Omegaman.ALIVE_STATE) die();
         if (frameCounter % (LIFE / NUM_STARS) == 0) {
-            double dir = 0;
+            double targetDir = 0;
             Char nearest = nearestChar();
-            if (nearest != null) dir = Math.atan2(nearest.coord.y - coord.y, nearest.coord.x - coord.x); 
-            OmegaFight3.babyProjectiles.add(new Star(omega, coord.add(COORD_TO_STAR), dir, size.x / SIZE.x));
+            if (nearest != null) targetDir = Math.atan2(nearest.coord.y - coord.y, nearest.coord.x - coord.x); 
+            OmegaFight3.babyProjectiles.add(new Star(omega, coord.add(COORD_TO_STAR), targetDir, size.x / SIZE.x));
         }
         rotation = (rotation + ROT_SPD) % (Math.PI * 2);
         func();
@@ -1121,7 +1149,7 @@ class Phoenix extends Projectile {
         super.draw(g2);
     }
 
-    public void dieTo(Char enemy) {
+    public boolean dieTo(Char enemy) {
         die();
         Omegaman omega = ((Omegaman) owner);
         double trueDmg = 0;
@@ -1138,6 +1166,7 @@ class Phoenix extends Projectile {
         
         if (trueDmg != 0) enemy.fireCounter += FIRE_TIME;
         OmegaFight3.screenShakeCounter += (int) (SCREENSHAKE * (size.x / SIZE.x));
+        return true;
     }
 }
 
@@ -1185,8 +1214,8 @@ class Star extends Projectile {
     public void die() {
         if (!dead) {
             OmegaFight3.explosionQ.add(new Explosion(coord, size.scaledBy(EXPLOSION_SIZE_MULT)));
+            super.die();
         }
-        super.die();
     }
 
     // Description: Draws the star on the screen
@@ -1203,7 +1232,7 @@ class Star extends Projectile {
         rotation = (rotation + ROT_SPD) % (Math.PI % 2);
     }
 
-    public void dieTo(Char enemy) {
+    public boolean dieTo(Char enemy) {
         die();
         Omegaman omega = ((Omegaman) owner);
         double trueDmg = 0;
@@ -1220,5 +1249,217 @@ class Star extends Projectile {
         
         if (trueDmg != 0) enemy.fireCounter += FIRE_TIME;
         OmegaFight3.screenShakeCounter += (int) (SCREENSHAKE * (size.x / SIZE.x));
+        return true;
+    }
+}
+
+class GlueBomb extends Projectile {
+    // Damage constants
+    public static final double DMG = 6 * Omegaman.PERC_MULT;
+    public static final double DURA = INF_DURA;
+    public static final double KB = 10;
+
+    // Size constants
+    public static final Coord[] GLUE_SIZE = {new Coord(70, 28), new Coord(60, 53)};
+    public static final Coord BOMB_SIZE = new Coord(32, 50);
+    public static final double SIZE_TO_HITBOX = 0.1; // Add glue coord to bomb coord
+    public static final Coord EXPLOSION_SIZE_MULT = new Coord(3, 2);
+
+    // Movement constants
+    public static final double VELOCITY = 15; 
+    public static final int LIFE = 120;
+    public static final int MIN_BOMB_TIME = 30;
+
+    // Misc constants
+    public static final int BUTTONO = 39;
+    public static final int SKILL_PT_GAIN = 12;
+    public static final boolean CAN_HIT_PROJ = true;
+    public static final boolean IS_ON_TOP = true;
+    public static final int NUM_STATES = 2;
+    public static final int GLOBBING = 0;
+    public static final int SPLATTING = 1;
+    public static final int BOMB_NUM_SPRITES = 2;
+    public static final int SCREENSHAKE = 10;
+
+    // Static image
+    public static BufferedImage[] glueImage = new BufferedImage[NUM_STATES];
+    public static BufferedImage[] bombImage = new BufferedImage[BOMB_NUM_SPRITES];
+
+    public int state;
+    public Char victim;
+    public Coord coordToVictim;
+
+    // Constructor with default stats
+    public GlueBomb(Omegaman player, Coord coord, double dir) {
+        this(player, coord, GLUE_SIZE[GLOBBING].copy(), GLUE_SIZE[GLOBBING].scaledBy(SIZE_TO_HITBOX), VELOCITY, dir, DMG, KB, DURA, LIFE, CAN_HIT_PROJ, IS_ON_TOP);
+    }
+
+    // Constructor with custom stats
+    public GlueBomb(Omegaman player, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double dura, int frameCounter, boolean canHitProj, boolean isOnTop) {
+        super(player, coord, size, hitBoxSize, velocity, dir, damage, knockback, 0, dura, frameCounter, canHitProj, isOnTop);
+    }
+
+    // Description: Draws the shotgun bullet on the screen
+    public void draw(Graphics2D g2) {
+        g2.drawImage(glueImage[state], (int) (coord.x - size.x / 2 * Math.cos(dir)), (int) (coord.y - size.y / 2), (int) (size.x * Math.cos(dir)), (int) size.y, null);
+        Coord bombSize = new Coord(size.x * BOMB_SIZE.x / GLUE_SIZE[state].x, size.y * BOMB_SIZE.y / GLUE_SIZE[state].y);
+        Coord bombCoord = coord.add(bombSize.scaledBy(-0.5));
+        g2.drawImage(bombImage[(int) (Math.sin(Math.PI * 2 * LIFE / frameCounter) / 2 + 1)], (int) (bombCoord.x), (int) (bombCoord.y), (int) (bombSize.x), (int) (bombSize.y), null);
+        super.draw(g2);
+    }
+
+    public void process() {
+        if (state == SPLATTING) {
+            coord = victim.coord.add(new Coord(coordToVictim.x * victim.spriteSign * victim.size.x, coordToVictim.y * victim.size.y));
+        }
+        else {
+            move();
+        }
+        expire();
+        checkLeave();
+    }
+
+    public void die() {
+        if (!dead) {
+            OmegaFight3.explosionQ.add(new Explosion(coord, (new Coord(size.x / GLUE_SIZE[state].x, size.y / GLUE_SIZE[state].y)).scaledBy(BOMB_SIZE).scaledBy(EXPLOSION_SIZE_MULT)));
+            super.die();
+            Omegaman omega = ((Omegaman) owner);
+            double trueDmg = 0;
+            if (victim instanceof Omegaman) {
+                trueDmg = ((Omegaman) victim).hurt(damage, knockback, coord);
+                omega.addToStat(Omegaman.DMG_TO_OMEGAMAN, trueDmg);
+            }
+            else if (victim instanceof Boss) {
+                trueDmg = ((Boss) victim).hurt(damage);
+                omega.addToStat(Omegaman.DMG_TO_BOSS, trueDmg);
+            }
+            
+            if (trueDmg != 0) {
+                omega.addSkillPts(SKILL_PT_GAIN);
+                OmegaFight3.screenShakeCounter += (int) (SCREENSHAKE * (size.x / GLUE_SIZE[SPLATTING].x));
+            }
+        }
+    }
+
+    public boolean dieTo(Char enemy) {
+        if (state == GLOBBING) {
+            state = SPLATTING;
+            victim = enemy;
+            coordToVictim = new Coord((coord.x - enemy.coord.x) / enemy.size.x * enemy.spriteSign, (coord.y - enemy.coord.y) / enemy.size.y);
+            size = new Coord(size.x * GLUE_SIZE[SPLATTING].x / GLUE_SIZE[GLOBBING].x, size.y * GLUE_SIZE[SPLATTING].y / GLUE_SIZE[GLOBBING].y);
+            velocity = 0;
+            frameCounter = Math.max(frameCounter, MIN_BOMB_TIME);
+        }
+        return false;
+    }
+}
+
+class Spark extends Projectile {
+    // Size constants
+    public static final double HITBOX_TO_SIZE = 0.9;
+    public static final Coord SIZE = new Coord(50, 45);
+
+    public static final Coord EXPLOSION_SIZE_MULT = new Coord(3, 30.0 / 9);
+
+    // Damage constants
+    public static final double DMG = 10 * Omegaman.PERC_MULT;
+    public static final double DURA = 3;
+    public static final double KB = 15;
+    public static final double KB_SPREAD = Math.PI / 4;
+
+    // Velocity constants
+    public static final double VELOCITY = 15;
+    public static final int LIFE = 45;
+
+    // Shot orientation constants
+    public static final int NUM_SHOTS = 3;
+    public static final double MAX_DIST_TO_CENTER = 0.65;
+    public static final double[] INIT_DIR = {-Math.atan2(MAX_DIST_TO_CENTER, 0.5), Math.atan2(MAX_DIST_TO_CENTER, 0.5), 0};
+    public static final double[] HALF_DIR = {Math.atan2(MAX_DIST_TO_CENTER, 0.5), -Math.atan2(MAX_DIST_TO_CENTER, 0.5), 0};
+
+    // Misc constants
+    public static final double RECOIL = 8;
+    public static final int SCREENSHAKE = 10;
+    public static final boolean CAN_HIT_PROJ = true;
+    public static final boolean IS_ON_TOP = true;
+    public static final int TOP = 0;
+    public static final int BOTM = 1;
+    public static final int CENTR = 2;
+
+    // Static image
+    public static BufferedImage image;
+    public static BufferedImage reticleImg;
+
+    public int type;
+    public double trueDir;
+    public Coord origin;
+    public int totalLife;
+
+    // Constructor
+    public Spark(Omegaman player, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double kbSpread, double dura, int frameCounter, int type, boolean canHitProj, boolean isOnTop) {
+        super(player, coord, size, hitBoxSize, velocity, dir, damage, knockback, kbSpread, dura, frameCounter, canHitProj, isOnTop);
+        trueDir = dir;
+        this.type = type;
+        this.dir = INIT_DIR[type] + trueDir;
+        origin = coord.copy();
+        totalLife = frameCounter;
+    }
+
+    public Spark(Omegaman player, Coord coord, double dir, double percentCharged, int type) {
+        this(player, coord, SIZE.scaledBy(percentCharged), SIZE.scaledBy(percentCharged).scaledBy(HITBOX_TO_SIZE), VELOCITY, dir, DMG * percentCharged, KB * percentCharged, KB_SPREAD, DURA, (int) (LIFE * percentCharged), type, CAN_HIT_PROJ, IS_ON_TOP);
+    }
+
+    public void process() {
+        frameCounter--;
+        coord.x = origin.x + (totalLife - frameCounter) * velocity * Math.cos(trueDir);
+        if (type == TOP) {
+            coord.y = origin.y - (double) (totalLife / 2 - Math.abs(totalLife / 2 - frameCounter)) / (totalLife / 2) * (MAX_DIST_TO_CENTER * totalLife / 2 * velocity) * Math.cos(trueDir);
+        }
+        else if (type == BOTM) {
+            coord.y = origin.y + (double) (totalLife / 2 - Math.abs(totalLife / 2 - frameCounter)) / (totalLife / 2) * (MAX_DIST_TO_CENTER * totalLife / 2 * velocity) * Math.cos(trueDir);
+        }
+        if (frameCounter == 0) {
+            die();
+            hitBoxSize = hitBoxSize.scaledBy(EXPLOSION_SIZE_MULT);
+        }
+        else if (frameCounter == totalLife / 2) {
+            dir = HALF_DIR[type] + trueDir;
+        }
+    }
+
+    // Description:
+    // This overridden method makes the rocket explode
+    public void die() {
+        if (!dead) {
+            OmegaFight3.explosionQ.add(new Explosion(coord, size.scaledBy(EXPLOSION_SIZE_MULT)));
+            super.die();
+        }
+    }
+
+    // Description:
+    // This overridden method draws the rocket or explosion image based on its state
+    public void draw(Graphics2D g2) {
+        g2.rotate(dir, coord.x, coord.y);
+        Coord drawCoord = coord.add(size.scaledBy(-0.5));
+        g2.drawImage(image, (int) (drawCoord.x), (int) (drawCoord.y), (int) size.x, (int) size.y, null);
+        g2.rotate(-dir, coord.x, coord.y);
+        super.draw(g2);
+    }
+
+    public boolean dieTo(Char enemy) {
+        die();
+        Omegaman omega = ((Omegaman) owner);
+        double trueDmg = 0;
+        if (enemy instanceof Omegaman) {
+            trueDmg = ((Omegaman) enemy).hurt(damage, knockback, coord, dir, kbSpread);
+            omega.addToStat(Omegaman.DMG_TO_OMEGAMAN, trueDmg);
+        }
+        else if (enemy instanceof Boss) {
+            trueDmg = ((Boss) enemy).hurt(damage);
+            omega.addToStat(Omegaman.DMG_TO_BOSS, trueDmg);
+        }
+        
+        OmegaFight3.screenShakeCounter += (int) (SCREENSHAKE * (size.x / SIZE.x));
+        return true;
     }
 }

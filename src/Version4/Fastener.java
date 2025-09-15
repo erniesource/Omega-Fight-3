@@ -78,15 +78,20 @@ public class Fastener extends Projectile {
         checkLeave();
     }
 
-    public void dieTo(Char enemy) {
+    public boolean dieTo(Char enemy) {
         if (enemy instanceof Omegaman) {
             ((Omegaman) enemy).hurt(damage, knockback, coord, Math.atan2(fastenerVelocity.y, fastenerVelocity.x), kbSpread);
             die();
+            return true;
         }
+        return false;
     }
 
-    public void dieTo(Projectile proj) {
-        if (!(proj.owner instanceof Boss)) super.dieTo(proj);
+    public boolean dieTo(Projectile proj) {
+        if (!(proj.owner instanceof Boss)) {
+            return super.dieTo(proj);
+        }
+        return false;
     }
 }
 
@@ -104,7 +109,7 @@ class Energy extends Projectile {
     // Movement constants
     public static final double VELOCITY = 4;
     public static final double ROT_PER_SECOND = 2;
-    public static final double ROT_SPD = Math.PI * 2 / OmegaFight3.FPS * ROT_PER_SECOND;
+    public static final double ROT_SPD = Math.PI * 2 / OmegaFight3.MAX_TICK_RATE * ROT_PER_SECOND;
 
     // Misc constants
     public static final boolean CAN_HIT_PROJ = false;
@@ -145,15 +150,20 @@ class Energy extends Projectile {
         rotation = (rotation + ROT_SPD) % (Math.PI * 2);
     }
 
-    public void dieTo(Char enemy) {
+    public boolean dieTo(Char enemy) {
         if (enemy instanceof Omegaman) {
             ((Omegaman) enemy).hurt(damage, knockback, coord, dir, kbSpread);
             die();
+            return true;
         }
+        return false;
     }
 
-    public void dieTo(Projectile proj) {
-        if (!(proj.owner instanceof Boss)) super.dieTo(proj);
+    public boolean dieTo(Projectile proj) {
+        if (!(proj.owner instanceof Boss)) {
+            return super.dieTo(proj); 
+        }
+        return false;
     }
 }
 
@@ -239,15 +249,20 @@ class Pincer extends Projectile {
         }
     }
 
-    public void dieTo(Char enemy) {
+    public boolean dieTo(Char enemy) {
         if (enemy instanceof Omegaman) {
             ((Omegaman) enemy).hurt(damage, knockback, coord, dir, kbSpread);
             die();
+            return true;
         }
+        return false;
     }
 
-    public void dieTo(Projectile proj) {
-        if (!(proj.owner instanceof Boss)) super.dieTo(proj);
+    public boolean dieTo(Projectile proj) {
+        if (!(proj.owner instanceof Boss)) {
+            return super.dieTo(proj);
+        }
+        return false;
     }
 }
 
@@ -325,15 +340,21 @@ class Bombot extends Projectile {
         owner.smokeQ.add(new Smoke(coord.copy(), new Coord(Math.max(size.x, size.y) * SIZE_TO_SMOKE)));
     }
 
-    public void dieTo(Char enemy) {
+    public boolean dieTo(Char enemy) {
         if (enemy instanceof Omegaman) {
             ((Omegaman) enemy).hurt(damage, knockback, coord, dir, kbSpread);
             die();
             OmegaFight3.screenShakeCounter += (int) (SCREENSHAKE * (size.x / SIZE.x));
+            return true;
         }
+        return false;
     }
 
-    public void dieTo(Projectile proj) {
-        if (!(proj.owner instanceof Boss)) die();
+    public boolean dieTo(Projectile proj) {
+        if (!(proj.owner instanceof Boss)) {
+            die();
+            return true;
+        }
+        return false;
     }
 }
