@@ -15,13 +15,14 @@ public class Omegaman extends Char {
     public static final int HURT_SPRITE = 5;
     public static final int DASH_SPRITE = 6;
     public static final Coord SIZE = new Coord(100);
+    public static final double SIZE_TO_HITBOX = 0.5;
+    public static final double SIZE_TO_HURTBOX = 0.9;
     public static final double SIZE_TO_FIRE = 0.8;
 
     // Skill Points Constants
     public static final int ONES_PER_SKILL_PT = 60;
     public static final int MAX_SKILL_PTS = 3 * ONES_PER_SKILL_PT;
-    public static final int SKILL_PT_REGEN_HZ = 10;
-    public static final int PVP_SKILL_PT_REGEN_HZ = OmegaFight3.DEV_MODE? 1: 20;
+    public static final int SKILL_PT_REGEN_HZ = OmegaFight3.DEV_MODE? 1: 10;
     public static final double PVP_SKILL_PT_BASIC_MULT = 2;
 
     // Movement Constants
@@ -37,11 +38,12 @@ public class Omegaman extends Char {
     public static final int NOT_DASHING = -1;
     public static final int DASH_LFT = 0;
     public static final int DASH_RIT = 1;
-    public static final int DASH_SKILL_PTS = (int) (ONES_PER_SKILL_PT * 5 / 12);
+    public static final int DASH_SKILL_PTS = (int) (ONES_PER_SKILL_PT / 2);
     public static final int DASH_TIME = 15;
     public static final double DASH_SPD = 16;
     public static final int DASH_SMOKE_HZ = 5;
     public static final double SIZE_TO_DASH_SMOKE = 0.5;
+    public static final double SOFT_COLLISION_ACCEL = 2;
 
     // Shooting Constants
     public static final int BULLET_WEAPON_NO = 0;
@@ -152,6 +154,7 @@ public class Omegaman extends Char {
     public int coyoteCounter; // Counter for Coyote time
     public int jumpState = 1; // Even number (Pressing on the i / 2 - th jump), Odd number (Not pressing on the i / 2 - th jump)
     public int onPlatform; // -1: Not on plaform (airborne), 0+ (which number platform player is on)
+    public Deque<Wake> wakeQ = new LinkedList<>();
 
     // Dash stats
     public int[] dashButtonCounter = new int[NUM_DASH_DIRS];
@@ -194,7 +197,7 @@ public class Omegaman extends Char {
     // Constructor
     public Omegaman(int playerNo, Coord coord, Coord size, int spriteSign, int onPlatform, int livesLeft,int[] controls, int[] shtKeys, int[] loadout) throws IOException {
         // Initialize character variables
-        super(coord, size, SIZE_TO_FIRE, IDLE_SPRITE, spriteSign, 0, ALIVE_STATE);
+        super(coord, size, size.scaledBy(SIZE_TO_HITBOX), size.scaledBy(SIZE_TO_HURTBOX), SIZE_TO_FIRE, IDLE_SPRITE, spriteSign, 0, ALIVE_STATE);
 
         // Initialize player variables
         this.playerNo = playerNo;
@@ -249,35 +252,38 @@ public class Omegaman extends Char {
     }
 
     public void controlDash(boolean[] pressed) {
-        for (int i = 0; i != NUM_DASH_DIRS; i++) {
-            int temp = controlDashDir(i, pressed[i]);
-            if (temp != NOT_DASHING) {
-                if (dashing != NOT_DASHING) {
-                    dashing = NOT_DASHING;
+        if (dashing == NOT_DASHING) {
+            for (int i = 0; i != NUM_DASH_DIRS; i++) {
+                int temp = controlDashDir(i, pressed[i]);
+                if (temp != NOT_DASHING) {
+                    if (dashing != NOT_DASHING) {
+                        dashing = NOT_DASHING;
+                    }
+                    else {
+                        dashing = temp;
+                    }
+                }
+            }
+            if (dashing != NOT_DASHING) {
+                if (skillPts >= DASH_SKILL_PTS && stunCounter == NOT_STUNNED) {
+                    if (dashing == DASH_LFT) {
+                        spriteSign = OmegaFight3.LFT_SIGN;
+                        velocity = new Coord(DASH_SPD * OmegaFight3.LFT_SIGN, 0);
+                    }
+                    else if (dashing == DASH_RIT) {
+                        spriteSign = OmegaFight3.RIT_SIGN;
+                        velocity = new Coord(DASH_SPD * OmegaFight3.RIT_SIGN, 0);
+                    }
+                    resetStats(DASH_STAT_RESET);
+                    skillPts -= DASH_SKILL_PTS;
+                    addToStat(SKILL_PTS_USED_NO, DASH_SKILL_PTS);
+                    spriteNo = DASH_SPRITE;
+                    dashCounter = DASH_TIME;
+                    invCounter = DASH_TIME;
                 }
                 else {
-                    dashing = temp;
+                    dashing = NOT_DASHING;
                 }
-            }
-        }
-        if (dashing != NOT_DASHING) {
-            if (skillPts >= DASH_SKILL_PTS) {
-                if (dashing == DASH_LFT) {
-                    spriteSign = OmegaFight3.LFT_SIGN;
-                    velocity = new Coord(DASH_SPD * OmegaFight3.LFT_SIGN, 0);
-                }
-                else if (dashing == DASH_RIT) {
-                    spriteSign = OmegaFight3.RIT_SIGN;
-                    velocity = new Coord(DASH_SPD * OmegaFight3.RIT_SIGN, 0);
-                }
-                resetStats(DASH_STAT_RESET);
-                skillPts -= DASH_SKILL_PTS;
-                spriteNo = DASH_SPRITE;
-                dashCounter = DASH_TIME;
-                invCounter = DASH_TIME;
-            }
-            else {
-                dashing = NOT_DASHING;
             }
         }
     }
@@ -287,15 +293,15 @@ public class Omegaman extends Char {
             if (dashState[idx] % 2 == 1) {
                 updateDashState(idx);
             }
-            if (dashState[idx] == TAPS_TO_DASH * 2) {
-                dashState[idx] = 0;
-                dashButtonCounter[idx] = 0;
-                return idx;
-            }
         }
         else {
             if (dashState[idx] % 2 == 0) {
                 updateDashState(idx);
+            }
+            if (dashState[idx] == TAPS_TO_DASH * 2 - 1) {
+                dashState[idx] = 0;
+                dashButtonCounter[idx] = 0;
+                return idx;
             }
         }
         if (dashState[idx] != 0) dashButtonCounter[idx]++;
@@ -340,6 +346,9 @@ public class Omegaman extends Char {
             spriteNo = JUMP_SPRITE;
             onPlatform = AIRBORNE;
             jumpCounter = 0;
+            if (jumpState != 1) {
+                wakeQ.add(new Wake(new Coord(coord.x, coord.y + size.y / 2 + velocity.y), size.x));
+            }
             jumpState++;
             addToStat(TIMES_JUMPED_NO, 1);
         }
@@ -355,7 +364,7 @@ public class Omegaman extends Char {
     // Description: This method passively regenerates skill points
     public void regenSkillPts() {
         if (skillPts != MAX_SKILL_PTS) {
-            skillPtCounter = (skillPtCounter + 1) % (OmegaFight3.gameMode == OmegaFight3.PVP? PVP_SKILL_PT_REGEN_HZ: SKILL_PT_REGEN_HZ);
+            skillPtCounter = (skillPtCounter + 1) % SKILL_PT_REGEN_HZ;
             if (skillPtCounter == 0) skillPts++;
         }
     }
@@ -523,7 +532,7 @@ public class Omegaman extends Char {
                 }
             }
         }
-    } // Bullet combo count method here?
+    }
 
     public void checkBulletCombo() {
         if (Bullet.combo[playerNo] != 0) {
@@ -532,6 +541,25 @@ public class Omegaman extends Char {
                 Bullet.combo[playerNo] = 0;
                 Bullet.comboEndCounter[playerNo] = 0;
             }
+        }
+    }
+
+    public void processWakes() {
+        // Process smoke trails
+        for (Wake wake: wakeQ) {
+            wake.frameCounter++;
+        }
+
+        // Delete dead smoke
+        while (!wakeQ.isEmpty() && wakeQ.getFirst().frameCounter == Wake.WAKE_LEN) {
+            wakeQ.removeFirst();
+        }
+    }
+
+    // Description: This method draws the smoke trails of the player
+    public void drawWakes(Graphics2D g2) {
+        for (Wake wake: wakeQ) {
+            wake.draw(g2);
         }
     }
 
@@ -637,11 +665,15 @@ public class Omegaman extends Char {
             }
         }
         else {
+            int platformNo = checkPlatforms();
             // Falling
-            if (checkPlatforms() == AIRBORNE) {
+            if (platformNo == AIRBORNE) {
                 spriteNo = JUMP_SPRITE;
                 onPlatform = AIRBORNE;
                 coyoteCounter = COYOTE_TIME;
+            }
+            else {
+                velocity.y = 0;
             }
         }
     }
@@ -691,11 +723,23 @@ public class Omegaman extends Char {
     }
 
     // Description: This method checks if the player is colliding with the boss and hurts them if so
-    public void checkBossHitbox() { // Change this to boss side
+    public void checkBossHitbox() {
+        for (Boss boss: OmegaFight3.bosses) {
+            if (OmegaFight3.intersects(coord, hurtBoxSize, boss.coord, boss.hitBoxSize)) {
+                hurt(KAMIKAZE_DMG, KAMIKAZE_KB, boss.coord, true);
+            }
+        }
+    }
+
+    public void checkPlayerHitBox() {
         if (invCounter == VULNERABLE) {
-            for (Boss boss: OmegaFight3.bosses) {
-                if (OmegaFight3.intersects(coord, size, boss.coord, boss.size.scaledBy(boss.sizeToHitbox), 0)) {
-                    hurt(KAMIKAZE_DMG, KAMIKAZE_KB, boss.coord);
+            for (Omegaman omega: OmegaFight3.omegaman) {
+                if (omega != this && OmegaFight3.intersects(coord, hurtBoxSize, omega.coord, omega.hitBoxSize) && omega.invCounter == VULNERABLE) {
+                    double angle = Math.atan2(coord.y - omega.coord.y, coord.x - omega.coord.x);
+                    velocity.x += SOFT_COLLISION_ACCEL * Math.cos(angle);
+                    velocity.y += SOFT_COLLISION_ACCEL * Math.sin(angle);
+                    omega.velocity.x += SOFT_COLLISION_ACCEL * -Math.cos(angle);
+                    omega.velocity.y += SOFT_COLLISION_ACCEL * -Math.sin(angle);
                 }
             }
         }
@@ -739,10 +783,6 @@ public class Omegaman extends Char {
         coolingWeapon = NO_COOLING_WEAPON;
         heatCounter = 0;
         runSign = 1;
-        for (int i = 0; i != NUM_DASH_DIRS; i++) {
-            dashButtonCounter[i] = 0;
-            dashState[i] = 0;
-        }
 
         // Died stats resets
         if (type == DIED_STAT_RESET) {
@@ -767,6 +807,12 @@ public class Omegaman extends Char {
         if (type != DASH_STAT_RESET) {
             dashing = NOT_DASHING;
             dashCounter = 0;
+        }
+        if (type != STUN_STAT_RESET) {
+            for (int i = 0; i != NUM_DASH_DIRS; i++) {
+                dashButtonCounter[i] = 0;
+                dashState[i] = 0;
+            }
         }
     }
 
@@ -884,13 +930,17 @@ public class Omegaman extends Char {
         if (potSpriteSign != 0) spriteSign = potSpriteSign;
     }
 
-    // Description: This method hurts the player and knocks them back in the directions specified with the amount of spread specified based on the enemy coordinates
     public double hurt(double damage, double knockback, Coord enemyCoord, double dir, double kbSpread) {
+        return hurt(damage, knockback, enemyCoord, dir, kbSpread, false);
+    }
+
+    // Description: This method hurts the player and knocks them back in the directions specified with the amount of spread specified based on the enemy coordinates
+    public double hurt(double damage, double knockback, Coord enemyCoord, double dir, double kbSpread, boolean setKB) {
         if (invCounter == VULNERABLE && state == ALIVE_STATE) {
             hurtWithKb(damage, knockback, enemyCoord);
 
             // knockback calculations. Can't put this with hurtWithKb cuz knockback is a local variable
-            knockback *= (percent / Math.pow(10, PERC_NUM_DECIMALS) / 100 + 1);
+            if (!setKB) knockback *= (percent / Math.pow(10, PERC_NUM_DECIMALS) / 100 + 1);
             stunCounter = (int) Math.pow(knockback, STUN_REDUCTION);
 
             // Angle and speed calculations
@@ -915,13 +965,17 @@ public class Omegaman extends Char {
         return 0;
     }
 
-    // Description: This method hurts the player and knocks them back in any direction based on the enemy coordinates
     public double hurt(double damage, double knockback, Coord enemyCoord) {
+        return hurt(damage, knockback, enemyCoord, false);
+    }
+
+    // Description: This method hurts the player and knocks them back in any direction based on the enemy coordinates
+    public double hurt(double damage, double knockback, Coord enemyCoord, boolean setKB) {
         if (invCounter == VULNERABLE && state == ALIVE_STATE) {
             hurtWithKb(damage, knockback, enemyCoord);
 
             // knockback calculations
-            knockback *= (percent / Math.pow(10, PERC_NUM_DECIMALS) / 100 + 1);
+            if (!setKB) knockback *= (percent / Math.pow(10, PERC_NUM_DECIMALS) / 100 + 1);
             stunCounter = (int) Math.pow(knockback, STUN_REDUCTION);
 
             // ANgle and speed calculations
@@ -976,7 +1030,7 @@ public class Omegaman extends Char {
 
         // Kb time calculations
         stunCounter--;
-        if (stunCounter == 0) {
+        if (stunCounter <= 0) {
             recover();
         }
 

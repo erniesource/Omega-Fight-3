@@ -10,7 +10,7 @@ public class Bullet extends Projectile {
     public static final double KB = 5;
     public static final double KB_SPREAD = Math.PI / 2;
     public static final int MAX_COMBO = 5;
-    public static final double DMG_POW = Math.pow(4, 1.0 / MAX_COMBO);
+    public static final double DMG_POW = Math.pow(6, 1.0 / MAX_COMBO);
     public static final double SIZE_POW = Math.pow(2.5, 1.0 / MAX_COMBO);
     public static final int TIME_TO_COMBO = 300;
 
@@ -89,6 +89,17 @@ public class Bullet extends Projectile {
         comboEndCounter[omega.playerNo] = 0;
         return true;
     }
+
+    public boolean dieTo(Projectile proj) {
+        if (dura <= proj.dura) {
+            die();
+            Omegaman omega = ((Omegaman) owner);
+            combo[omega.playerNo] = Math.min(MAX_COMBO, combo[omega.playerNo] + 1);
+            comboEndCounter[omega.playerNo] = 0;
+            return true;
+        }
+        return false;
+    }
 }
 
 class Rocket extends Projectile {
@@ -139,6 +150,22 @@ class Rocket extends Projectile {
         }
     }
 
+    public void process() {
+        move();
+        Omegaman omega = (Omegaman) owner;
+        frameCounter--;
+        if (frameCounter == 0) {
+            die();
+            Bullet.combo[omega.playerNo] = 0;
+            Bullet.comboEndCounter[omega.playerNo] = 0;
+        }
+        if (OmegaFight3.outOfScreen(coord, size)) {
+            die();
+            Bullet.combo[omega.playerNo] = 0;
+            Bullet.comboEndCounter[omega.playerNo] = 0;
+        }
+    }
+
     // Description:
     // This overridden method draws the rocket or explosion image based on its state
     public void draw(Graphics2D g2) {
@@ -149,6 +176,9 @@ class Rocket extends Projectile {
 
     public boolean dieTo(Projectile proj) {
         die();
+        Omegaman omega = ((Omegaman) owner);
+        Bullet.combo[omega.playerNo] = Math.min(Bullet.MAX_COMBO, Bullet.combo[omega.playerNo] + 1);
+        Bullet.comboEndCounter[omega.playerNo] = 0;
         return true;
     }
 
@@ -165,7 +195,14 @@ class Rocket extends Projectile {
             omega.addToStat(Omegaman.DMG_TO_BOSS, trueDmg);
         }
         
-        OmegaFight3.screenShakeCounter += (int) (SCREENSHAKE * (size.x / SIZE.x));
+        if (trueDmg != 0) {
+            Bullet.combo[omega.playerNo] = Math.min(Bullet.MAX_COMBO, Bullet.combo[omega.playerNo] + 1);
+            OmegaFight3.screenShakeCounter += (int) (SCREENSHAKE * (size.x / SIZE.x));
+        }
+        else {
+            Bullet.combo[omega.playerNo] = 0;
+        }
+        Bullet.comboEndCounter[omega.playerNo] = 0;
         return true;
     }
 }
@@ -543,7 +580,7 @@ class Laser extends Projectile {
     public static final double DMG = 0.65 * Omegaman.PERC_MULT;
     public static final double DURA = INF_DURA;
     public static final double SOUR_KB = 2;
-    public static final double SWEET_KB_MULT = 9;
+    public static final double SWEET_KB = 18;
     public static final double BASE_KB_DIR = Math.PI * 1.5;
     public static final double KB_DIR_TILT = Math.PI / 3;
     public static final double KB_SPREAD = Math.PI / 6;
@@ -586,7 +623,7 @@ class Laser extends Projectile {
 
     public void process() {
         super.process();
-        if (frameCounter == SOUR_TO_SWEET_TRANS) knockback *= SWEET_KB_MULT;
+        if (frameCounter == SOUR_TO_SWEET_TRANS) knockback = SWEET_KB;
     }
 
     // Description: this method returns that the laser should never die to a projectile
@@ -598,7 +635,7 @@ class Laser extends Projectile {
         Omegaman omega = ((Omegaman) owner);
         double trueDmg = 0;
         if (enemy instanceof Omegaman) {
-            trueDmg = ((Omegaman) enemy).hurt(damage, knockback, coord, BASE_KB_DIR + KB_DIR_TILT * Math.cos(dir), kbSpread);
+            trueDmg = ((Omegaman) enemy).hurt(damage, knockback, coord, BASE_KB_DIR + KB_DIR_TILT * Math.cos(dir), kbSpread, knockback != SWEET_KB);
             omega.addToStat(Omegaman.DMG_TO_OMEGAMAN, trueDmg);
         }
         else if (enemy instanceof Boss) {

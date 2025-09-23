@@ -6,6 +6,7 @@ public class Doctor extends Boss {
     // Combat constants
     public static final double INIT_HEALTH = (OmegaFight3.DEV_MODE? 100: 600) * Omegaman.PERC_MULT;
     public static final double SIZE_TO_HITBOX = 0.4;
+    public static final double SIZE_TO_HURTBOX = 0.8;
 
     // State constants
     public static final int SPIT = 2;
@@ -59,7 +60,7 @@ public class Doctor extends Boss {
 
     // Constructor
     public Doctor() {
-        super(docSprite, STATE_COORD, STATE_SIZE, STATE_SPRITE_HZ, STATE_TIME, STATE_SPRITE_START, STATE_SPRITE_SIGN, STATE_NUM_SPRITES, INIT_HEALTH , SIZE_TO_HITBOX, SIZE_TO_FIRE, IDLE, NUM_STATES, TRANS_TIME);
+        super(docSprite, STATE_COORD, STATE_SIZE, STATE_SPRITE_HZ, STATE_TIME, STATE_SPRITE_START, STATE_SPRITE_SIGN, STATE_NUM_SPRITES, INIT_HEALTH , SIZE_TO_HITBOX, SIZE_TO_HURTBOX, SIZE_TO_FIRE, IDLE, NUM_STATES, TRANS_TIME);
     }
 
     // Description: This method calculates the attacks of the Doctor

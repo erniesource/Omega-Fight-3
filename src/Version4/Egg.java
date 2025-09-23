@@ -91,20 +91,12 @@ public class Egg extends Projectile{
                 if (platform.landed(coord.x, size.y, coord.y, coord.y + eggVelocity.y)) {
                     coord.y = platform.y;
                     die();
+                    if (state != 0) {
+                        for (int i = 0; i != PROJS_PER_SPLIT[state - 1]; i++) {
+                            OmegaFight3.babyProjectiles.add(new Egg((Boss) owner, coord.copy(), -Math.PI / (PROJS_PER_SPLIT[state - 1] + 1) * (i + 1), state - 1));
+                        }
+                    }
                     break;
-                }
-            }
-        }
-    }
-
-    public void die() {
-        if (!dead) {
-            super.die();
-
-            // Split if not at final state
-            if (state != 0) {
-                for (int i = 0; i != PROJS_PER_SPLIT[state - 1]; i++) {
-                    OmegaFight3.babyProjectiles.add(new Egg((Boss) owner, coord.copy(), -Math.PI / (PROJS_PER_SPLIT[state - 1] + 1) * (i + 1), state - 1));
                 }
             }
         }
@@ -197,7 +189,7 @@ class Diver extends Projectile {
     // Size constants
     public static final Coord SIZE = new Coord(160, 110);
     public static final double SIZE_TO_SMOKE = 0.35;
-    public static final double SIZE_TO_HITBOX = 1.2;
+    public static final double SIZE_TO_HITBOX = 1;
     public static final Coord EXPLOSION_SIZE_MULT = new Coord(33.0/20, 48.0/20);
 
     // Damage constants
@@ -205,13 +197,13 @@ class Diver extends Projectile {
     public static final double DURA = INF_DURA;
     public static final double KB = 10;
     public static final double KB_SPREAD = Math.PI / 4;
-    public static final double MULT = 0.35;
+    public static final double DMG_KB_MULT = 0.35;
 
     // Velocity constants
     public static final double VELOCITY = 6;
     public static final double DIVE_ANGLE = 7.0 / 9 * Math.PI / 2;
     public static final double DIVE_ANGLE_LEEWAY = Math.PI / 60;
-    public static final double ACCEL = 1;
+    public static final double ACCEL = 0.7;
 
     // State constants
     public static final int TRAVELLING = 0;
@@ -297,7 +289,7 @@ class Diver extends Projectile {
 
     public boolean dieTo(Char enemy) {
         if (enemy instanceof Omegaman) {
-            double mult = Math.sqrt(velocity) * MULT;
+            double mult = Math.sqrt(velocity) * DMG_KB_MULT;
             ((Omegaman) enemy).hurt(damage * mult, knockback * mult, coord, dir, KB_SPREAD);
             OmegaFight3.screenShakeCounter += (int) (SCREENSHAKE * mult);
             die();

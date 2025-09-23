@@ -1,5 +1,6 @@
 package Version4;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import javafx.util.Pair;
 
@@ -7,6 +8,7 @@ public class Bird extends Boss {
     // Combat constants
     public static final double INIT_HEALTH = (OmegaFight3.DEV_MODE? 100: 600) * Omegaman.PERC_MULT;
     public static final double SIZE_TO_HITBOX = 0.5;
+    public static final double SIZE_TO_HURTBOX = 0.6;
 
     // State constants
     public static final int EAGLE_ART = 2;
@@ -42,11 +44,15 @@ public class Bird extends Boss {
     public static final double TWEAKS_PER_CYCLE = 2;
 
     // Background attack constants
-    public static final int WAVE_HZ = 1080;
-    public static final int MIN_WAVE_HZ = 180;
+    public static final int WAVE_HZ = 2160;
+    public static final int MIN_WAVE_HZ = 360;
     public static final double WAVE_THRESHOLD = 0.7;
     public static final int DIVER_PER_WAVE = 3;
-    public static final int WAVE_TIME = 90;
+    public static final int WAVE_TIME = 150;
+    public static final int WARN_TIME = 60;
+    public static final int WARN_ANIM_LEN = 6;
+    public static final Coord SIGN_SIZE = new Coord(250, 250);
+    public static final int SIGN_SPACING = 25;
     public static final int NOT_WAVING = 0;
     public static final int WAVING_LFT = -1;
     public static final int WAVING_RIT = 1;
@@ -58,6 +64,7 @@ public class Bird extends Boss {
 
     // Images
     public static BufferedImage[] birdSprite = new BufferedImage[TOT_NUM_SPRITES];
+    public static BufferedImage sign;
 
     // Background attack variables
     public int waveCounter;
@@ -67,7 +74,7 @@ public class Bird extends Boss {
 
     // Constructor
     public Bird() {
-        super(birdSprite, STATE_COORD, STATE_SIZE, STATE_SPRITE_HZ, STATE_TIME, STATE_SPRITE_START, STATE_SPRITE_SIGN, STATE_NUM_SPRITES, INIT_HEALTH , SIZE_TO_HITBOX, SIZE_TO_FIRE, IDLE, NUM_STATES, TRANS_TIME);
+        super(birdSprite, STATE_COORD, STATE_SIZE, STATE_SPRITE_HZ, STATE_TIME, STATE_SPRITE_START, STATE_SPRITE_SIGN, STATE_NUM_SPRITES, INIT_HEALTH , SIZE_TO_HITBOX, SIZE_TO_HURTBOX, SIZE_TO_FIRE, IDLE, NUM_STATES, TRANS_TIME);
     }
 
     // Description: This method calculates the attacks of the bird
@@ -104,7 +111,7 @@ public class Bird extends Boss {
         if (health <= INIT_HEALTH  * WAVE_THRESHOLD) {
             waveCounter++;
             if (waving != NOT_WAVING) {
-                if (waveCounter % (WAVE_TIME / DIVER_PER_WAVE) == 0) {
+                if (waveCounter % ((WAVE_TIME - WARN_TIME) / DIVER_PER_WAVE) == 0 && waveCounter > WARN_TIME) {
                     OmegaFight3.projectiles.add(new Diver(this, new Coord(OmegaFight3.SCREEN_CENTER.x - (OmegaFight3.SCREEN_SIZE.x / 2 + Diver.SIZE.x / 2) * waving, DIVER_ALTITUDE), (waving == WAVING_RIT? 0: Math.PI), waving));
                 }
                 if (waveCounter == WAVE_TIME) {
@@ -138,11 +145,24 @@ public class Bird extends Boss {
             }
         }
     }
+
+    public void draw(Graphics g) {
+        super.draw(g);
+        if (waveCounter <= WARN_TIME) {
+            if (waving == WAVING_LFT) {
+                g.drawImage(sign, (int) (OmegaFight3.SCREEN_SIZE.x - SIGN_SPACING - SIGN_SIZE.y), (int) OmegaFight3.lerp(-SIGN_SIZE.y, 0, (double) Math.min(WARN_TIME / 2 - Math.abs(WARN_TIME / 2 - waveCounter), WARN_ANIM_LEN) / WARN_ANIM_LEN), null);
+            }
+            else if (waving == WAVING_RIT) {
+                g.drawImage(sign, SIGN_SPACING, (int) OmegaFight3.lerp(-SIGN_SIZE.y, 0, (double) Math.min(WARN_TIME / 2 - Math.abs(WARN_TIME / 2 - waveCounter), WARN_ANIM_LEN) / WARN_ANIM_LEN), null);
+            }
+        }
+    }
 }
 
 class Punk extends Boss {
     public static final double INIT_HEALTH = 3;
     public static final double SIZE_TO_HITBOX = 0.5;
+    public static final double SIZE_TO_HURTBOX = 0.65;
     public static final double DEATH_DMG = 30 * Omegaman.PERC_MULT;
 
     // State constants
@@ -177,7 +197,7 @@ class Punk extends Boss {
 
     // Constructor
     public Punk(Bird mommy, Coord coord, int sign) {
-        super(punkSprite, new Coord[] {null, coord}, STATE_SIZE, STATE_SPRITE_HZ, new int[] {0, 0}, STATE_SPRITE_START, new int[] {OmegaFight3.RIT_SIGN, sign}, STATE_NUM_SPRITES, INIT_HEALTH, SIZE_TO_HITBOX, SIZE_TO_FIRE, IDLE, NUM_STATES, 0);
+        super(punkSprite, new Coord[] {null, coord}, STATE_SIZE, STATE_SPRITE_HZ, new int[] {0, 0}, STATE_SPRITE_START, new int[] {OmegaFight3.RIT_SIGN, sign}, STATE_NUM_SPRITES, INIT_HEALTH, SIZE_TO_HITBOX, SIZE_TO_HURTBOX, SIZE_TO_FIRE, IDLE, NUM_STATES, 0);
         this.mommy = mommy;
         for (int i = 0; i < INIT_HEALTH; i++) {
             plushes[i] = new Plush(this);

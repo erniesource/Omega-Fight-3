@@ -39,7 +39,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
 
     // Cheat constants
     public static final boolean CHEATS = true;
-    public static final boolean DEV_MODE = false;
+    public static final boolean DEV_MODE = true;
     public static final int KILL_KEY = KeyEvent.VK_K;
     public static final double KILL_DMG = 2 * Omegaman.PERC_MULT;
     public static final int FPS_CNT_KEY = KeyEvent.VK_F;
@@ -226,7 +226,6 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static final int DEFAULT_DIFFICULTY = 3;
 
     // Misc
-    public static final double HITBOX_LEEWAY = 5;
     public static final int MAX_RGB_VAL = 255;
     public static final double EPSILON = 1e-15;
     public static BufferedImage placeHolder;
@@ -392,8 +391,8 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static HashMap<Integer, Button> chooseButtons = new HashMap<>();
     public static int buttonPressed = NO_BUTTON_HIT;
     public static Button selectedIcon;
-    public static BufferedImage[] icon = new BufferedImage[TOT_NUM_WEAPONS];
-    public static int iconFlashCounter = 0;
+    public static BufferedImage[] weaponIcon = new BufferedImage[TOT_NUM_WEAPONS];
+    public static int weaponIconFlashCounter = 0;
     public static int readyCounter = NOT_READY;
 
     // Pause buttons
@@ -607,20 +606,20 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         // Player Weapon image importing
         addWeaponIcon = ImageIO.read(new File(MENUS_DIR + "no weapon.png"));
         Bullet.image = ImageIO.read(new File(PLAYER_PROJS_DIR + "bullet.png"));
-        icon[Omegaman.BULLET_WEAPON_NO] = ImageIO.read(new File(MENUS_DIR + "bullet icon.png"));
+        weaponIcon[Omegaman.BULLET_WEAPON_NO] = ImageIO.read(new File(MENUS_DIR + "bullet icon.png"));
         Shotgun.image = ImageIO.read(new File(PLAYER_PROJS_DIR + "shotgun.png"));
-        icon[Omegaman.SHOTGUN_WEAPON_NO] = ImageIO.read(new File(MENUS_DIR + "shotgun icon.png"));
+        weaponIcon[Omegaman.SHOTGUN_WEAPON_NO] = ImageIO.read(new File(MENUS_DIR + "shotgun icon.png"));
         Spammer.image = ImageIO.read(new File(PLAYER_PROJS_DIR + "spammer.png"));
-        icon[Omegaman.SPAMMER_WEAPON_NO] = ImageIO.read(new File(MENUS_DIR + "spammer icon.png"));
+        weaponIcon[Omegaman.SPAMMER_WEAPON_NO] = ImageIO.read(new File(MENUS_DIR + "spammer icon.png"));
         Sniper.image = ImageIO.read(new File(PLAYER_PROJS_DIR + "sniper.png"));
-        icon[Omegaman.SNIPER_WEAPON_NO] = ImageIO.read(new File(MENUS_DIR + "sniper icon.png"));
+        weaponIcon[Omegaman.SNIPER_WEAPON_NO] = ImageIO.read(new File(MENUS_DIR + "sniper icon.png"));
         Laser.ball = ImageIO.read(new File(PLAYER_PROJS_DIR + "ball.png"));
         Laser.beam = ImageIO.read(new File(PLAYER_PROJS_DIR + "beam.png"));
-        icon[Omegaman.BOOMER_WEAPON_NO] = ImageIO.read(new File(MENUS_DIR + "boomer icon.png"));
+        weaponIcon[Omegaman.BOOMER_WEAPON_NO] = ImageIO.read(new File(MENUS_DIR + "boomer icon.png"));
         Spike.image = ImageIO.read(new File(PLAYER_PROJS_DIR + "spike.png"));
-        icon[Omegaman.SPIKE_WEAPON_NO] = ImageIO.read(new File(MENUS_DIR + "spike icon.png"));
+        weaponIcon[Omegaman.SPIKE_WEAPON_NO] = ImageIO.read(new File(MENUS_DIR + "spike icon.png"));
         Thorn.image = ImageIO.read(new File(PLAYER_PROJS_DIR + "thorn.png"));
-        icon[Omegaman.FIREBALL_WEAPON_NO] = ImageIO.read(new File(MENUS_DIR + "fireball icon.png"));
+        weaponIcon[Omegaman.FIREBALL_WEAPON_NO] = ImageIO.read(new File(MENUS_DIR + "fireball icon.png"));
         for (int i = 0; i != Fireball.NUM_SPRITES; i++) {
             Fireball.image[i] = ImageIO.read(new File(PLAYER_PROJS_DIR + "fireball" + i + ".png"));
         }
@@ -635,7 +634,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         for (int i = 0; i != GlueBomb.BOMB_NUM_SPRITES; i++) {
             GlueBomb.bombImage[i] = ImageIO.read(new File(PLAYER_PROJS_DIR + "C4" + i + ".png"));
         }
-        icon[Omegaman.GLUE_BOMB_WEAPON_NO] = ImageIO.read(new File(MENUS_DIR + "glue bomb icon.png"));
+        weaponIcon[Omegaman.GLUE_BOMB_WEAPON_NO] = ImageIO.read(new File(MENUS_DIR + "glue bomb icon.png"));
         Spark.image = ImageIO.read(new File(PLAYER_PROJS_DIR + "spark.png"));
         Spark.reticleImg = ImageIO.read(new File(PLAYER_PROJS_DIR + "reticle.png"));
         for (int i = 0; i != Omegaman.NUM_PLAYERS; i++) {
@@ -677,6 +676,8 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         for (int i = 0; i != Explosion.NUM_EXPLOSIONS; i++) {
             Explosion.explosions[i] = ImageIO.read(new File(EXPLOSIONS_DIR + "explosion" + i + ".png"));
         }
+
+        Wake.wakeImg = ImageIO.read(new File(PLAYER_SPRITES_DIR + "wake.png"));
 
         // Boss surge image importing
         for (int i = 0; i != NUM_SURGE_IMAGES; i++) {
@@ -743,21 +744,20 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         }
 
         // Boss Image importing
-        for (int i = 0; i != 2; i++) {
-            for (int j = 0; j != Doctor.STATE_NUM_SPRITES[Boss.DEAD] + Doctor.STATE_NUM_SPRITES[Boss.IDLE]; j++) {
-                Doctor.docSprite[j] = ImageIO.read(new File(DOCTOR_DIR + (j < Doctor.STATE_NUM_SPRITES[Boss.DEAD] ? "dead" + j : "idle" + (j - Doctor.STATE_NUM_SPRITES[Boss.DEAD])) +  ".png"));
-            }
-            for (int j = 0; j != Dragon.STATE_NUM_SPRITES[Boss.DEAD] + Dragon.STATE_NUM_SPRITES[Boss.IDLE]; j++) {
-                Dragon.dragonSprite[j] = ImageIO.read(new File(DRAGON_DIR + (j < Dragon.STATE_NUM_SPRITES[Boss.DEAD] ? "dead" + j : "idle" + (j - Dragon.STATE_NUM_SPRITES[Boss.DEAD])) + ".png"));
-            }
-            for (int j = 0; j != Bird.STATE_NUM_SPRITES[Boss.DEAD] + Bird.STATE_NUM_SPRITES[Boss.IDLE]; j++) {
-                Bird.birdSprite[j] = ImageIO.read(new File(BIRD_DIR + (j < Bird.STATE_NUM_SPRITES[Boss.DEAD] ? "dead" + j : "idle" + (j - Bird.STATE_NUM_SPRITES[Boss.DEAD])) + ".png"));
-            }
-            for (int j = 0; j != Punk.STATE_NUM_SPRITES[Boss.DEAD] + Punk.STATE_NUM_SPRITES[Boss.IDLE]; j++) {
-                Punk.punkSprite[j] = ImageIO.read(new File(PUNK_DIR + (j < Punk.STATE_NUM_SPRITES[Boss.DEAD] ? "dead" + j : "idle" + (j - Punk.STATE_NUM_SPRITES[Boss.DEAD])) + ".png"));
-            }
+        for (int i = 0; i != Doctor.STATE_NUM_SPRITES[Boss.DEAD] + Doctor.STATE_NUM_SPRITES[Boss.IDLE]; i++) {
+            Doctor.docSprite[i] = ImageIO.read(new File(DOCTOR_DIR + (i < Doctor.STATE_NUM_SPRITES[Boss.DEAD] ? "dead" + i : "idle" + (i - Doctor.STATE_NUM_SPRITES[Boss.DEAD])) +  ".png"));
         }
-        
+        for (int i = 0; i != Dragon.STATE_NUM_SPRITES[Boss.DEAD] + Dragon.STATE_NUM_SPRITES[Boss.IDLE]; i++) {
+            Dragon.dragonSprite[i] = ImageIO.read(new File(DRAGON_DIR + (i < Dragon.STATE_NUM_SPRITES[Boss.DEAD] ? "dead" + i : "idle" + (i - Dragon.STATE_NUM_SPRITES[Boss.DEAD])) + ".png"));
+        }
+        for (int i = 0; i != Bird.STATE_NUM_SPRITES[Boss.DEAD] + Bird.STATE_NUM_SPRITES[Boss.IDLE]; i++) {
+            Bird.birdSprite[i] = ImageIO.read(new File(BIRD_DIR + (i < Bird.STATE_NUM_SPRITES[Boss.DEAD] ? "dead" + i : "idle" + (i - Bird.STATE_NUM_SPRITES[Boss.DEAD])) + ".png"));
+        }
+        Bird.sign = ImageIO.read(new File(BIRD_DIR + "sign.png"));
+        for (int i = 0; i != Punk.STATE_NUM_SPRITES[Boss.DEAD] + Punk.STATE_NUM_SPRITES[Boss.IDLE]; i++) {
+            Punk.punkSprite[i] = ImageIO.read(new File(PUNK_DIR + (i < Punk.STATE_NUM_SPRITES[Boss.DEAD] ? "dead" + i : "idle" + (i - Punk.STATE_NUM_SPRITES[Boss.DEAD])) + ".png"));
+        }
+
         // Doctor image importing
         for (int i = 1; i != Doctor.NUM_STATES; i++) {
             Doctor.STATE_SPRITE_START[i] = Doctor.STATE_SPRITE_START[i - 1] + Doctor.STATE_NUM_SPRITES[i - 1];
@@ -805,7 +805,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         chooseButtons.put(RANDOM_STAGE_BUTTONO, new Button(randomStageIcon, STAGE_FONT, new Coord(STAGE_SPACING * (NUM_STAGES + 1) + STAGE_BUTTON_SIZE.x * (NUM_STAGES + 0.5), stageIconY), STAGE_BUTTON_SIZE.copy(), "RANDOM STAGE", RANDOM_STAGE_BUTTONO, Button.HIGHLIGHT));
         
         for (int i = 0; i != TOT_NUM_WEAPONS; i++) {
-            chooseButtons.put(WEAPON_BUTTONO[i], new Button(icon[i], new Coord(DIVIDER_RIT_X + SPACING * (i % WEAPON_ICONS_PER_ROW + 1) + WEAPON_ICON_SIZE.x * (0.5 + i % WEAPON_ICONS_PER_ROW),
+            chooseButtons.put(WEAPON_BUTTONO[i], new Button(weaponIcon[i], new Coord(DIVIDER_RIT_X + SPACING * (i % WEAPON_ICONS_PER_ROW + 1) + WEAPON_ICON_SIZE.x * (0.5 + i % WEAPON_ICONS_PER_ROW),
             BLACK_BAR_TOP + SPACING * (i / WEAPON_ICONS_PER_ROW + 1) + WEAPON_ICON_SIZE.y * (0.5 + i / WEAPON_ICONS_PER_ROW)), WEAPON_ICON_SIZE.copy(), WEAPON_BUTTONO[i]));
         }
         chooseButtons.put(RANDOM_WEAPON_BUTTONO, new Button(randomWeaponIcon, new Coord(DIVIDER_RIT_X + SPACING * (TOT_NUM_WEAPONS % WEAPON_ICONS_PER_ROW + 1) + WEAPON_ICON_SIZE.x * (0.5 + TOT_NUM_WEAPONS % WEAPON_ICONS_PER_ROW),
@@ -1011,8 +1011,8 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
 
             // If user has selected loadout or weapon icon, flash icon
             if (selectedIcon != null) {
-                iconFlashCounter = (iconFlashCounter + 1) % (FLASH_HZ * 2);
-                if (iconFlashCounter < FLASH_HZ) g.setColor(PURPLE);
+                weaponIconFlashCounter = (weaponIconFlashCounter + 1) % (FLASH_HZ * 2);
+                if (weaponIconFlashCounter < FLASH_HZ) g.setColor(PURPLE);
                 else g.setColor(Color.YELLOW);
                 Coord selectedIconSize = selectedIcon.size[selectedIcon.state];
                 selectCoord = selectedIcon.coord.add(selectedIconSize.scaledBy(-0.5)).add(-FLASH_SIZE);
@@ -1096,6 +1096,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
             for (Omegaman omega: omegaman) {
                 omega.drawHUD(g);
                 omega.drawSmokes(g2);
+                omega.drawWakes(g2);
                 if (omega.state == Omegaman.ALIVE_STATE) {
                     omega.draw(g);
                     omega.drawCharge(g);
@@ -1143,6 +1144,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                 for (Omegaman omega: omegaman) {
                     omega.processFire();
                     omega.processSmokes();
+                    omega.processWakes();
                     if (omega.state == Omegaman.ALIVE_STATE) {
                         if (omega.stunCounter != Omegaman.NOT_STUNNED) {
                             omega.knockback(pressedKeys);
@@ -1155,13 +1157,14 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                             omega.controlY(pressedKeys.contains(omega.upKey), pressedKeys.contains(omega.dwnKey));
                             omega.controlShoot(pressedKeys);
                             omega.moveAerial(pressedKeys.contains(omega.upKey));
-                            omega.controlDash(new boolean[] {pressedKeys.contains(omega.lftKey), pressedKeys.contains(omega.ritKey)});
                         }
 
-                        omega.checkBulletCombo();
+                        omega.controlDash(new boolean[] {pressedKeys.contains(omega.lftKey), pressedKeys.contains(omega.ritKey)});
                         omega.move();
+                        omega.checkBulletCombo();
                         omega.checkState();
                         omega.checkBossHitbox();
+                        omega.checkPlayerHitBox();
                         omega.countInv();
                         omega.regenSkillPts();
                     }
@@ -1540,7 +1543,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                 for (Omegaman enemy: omegaman) {
                     if (enemy != proj.owner) {
                         // Enemy hitbox
-                        if (intersects(proj.coord, proj.hitBoxSize, enemy.coord, enemy.size, HITBOX_LEEWAY) && enemy.invCounter == Omegaman.VULNERABLE) {
+                        if (intersects(proj.coord, proj.hitBoxSize, enemy.coord, enemy.hurtBoxSize) && enemy.invCounter == Omegaman.VULNERABLE) {
                             if (proj.dieTo(enemy)) {
                                 if (proj.size.x == proj.size.y) {
                                     proj.owner.smokeQ.add(new Smoke(proj.coord.copy(), proj.size.copy()));
@@ -1557,7 +1560,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                 for (Boss boss: bosses) {
                     if (boss != proj.owner) {
                         // Boss hitbox
-                        if (intersects(proj.coord, proj.hitBoxSize, boss.coord, boss.size, Boss.BOSS_HITBOX_LEEWAY * Math.min(boss.size.x, boss.size.y))) {
+                        if (intersects(proj.coord, proj.hitBoxSize, boss.coord, boss.hurtBoxSize)) {
                             if (proj.dieTo(boss)) {
                                 if (proj.size.x == proj.size.y) {
                                     proj.owner.smokeQ.add(new Smoke(proj.coord.copy(), proj.size.copy()));
@@ -1865,7 +1868,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                 // Reset choose your fight menu variables
                 readyCounter = -1;
                 stageFlashCounter = 0;
-                iconFlashCounter = 0;
+                weaponIconFlashCounter = 0;
                 selectedIcon = null;
                 chooseButtons.get(READY_BUTTONO).canUse = false;
                 chooseButtons.get(READY_BUTTONO).canSee = false;
@@ -2547,7 +2550,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                     // Reset choose your fight menu variables
                     readyCounter = -1;
                     stageFlashCounter = 0;
-                    iconFlashCounter = 0;
+                    weaponIconFlashCounter = 0;
                     selectedIcon = null;
                     chooseButtons.get(READY_BUTTONO).canUse = false;
                     chooseButtons.get(READY_BUTTONO).canSee = false;
