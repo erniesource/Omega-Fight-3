@@ -38,7 +38,7 @@ public class Omegaman extends Char {
     public static final int NOT_DASHING = -1;
     public static final int DASH_LFT = 0;
     public static final int DASH_RIT = 1;
-    public static final int DASH_SKILL_PTS = (int) (ONES_PER_SKILL_PT / 2);
+    public static final double DASH_SKILL_PTS = 5.0 / 12;
     public static final int DASH_TIME = 15;
     public static final double DASH_SPD = 16;
     public static final int DASH_SMOKE_HZ = 5;
@@ -105,12 +105,17 @@ public class Omegaman extends Char {
     public static final int RESPAWN_INIT_VELOCITY = 25;
     public static final int RESPAWN_TIME_LIMIT = 120;
 
-    // Death States
+    // Surge Constants
     public static final int ALIVE_STATE = 0;
     public static final int DIED_BOT = 1;
-    public static final int DIED_LFT = 2;
-    public static final int DIED_TOP = 3;
-    public static final int DIED_RIT = 4;
+    public static final int DIED_LFT = 3;
+    public static final int DIED_TOP = 5;
+    public static final int DIED_RIT = 7;
+    public static final int DIED_BOTLFT = 2;
+    public static final int DIED_TOPLFT = 4;
+    public static final int DIED_TOPRIT = 6;
+    public static final int DIED_BOTRIT = 8;
+    public static final int MAX_DIST_TO_DIAGONAL = 50;
 
     // Stat reset constants
     public static final int DIED_STAT_RESET = 0;
@@ -265,7 +270,7 @@ public class Omegaman extends Char {
                 }
             }
             if (dashing != NOT_DASHING) {
-                if (skillPts >= DASH_SKILL_PTS && stunCounter == NOT_STUNNED) {
+                if (skillPts >= DASH_SKILL_PTS * ONES_PER_SKILL_PT && stunCounter == NOT_STUNNED) {
                     if (dashing == DASH_LFT) {
                         spriteSign = OmegaFight3.LFT_SIGN;
                         velocity = new Coord(DASH_SPD * OmegaFight3.LFT_SIGN, 0);
@@ -275,7 +280,7 @@ public class Omegaman extends Char {
                         velocity = new Coord(DASH_SPD * OmegaFight3.RIT_SIGN, 0);
                     }
                     resetStats(DASH_STAT_RESET);
-                    skillPts -= DASH_SKILL_PTS;
+                    skillPts -= (int) (DASH_SKILL_PTS * ONES_PER_SKILL_PT);
                     addToStat(SKILL_PTS_USED_NO, DASH_SKILL_PTS);
                     spriteNo = DASH_SPRITE;
                     dashCounter = DASH_TIME;
@@ -746,28 +751,60 @@ public class Omegaman extends Char {
     }
 
     // Description: This method checks if the player has died and calculates in which direction they have died
-    public void checkState() {
+    public void checkState() { // CHECK FOR DIAGONAL DEATHS
         // Bottom
         if (coord.y > OmegaFight3.SCREEN_SIZE.y + size.y) {
-            state = DIED_BOT;
+            if (coord.x < MAX_DIST_TO_DIAGONAL) {
+                state = DIED_BOTLFT;
+            }
+            else if (coord.x > OmegaFight3.SCREEN_SIZE.x - MAX_DIST_TO_DIAGONAL) {
+                state = DIED_BOTRIT;
+            }
+            else {
+                state = DIED_BOT;
+            }
             resetStats(DIED_STAT_RESET);
         }
 
         // Left
         else if (coord.x < -size.x) {
-            state = DIED_LFT;
+            if (coord.y < MAX_DIST_TO_DIAGONAL) {
+                state = DIED_TOPLFT;
+            }
+            else if (coord.y > OmegaFight3.SCREEN_SIZE.y - MAX_DIST_TO_DIAGONAL) {
+                state = DIED_BOTLFT;
+            }
+            else {
+                state = DIED_LFT;
+            }
             resetStats(DIED_STAT_RESET);
         }
 
         // Top
         else if (coord.y < -size.y) {
-            state = DIED_TOP;
+            if (coord.x < MAX_DIST_TO_DIAGONAL) {
+                state = DIED_TOPLFT;
+            }
+            else if (coord.x > OmegaFight3.SCREEN_SIZE.x - MAX_DIST_TO_DIAGONAL) {
+                state = DIED_TOPRIT;
+            }
+            else {
+                state = DIED_TOP;
+            }
             resetStats(DIED_STAT_RESET);
         }
 
         // Right
         else if (coord.x > OmegaFight3.SCREEN_SIZE.x + size.x) {
-            state = DIED_RIT;
+            if (coord.y < MAX_DIST_TO_DIAGONAL) {
+                state = DIED_TOPRIT;
+            }
+            else if (coord.y > OmegaFight3.SCREEN_SIZE.y - MAX_DIST_TO_DIAGONAL) {
+                state = DIED_BOTRIT;
+            }
+            else {
+                state = DIED_RIT;
+            }
             resetStats(DIED_STAT_RESET);
         }
     }
@@ -826,35 +863,68 @@ public class Omegaman extends Char {
 
     // Description: This method draws the surge of the dying player
     public void drawSurge(Graphics2D g2) {
-        double rotation = Math.PI / 2 * (state - 1);
+        double rotation = Math.PI / 4 * (state - 1);
         BufferedImage surgeImage = surge[playerNo][frameCounter / OmegaFight3.SURGE_FRAME_HZ];
+        Coord rotCoord;
 
         // Bottom death
         if (state == DIED_BOT) {
-            g2.rotate(rotation, coord.x, OmegaFight3.SCREEN_SIZE.y - OmegaFight3.SURGE_SIZE.y / 2);
+            rotCoord = new Coord(coord.x, OmegaFight3.SCREEN_SIZE.y - OmegaFight3.SURGE_SIZE.y / 2);
+            g2.rotate(rotation, rotCoord.x, rotCoord.y);
             g2.drawImage(surgeImage, (int) (coord.x - OmegaFight3.SURGE_SIZE.x / 2), (int) (OmegaFight3.SCREEN_SIZE.y - OmegaFight3.SURGE_SIZE.y), null);
-            g2.rotate(-rotation, coord.x, OmegaFight3.SCREEN_SIZE.y - OmegaFight3.SURGE_SIZE.y / 2);
+            g2.rotate(-rotation, rotCoord.x, rotCoord.y);
         }
 
         // Left death
         else if (state == DIED_LFT) {
-            g2.rotate(rotation, OmegaFight3.SURGE_SIZE.y / 2, coord.y);
+            rotCoord = new Coord(OmegaFight3.SURGE_SIZE.y / 2, coord.y);
+            g2.rotate(rotation, rotCoord.x, rotCoord.y);
             g2.drawImage(surgeImage, (int) ((OmegaFight3.SURGE_SIZE.y - OmegaFight3.SURGE_SIZE.x) / 2), (int) (coord.y - OmegaFight3.SURGE_SIZE.y / 2), null);
-            g2.rotate(-rotation, OmegaFight3.SURGE_SIZE.y / 2, coord.y);
+            g2.rotate(-rotation, rotCoord.x, rotCoord.y);
         }
 
         // Top death
         else if (state == DIED_TOP) {
-            g2.rotate(rotation, coord.x, OmegaFight3.SURGE_SIZE.y / 2);
+            rotCoord = new Coord(coord.x, OmegaFight3.SURGE_SIZE.y / 2);
+            g2.rotate(rotation, rotCoord.x, rotCoord.y);
             g2.drawImage(surgeImage, (int) (coord.x - OmegaFight3.SURGE_SIZE.x / 2), 0, null);
-            g2.rotate(-rotation, coord.x, OmegaFight3.SURGE_SIZE.y / 2);
+            g2.rotate(-rotation, rotCoord.x, rotCoord.y);
         }
 
         // Right death
         else if (state == DIED_RIT) {
-            g2.rotate(rotation, OmegaFight3.SCREEN_SIZE.x - OmegaFight3.SURGE_SIZE.y / 2, coord.y);
+            rotCoord = new Coord(OmegaFight3.SCREEN_SIZE.x - OmegaFight3.SURGE_SIZE.y / 2, coord.y);
+            g2.rotate(rotation, rotCoord.x, rotCoord.y);
             g2.drawImage(surgeImage, (int) (OmegaFight3.SCREEN_SIZE.x - (OmegaFight3.SURGE_SIZE.x + OmegaFight3.SURGE_SIZE.y) / 2), (int) (coord.y - OmegaFight3.SURGE_SIZE.y / 2), null);
-            g2.rotate(-rotation, OmegaFight3.SCREEN_SIZE.x - OmegaFight3.SURGE_SIZE.y / 2, coord.y);
+            g2.rotate(-rotation, rotCoord.x, rotCoord.y);
+        }
+
+        else if (state == DIED_BOTLFT) {
+            rotCoord = new Coord(0, OmegaFight3.SCREEN_SIZE.y);
+            g2.rotate(rotation, rotCoord.x, rotCoord.y);
+            g2.drawImage(surgeImage, (int) (-OmegaFight3.SURGE_SIZE.x / 2), (int) (OmegaFight3.SCREEN_SIZE.y - OmegaFight3.SURGE_SIZE.y), null);
+            g2.rotate(-rotation, rotCoord.x, rotCoord.y);
+        }
+        
+        else if (state == DIED_TOPLFT) {
+            rotCoord = new Coord();
+            g2.rotate(rotation, rotCoord.x, rotCoord.y);
+            g2.drawImage(surgeImage, (int) (-OmegaFight3.SURGE_SIZE.x / 2), (int) (-OmegaFight3.SURGE_SIZE.y), null);
+            g2.rotate(-rotation, rotCoord.x, rotCoord.y);
+        }
+
+        else if (state == DIED_TOPRIT) {
+            rotCoord = new Coord(OmegaFight3.SCREEN_SIZE.x, 0);
+            g2.rotate(rotation, rotCoord.x, rotCoord.y);
+            g2.drawImage(surgeImage, (int) (OmegaFight3.SCREEN_SIZE.x - OmegaFight3.SURGE_SIZE.x / 2), (int) (-OmegaFight3.SURGE_SIZE.y), null);
+            g2.rotate(-rotation, rotCoord.x, rotCoord.y);
+        }
+
+        else if (state == DIED_BOTRIT) {
+            rotCoord = new Coord(OmegaFight3.SCREEN_SIZE.x, OmegaFight3.SCREEN_SIZE.y);
+            g2.rotate(rotation, rotCoord.x, rotCoord.y);
+            g2.drawImage(surgeImage, (int) (OmegaFight3.SCREEN_SIZE.x - OmegaFight3.SURGE_SIZE.x / 2), (int) (OmegaFight3.SCREEN_SIZE.y - OmegaFight3.SURGE_SIZE.y), null);
+            g2.rotate(-rotation, rotCoord.x, rotCoord.y);
         }
     }
 

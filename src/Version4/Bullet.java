@@ -1210,7 +1210,7 @@ class Phoenix extends Projectile {
 class Star extends Projectile {
     // Damage constants
     public static final double DMG = 2 * Omegaman.PERC_MULT;
-    public static final double DURA = 1;
+    public static final double DURA = 2;
     public static final double KB = 20;
     public static final double KB_SPREAD = Math.PI / 4;
     public static final int FIRE_TIME = 60;
@@ -1292,14 +1292,14 @@ class Star extends Projectile {
 
 class GlueBomb extends Projectile {
     // Damage constants
-    public static final double DMG = 6 * Omegaman.PERC_MULT;
+    public static final double DMG = 4 * Omegaman.PERC_MULT;
     public static final double DURA = INF_DURA;
     public static final double KB = 10;
 
     // Size constants
     public static final Coord[] GLUE_SIZE = {new Coord(70, 28), new Coord(60, 53)};
     public static final Coord BOMB_SIZE = new Coord(32, 50);
-    public static final double SIZE_TO_HITBOX = 0.1; // Add glue coord to bomb coord
+    public static final double SIZE_TO_HITBOX = 0.1;
     public static final Coord EXPLOSION_SIZE_MULT = new Coord(3, 2);
 
     // Movement constants
@@ -1388,6 +1388,11 @@ class GlueBomb extends Projectile {
             frameCounter = Math.max(frameCounter, MIN_BOMB_TIME);
         }
         return false;
+    }
+
+    public boolean dieTo(Projectile proj) {
+        die();
+        return true;
     }
 }
 
