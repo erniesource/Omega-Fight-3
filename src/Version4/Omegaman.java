@@ -285,6 +285,7 @@ public class Omegaman extends Char {
                     spriteNo = DASH_SPRITE;
                     dashCounter = DASH_TIME;
                     invCounter = DASH_TIME;
+                    OmegaFight3.play(Boomer.whoosh);
                 }
                 else {
                     dashing = NOT_DASHING;
@@ -334,7 +335,7 @@ public class Omegaman extends Char {
             else if (dashing == DASH_RIT) {
                 velocity.x = maxVelocity.x * OmegaFight3.RIT_SIGN;
             }
-            jumpState = 1;
+            jumpState = 3;
             dashing = NOT_DASHING;
             recover();
         }
@@ -404,6 +405,9 @@ public class Omegaman extends Char {
                                 // Bullet
                                 if (loadout[i] == BULLET_WEAPON_NO) {
                                     OmegaFight3.projectiles.add(new Bullet(this, newProjCoord, OmegaFight3.signToRadians(spriteSign)));
+                                    
+                                    // Sound effect
+                                    OmegaFight3.play(Bullet.pew);
                                 }
 
                                 // SHotgun
@@ -411,10 +415,16 @@ public class Omegaman extends Char {
                                     for (int j = 0; j != Shotgun.NUM_SHOTS; j++) {
                                         OmegaFight3.projectiles.add(new Shotgun(this, newProjCoord.copy(), OmegaFight3.signToRadians(spriteSign) - Shotgun.SPREAD + j * (Shotgun.SPREAD * 2 / (Shotgun.NUM_SHOTS - 1))));
                                     }
+
+                                    // Sound effect
+                                    OmegaFight3.play(Shotgun.bang);
                                 }
 
                                 else if (loadout[i] == SPAMMER_WEAPON_NO) {
                                     OmegaFight3.projectiles.add(new Spammer(this, newProjCoord, OmegaFight3.signToRadians(spriteSign) - Spammer.SPREAD + Math.random() * Spammer.SPREAD * 2));
+                                    
+                                    // Sound effect
+                                    OmegaFight3.play(Spammer.ratatat);
                                 }
 
                                 // SNiper
@@ -423,11 +433,17 @@ public class Omegaman extends Char {
                                     
                                     // Recoil
                                     recoil(Sniper.RECOIL);
+
+                                    // Sound effect
+                                    OmegaFight3.play(Sniper.baw);
                                 }
 
                                 // Boomer
                                 else if (loadout[i] == BOOMER_WEAPON_NO) {
                                     OmegaFight3.projectiles.add(new Boomer(this, newProjCoord, OmegaFight3.signToRadians(spriteSign)));
+
+                                    // Sound effect
+                                    OmegaFight3.play(Boomer.whoosh);
                                 }
 
                                 // Spike
@@ -437,6 +453,9 @@ public class Omegaman extends Char {
 
                                 else if (loadout[i] == FIREBALL_WEAPON_NO) {
                                     OmegaFight3.projectiles.add(new Fireball(this, newProjCoord, OmegaFight3.signToRadians(spriteSign)));
+
+                                    // Sound effect
+                                    OmegaFight3.play(Fireball.foom);
                                 }
 
                                 else if (loadout[i] == GLUE_BOMB_WEAPON_NO) {
@@ -467,6 +486,9 @@ public class Omegaman extends Char {
                                     for (int j = 0; j != Firework.NUM_SHOTS; j++) {
                                         OmegaFight3.projectiles.add(new Firework(this, newProjCoord.copy(), Math.PI * 2 / Firework.NUM_SHOTS * j, percentCharged));
                                     }
+
+                                    // Sound effect
+                                    OmegaFight3.play(Firework.pow);
                                 }
 
                                 // Missile
@@ -476,6 +498,9 @@ public class Omegaman extends Char {
                                     
                                     // Recoil
                                     recoil(Missile.RECOIL * percentCharged);
+
+                                    // Sound effect
+                                    OmegaFight3.play(Missile.fwoosh);
                                 }
 
                                 // Laser
@@ -485,12 +510,18 @@ public class Omegaman extends Char {
 
                                     // Recoil
                                     recoil(Laser.RECOIL * percentCharged);
+
+                                    // Sound effect
+                                    OmegaFight3.play(Laser.bew);
                                 }
 
                                 // Bouncer
                                 else if (loadout[i] == BOOMER_WEAPON_NO) {
                                     percentCharged = getPercentCharged(BOOMER_WEAPON_NO);
                                     OmegaFight3.projectiles.add(new Bouncer(this, newProjCoord, OmegaFight3.signToRadians(spriteSign), percentCharged));
+
+                                    // Sound effect
+                                    OmegaFight3.play(Bouncer.vrrr);
                                 }
 
                                 // Splitter
@@ -503,6 +534,9 @@ public class Omegaman extends Char {
                                 else if (loadout[i] == FIREBALL_WEAPON_NO) {
                                     percentCharged = getPercentCharged(FIREBALL_WEAPON_NO);
                                     OmegaFight3.projectiles.add(new Phoenix(this, OmegaFight3.signToRadians(spriteSign), percentCharged));
+
+                                    // Sound effect
+                                    OmegaFight3.play(Phoenix.caw);
                                 }
 
                                 // Nani
@@ -1111,7 +1145,7 @@ public class Omegaman extends Char {
     private void recover() {
         int platformNo = checkPlatforms();
         // Airborne recovery
-        if (platformNo == AIRBORNE) { // Make this method?
+        if (platformNo == AIRBORNE) {
             spriteNo = JUMP_SPRITE;
             onPlatform = AIRBORNE;
             velocity.y = Math.min(velocity.y, maxVelocity.y);

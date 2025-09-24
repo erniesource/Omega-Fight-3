@@ -73,6 +73,7 @@ public class Fastener extends Projectile {
             if (fastenerVelocity.x < 0) fastenerVelocity.x = 0;
         }
         fastenerVelocity.y += ACCEL;
+        dir = Math.atan2(fastenerVelocity.y, fastenerVelocity.x);
 
         // Check if out of screen
         checkLeave();
@@ -80,7 +81,7 @@ public class Fastener extends Projectile {
 
     public boolean dieTo(Char enemy) {
         if (enemy instanceof Omegaman) {
-            ((Omegaman) enemy).hurt(damage, knockback, coord, Math.atan2(fastenerVelocity.y, fastenerVelocity.x), kbSpread);
+            ((Omegaman) enemy).hurt(damage, knockback, coord, dir, kbSpread);
             die();
             return true;
         }

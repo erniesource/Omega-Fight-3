@@ -3,6 +3,8 @@ package Version4;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
+import javax.sound.sampled.*;
+
 public class Bullet extends Projectile {
     // Damage constants
     public static final double DMG = 1 * Omegaman.PERC_MULT;
@@ -28,10 +30,11 @@ public class Bullet extends Projectile {
     public static final boolean CAN_HIT_PROJ = true;
     public static final boolean IS_ON_TOP = true;
 
-    // Static image
+    // Static variables
     public static BufferedImage image;
     public static int[] combo = new int[Omegaman.NUM_PLAYERS];
     public static int[] comboEndCounter = new int[Omegaman.NUM_PLAYERS];
+    public static Clip pew;
 
     // Constructor
     public Bullet(Omegaman player, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double kbSpread, double dura, int frameCounter, boolean canHitProj, boolean isOnTop) {
@@ -232,8 +235,9 @@ class Shotgun extends Projectile {
     public static final boolean CAN_HIT_PROJ = true;
     public static final boolean IS_ON_TOP = true;
 
-    // Static image
+    // Static variables
     public static BufferedImage image;
+    public static Clip bang;
 
     // Constructor with default stats
     public Shotgun(Omegaman player, Coord coord, double dir) {
@@ -297,6 +301,7 @@ class Firework extends Projectile {
     // Static images
     public static BufferedImage[] images = new BufferedImage[Omegaman.NUM_PLAYERS];
     public static BufferedImage[] chargingImages = new BufferedImage[Omegaman.NUM_PLAYERS];
+    public static Clip pow;
 
     // Instance variables
     public BufferedImage image;
@@ -369,6 +374,7 @@ class Spammer extends Projectile {
 
     // Static image
     public static BufferedImage image;
+    public static Clip ratatat;
 
     // Constructor with default stats
     public Spammer(Omegaman player, Coord coord, double dir) {
@@ -433,6 +439,7 @@ class Missile extends Projectile {
 
     // Static images
     public static BufferedImage[] images = new BufferedImage[Omegaman.NUM_PLAYERS];
+    public static Clip fwoosh;
 
     // Instance variables
     public BufferedImage image;
@@ -525,8 +532,9 @@ class Sniper extends Projectile {
     public static final boolean CAN_HIT_PROJ = true;
     public static final boolean IS_ON_TOP = true;
 
-    // Static image
+    // Static variables
     public static BufferedImage image;
+    public static Clip baw;
 
     // Constructor with default stats
     public Sniper(Omegaman player, Coord coord, double dir) {
@@ -602,6 +610,7 @@ class Laser extends Projectile {
     // Static images
     public static BufferedImage ball;
     public static BufferedImage beam;
+    public static Clip bew;
 
     // Constructor
     public Laser(Omegaman player, Coord coord, Coord size, Coord hitBoxSize, double dir, double damage, double knockback, double kbSpread, double dura, int frameCounter, boolean canHitProj, boolean isOnTop) {
@@ -668,8 +677,9 @@ class Boomer extends Projectile {
     public static final boolean CAN_HIT_PROJ = false;
     public static final boolean IS_ON_TOP = true;
 
-    // Static images
+    // Static variables
     public static BufferedImage[] images = new BufferedImage[Omegaman.NUM_PLAYERS];
+    public static Clip whoosh;
 
     // Instance variables
     public BufferedImage image;
@@ -742,8 +752,9 @@ class Bouncer extends Projectile {
     public static final boolean CAN_HIT_PROJ = true;
     public static final boolean IS_ON_TOP = true;
 
-    // Static images
+    // Static variables
     public static BufferedImage[] images = new BufferedImage[Omegaman.NUM_PLAYERS];
+    public static Clip vrrr;
 
     // Instance variables
     public BufferedImage image;
@@ -828,11 +839,12 @@ class Spike extends Projectile {
     public static final boolean CAN_HIT_PROJ = true;
     public static final boolean IS_ON_TOP = true;
 
+    // Static variables
+    public static BufferedImage image;
+    public static Clip pop;
+
     // Instance variables
     public double rotation;
-
-    // Static image
-    public static BufferedImage image;
 
     // Constructor with default stats
     public Spike(Omegaman player, Coord coord, double dir) {
@@ -869,6 +881,8 @@ class Spike extends Projectile {
             for (int i = 0; i != NUM_THORNS; i++) {
                 OmegaFight3.babyProjectiles.add(new Thorn((Omegaman) owner, coord.copy(), i * Math.PI * 2 / NUM_THORNS, THORN_DMG, THORN_KB, THORN_PERC_CHARGED, Thorn.LIFE, CURVED_BABY_PROJS));
             }
+
+            OmegaFight3.play(pop);
         }
     }
 
@@ -1012,6 +1026,8 @@ class Splitter extends Projectile {
             for (int i = 0; i != PROJS_PER_SPLIT; i++) { // Make these thorns not have skill pts?
                 OmegaFight3.babyProjectiles.add(new Thorn((Omegaman) owner, coord.copy(), SPLIT_PROJS_START_ANGLE + i * Math.PI * 2 / PROJS_PER_SPLIT, THORN_DMG, THORN_KB, size.x / SIZE.x, (int) (Thorn.LIFE * ((double) frameCounter / LIFE + 1.0 / NUM_SPLITS)), CURVED_BABY_PROJS));
             }
+
+            OmegaFight3.play(Spike.pop);
         }
     }
 
@@ -1049,8 +1065,9 @@ class Fireball extends Projectile {
     public static final int NUM_SPRITES = 3;
     public static final int SPRITE_CHANGE_HZ = 7;
 
-    // Static image
+    // Static variables
     public static BufferedImage[] image = new BufferedImage[NUM_SPRITES];
+    public static Clip foom;
 
     // Constructor
     public Fireball(Omegaman player, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double kbSpread, double dura, int frameCounter, boolean canHitProj, boolean isOnTop) {
@@ -1127,9 +1144,10 @@ class Phoenix extends Projectile {
     public static final int SPRITE_CHANGE_HZ = 5;
     public static final double ROT_SPD = Math.PI * 2 / 100;
 
-    // Static images
+    // Static variables
     public static BufferedImage[] image = new BufferedImage[NUM_SPRITES];
     public static BufferedImage chargingImage;
+    public static Clip caw;
 
     // Instance variables
     public double rotation;
@@ -1318,7 +1336,7 @@ class GlueBomb extends Projectile {
     public static final int BOMB_NUM_SPRITES = 2;
     public static final int SCREENSHAKE = 10;
 
-    // Static image
+    // Static variables
     public static BufferedImage[] glueImage = new BufferedImage[NUM_STATES];
     public static BufferedImage[] bombImage = new BufferedImage[BOMB_NUM_SPRITES];
 

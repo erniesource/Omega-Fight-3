@@ -234,6 +234,7 @@ class Bubble extends Projectile {
             coord.y = OmegaFight3.SCREEN_SIZE.y - size.y / 2;
         }
         bubbleVelocity.y += ACCEL;
+        dir = Math.atan2(bubbleVelocity.y, bubbleVelocity.x);
 
         // Check if fire bubble is outside of screen
         checkLeave();
@@ -246,7 +247,7 @@ class Bubble extends Projectile {
 
     public boolean dieTo(Char enemy) {
         if (enemy instanceof Omegaman) {
-            ((Omegaman) enemy).hurt(damage, knockback, coord, Math.atan2(bubbleVelocity.y, bubbleVelocity.x), kbSpread);
+            ((Omegaman) enemy).hurt(damage, knockback, coord, dir, kbSpread);
             die();
             OmegaFight3.screenShakeCounter += (int) (SCREENSHAKE * (size.x / SIZE.x));
             enemy.fireCounter += FIRE_TIME;

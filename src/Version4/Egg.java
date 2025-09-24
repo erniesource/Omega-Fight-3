@@ -78,6 +78,7 @@ public class Egg extends Projectile{
         // Movement
         coord = coord.add(eggVelocity);
         eggVelocity.y += ACCEL;
+        dir = Math.atan2(eggVelocity.y, eggVelocity.x);
 
         // Smokes (Does every state need smoke?)
         owner.smokeQ.add(new Smoke(coord.copy(), new Coord(Math.max(size.x, size.y) * SIZE_TO_SMOKE)));
@@ -104,7 +105,7 @@ public class Egg extends Projectile{
 
     public boolean dieTo(Char enemy) {
         if (enemy instanceof Omegaman) {
-            ((Omegaman) enemy).hurt(damage, knockback, coord, Math.atan2(eggVelocity.y, eggVelocity.x), kbSpread);
+            ((Omegaman) enemy).hurt(damage, knockback, coord, dir, kbSpread);
             super.die();
             return true;
         }
@@ -190,7 +191,7 @@ class Diver extends Projectile {
     public static final Coord SIZE = new Coord(160, 110);
     public static final double SIZE_TO_SMOKE = 0.35;
     public static final double SIZE_TO_HITBOX = 1;
-    public static final Coord EXPLOSION_SIZE_MULT = new Coord(33.0/20, 48.0/20);
+    public static final Coord EXPLOSION_SIZE_MULT = new Coord(33.0/40, 48.0/40);
 
     // Damage constants
     public static final double DMG = 10 * Omegaman.PERC_MULT;

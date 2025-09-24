@@ -34,9 +34,6 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static final double SCREEN_SHAKE_MULT = 0.75;
     public static final int SCREEN_SHAKE_MAX = 60;
 
-    // Sound settings
-    public static final boolean SOUND_ON = false;
-
     // Cheat constants
     public static final boolean CHEATS = true;
     public static final boolean DEV_MODE = false;
@@ -50,6 +47,9 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static final int HITBOX_KEY = KeyEvent.VK_H;
     public static final int SLOW_MODE_KEY = KeyEvent.VK_S;
     public static final int SLOW_MODE_TICK_RATE = 20;
+
+    // Sound settings
+    public static final boolean SOUND_ON = !DEV_MODE;
 
     // Gamestates
     public static final int STUDIO_ANIM_GS = -1;
@@ -264,6 +264,8 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static final String DRAGON_DIR = "dragon/";
     public static final String BIRD_DIR = "bird/";
     public static final String PUNK_DIR = "punk/";
+    public static final String MUSIC_DIR = "music/";
+    public static final String SFX_DIR = "sfx/";
 
     // Transition constants (Next avail: 11)
     public static final int NO_TRANS = -1;
@@ -875,14 +877,26 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
 
         // Import music and SFX
         try {
-            menuMusic = loadClip("music/menu music.wav");
-            endMusic = loadClip("music/end music.wav");
-            superClick = loadClip("SFX/super click.wav");
-            Button.click = loadClip("SFX/click.wav");
-            Button.hover = loadClip("SFX/hover.wav");
-            boom = loadClip("SFX/boom.wav");
-            cheer = loadClip("SFX/cheer.wav");
-            shing = loadClip("SFX/shing.wav");
+            menuMusic = loadClip(MUSIC_DIR + "menu music.wav");
+            endMusic = loadClip(MUSIC_DIR + "end music.wav");
+            superClick = loadClip(SFX_DIR + "super click.wav");
+            Button.click = loadClip(SFX_DIR + "click.wav");
+            Button.hover = loadClip(SFX_DIR + "hover.wav");
+            boom = loadClip(SFX_DIR + "boom.wav");
+            cheer = loadClip(SFX_DIR + "cheer.wav");
+            shing = loadClip(SFX_DIR + "shing.wav");
+            Bullet.pew = loadClip(SFX_DIR + "pew.wav");
+            Shotgun.bang = loadClip(SFX_DIR + "bang.wav");
+            Firework.pow = loadClip(SFX_DIR + "pow.wav");
+            Spammer.ratatat = loadClip(SFX_DIR + "ratatat.wav");
+            Missile.fwoosh = loadClip(SFX_DIR + "fwoosh.wav");
+            Sniper.baw = loadClip(SFX_DIR + "baw.wav");
+            Laser.bew = loadClip(SFX_DIR + "bew.wav");
+            Boomer.whoosh = loadClip(SFX_DIR + "whoosh.wav");
+            Bouncer.vrrr = loadClip(SFX_DIR + "vrrr.wav");
+            Spike.pop = loadClip(SFX_DIR + "pop.wav");
+            Fireball.foom = loadClip(SFX_DIR + "foom.wav");
+            Phoenix.caw = loadClip(SFX_DIR + "caw.wav");
         }
         catch (Exception e) {}
 
