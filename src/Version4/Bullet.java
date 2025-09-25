@@ -12,7 +12,7 @@ public class Bullet extends Projectile {
     public static final double KB = 5;
     public static final double KB_SPREAD = Math.PI / 2;
     public static final int MAX_COMBO = 5;
-    public static final double DMG_POW = Math.pow(6, 1.0 / MAX_COMBO);
+    public static final double DMG_POW = Math.pow(5, 1.0 / MAX_COMBO);
     public static final double SIZE_POW = Math.pow(2.5, 1.0 / MAX_COMBO);
     public static final int TIME_TO_COMBO = 300;
 
@@ -585,7 +585,7 @@ class Laser extends Projectile {
     public static final double SIZE_TO_HITBOX = 1.0;
 
     // Damage constants
-    public static final double DMG = 0.65 * Omegaman.PERC_MULT;
+    public static final double DMG = 0.8 * Omegaman.PERC_MULT;
     public static final double DURA = INF_DURA;
     public static final double SOUR_KB = 2;
     public static final double SWEET_KB = 18;
@@ -657,7 +657,7 @@ class Laser extends Projectile {
 
 class Boomer extends Projectile {
     // Damage constants
-    public static final double DMG = 2 * Omegaman.PERC_MULT;
+    public static final double DMG = 2.5 * Omegaman.PERC_MULT;
     public static final double DURA = 2;
     public static final double KB = 10;
     public static final double KB_SPREAD = Math.PI / 4;
@@ -735,7 +735,7 @@ class Bouncer extends Projectile {
     public static final double SIZE_TO_HITBOX = 1.0;
 
     // Damage constants
-    public static final double DMG = 0.5 * Omegaman.PERC_MULT;
+    public static final double DMG = 1 * Omegaman.PERC_MULT;
     public static final double DURA = INF_DURA;
     public static final double KB = 10;
     public static final double KB_SPREAD = Math.PI / 4;
@@ -974,7 +974,7 @@ class Splitter extends Projectile {
     public static final double SIZE_TO_HITBOX = 1.0;
 
     // Damage constants
-    public static final double THORN_DMG = 2 * Omegaman.PERC_MULT;
+    public static final double THORN_DMG = 3 * Omegaman.PERC_MULT;
     public static final double DURA = INF_DURA;
     public static final double THORN_KB = 20;
     public static final int NUM_SPLITS = 3;
@@ -1433,7 +1433,7 @@ class Spark extends Projectile {
 
     // Shot orientation constants
     public static final int NUM_SHOTS = 3;
-    public static final double MAX_DIST_TO_CENTER = 0.65;
+    public static final double MAX_DIST_TO_CENTER = 1;
     public static final double[] INIT_DIR = {-Math.atan2(MAX_DIST_TO_CENTER, 0.5), Math.atan2(MAX_DIST_TO_CENTER, 0.5), 0};
     public static final double[] HALF_DIR = {Math.atan2(MAX_DIST_TO_CENTER, 0.5), -Math.atan2(MAX_DIST_TO_CENTER, 0.5), 0};
 

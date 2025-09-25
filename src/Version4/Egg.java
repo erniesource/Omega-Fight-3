@@ -191,7 +191,7 @@ class Diver extends Projectile {
     public static final Coord SIZE = new Coord(160, 110);
     public static final double SIZE_TO_SMOKE = 0.35;
     public static final double SIZE_TO_HITBOX = 1;
-    public static final Coord EXPLOSION_SIZE_MULT = new Coord(33.0/40, 48.0/40);
+    public static final Coord EXPLOSION_SIZE_MULT = new Coord(33.0/30, 48.0/30);
 
     // Damage constants
     public static final double DMG = 10 * Omegaman.PERC_MULT;

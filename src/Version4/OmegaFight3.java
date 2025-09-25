@@ -49,7 +49,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static final int SLOW_MODE_TICK_RATE = 20;
 
     // Sound settings
-    public static final boolean SOUND_ON = !DEV_MODE;
+    public static final boolean SOUND_ON = true;//!DEV_MODE;
 
     // Gamestates
     public static final int STUDIO_ANIM_GS = -1;
@@ -897,6 +897,10 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
             Spike.pop = loadClip(SFX_DIR + "pop.wav");
             Fireball.foom = loadClip(SFX_DIR + "foom.wav");
             Phoenix.caw = loadClip(SFX_DIR + "caw.wav");
+            Dragon.donk = loadClip(SFX_DIR + "donk.wav");
+            Fire.foosh = loadClip(SFX_DIR + "foosh.wav");
+            Doctor.hahaha = loadClip(SFX_DIR + "hahaha.wav");
+            Bird.fwoot = loadClip(SFX_DIR + "fwoot.wav");
         }
         catch (Exception e) {}
 

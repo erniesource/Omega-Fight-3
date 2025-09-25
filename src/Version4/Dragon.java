@@ -1,6 +1,7 @@
 package Version4;
 
 import java.awt.image.BufferedImage;
+import javax.sound.sampled.*;
 
 public class Dragon extends Boss{
     // Combat constants
@@ -47,13 +48,14 @@ public class Dragon extends Boss{
     public static final int MIN_FIRE_HZ = 120;
     public static final double FIRE_THRESHOLD = 0.4;
 
+    // Static variables
+    public static BufferedImage[] dragonSprite = new BufferedImage[TOT_NUM_SPRITES];
+    public static Clip donk;
+
     // Background attack variables
     public int bubbleCounter;
     public int fireCounter;
     public double dizzyAngle;
-
-    // Images
-    public static BufferedImage[] dragonSprite = new BufferedImage[TOT_NUM_SPRITES];
 
     // Constructor
     public Dragon() {
@@ -118,7 +120,15 @@ public class Dragon extends Boss{
             if (fireCounter >= Math.max(MIN_FIRE_HZ, FIRE_HZ * health / (INIT_HEALTH  * FIRE_THRESHOLD) / difficultyMult)) {
                 OmegaFight3.projectiles.add(new Fire(this, new Coord(Math.random() * (OmegaFight3.SCREEN_SIZE.x - Fire.SIZE.x) + Fire.SIZE.x / 2, 0), Math.PI / 2));
                 fireCounter = 0;
+                OmegaFight3.play(Fire.foosh);
             }
+        }
+    }
+
+    public void transition() {
+        super.transition();
+        if (frameCounter == stateTime[DIZZY] && state == DIZZY) {
+            OmegaFight3.play(donk);
         }
     }
 }

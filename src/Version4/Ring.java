@@ -2,6 +2,7 @@ package Version4;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import javax.sound.sampled.*;
 
 public class Ring extends Projectile{
     // Damage constants
@@ -288,8 +289,9 @@ class Fire extends Projectile {
     // Instance variables
     public double trueDir;
 
-    // Static images
+    // Static variables
     public static BufferedImage[] images = new BufferedImage[NUM_SPRITES];
+    public static Clip foosh;
 
     // Constructor with custom stats
     public Fire(Boss boss, Coord coord, double sizeX, double velocity, double dir, double damage, double knockback, double kbSpread, double dura, boolean canHitProj, boolean isOnTop) {
@@ -324,7 +326,7 @@ class Fire extends Projectile {
         }
 
         // Check if fire from the ceiling is out of the screen
-        if (coord.y <= 0 || coord.x >= OmegaFight3.SCREEN_SIZE.y) {
+        if (coord.y <= 0 || coord.y >= OmegaFight3.SCREEN_SIZE.y) {
             die();
         }
     }

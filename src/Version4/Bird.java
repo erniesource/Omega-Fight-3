@@ -2,6 +2,8 @@ package Version4;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import javax.sound.sampled.*;
+
 import javafx.util.Pair;
 
 public class Bird extends Boss {
@@ -65,6 +67,7 @@ public class Bird extends Boss {
     // Images
     public static BufferedImage[] birdSprite = new BufferedImage[TOT_NUM_SPRITES];
     public static BufferedImage sign;
+    public static Clip fwoot;
 
     // Background attack variables
     public int waveCounter;
@@ -122,6 +125,7 @@ public class Bird extends Boss {
             else if (waveCounter >= Math.max(MIN_WAVE_HZ, WAVE_HZ * health / (INIT_HEALTH  * WAVE_THRESHOLD) / difficultyMult)) {
                 waving = OmegaFight3.randomSign();
                 waveCounter = 0;
+                OmegaFight3.play(fwoot);
             }
         }
 

@@ -1,6 +1,7 @@
 package Version4;
 
 import java.awt.image.BufferedImage;
+import javax.sound.sampled.*;
 
 public class Doctor extends Boss {
     // Combat constants
@@ -55,8 +56,9 @@ public class Doctor extends Boss {
     public int pincerCounter;
     public int bombotCounter;
 
-    // Images
+    // Static variables
     public static BufferedImage[] docSprite = new BufferedImage[TOT_NUM_SPRITES];
+    public static Clip hahaha;
 
     // Constructor
     public Doctor() {
@@ -127,6 +129,13 @@ public class Doctor extends Boss {
                 OmegaFight3.projectiles.add(new Bombot(this, new Coord(OmegaFight3.SCREEN_CENTER.x - (OmegaFight3.SCREEN_CENTER.x + Bombot.SIZE.x / 2) * sign, OmegaFight3.SCREEN_SIZE.y * Math.random()), OmegaFight3.signToRadians(sign), sign));
                 bombotCounter = 0;
             }
+        }
+    }
+
+    public void transition() {
+        super.transition();
+        if (frameCounter == stateTime[LAUGH] && state == LAUGH) {
+            OmegaFight3.play(hahaha);
         }
     }
 }
