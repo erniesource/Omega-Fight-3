@@ -873,7 +873,7 @@ public class Omegaman extends Char {
             Bullet.combo[playerNo] = 0;
             Bullet.comboEndCounter[playerNo] = 0;
             fireCounter = 0;
-            OmegaFight3.play(OmegaFight3.boom);
+            OmegaFight3.play(OmegaFight3.boosh);
         }
         if (type != DASH_STAT_RESET) {
             dashing = NOT_DASHING;

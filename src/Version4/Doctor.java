@@ -59,6 +59,7 @@ public class Doctor extends Boss {
     // Static variables
     public static BufferedImage[] docSprite = new BufferedImage[TOT_NUM_SPRITES];
     public static Clip hahaha;
+    public static Clip blblbl;
 
     // Constructor
     public Doctor() {
@@ -118,6 +119,7 @@ public class Doctor extends Boss {
             if (pincerCounter >= Math.max(MIN_PINCER_HZ, PINCER_HZ * health / (INIT_HEALTH  * PINCER_THRESHOLD)) / difficultyMult) {
                 OmegaFight3.projectiles.add(new Pincer(this, new Coord((int) (Math.random() * 2) * OmegaFight3.SCREEN_SIZE.x, (int) (Math.random() * 2) * OmegaFight3.SCREEN_SIZE.y)));
                 pincerCounter = 0;
+                OmegaFight3.play(Pincer.zzzClick);
             }
         }
 
@@ -132,10 +134,12 @@ public class Doctor extends Boss {
         }
     }
 
-    public void transition() {
-        super.transition();
-        if (frameCounter == stateTime[LAUGH] && state == LAUGH) {
+    public void changeStateSfx() {
+        if (state == LAUGH) {
             OmegaFight3.play(hahaha);
+        }
+        else if (state == SPIT) {
+            OmegaFight3.play(blblbl);
         }
     }
 }

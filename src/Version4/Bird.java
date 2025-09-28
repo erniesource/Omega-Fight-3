@@ -67,7 +67,8 @@ public class Bird extends Boss {
     // Images
     public static BufferedImage[] birdSprite = new BufferedImage[TOT_NUM_SPRITES];
     public static BufferedImage sign;
-    public static Clip fwoot;
+    public static Clip vrrrCaw;
+    public static Clip bacaw;
 
     // Background attack variables
     public int waveCounter;
@@ -125,7 +126,7 @@ public class Bird extends Boss {
             else if (waveCounter >= Math.max(MIN_WAVE_HZ, WAVE_HZ * health / (INIT_HEALTH  * WAVE_THRESHOLD) / difficultyMult)) {
                 waving = OmegaFight3.randomSign();
                 waveCounter = 0;
-                OmegaFight3.play(fwoot);
+                OmegaFight3.play(Diver.fwoot);
             }
         }
 
@@ -136,7 +137,17 @@ public class Bird extends Boss {
                 OmegaFight3.babyBosses.addLast(new Pair<>(0, new Punk(this, coord.copy(), -spriteSign)));
                 punkCounter = 0;
                 numPunks++;
+                OmegaFight3.play(Punk.honk);
             }
+        }
+    }
+
+    public void changeStateSfx() {
+        if (state == EAGLE_ART) {
+            OmegaFight3.play(vrrrCaw);
+        }
+        else if (state == TWEAK) {
+            OmegaFight3.play(bacaw);
         }
     }
 
@@ -188,8 +199,9 @@ class Punk extends Boss {
     public static final double VEL_MIN = 4;
     public static final double VEL_MAX = 6;
 
-    // Images
+    // static variables
     public static BufferedImage[] punkSprite = new BufferedImage[TOT_NUM_SPRITES];
+    public static Clip honk;
 
     // Background attack variables
     public int circleRadDir = 1;
@@ -274,8 +286,9 @@ class Punk extends Boss {
         return VEL_MIN + (VEL_MAX - VEL_MIN) * Math.random();
     }
 
-    // Description: This method calculates all of the background attacks of the punk
+    // Description: Thiese methods are the empty abstract methods that don't need to be implemented
     public void backgroundAttack() {}
+    public void changeStateSfx() {}
 
     private void calculatePlushes() {
         for (int i = 0; i < INIT_HEALTH; i++) {

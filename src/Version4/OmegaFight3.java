@@ -35,8 +35,8 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static final int SCREEN_SHAKE_MAX = 60;
 
     // Cheat constants
-    public static final boolean CHEATS = true;
-    public static final boolean DEV_MODE = false;
+    public static final boolean DEV_MODE = true;
+    public static final boolean CHEATS = DEV_MODE;
     public static final int KILL_KEY = KeyEvent.VK_K;
     public static final double KILL_DMG = 2 * Omegaman.PERC_MULT;
     public static final int FPS_CNT_KEY = KeyEvent.VK_F;
@@ -497,6 +497,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static Clip endMusic;
     public static Clip superClick;
     public static Clip boom;
+    public static Clip boosh;
     public static Clip cheer;
     public static Clip shing;
 
@@ -883,6 +884,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
             Button.click = loadClip(SFX_DIR + "click.wav");
             Button.hover = loadClip(SFX_DIR + "hover.wav");
             boom = loadClip(SFX_DIR + "boom.wav");
+            boosh = loadClip(SFX_DIR + "boosh.wav");
             cheer = loadClip(SFX_DIR + "cheer.wav");
             shing = loadClip(SFX_DIR + "shing.wav");
             Bullet.pew = loadClip(SFX_DIR + "pew.wav");
@@ -898,9 +900,16 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
             Fireball.foom = loadClip(SFX_DIR + "foom.wav");
             Phoenix.caw = loadClip(SFX_DIR + "caw.wav");
             Dragon.donk = loadClip(SFX_DIR + "donk.wav");
+            Dragon.roar = loadClip(SFX_DIR + "roar.wav");
+            Bubble.bububup = loadClip(SFX_DIR + "bububup.wav");
             Fire.foosh = loadClip(SFX_DIR + "foosh.wav");
             Doctor.hahaha = loadClip(SFX_DIR + "hahaha.wav");
-            Bird.fwoot = loadClip(SFX_DIR + "fwoot.wav");
+            Doctor.blblbl = loadClip(SFX_DIR + "blblbl.wav");
+            Pincer.zzzClick = loadClip(SFX_DIR + "zzz click.wav");
+            Bird.vrrrCaw = loadClip(SFX_DIR + "vrrr caw.wav");
+            Bird.bacaw = loadClip(SFX_DIR + "bacaw.wav");
+            Diver.fwoot = loadClip(SFX_DIR + "fwoot.wav");
+            Punk.honk = loadClip(SFX_DIR + "honk.wav");
         }
         catch (Exception e) {}
 

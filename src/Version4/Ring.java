@@ -93,11 +93,11 @@ class Meteor extends Projectile {
     public static final int NUM_SPRITES = 3;
     public static final int SPRITE_CHANGE_HZ = 7;
 
+    // Static variables
+    public static BufferedImage[] images = new BufferedImage[NUM_SPRITES];
+
     // Instance variables
     public int sign;
-
-    // Static images
-    public static BufferedImage[] images = new BufferedImage[NUM_SPRITES];
 
     // Constructor with custom stats
     public Meteor(Boss boss, Coord size, Coord hitBoxSize, double xCoord, double velocity, double dir, double damage, double knockback, double dura, double kbSpread, int sign, boolean canHitProj, boolean isOnTop) {
@@ -189,11 +189,12 @@ class Bubble extends Projectile {
     public static final int NUM_SPRITES = 3;
     public static final int SPRITE_CHANGE_HZ = 7;
 
+    // Static variables
+    public static BufferedImage[] images = new BufferedImage[NUM_SPRITES];
+    public static Clip bububup;
+
     // Instance variables
     public Coord bubbleVelocity;
-
-    // Static images
-    public static BufferedImage[] images = new BufferedImage[NUM_SPRITES];
 
     // Constructor with custom stats
     public Bubble(Boss boss, Coord coord, Coord size, Coord hitBoxSize, double velocity, double damage, double knockback, double kbSpread, double dura, boolean canHitProj, boolean isOnTop) {

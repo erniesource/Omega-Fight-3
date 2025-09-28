@@ -2,6 +2,7 @@ package Version4;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import javax.sound.sampled.*;
 
 public class Egg extends Projectile{
     // Damage constants
@@ -216,13 +217,14 @@ class Diver extends Projectile {
     public static final boolean IS_ON_TOP = true;
     public static final int NUM_SPRITES = 4;
     public static final int SPRITE_CHANGE_HZ = 5;
-
+    
+    // Static variables
+    public static BufferedImage[] images = new BufferedImage[NUM_SPRITES];
+    public static Clip fwoot;
+    
     // Instance variables
     public int state = TRAVELLING;
     public int sign;
-
-    // Static images
-    public static BufferedImage[] images = new BufferedImage[NUM_SPRITES];
 
     // Constructor with custom stats
     public Diver(Boss boss, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double kbSpread, double dura, int sign, boolean canHitProj, boolean isOnTop) {

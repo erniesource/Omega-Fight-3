@@ -202,7 +202,7 @@ abstract class Boss extends Char {
             frameCounter = 0;
             spriteNo = 0;
             OmegaFight3.screenShakeCounter += DIE_SCREENSHAKE;
-            OmegaFight3.play(OmegaFight3.boom);
+            OmegaFight3.play(OmegaFight3.boosh);
         }
     }
 
@@ -255,6 +255,7 @@ abstract class Boss extends Char {
             size = stateSize[state];
             hitBoxSize = stateSize[state].scaledBy(sizeToHitbox);
             hurtBoxSize = stateSize[state].scaledBy(sizeToHurtBox);
+            changeStateSfx();
         }
     }
 
@@ -292,4 +293,5 @@ abstract class Boss extends Char {
     // Abstract methods for each boss
     abstract public void attack();
     abstract public void backgroundAttack();
+    abstract public void changeStateSfx();
 }

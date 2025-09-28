@@ -2,6 +2,7 @@ package Version4;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import javax.sound.sampled.*;
 
 public class Fastener extends Projectile {
     // Damage constants
@@ -189,12 +190,13 @@ class Pincer extends Projectile {
     public static final int NUM_SPRITES = 3;
     public static final int SPRITE_CHANGE_HZ = 7;
 
+    // static variables
+    public static BufferedImage[] images = new BufferedImage[NUM_SPRITES];
+    public static Clip zzzClick;
+
     // Instance variables
     public double trueDir;
     public int xMoveCounter = 10;
-
-    // static images
-    public static BufferedImage[] images = new BufferedImage[NUM_SPRITES];
 
     // Customized constructor
     public Pincer(Boss boss, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double kbSpread, double dura, boolean canHitProj, boolean isOnTop) {

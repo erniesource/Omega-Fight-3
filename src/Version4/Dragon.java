@@ -51,6 +51,7 @@ public class Dragon extends Boss{
     // Static variables
     public static BufferedImage[] dragonSprite = new BufferedImage[TOT_NUM_SPRITES];
     public static Clip donk;
+    public static Clip roar;
 
     // Background attack variables
     public int bubbleCounter;
@@ -111,6 +112,7 @@ public class Dragon extends Boss{
             if (bubbleCounter >= Math.max(MIN_BUBBLE_HZ, BUBBLE_HZ * health / (INIT_HEALTH  * BUBBLE_THRESHOLD) / difficultyMult)) {
                 OmegaFight3.projectiles.add(new Bubble(this, new Coord(OmegaFight3.randomSign() * (OmegaFight3.SCREEN_CENTER.x + Bubble.SIZE.x / 2) + OmegaFight3.SCREEN_CENTER.x, OmegaFight3.SCREEN_SIZE.y - Bubble.SIZE.y / 2)));
                 bubbleCounter = 0;
+                OmegaFight3.play(Bubble.bububup);
             }
         }
 
@@ -125,10 +127,12 @@ public class Dragon extends Boss{
         }
     }
 
-    public void transition() {
-        super.transition();
-        if (frameCounter == stateTime[DIZZY] && state == DIZZY) {
+    public void changeStateSfx() {
+        if (state == DIZZY) {
             OmegaFight3.play(donk);
+        }
+        else if (state == BARF) {
+            OmegaFight3.play(roar);
         }
     }
 }
