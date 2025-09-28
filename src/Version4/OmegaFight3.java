@@ -35,7 +35,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static final int SCREEN_SHAKE_MAX = 60;
 
     // Cheat constants
-    public static final boolean DEV_MODE = true;
+    public static final boolean DEV_MODE = false;
     public static final boolean CHEATS = DEV_MODE;
     public static final int KILL_KEY = KeyEvent.VK_K;
     public static final double KILL_DMG = 2 * Omegaman.PERC_MULT;
@@ -49,7 +49,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static final int SLOW_MODE_TICK_RATE = 20;
 
     // Sound settings
-    public static final boolean SOUND_ON = true;//!DEV_MODE;
+    public static final boolean SOUND_ON = !DEV_MODE;
 
     // Gamestates
     public static final int STUDIO_ANIM_GS = -1;
