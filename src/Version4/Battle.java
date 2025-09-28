@@ -9,7 +9,7 @@ public class Battle {
     public static BufferedImage[] scoreBoard = new BufferedImage[OmegaFight3.NUM_GAMEMODES];
     public static final Font STATS_FONT = new Font("Consolas", Font.BOLD, 30);
     public static final int SCORE_SPACING = 43;
-    public static final Coord[] SCOREBOARD_TO_STATS_COORDS = {new Coord(314, 90), new Coord(457, 90)}; // Maybe array? prolly...
+    public static final Coord[] SCOREBOARD_TO_STATS_COORDS = {new Coord(314, 90), new Coord(457, 90)};
 
     // scoreboard constants
     public static final int SKIP = 0;
@@ -178,7 +178,7 @@ public class Battle {
     private void drawBossHealth(Coord bossHealthStrCoord, double progress, Graphics g) {
         g.setFont(STATS_FONT);
         g.setColor(GOLD); // Change color if didn't kill?
-        String bossHealthStr = bossHealth == 0? "BOSS DEFEATED!!": String.format("%.1f BOSS HEALTH REMAINED...", bossHealth * progress);
+        String bossHealthStr = bossHealth == 0? "BOSSES DEFEATED!!": String.format("%.1f BOSS HEALTH REMAINED...", bossHealth * progress);
         g.drawString(bossHealthStr, (int) (bossHealthStrCoord.x - g.getFontMetrics().stringWidth(bossHealthStr) / 2), (int) bossHealthStrCoord.y);
     }
 

@@ -5,7 +5,6 @@ import java.awt.*;
 abstract public class Projectile {
     // Misc Variables
     public static final double INF_DURA = 100;
-    public static final int NUM_PLAYER_PROJS = 6;
     public static final int INF_LIFE = 0;
     
     // General variables
@@ -54,13 +53,18 @@ abstract public class Projectile {
         }
     }
 
-    public void dieTo(Projectile proj) {
-        if (dura < proj.dura) die();
+    public boolean dieTo(Projectile proj) {
+        if (dura <= proj.dura) {
+            die();
+            return true;
+        }
+        return false;
     }
 
-    public void dieTo(Char enemy) {
+    public boolean dieTo(Char enemy) {
         enemy.hurt(damage);
         die();
+        return true;
     }
 
     // Description: THis method processes the movement and expiry of the projectile
@@ -84,12 +88,75 @@ abstract public class Projectile {
         coord.y += velocity * Math.sin(dir);
     }
 
+    public Char nearestChar() {
+        Char nearestOmega = nearestOmegaman();
+        Char nearestBoss = nearestBoss();
+
+        double minDist = Double.MAX_VALUE;
+        Char nearest = null;
+
+        if (nearestOmega != null) {
+            double dist = coord.disto(nearestOmega.coord);
+            if (dist < minDist) {
+                minDist = dist;
+                nearest = nearestOmega;
+            }
+        }
+        if (nearestBoss != null) {
+            double dist = coord.disto(nearestBoss.coord);
+            if (dist < minDist) {
+                minDist = dist;
+                nearest = nearestBoss;
+            }
+        }
+        return nearest;
+    }
+
+    public Omegaman nearestOmegaman() {
+        Omegaman nearest = null;
+        double minDist = Double.MAX_VALUE;
+        for (Omegaman omega : OmegaFight3.omegaman) {
+            if (omega == owner || omega.state != Omegaman.ALIVE_STATE) continue;
+            double dist = coord.disto(omega.coord);
+            if (dist < minDist) {
+                minDist = dist;
+                nearest = omega;
+            }
+        }
+        return nearest;
+    }
+
+    public Boss nearestBoss() {
+        Boss nearest = null;
+        double minDist = Double.MAX_VALUE;
+        for (Boss boss : OmegaFight3.bosses) {
+            if (boss == owner || boss.state == Boss.DEAD) continue;
+            double dist = coord.disto(boss.coord);
+            if (dist < minDist) {
+                minDist = dist;
+                nearest = boss;
+            }
+        }
+        return nearest;
+    }
+
+    public void home(Char target, double turnSpd) {
+        double targetDir = coord.angleTo(target.coord);
+        double angleDif = targetDir - dir;
+        angleDif = Math.atan2(Math.sin(angleDif), Math.cos(angleDif));
+        if (Math.abs(angleDif) <= turnSpd) dir = targetDir;
+        else dir += Math.signum(angleDif) * turnSpd;
+    }
+
     // Abstract method(s)
     public void draw(Graphics2D g2) {
         if (OmegaFight3.hitBoxVis) {
             Coord hitBoxCoord = coord.add(hitBoxSize.scaledBy(-0.5));
             g2.setColor(OmegaFight3.CHEAT_COLOR);
-            g2.drawRect((int) (hitBoxCoord.x), (int) (hitBoxCoord.y), (int) (hitBoxSize.x), (int) (hitBoxSize.y)); // FIGURE THIS OUT
+            g2.drawRect((int) (hitBoxCoord.x), (int) (hitBoxCoord.y), (int) (hitBoxSize.x), (int) (hitBoxSize.y));
+            g2.setColor(Battle.PLAYER_COLOR[0]);
+            double hypot = Math.hypot(size.x, size.y) / 2;
+            g2.drawLine((int) coord.x, (int) coord.y, (int) (coord.x + hypot * Math.cos(dir)), (int) (coord.y + hypot * Math.sin(dir)));
         }
     }
 }

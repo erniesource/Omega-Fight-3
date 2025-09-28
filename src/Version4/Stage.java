@@ -104,6 +104,14 @@ class Coord { // Note: Coord is actually more of a Vector, but Vector has alread
         return new Coord(x + coord.x, y + coord.y);
     }
 
+    public double disto(Coord coord) {
+        return Math.hypot(x - coord.x, y - coord.y);
+    }
+
+    public double angleTo(Coord coord) {
+        return Math.atan2(coord.y - y, coord.x - x);
+    }
+
     // Description: This method is for printing out coords when debugging
     public String toString() {
         return "(" + x + ", " + y + ")";

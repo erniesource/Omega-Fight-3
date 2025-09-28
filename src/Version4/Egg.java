@@ -2,13 +2,14 @@ package Version4;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import javax.sound.sampled.*;
 
 public class Egg extends Projectile{
     // Damage constants
     public static final double[] DMG = {2 * Omegaman.PERC_MULT, 4 * Omegaman.PERC_MULT, 8 * Omegaman.PERC_MULT};
     public static final double DURA = 1;
     public static final double[] KB = {3, 6, 12};
-    public static final double KB_SPREAD = Math.PI / 3;
+    public static final double KB_SPREAD = Math.PI / 4;
     public static final int[] PROJS_PER_SPLIT = {2, 2};
 
     // Size constants
@@ -20,7 +21,7 @@ public class Egg extends Projectile{
     public static final double[] VELOCITY = {16, 22, 40};
     public static final double ACCEL = 1;
     public static final double ROT_PER_SECOND = 2;
-    public static final double ROT_SPEED = Math.PI * 2 / OmegaFight3.FPS * ROT_PER_SECOND;
+    public static final double ROT_SPD = Math.PI * 2 / OmegaFight3.MAX_TICK_RATE * ROT_PER_SECOND;
 
     // Misc constants
     public static final boolean CAN_HIT_PROJ = true;
@@ -73,11 +74,12 @@ public class Egg extends Projectile{
     public void process() {
         // Sprite change
         frameCounter = (frameCounter + 1) % (NUM_SPRITES[type] * SPRITE_CHANGE_HZ);
-        rotation = (rotation + ROT_SPEED) % (Math.PI * 2);
+        rotation = (rotation + ROT_SPD) % (Math.PI * 2);
 
         // Movement
         coord = coord.add(eggVelocity);
         eggVelocity.y += ACCEL;
+        dir = Math.atan2(eggVelocity.y, eggVelocity.x);
 
         // Smokes (Does every state need smoke?)
         owner.smokeQ.add(new Smoke(coord.copy(), new Coord(Math.max(size.x, size.y) * SIZE_TO_SMOKE)));
@@ -91,34 +93,31 @@ public class Egg extends Projectile{
                 if (platform.landed(coord.x, size.y, coord.y, coord.y + eggVelocity.y)) {
                     coord.y = platform.y;
                     die();
+                    if (state != 0) {
+                        for (int i = 0; i != PROJS_PER_SPLIT[state - 1]; i++) {
+                            OmegaFight3.babyProjectiles.add(new Egg((Boss) owner, coord.copy(), -Math.PI / (PROJS_PER_SPLIT[state - 1] + 1) * (i + 1), state - 1));
+                        }
+                    }
                     break;
                 }
             }
         }
     }
 
-    public void die() {
-        if (!dead) {
-            super.die();
-
-            // Split if not at final state
-            if (state != 0) {
-                for (int i = 0; i != PROJS_PER_SPLIT[state - 1]; i++) {
-                    OmegaFight3.babyProjectiles.add(new Egg((Boss) owner, coord.copy(), -Math.PI / (PROJS_PER_SPLIT[state - 1] + 1) * (i + 1), state - 1));
-                }
-            }
-        }
-    }
-
-    public void dieTo(Char enemy) {
+    public boolean dieTo(Char enemy) {
         if (enemy instanceof Omegaman) {
-            ((Omegaman) enemy).hurt(damage, knockback, coord, Math.atan2(eggVelocity.y, eggVelocity.x), kbSpread);
+            ((Omegaman) enemy).hurt(damage, knockback, coord, dir, kbSpread);
             super.die();
+            return true;
         }
+        return false;
     }
 
-    public void dieTo(Projectile proj) {
-        if (!(proj.owner instanceof Boss)) super.dieTo(proj);
+    public boolean dieTo(Projectile proj) {
+        if (!(proj.owner instanceof Boss)) {
+            return super.dieTo(proj);
+        }
+        return false;
     }
 }
 
@@ -127,7 +126,7 @@ class Feather extends Projectile {
     public static final double DMG = 10 * Omegaman.PERC_MULT;
     public static final double DURA = 2;
     public static final double KB = 10;
-    public static final double KB_SPREAD = Math.PI / 3;
+    public static final double KB_SPREAD = Math.PI / 4;
 
     // Size constants
     public static final Coord SIZE = new Coord(155, 40);
@@ -171,15 +170,20 @@ class Feather extends Projectile {
         if (frameCounter == -SPRITE_CHANGE_HZ * NUM_SPRITES) frameCounter = 0;
     }
 
-    public void dieTo(Char enemy) {
+    public boolean dieTo(Char enemy) {
         if (enemy instanceof Omegaman) {
             ((Omegaman) enemy).hurt(damage, knockback, coord, dir, kbSpread);
             die();
+            return true;
         }
+        return false;
     }
 
-    public void dieTo(Projectile proj) {
-        if (!(proj.owner instanceof Boss)) super.dieTo(proj);
+    public boolean dieTo(Projectile proj) {
+        if (!(proj.owner instanceof Boss)) {
+            return super.dieTo(proj);
+        }
+        return false;
     }
 }
 
@@ -187,21 +191,21 @@ class Diver extends Projectile {
     // Size constants
     public static final Coord SIZE = new Coord(160, 110);
     public static final double SIZE_TO_SMOKE = 0.35;
-    public static final double SIZE_TO_HITBOX = 1.2;
-    public static final Coord EXPLOSION_SIZE_MULT = new Coord(33.0/20, 48.0/20);
+    public static final double SIZE_TO_HITBOX = 1;
+    public static final Coord EXPLOSION_SIZE_MULT = new Coord(33.0/30, 48.0/30);
 
     // Damage constants
     public static final double DMG = 10 * Omegaman.PERC_MULT;
     public static final double DURA = INF_DURA;
     public static final double KB = 10;
-    public static final double KB_SPREAD = Math.PI / 3;
-    public static final double MULT = 0.35;
+    public static final double KB_SPREAD = Math.PI / 4;
+    public static final double DMG_KB_MULT = 0.35;
 
     // Velocity constants
     public static final double VELOCITY = 6;
     public static final double DIVE_ANGLE = 7.0 / 9 * Math.PI / 2;
     public static final double DIVE_ANGLE_LEEWAY = Math.PI / 60;
-    public static final double ACCEL = 1;
+    public static final double ACCEL = 0.7;
 
     // State constants
     public static final int TRAVELLING = 0;
@@ -213,13 +217,14 @@ class Diver extends Projectile {
     public static final boolean IS_ON_TOP = true;
     public static final int NUM_SPRITES = 4;
     public static final int SPRITE_CHANGE_HZ = 5;
-
+    
+    // Static variables
+    public static BufferedImage[] images = new BufferedImage[NUM_SPRITES];
+    public static Clip fwoot;
+    
     // Instance variables
     public int state = TRAVELLING;
     public int sign;
-
-    // Static images
-    public static BufferedImage[] images = new BufferedImage[NUM_SPRITES];
 
     // Constructor with custom stats
     public Diver(Boss boss, Coord coord, Coord size, Coord hitBoxSize, double velocity, double dir, double damage, double knockback, double kbSpread, double dura, int sign, boolean canHitProj, boolean isOnTop) {
@@ -260,7 +265,7 @@ class Diver extends Projectile {
             double diveAngle = (sign == OmegaFight3.RIT_SIGN? DIVE_ANGLE: Math.PI - DIVE_ANGLE);
             for (Omegaman enemy: OmegaFight3.omegaman) {
                 // Check if should dive (maybe check if state alr diving just in case?) I just check the angle and see if it's within a few degrees of diving angle
-                if (Math.abs(Math.atan2(enemy.coord.y - coord.y, enemy.coord.x - coord.x) - diveAngle) <= DIVE_ANGLE_LEEWAY && enemy.state == Omegaman.ALIVE_STATE) {
+                if (Math.abs(coord.angleTo(enemy.coord) - diveAngle) <= DIVE_ANGLE_LEEWAY && enemy.state == Omegaman.ALIVE_STATE) {
                     dir = diveAngle;
                     state = DIVING;
                 }
@@ -285,17 +290,23 @@ class Diver extends Projectile {
         }
     }
 
-    public void dieTo(Char enemy) {
+    public boolean dieTo(Char enemy) {
         if (enemy instanceof Omegaman) {
-            double mult = Math.sqrt(velocity) * MULT;
+            double mult = Math.sqrt(velocity) * DMG_KB_MULT;
             ((Omegaman) enemy).hurt(damage * mult, knockback * mult, coord, dir, KB_SPREAD);
             OmegaFight3.screenShakeCounter += (int) (SCREENSHAKE * mult);
             die();
+            return true;
         }
+        return false;
     }
 
-    public void dieTo(Projectile proj) {
-        if (!(proj.owner instanceof Boss)) die();
+    public boolean dieTo(Projectile proj) {
+        if (!(proj.owner instanceof Boss)) {
+            die();
+            return true;
+        }
+        return false;
     }
 }
 
@@ -304,7 +315,7 @@ class Plush extends Projectile {
     public static final double DMG = 10 * Omegaman.PERC_MULT;
     public static final double DURA = INF_DURA;
     public static final double KB = 10;
-    public static final double KB_SPREAD = Math.PI / 3;
+    public static final double KB_SPREAD = Math.PI / 4;
 
     // Size constants
     public static final Coord SIZE = new Coord(134, 103);
@@ -325,7 +336,7 @@ class Plush extends Projectile {
 
     // Constructor with custom stats
     public Plush(Boss boss, Coord size, Coord hitBoxSize, double damage, double knockback, double kbSpread, double dura, boolean canHitProj, boolean isOnTop) {
-        super(boss, new Coord(OmegaFight3.SCREEN_CENTER.x, OmegaFight3.stage[OmegaFight3.NORTH_CAVE_NO].platforms[0].y - SIZE.y / 2), size, hitBoxSize, 0, 0, damage, knockback, kbSpread, dura, INF_LIFE, canHitProj, isOnTop);
+        super(boss, new Coord(), size, hitBoxSize, 0, 0, damage, knockback, kbSpread, dura, INF_LIFE, canHitProj, isOnTop);
     }
 
     // Constructor with default stats
@@ -345,7 +356,7 @@ class Plush extends Projectile {
         }
     }
 
-    // Description: This method processes the pellet
+    // Description: This method processes the plush
     public void process() {
         frameCounter = (frameCounter + 1) % (NUM_SPRITES * SPRITE_CHANGE_HZ);
     }
@@ -360,21 +371,25 @@ class Plush extends Projectile {
         }
     }
 
-    public void dieTo(Char enemy) {
+    public boolean dieTo(Char enemy) {
         if (enemy instanceof Omegaman) {
             Omegaman omega = ((Omegaman) enemy);
             omega.hurt(damage, knockback, coord, dir, kbSpread);
             die();
             ((Punk) owner).hits[omega.playerNo]++;
+            return (state == DEAD);
         }
+        return false;
     }
 
-    public void dieTo(Projectile proj) {
+    public boolean dieTo(Projectile proj) {
         if (!(proj.owner instanceof Boss)) {
             die();
             if (proj.owner instanceof Omegaman) {
                 ((Punk) owner).hits[((Omegaman) proj.owner).playerNo]++;
             }
+            return (state == DEAD);
         }
+        return false;
     }
 }

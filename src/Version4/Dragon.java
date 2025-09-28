@@ -1,11 +1,13 @@
 package Version4;
 
 import java.awt.image.BufferedImage;
+import javax.sound.sampled.*;
 
 public class Dragon extends Boss{
     // Combat constants
     public static final double INIT_HEALTH = (OmegaFight3.DEV_MODE? 100: 600) * Omegaman.PERC_MULT;
     public static final double SIZE_TO_HITBOX = 0.2;
+    public static final double SIZE_TO_HURTBOX = 0.7;
 
     // State constants
     public static final int DIZZY = 2;
@@ -25,6 +27,7 @@ public class Dragon extends Boss{
     public static final int[] STATE_SPRITE_SIGN = {OmegaFight3.RIT_SIGN, OmegaFight3.RIT_SIGN, OmegaFight3.RIT_SIGN, OmegaFight3.LFT_SIGN};
     public static final int[] STATE_NUM_SPRITES = {4, 4, 4, 3};
     public static final int TOT_NUM_SPRITES = 15;
+    public static final double SIZE_TO_FIRE = 0.5;
 
     // Dizzy Constants
     public static final int DIZZY_NUM_PROJS = 3;
@@ -45,17 +48,19 @@ public class Dragon extends Boss{
     public static final int MIN_FIRE_HZ = 120;
     public static final double FIRE_THRESHOLD = 0.4;
 
+    // Static variables
+    public static BufferedImage[] dragonSprite = new BufferedImage[TOT_NUM_SPRITES];
+    public static Clip donk;
+    public static Clip roar;
+
     // Background attack variables
     public int bubbleCounter;
     public int fireCounter;
     public double dizzyAngle;
 
-    // Images
-    public static BufferedImage[] dragonSprite = new BufferedImage[TOT_NUM_SPRITES];
-
     // Constructor
     public Dragon() {
-        super(dragonSprite, STATE_COORD, STATE_SIZE, STATE_SPRITE_HZ, STATE_TIME, STATE_SPRITE_START, STATE_SPRITE_SIGN, STATE_NUM_SPRITES, INIT_HEALTH * OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty], SIZE_TO_HITBOX, IDLE, NUM_STATES, TRANS_TIME);
+        super(dragonSprite, STATE_COORD, STATE_SIZE, STATE_SPRITE_HZ, STATE_TIME, STATE_SPRITE_START, STATE_SPRITE_SIGN, STATE_NUM_SPRITES, INIT_HEALTH , SIZE_TO_HITBOX, SIZE_TO_HURTBOX, SIZE_TO_FIRE, IDLE, NUM_STATES, TRANS_TIME);
     }
 
     // Description: This method calculates the dragon attacking
@@ -101,23 +106,33 @@ public class Dragon extends Boss{
     // Description: This method calculates the background attacks of the dragon
     public void backgroundAttack() {
         double difficultyMult = OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty];
-        double maxHealth = INIT_HEALTH * difficultyMult;
         // Bubble attack
-        if (health <= maxHealth * BUBBLE_THRESHOLD) {
+        if (health <= INIT_HEALTH  * BUBBLE_THRESHOLD) {
             bubbleCounter++;
-            if (bubbleCounter >= Math.max(MIN_BUBBLE_HZ, BUBBLE_HZ * health / (maxHealth * BUBBLE_THRESHOLD) / difficultyMult)) {
+            if (bubbleCounter >= Math.max(MIN_BUBBLE_HZ, BUBBLE_HZ * health / (INIT_HEALTH  * BUBBLE_THRESHOLD) / difficultyMult)) {
                 OmegaFight3.projectiles.add(new Bubble(this, new Coord(OmegaFight3.randomSign() * (OmegaFight3.SCREEN_CENTER.x + Bubble.SIZE.x / 2) + OmegaFight3.SCREEN_CENTER.x, OmegaFight3.SCREEN_SIZE.y - Bubble.SIZE.y / 2)));
                 bubbleCounter = 0;
+                OmegaFight3.play(Bubble.bububup);
             }
         }
 
         // Flames from the ceiling attack
-        if (health <= maxHealth * FIRE_THRESHOLD) {
+        if (health <= INIT_HEALTH  * FIRE_THRESHOLD) {
             fireCounter++;
-            if (fireCounter >= Math.max(MIN_FIRE_HZ, FIRE_HZ * health / (maxHealth * FIRE_THRESHOLD) / difficultyMult)) {
+            if (fireCounter >= Math.max(MIN_FIRE_HZ, FIRE_HZ * health / (INIT_HEALTH  * FIRE_THRESHOLD) / difficultyMult)) {
                 OmegaFight3.projectiles.add(new Fire(this, new Coord(Math.random() * (OmegaFight3.SCREEN_SIZE.x - Fire.SIZE.x) + Fire.SIZE.x / 2, 0), Math.PI / 2));
                 fireCounter = 0;
+                OmegaFight3.play(Fire.foosh);
             }
+        }
+    }
+
+    public void changeStateSfx() {
+        if (state == DIZZY) {
+            OmegaFight3.play(donk);
+        }
+        else if (state == BARF) {
+            OmegaFight3.play(roar);
         }
     }
 }

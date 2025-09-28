@@ -2,13 +2,14 @@ package Version4;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import javax.sound.sampled.*;
 
 public class Ring extends Projectile{
     // Damage constants
     public static final double DMG = 10 * Omegaman.PERC_MULT;
     public static final double DURA = 2;
     public static final double KB = 10;
-    public static final double KB_SPREAD = Math.PI / 3;
+    public static final double KB_SPREAD = Math.PI / 4;
 
     // Size constants
     public static final Coord SIZE = new Coord(90, 135);
@@ -52,15 +53,20 @@ public class Ring extends Projectile{
         if (frameCounter == -SPRITE_CHANGE_HZ * NUM_SPRITES) frameCounter = 0;
     }
 
-    public void dieTo(Char enemy) {
+    public boolean dieTo(Char enemy) {
         if (enemy instanceof Omegaman) {
             ((Omegaman) enemy).hurt(damage, knockback, coord, dir, kbSpread);
             die();
+            return true;
         }
+        return false;
     }
 
-    public void dieTo(Projectile proj) {
-        if (!(proj.owner instanceof Boss)) super.dieTo(proj);
+    public boolean dieTo(Projectile proj) {
+        if (!(proj.owner instanceof Boss)) {
+            return super.dieTo(proj);
+        }
+        return false;
     }
 }
 
@@ -69,7 +75,8 @@ class Meteor extends Projectile {
     public static final double DMG = 5 * Omegaman.PERC_MULT;
     public static final double DURA = INF_DURA;
     public static final double KB = 20;
-    public static final double KB_SPREAD = Math.PI / 3;
+    public static final double KB_SPREAD = Math.PI / 4;
+    public static final int FIRE_TIME = 120;
 
     // Size constants
     public static final Coord SIZE = (new Coord(220, 170)).scaledBy(0.75);
@@ -86,11 +93,11 @@ class Meteor extends Projectile {
     public static final int NUM_SPRITES = 3;
     public static final int SPRITE_CHANGE_HZ = 7;
 
+    // Static variables
+    public static BufferedImage[] images = new BufferedImage[NUM_SPRITES];
+
     // Instance variables
     public int sign;
-
-    // Static images
-    public static BufferedImage[] images = new BufferedImage[NUM_SPRITES];
 
     // Constructor with custom stats
     public Meteor(Boss boss, Coord size, Coord hitBoxSize, double xCoord, double velocity, double dir, double damage, double knockback, double dura, double kbSpread, int sign, boolean canHitProj, boolean isOnTop) {
@@ -137,23 +144,29 @@ class Meteor extends Projectile {
         dir = Math.atan(Math.abs(OmegaFight3.SCREEN_SIZE.y - SIZE.y / 2 - (Dragon.STATE_COORD[Dragon.BARF].y + Dragon.COORD_TO_BARF.y)) / 2 * (Math.PI * 2 / ((Dragon.STATE_COORD[Dragon.BARF].x + Dragon.COORD_TO_BARF.x * Dragon.STATE_SPRITE_SIGN[Dragon.BARF]) / PERIODS)) * Math.sin(Math.PI * 2 / ((Dragon.STATE_COORD[Dragon.BARF].x + Dragon.COORD_TO_BARF.x * Dragon.STATE_SPRITE_SIGN[Dragon.BARF]) / PERIODS) * (coord.x - (Dragon.STATE_COORD[Dragon.BARF].x + Dragon.COORD_TO_BARF.x * sign)))) + (sign == OmegaFight3.LFT_SIGN? Math.PI: 0);
     }
 
-    public void dieTo(Char enemy) {
+    public boolean dieTo(Char enemy) {
         if (enemy instanceof Omegaman) {
             ((Omegaman) enemy).hurt(damage, knockback, coord, dir, kbSpread);
+            enemy.fireCounter += FIRE_TIME;
         }
+        return false;
     }
 
-    public void dieTo(Projectile proj) {
-        if (!(proj.owner instanceof Boss)) super.dieTo(proj);
+    public boolean dieTo(Projectile proj) {
+        if (!(proj.owner instanceof Boss)) {
+            return super.dieTo(proj);
+        }
+        return false;
     }
 }
 
 class Bubble extends Projectile {
     // Damage constants
-    public static final double DMG = 10 * Omegaman.PERC_MULT;
+    public static final double DMG = 3 * Omegaman.PERC_MULT;
     public static final double DURA = INF_DURA;
     public static final double KB = 15;
-    public static final double KB_SPREAD = Math.PI / 3;
+    public static final double KB_SPREAD = Math.PI / 4;
+    public static final int FIRE_TIME = 120;
 
     // Size constants
     public static final Coord SIZE = new Coord(120, 120);
@@ -176,11 +189,12 @@ class Bubble extends Projectile {
     public static final int NUM_SPRITES = 3;
     public static final int SPRITE_CHANGE_HZ = 7;
 
+    // Static variables
+    public static BufferedImage[] images = new BufferedImage[NUM_SPRITES];
+    public static Clip bububup;
+
     // Instance variables
     public Coord bubbleVelocity;
-
-    // Static images
-    public static BufferedImage[] images = new BufferedImage[NUM_SPRITES];
 
     // Constructor with custom stats
     public Bubble(Boss boss, Coord coord, Coord size, Coord hitBoxSize, double velocity, double damage, double knockback, double kbSpread, double dura, boolean canHitProj, boolean isOnTop) {
@@ -222,6 +236,7 @@ class Bubble extends Projectile {
             coord.y = OmegaFight3.SCREEN_SIZE.y - size.y / 2;
         }
         bubbleVelocity.y += ACCEL;
+        dir = Math.atan2(bubbleVelocity.y, bubbleVelocity.x);
 
         // Check if fire bubble is outside of screen
         checkLeave();
@@ -232,25 +247,30 @@ class Bubble extends Projectile {
         return true;
     }
 
-    public void dieTo(Char enemy) {
+    public boolean dieTo(Char enemy) {
         if (enemy instanceof Omegaman) {
-            ((Omegaman) enemy).hurt(damage, knockback, coord, Math.atan2(bubbleVelocity.y, bubbleVelocity.x), kbSpread);
+            ((Omegaman) enemy).hurt(damage, knockback, coord, dir, kbSpread);
             die();
             OmegaFight3.screenShakeCounter += (int) (SCREENSHAKE * (size.x / SIZE.x));
+            enemy.fireCounter += FIRE_TIME;
+            return true;
         }
+        return false;
     }
 
-    public void dieTo(Projectile proj) {
-        if (!(proj.owner instanceof Boss)) super.dieTo(proj);
+    public boolean dieTo(Projectile proj) {
+        if (!(proj.owner instanceof Boss)) return super.dieTo(proj);
+        return false;
     }
 }
 
 class Fire extends Projectile {
     // Damage constants
-    public static final double DMG = 10 * Omegaman.PERC_MULT;
+    public static final double DMG = 6 * Omegaman.PERC_MULT;
     public static final double DURA = 2;
     public static final double KB = 20;
-    public static final double KB_SPREAD = Math.PI / 3;
+    public static final double KB_SPREAD = Math.PI / 4;
+    public static final int FIRE_TIME = 40;
 
     // Size constants
     public static final Coord SIZE = new Coord(150, 645);
@@ -270,8 +290,9 @@ class Fire extends Projectile {
     // Instance variables
     public double trueDir;
 
-    // Static images
+    // Static variables
     public static BufferedImage[] images = new BufferedImage[NUM_SPRITES];
+    public static Clip foosh;
 
     // Constructor with custom stats
     public Fire(Boss boss, Coord coord, double sizeX, double velocity, double dir, double damage, double knockback, double kbSpread, double dura, boolean canHitProj, boolean isOnTop) {
@@ -306,18 +327,21 @@ class Fire extends Projectile {
         }
 
         // Check if fire from the ceiling is out of the screen
-        if (coord.y <= 0 || coord.x >= OmegaFight3.SCREEN_SIZE.y) {
+        if (coord.y <= 0 || coord.y >= OmegaFight3.SCREEN_SIZE.y) {
             die();
         }
     }
 
-    public void dieTo(Char enemy) {
+    public boolean dieTo(Char enemy) {
         if (enemy instanceof Omegaman) {
             ((Omegaman) enemy).hurt(damage, knockback, coord, trueDir, kbSpread);
+            enemy.fireCounter += FIRE_TIME;
         }
+        return false;
     }
 
-    public void dieTo(Projectile proj) {
-        if (!(proj.owner instanceof Boss)) super.dieTo(proj);
+    public boolean dieTo(Projectile proj) {
+        if (!(proj.owner instanceof Boss)) return super.dieTo(proj);
+        return false;
     }
 }

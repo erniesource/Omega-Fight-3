@@ -5,27 +5,40 @@ import java.awt.image.BufferedImage;
 import java.util.*;
 
 abstract class Char {
+    public static final int FIRE_HURT_HZ = 20;
+    public static final int FIRE_SPRITE_CHANGE_HZ = 5;
+    public static double FIRE_DMG = 2;
+
+    public static BufferedImage fireImg;
+
     // Instance variables
     public Coord coord;
     public int spriteNo;
     public int spriteSign; // 1: Positive, -1: Negative
     public int frameCounter; // Framecounter for running player
     public Coord size;
+    public Coord hitBoxSize;
+    public Coord hurtBoxSize;
     public Coord velocity = new Coord();
     public int state;
     public Deque<Smoke> smokeQ = new LinkedList<>();
+    public double sizeToFire;
+    public int fireCounter;
 
     // Constructor
-    public Char(Coord coord, int spriteNo, int spriteSign, int frameCounter, Coord size, int state) {
+    public Char(Coord coord, Coord size, Coord hitBoxSize, Coord hurtBoxSize, double sizeToFire, int spriteNo, int spriteSign, int frameCounter, int state) {
         this.coord = coord;
         this.spriteNo = spriteNo;
         this.spriteSign = spriteSign;
         this.frameCounter = frameCounter;
         this.size = size;
+        this.hitBoxSize = hitBoxSize;
+        this.hurtBoxSize = hurtBoxSize;
         this.state = state;
+        this.sizeToFire = sizeToFire;
     }
 
-    public void processSmokes() { // make an explosion class
+    public void processSmokes() {
         // Process smoke trails
         for (Smoke smoke: smokeQ) {
             smoke.setFrameCounter(smoke.getFrameCounter() - 1);
@@ -44,11 +57,32 @@ abstract class Char {
         }
     }
 
+    public void processFire() {
+        if (fireCounter != 0) {
+            fireCounter--;
+            if (fireCounter % FIRE_HURT_HZ == 0) hurt(FIRE_DMG);
+        }
+    }
+
     public void draw(Graphics g) {
-        if (OmegaFight3.hitBoxVis) {
-            Coord hitBoxCoord = coord.add(size.scaledBy(-0.5));
+        drawFire(g);
+
+        if (OmegaFight3.hitBoxVis) { // CHANGE THIS TO DIFF COLOR FOR HURT AND HTI BOX
+            Coord hitBoxCoord = coord.add(hitBoxSize.scaledBy(-0.5));
             g.setColor(OmegaFight3.CHEAT_COLOR);
-            g.drawRect((int) (hitBoxCoord.x), (int) (hitBoxCoord.y), (int) (size.x), (int) (size.y));
+            g.drawRect((int) (hitBoxCoord.x), (int) (hitBoxCoord.y), (int) (hitBoxSize.x), (int) (hitBoxSize.y));
+
+            Coord hurtBoxCoord = coord.add(hurtBoxSize.scaledBy(-0.5));
+            g.setColor(Color.RED);
+            g.drawRect((int) (hurtBoxCoord.x), (int) (hurtBoxCoord.y), (int) (hurtBoxSize.x), (int) (hurtBoxSize.y));
+        }
+    }
+
+    public void drawFire(Graphics g) {
+        if (fireCounter != 0) {
+            Coord fireSize = size.scaledBy(sizeToFire);
+            int sign = ((fireCounter % (2 * FIRE_SPRITE_CHANGE_HZ) < FIRE_SPRITE_CHANGE_HZ)? -1: 1);
+            g.drawImage(fireImg, (int) (coord.x - fireSize.x / 2 * sign), (int) (coord.y - fireSize.y / 2), (int) (fireSize.x * sign), (int) fireSize.y, null);
         }
     }
 
@@ -58,7 +92,6 @@ abstract class Char {
 
 abstract class Boss extends Char {
     // Constants
-    public static final double BOSS_HITBOX_LEEWAY = 0.2;
     public static final int NO_TRANS = -1;
     public static final int NOT_HURT = -1;
     public static final int HURT_BLINK_HZ = 1;
@@ -85,9 +118,20 @@ abstract class Boss extends Char {
     public int[] stateSpriteSign;
     public int[] stateNumSprites;
 
+    // Combat stats
+    public double health;
+    public double sizeToHitbox;
+    public double sizeToHurtBox;
+    public int transTo = NO_TRANS;
+    public int hurtCounter = NOT_HURT;
+    public boolean hurt;
+
+    // Images
+    public BufferedImage[] sprite;
+
     public Boss(BufferedImage[] sprite, Coord[] stateCoord, Coord[] stateSize, int[] stateSpriteHz, int[] stateTime,
-    int[] stateSpriteStart, int[] stateSpriteSign, int[] stateNumSprites, double health, double sizeToHitbox, int state, int numStates, int transTime) {
-        super(stateCoord[state].copy(), stateSpriteStart[state], stateSpriteSign[state], stateTime[state], stateSize[state], state);
+    int[] stateSpriteStart, int[] stateSpriteSign, int[] stateNumSprites, double health, double sizeToHitbox, double sizeToHurtBox, double sizeToFire, int state, int numStates, int transTime) {
+        super(stateCoord[state].copy(), stateSize[state].copy(), stateSize[state].scaledBy(sizeToHitbox), stateSize[state].scaledBy(sizeToHurtBox), sizeToFire, stateSpriteStart[state], stateSpriteSign[state], stateTime[state], state);
         this.sprite = sprite;
         this.stateCoord = stateCoord;
         this.stateSize = stateSize;
@@ -98,20 +142,11 @@ abstract class Boss extends Char {
         this.stateNumSprites = stateNumSprites;
         this.health = health;
         this.sizeToHitbox = sizeToHitbox;
+        this.sizeToHurtBox = sizeToHurtBox;
         this.state = state;
         this.numStates = numStates;
         this.transTime = transTime;
     }
-
-    // Combat stats
-    public double health;
-    public double sizeToHitbox;
-    public int transTo = NO_TRANS;
-    public int hurtCounter = NOT_HURT;
-    public boolean hurt;
-
-    // Images
-    public BufferedImage[] sprite;
 
     // Description: This method hurts and prepares the boss to die if they're gonna die
     public double hurt(double damage) {
@@ -147,6 +182,8 @@ abstract class Boss extends Char {
         velocity.y = 0;
         spriteNo = stateSpriteStart[DEAD];
         size = stateSize[DEAD];
+        hitBoxSize = stateSize[DEAD].scaledBy(sizeToHitbox);
+        hurtBoxSize = stateSize[DEAD].scaledBy(sizeToHurtBox);
     }
 
     // Description: This method calculates the boss falling to his death
@@ -165,7 +202,7 @@ abstract class Boss extends Char {
             frameCounter = 0;
             spriteNo = 0;
             OmegaFight3.screenShakeCounter += DIE_SCREENSHAKE;
-            OmegaFight3.play(OmegaFight3.boom);
+            OmegaFight3.play(OmegaFight3.boosh);
         }
     }
 
@@ -194,12 +231,7 @@ abstract class Boss extends Char {
             g.drawImage(sprite[spriteNo], (int) (coord.x - size.x / 2 * spriteSign), (int) (coord.y - size.y / 2), (int) size.x * spriteSign, (int) size.y, null);
         }
 
-        if (OmegaFight3.hitBoxVis) {
-            Coord hitBoxSize = size.scaledBy(sizeToHitbox);
-            Coord hitBoxCoord = coord.add(hitBoxSize.scaledBy(-0.5));
-            g.setColor(OmegaFight3.CHEAT_COLOR);
-            g.drawRect((int) (hitBoxCoord.x), (int) (hitBoxCoord.y), (int) (hitBoxSize.x), (int) (hitBoxSize.y));
-        }
+        super.draw(g);
     }
 
     public void transition() {
@@ -221,6 +253,9 @@ abstract class Boss extends Char {
             spriteNo = stateSpriteStart[state];
             spriteSign = stateSpriteSign[state];
             size = stateSize[state];
+            hitBoxSize = stateSize[state].scaledBy(sizeToHitbox);
+            hurtBoxSize = stateSize[state].scaledBy(sizeToHurtBox);
+            changeStateSfx();
         }
     }
 
@@ -249,6 +284,8 @@ abstract class Boss extends Char {
                 spriteSign = (int) Math.signum(stateCoord[transTo].x - stateCoord[state].x);
                 if (spriteSign == 0) spriteSign = stateSpriteSign[transTo];
                 size = stateSize[IDLE];
+                hitBoxSize = stateSize[IDLE].scaledBy(sizeToHitbox);
+                hurtBoxSize = stateSize[IDLE].scaledBy(sizeToHurtBox);
             }
         }
     }
@@ -256,4 +293,5 @@ abstract class Boss extends Char {
     // Abstract methods for each boss
     abstract public void attack();
     abstract public void backgroundAttack();
+    abstract public void changeStateSfx();
 }
