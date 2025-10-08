@@ -357,8 +357,8 @@ class Spammer extends Projectile {
     public static final double SIZE_TO_HITBOX = 1.0;
 
     // Movement constants
-    public static final double VELOCITY = 19; 
-    public static final int LIFE = 20;
+    public static final double VELOCITY = 20; 
+    public static final int LIFE = 21;
 
     // Shot constants
     public static final double SPREAD = Math.PI / 9;
@@ -657,9 +657,9 @@ class Laser extends Projectile {
 
 class Boomer extends Projectile {
     // Damage constants
-    public static final double DMG = 2.5 * Omegaman.PERC_MULT;
+    public static final double DMG = 2 * Omegaman.PERC_MULT;
     public static final double DURA = 2;
-    public static final double KB = 10;
+    public static final double KB = 7.5;
     public static final double KB_SPREAD = Math.PI / 4;
 
     // Size constants
@@ -735,7 +735,7 @@ class Bouncer extends Projectile {
     public static final double SIZE_TO_HITBOX = 1.0;
 
     // Damage constants
-    public static final double DMG = 1 * Omegaman.PERC_MULT;
+    public static final double DMG = 0.75 * Omegaman.PERC_MULT;
     public static final double DURA = INF_DURA;
     public static final double KB = 10;
     public static final double KB_SPREAD = Math.PI / 4;
@@ -1042,7 +1042,7 @@ class Splitter extends Projectile {
 
 class Fireball extends Projectile {
     // Damage constants
-    public static final double DMG = 2 * Omegaman.PERC_MULT;
+    public static final double DMG = 1 * Omegaman.PERC_MULT;
     public static final double DURA = 2;
     public static final double KB = 10;
     public static final double KB_SPREAD = Math.PI / 4;
@@ -1321,7 +1321,7 @@ class GlueBomb extends Projectile {
     public static final Coord EXPLOSION_SIZE_MULT = new Coord(3, 2);
 
     // Movement constants
-    public static final double VELOCITY = 15; 
+    public static final double VELOCITY = 8; 
     public static final int LIFE = 120;
     public static final int MIN_BOMB_TIME = 30;
 
@@ -1422,7 +1422,7 @@ class Spark extends Projectile {
     public static final Coord EXPLOSION_SIZE_MULT = new Coord(3, 30.0 / 9);
 
     // Damage constants
-    public static final double DMG = 10 * Omegaman.PERC_MULT;
+    public static final double DMG = 8 * Omegaman.PERC_MULT;
     public static final double DURA = 3;
     public static final double KB = 15;
     public static final double KB_SPREAD = Math.PI / 4;

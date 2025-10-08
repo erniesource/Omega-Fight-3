@@ -36,7 +36,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
 
     // Cheat constants
     public static final boolean DEV_MODE = false;
-    public static final boolean CHEATS = DEV_MODE;
+    public static final boolean CHEATS = true;//DEV_MODE;
     public static final int KILL_KEY = KeyEvent.VK_K;
     public static final double KILL_DMG = 2 * Omegaman.PERC_MULT;
     public static final int FPS_CNT_KEY = KeyEvent.VK_F;
@@ -119,7 +119,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static final Coord PRESS_START_SIZE = new Coord(551, 31);
     public static final int PRESS_START_BLINK_HZ = 60;
     public static final int NUM_SLAM_SCREENSHAKE = 45;
-    public static final Coord STUDIO_LOGO_SIZE = new Coord(256, 140);
+    public static final Coord STUDIO_LOGO_SIZE = new Coord(202, 126);
     public static final int STUDIO_FADE_LEN = 6;
 
     // Home menu Constants
@@ -193,7 +193,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static final String[] BATTLE_LOG_SORT_NAME = {SortByTitle.NAME, SortByGrade.NAME};
 
     // Slideshow menu constants
-    public static final int NUM_SLIDES = 5;
+    public static final int NUM_SLIDES = 6;
 
     // Direction Constants
     public static final int LFT_SIGN = -1;
@@ -2234,7 +2234,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                         }
                         Coord studioLogoCoord = SCREEN_CENTER.add(STUDIO_LOGO_SIZE.scaledBy(-0.5));
                         g2.drawImage(studioLogo, (int) (studioLogoCoord.x), (int) (studioLogoCoord.y), null);
-                        setOpacity(1.0, g2);
+                        resetOpacity(g2);
                     }
                 }
 
@@ -2255,7 +2255,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                 for (Letter letter: letters) {
                     letter.draw(g2);
                 }
-                setOpacity(1.0, g2);
+                resetOpacity(g2);
 
                 // Slam number
                 double progress = 1 - (double) (transCounter) / NUM_SLAM_LEN;
