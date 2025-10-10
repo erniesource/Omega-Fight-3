@@ -35,7 +35,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static final int SCREEN_SHAKE_MAX = 60;
 
     // Cheat constants
-    public static final boolean DEV_MODE = false;
+    public static final boolean DEV_MODE = true;
     public static final boolean CHEATS = true;//DEV_MODE;
     public static final int KILL_KEY = KeyEvent.VK_K;
     public static final double KILL_DMG = 2 * Omegaman.PERC_MULT;
@@ -221,13 +221,18 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static final int DOCTOR_ANIM_STATE = Doctor.LAUGH;
     public static final int DRAGON_ANIM_STATE = Dragon.BARF;
     public static final int BIRD_ANIM_STATE = Bird.TWEAK;
+    public static final int DOCTOR_STILL_SPRITE_NO = 3;
+    public static final int DRAGON_STILL_SPRITE_NO = 2;
+    public static final int BIRD_STILL_SPRITE_NO = 2;
     public static final Coord DOCTOR_ANIM_COORD = new Coord(34, 95);
     public static final Coord DRAGON_ANIM_COORD = new Coord(681, 59);
     public static final Coord BIRD_ANIM_COORD = new Coord(1276, 59);
     public static final Coord DOCTOR_ANIM_SIZE = new Coord(441, 578);
     public static final Coord DRAGON_ANIM_SIZE = new Coord(490, 603);
     public static final Coord BIRD_ANIM_SIZE = new Coord(612, 578);
-    public static final int BOSS_SLIDE_MAX_CNT = 420;
+    public static final Coord DOCTOR_ANIM_MID_COORD = DOCTOR_ANIM_COORD.add(DOCTOR_ANIM_SIZE.scaledBy(0.5));
+    public static final Coord DRAGON_ANIM_MID_COORD = DRAGON_ANIM_COORD.add(DRAGON_ANIM_SIZE.scaledBy(0.5));
+    public static final Coord BIRD_ANIM_MID_COORD = BIRD_ANIM_COORD.add(BIRD_ANIM_SIZE.scaledBy(0.5));
 
     // Boss constants
     public static final int NUM_DIFFICULTY = 6;
@@ -771,6 +776,17 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         Bird.sign = ImageIO.read(new File(BIRD_DIR + "sign.png"));
         for (int i = 0; i != Punk.STATE_NUM_SPRITES[Boss.DEAD] + Punk.STATE_NUM_SPRITES[Boss.IDLE]; i++) {
             Punk.punkSprite[i] = ImageIO.read(new File(PUNK_DIR + (i < Punk.STATE_NUM_SPRITES[Boss.DEAD] ? "dead" + i : "idle" + (i - Punk.STATE_NUM_SPRITES[Boss.DEAD])) + ".png"));
+        }
+
+        // Boss state animation length calculation
+        for (int i = 0; i != Doctor.NUM_STATES; i++) {
+            Doctor.STATE_ANIM_LEN[i] = Doctor.STATE_NUM_SPRITES[i] * Doctor.STATE_SPRITE_HZ[i];
+        }
+        for (int i = 0; i != Dragon.NUM_STATES; i++) {
+            Dragon.STATE_ANIM_LEN[i] = Dragon.STATE_NUM_SPRITES[i] * Dragon.STATE_SPRITE_HZ[i];
+        }
+        for (int i = 0; i != Bird.NUM_STATES; i++) {
+            Bird.STATE_ANIM_LEN[i] = Bird.STATE_NUM_SPRITES[i] * Bird.STATE_SPRITE_HZ[i];
         }
 
         // Doctor image importing
@@ -1324,12 +1340,43 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
             // Draw slide
             g.drawImage(slides[slideNo], 0, 0, (int) SCREEN_SIZE.x, (int) SCREEN_SIZE.y, null);
 
-            slideCounter++;
             if (slideNo == BOSS_SLIDE_NO) {
-                if (slideCounter == BOSS_SLIDE_MAX_CNT) slideCounter = 0;
-                g.drawImage(Doctor.docSprite[Doctor.STATE_SPRITE_START[DOCTOR_ANIM_STATE] + (slideCounter % (Doctor.STATE_NUM_SPRITES[DOCTOR_ANIM_STATE] * Doctor.STATE_SPRITE_HZ[DOCTOR_ANIM_STATE])) / Doctor.STATE_SPRITE_HZ[DOCTOR_ANIM_STATE]], (int) DOCTOR_ANIM_COORD.x, (int) DOCTOR_ANIM_COORD.y, (int) DOCTOR_ANIM_SIZE.x, (int) DOCTOR_ANIM_SIZE.y, null);
-                g.drawImage(Dragon.dragonSprite[Dragon.STATE_SPRITE_START[DRAGON_ANIM_STATE] + (slideCounter % (Dragon.STATE_NUM_SPRITES[DRAGON_ANIM_STATE] * Dragon.STATE_SPRITE_HZ[DRAGON_ANIM_STATE])) / Dragon.STATE_SPRITE_HZ[DRAGON_ANIM_STATE]], (int) DRAGON_ANIM_COORD.x, (int) DRAGON_ANIM_COORD.y, (int) DRAGON_ANIM_SIZE.x, (int) DRAGON_ANIM_SIZE.y, null);
-                g.drawImage(Bird.birdSprite[Bird.STATE_SPRITE_START[BIRD_ANIM_STATE] + (slideCounter % (Bird.STATE_NUM_SPRITES[BIRD_ANIM_STATE] * Bird.STATE_SPRITE_HZ[BIRD_ANIM_STATE])) / Bird.STATE_SPRITE_HZ[BIRD_ANIM_STATE]], (int) BIRD_ANIM_COORD.x, (int) BIRD_ANIM_COORD.y, (int) BIRD_ANIM_SIZE.x, (int) BIRD_ANIM_SIZE.y, null);
+                boolean doctorHover = intersects(mouse, Coord.PT, DOCTOR_ANIM_MID_COORD, DOCTOR_ANIM_SIZE);
+                boolean dragonHover = intersects(mouse, Coord.PT, DRAGON_ANIM_MID_COORD, DRAGON_ANIM_SIZE);
+                boolean birdHover = intersects(mouse, Coord.PT, BIRD_ANIM_MID_COORD, BIRD_ANIM_SIZE);
+                int doctorSpriteNo, dragonSpriteNo, birdSpriteNo;
+
+                if (!doctorHover && !dragonHover && !birdHover && slideCounter != 0) {
+                    slideCounter = 0;
+                }
+
+                if (doctorHover) {
+                    doctorSpriteNo = Doctor.STATE_SPRITE_START[DOCTOR_ANIM_STATE] + (slideCounter % Doctor.STATE_ANIM_LEN[DOCTOR_ANIM_STATE]) / Doctor.STATE_SPRITE_HZ[DOCTOR_ANIM_STATE];
+                    slideCounter = (slideCounter + 1) % Doctor.STATE_ANIM_LEN[DOCTOR_ANIM_STATE];
+                }
+                else {
+                    doctorSpriteNo = Doctor.STATE_SPRITE_START[DOCTOR_ANIM_STATE] + DOCTOR_STILL_SPRITE_NO;
+                }
+
+                if (dragonHover) {
+                    dragonSpriteNo = Dragon.STATE_SPRITE_START[DRAGON_ANIM_STATE] + (slideCounter % Dragon.STATE_ANIM_LEN[DRAGON_ANIM_STATE]) / Dragon.STATE_SPRITE_HZ[DRAGON_ANIM_STATE];
+                    slideCounter = (slideCounter + 1) % Dragon.STATE_ANIM_LEN[DRAGON_ANIM_STATE];
+                }
+                else {
+                    dragonSpriteNo = Dragon.STATE_SPRITE_START[DRAGON_ANIM_STATE] + DRAGON_STILL_SPRITE_NO;
+                }
+
+                if (birdHover) {
+                    birdSpriteNo = Bird.STATE_SPRITE_START[BIRD_ANIM_STATE] + (slideCounter % Bird.STATE_ANIM_LEN[BIRD_ANIM_STATE]) / Bird.STATE_SPRITE_HZ[BIRD_ANIM_STATE];
+                    slideCounter = (slideCounter + 1) % Bird.STATE_ANIM_LEN[BIRD_ANIM_STATE];
+                }
+                else {
+                    birdSpriteNo = Bird.STATE_SPRITE_START[BIRD_ANIM_STATE] + BIRD_STILL_SPRITE_NO;
+                }
+
+                g.drawImage(Doctor.docSprite[doctorSpriteNo], (int) DOCTOR_ANIM_COORD.x, (int) DOCTOR_ANIM_COORD.y, (int) DOCTOR_ANIM_SIZE.x, (int) DOCTOR_ANIM_SIZE.y, null);
+                g.drawImage(Dragon.dragonSprite[dragonSpriteNo], (int) DRAGON_ANIM_COORD.x, (int) DRAGON_ANIM_COORD.y, (int) DRAGON_ANIM_SIZE.x, (int) DRAGON_ANIM_SIZE.y, null);
+                g.drawImage(Bird.birdSprite[birdSpriteNo], (int) BIRD_ANIM_COORD.x, (int) BIRD_ANIM_COORD.y, (int) BIRD_ANIM_SIZE.x, (int) BIRD_ANIM_SIZE.y, null);
             }
 
             // Draw buttons

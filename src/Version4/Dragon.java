@@ -26,6 +26,7 @@ public class Dragon extends Boss{
     public static int[] STATE_SPRITE_START = new int[NUM_STATES];
     public static final int[] STATE_SPRITE_SIGN = {OmegaFight3.RIT_SIGN, OmegaFight3.RIT_SIGN, OmegaFight3.RIT_SIGN, OmegaFight3.LFT_SIGN};
     public static final int[] STATE_NUM_SPRITES = {4, 4, 4, 3};
+    public static int[] STATE_ANIM_LEN = new int[NUM_STATES];
     public static final int TOT_NUM_SPRITES = 15;
     public static final double SIZE_TO_FIRE = 0.5;
 
@@ -95,7 +96,7 @@ public class Dragon extends Boss{
         // Meteors/Meatball cosine wave attack
         else if (state == BARF) {
             // Barf meteor
-            if (frameCounter % (STATE_NUM_SPRITES[BARF] * STATE_SPRITE_HZ[BARF] * BARF_TO_GAG_HZ) == STATE_SPRITE_HZ[BARF] * (STATE_NUM_SPRITES[BARF] - BARF_SPAWN_SPRITE_NO)) {
+            if (frameCounter % (STATE_ANIM_LEN[BARF] * BARF_TO_GAG_HZ) == STATE_ANIM_LEN[BARF] - STATE_SPRITE_HZ[BARF] * BARF_SPAWN_SPRITE_NO) {
                 OmegaFight3.projectiles.add(new Meteor(this, coord.x + COORD_TO_BARF.x * spriteSign, spriteSign));
             }
         }
