@@ -712,7 +712,7 @@ class Boomer extends Projectile {
 
     public boolean dieTo(Char enemy) {
         die();
-        double mult = velocity < 0? 2: 1;
+        int mult = velocity < 0? 2: 1;
         Omegaman omega = ((Omegaman) owner);
         double trueDmg = 0;
         if (enemy instanceof Omegaman) {

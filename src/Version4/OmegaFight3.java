@@ -192,9 +192,6 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static final String BATTLE_LOG_FILE_NAME = "battle log";
     public static final String[] BATTLE_LOG_SORT_NAME = {SortByTitle.NAME, SortByGrade.NAME};
 
-    // Slideshow menu constants
-    public static final int NUM_SLIDES = 6;
-
     // Direction Constants
     public static final int LFT_SIGN = -1;
     public static final int RIT_SIGN = 1;
@@ -217,6 +214,20 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static final int[] STAGE_BUTTONO = {1, 2, 3};
     public static final int FLASH_HZ = 10;
     public static final int FLASH_SIZE = 10;
+
+    // Slideshow menu constants
+    public static final int NUM_SLIDES = 6;
+    public static final int BOSS_SLIDE_NO = 3;
+    public static final int DOCTOR_ANIM_STATE = Doctor.LAUGH;
+    public static final int DRAGON_ANIM_STATE = Dragon.BARF;
+    public static final int BIRD_ANIM_STATE = Bird.TWEAK;
+    public static final Coord DOCTOR_ANIM_COORD = new Coord(34, 95);
+    public static final Coord DRAGON_ANIM_COORD = new Coord(681, 59);
+    public static final Coord BIRD_ANIM_COORD = new Coord(1276, 59);
+    public static final Coord DOCTOR_ANIM_SIZE = new Coord(441, 578);
+    public static final Coord DRAGON_ANIM_SIZE = new Coord(490, 603);
+    public static final Coord BIRD_ANIM_SIZE = new Coord(612, 578);
+    public static final int BOSS_SLIDE_MAX_CNT = 420;
 
     // Boss constants
     public static final int NUM_DIFFICULTY = 6;
@@ -467,7 +478,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static HashSet<Letter> letters = new HashSet<>();
     public static int pressStartCounter = 0;
 
-    // Choose menu stats
+    // Battle end menu stats
     public static Battle battleDone;
     public static double flashRot;
 
@@ -482,6 +493,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
 
     // Slideshow stats
     public static int slideNo;
+    public static int slideCounter;
 
     // General game stats
     public static int screenShakeCounter = 0;
@@ -1311,6 +1323,14 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         else if (gameState == SLIDESHOW_GS) {
             // Draw slide
             g.drawImage(slides[slideNo], 0, 0, (int) SCREEN_SIZE.x, (int) SCREEN_SIZE.y, null);
+
+            slideCounter++;
+            if (slideNo == BOSS_SLIDE_NO) {
+                if (slideCounter == BOSS_SLIDE_MAX_CNT) slideCounter = 0;
+                g.drawImage(Doctor.docSprite[Doctor.STATE_SPRITE_START[DOCTOR_ANIM_STATE] + (slideCounter % (Doctor.STATE_NUM_SPRITES[DOCTOR_ANIM_STATE] * Doctor.STATE_SPRITE_HZ[DOCTOR_ANIM_STATE])) / Doctor.STATE_SPRITE_HZ[DOCTOR_ANIM_STATE]], (int) DOCTOR_ANIM_COORD.x, (int) DOCTOR_ANIM_COORD.y, (int) DOCTOR_ANIM_SIZE.x, (int) DOCTOR_ANIM_SIZE.y, null);
+                g.drawImage(Dragon.dragonSprite[Dragon.STATE_SPRITE_START[DRAGON_ANIM_STATE] + (slideCounter % (Dragon.STATE_NUM_SPRITES[DRAGON_ANIM_STATE] * Dragon.STATE_SPRITE_HZ[DRAGON_ANIM_STATE])) / Dragon.STATE_SPRITE_HZ[DRAGON_ANIM_STATE]], (int) DRAGON_ANIM_COORD.x, (int) DRAGON_ANIM_COORD.y, (int) DRAGON_ANIM_SIZE.x, (int) DRAGON_ANIM_SIZE.y, null);
+                g.drawImage(Bird.birdSprite[Bird.STATE_SPRITE_START[BIRD_ANIM_STATE] + (slideCounter % (Bird.STATE_NUM_SPRITES[BIRD_ANIM_STATE] * Bird.STATE_SPRITE_HZ[BIRD_ANIM_STATE])) / Bird.STATE_SPRITE_HZ[BIRD_ANIM_STATE]], (int) BIRD_ANIM_COORD.x, (int) BIRD_ANIM_COORD.y, (int) BIRD_ANIM_SIZE.x, (int) BIRD_ANIM_SIZE.y, null);
+            }
 
             // Draw buttons
             drawButtons(slideshowButtons.values(), g);
@@ -2761,11 +2781,13 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                 // Next button
                 else if (buttonPressed == SLIDE_NO_NEXT_BUTTONO) {
                     slideNo = (slideNo + 1) % NUM_SLIDES;
+                    slideCounter = 0;
                 }
 
                 // Prev button
                 else if (buttonPressed == SLIDE_NO_BACK_BUTTONO) {
                     slideNo = (slideNo - 1 + NUM_SLIDES) % NUM_SLIDES;
+                    slideCounter = 0;
                 }
             }
 
