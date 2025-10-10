@@ -35,8 +35,8 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static final int SCREEN_SHAKE_MAX = 60;
 
     // Cheat constants
-    public static final boolean DEV_MODE = true;
-    public static final boolean CHEATS = true;//DEV_MODE;
+    public static final boolean DEV_MODE = false;
+    public static final boolean CHEATS = DEV_MODE;
     public static final int KILL_KEY = KeyEvent.VK_K;
     public static final double KILL_DMG = 2 * Omegaman.PERC_MULT;
     public static final int FPS_CNT_KEY = KeyEvent.VK_F;
@@ -233,6 +233,11 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static final Coord DOCTOR_ANIM_MID_COORD = DOCTOR_ANIM_COORD.add(DOCTOR_ANIM_SIZE.scaledBy(0.5));
     public static final Coord DRAGON_ANIM_MID_COORD = DRAGON_ANIM_COORD.add(DRAGON_ANIM_SIZE.scaledBy(0.5));
     public static final Coord BIRD_ANIM_MID_COORD = BIRD_ANIM_COORD.add(BIRD_ANIM_SIZE.scaledBy(0.5));
+    public static final int THANKS_SLIDE_NO = 5;
+    public static final Coord CHROMATIC_SIZE = new Coord(993.0 / 960 * SCREEN_SIZE.y);
+    public static final Coord CHROMATIC_MID_COORD = new Coord(SCREEN_CENTER.x, 777.0 / 960 * SCREEN_SIZE.y);
+    public static final Coord CHROMATIC_COORD = CHROMATIC_MID_COORD.add(CHROMATIC_SIZE.scaledBy(-0.5));
+    public static final int CHROMATIC_ROT_LEN = MAX_TICK_RATE * 3;
 
     // Boss constants
     public static final int NUM_DIFFICULTY = 6;
@@ -473,6 +478,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
 
     // Slideshow images
     public static BufferedImage[] slides = new BufferedImage[NUM_SLIDES];
+    public static BufferedImage chromatic;
 
     // Menu stats
     public static int transCounter = DEV_MODE? 0: START_ANIM_LEN;
@@ -615,8 +621,9 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
 
         // Slideshow image importing
         for (int i = 0; i != NUM_SLIDES; i++) {
-            slides[i] = ImageIO.read(new File(SLIDESHOW_DIR + "slide" + i + ".jpg"));
+            slides[i] = ImageIO.read(new File(SLIDESHOW_DIR + "slide" + i + (i == THANKS_SLIDE_NO? ".png": ".jpg")));
         }
+        chromatic = ImageIO.read(new File(SLIDESHOW_DIR + "chromatic.jpg"));
 
         // Smoke image importing
         for (int i = 0; i != Smoke.NUM_SMOKES; i++) {
@@ -1337,6 +1344,14 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
 
         // Slideshow gamestate
         else if (gameState == SLIDESHOW_GS) {
+            if (slideNo == THANKS_SLIDE_NO) {
+                slideCounter = (slideCounter + 1) % CHROMATIC_ROT_LEN;
+                double rotAmt = Math.PI * 2 * slideCounter / CHROMATIC_ROT_LEN;
+                g2.rotate(rotAmt, CHROMATIC_MID_COORD.x, CHROMATIC_MID_COORD.y);
+                g.drawImage(chromatic, (int) CHROMATIC_COORD.x, (int) CHROMATIC_COORD.y, (int) CHROMATIC_SIZE.x, (int) CHROMATIC_SIZE.y, null);
+                g2.rotate(-rotAmt, CHROMATIC_MID_COORD.x, CHROMATIC_MID_COORD.y);
+            }
+            
             // Draw slide
             g.drawImage(slides[slideNo], 0, 0, (int) SCREEN_SIZE.x, (int) SCREEN_SIZE.y, null);
 
