@@ -26,6 +26,7 @@ public class Doctor extends Boss {
     public static int[] STATE_SPRITE_START = new int[NUM_STATES];
     public static final int[] STATE_SPRITE_SIGN = {OmegaFight3.RIT_SIGN, OmegaFight3.LFT_SIGN, OmegaFight3.LFT_SIGN, OmegaFight3.RIT_SIGN};
     public static final int[] STATE_NUM_SPRITES = {2, 2, 3, 4};
+    public static int[] STATE_ANIM_LEN = new int[NUM_STATES];
     public static final int TOT_NUM_SPRITES = 11;
     public static final double SIZE_TO_FIRE = 0.8;
 

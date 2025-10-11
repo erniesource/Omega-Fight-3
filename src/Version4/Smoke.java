@@ -2,6 +2,7 @@ package Version4;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import javax.sound.sampled.*;
 
 public class Smoke {
     // Constants
@@ -81,9 +82,11 @@ class Explosion {
     public static final int EXPLOSION_CHANGE_HZ = 4;
     public static final int NUM_EXPLOSIONS = 8;
     public static final int EXPLOSION_LEN = EXPLOSION_CHANGE_HZ * NUM_EXPLOSIONS;
+    public static final int NUM_BOOMS = 2;
 
     // static images
     public static BufferedImage[] explosions = new BufferedImage[NUM_EXPLOSIONS];
+    public static Clip[] boom = new Clip[NUM_BOOMS];
 
     // Instance variables (Data encapsulation)
     public int frameCounter;
@@ -95,7 +98,7 @@ class Explosion {
         this.coord = coord;
         this.size = size;
         frameCounter = EXPLOSION_LEN;
-        OmegaFight3.play(OmegaFight3.boom);
+        OmegaFight3.play(boom[(int) (Math.random() * NUM_BOOMS)]);
     }
 
     // Description: This method draws the explosion

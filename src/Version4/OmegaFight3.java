@@ -119,7 +119,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static final Coord PRESS_START_SIZE = new Coord(551, 31);
     public static final int PRESS_START_BLINK_HZ = 60;
     public static final int NUM_SLAM_SCREENSHAKE = 45;
-    public static final Coord STUDIO_LOGO_SIZE = new Coord(256, 140);
+    public static final Coord STUDIO_LOGO_SIZE = new Coord(202, 126);
     public static final int STUDIO_FADE_LEN = 6;
 
     // Home menu Constants
@@ -192,9 +192,6 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static final String BATTLE_LOG_FILE_NAME = "battle log";
     public static final String[] BATTLE_LOG_SORT_NAME = {SortByTitle.NAME, SortByGrade.NAME};
 
-    // Slideshow menu constants
-    public static final int NUM_SLIDES = 5;
-
     // Direction Constants
     public static final int LFT_SIGN = -1;
     public static final int RIT_SIGN = 1;
@@ -217,6 +214,30 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static final int[] STAGE_BUTTONO = {1, 2, 3};
     public static final int FLASH_HZ = 10;
     public static final int FLASH_SIZE = 10;
+
+    // Slideshow menu constants
+    public static final int NUM_SLIDES = 6;
+    public static final int BOSS_SLIDE_NO = 3;
+    public static final int DOCTOR_ANIM_STATE = Doctor.LAUGH;
+    public static final int DRAGON_ANIM_STATE = Dragon.BARF;
+    public static final int BIRD_ANIM_STATE = Bird.TWEAK;
+    public static final int DOCTOR_STILL_SPRITE_NO = 3;
+    public static final int DRAGON_STILL_SPRITE_NO = 2;
+    public static final int BIRD_STILL_SPRITE_NO = 2;
+    public static final Coord DOCTOR_ANIM_COORD = new Coord(34, 95);
+    public static final Coord DRAGON_ANIM_COORD = new Coord(681, 59);
+    public static final Coord BIRD_ANIM_COORD = new Coord(1276, 59);
+    public static final Coord DOCTOR_ANIM_SIZE = new Coord(441, 578);
+    public static final Coord DRAGON_ANIM_SIZE = new Coord(490, 603);
+    public static final Coord BIRD_ANIM_SIZE = new Coord(612, 578);
+    public static final Coord DOCTOR_ANIM_MID_COORD = DOCTOR_ANIM_COORD.add(DOCTOR_ANIM_SIZE.scaledBy(0.5));
+    public static final Coord DRAGON_ANIM_MID_COORD = DRAGON_ANIM_COORD.add(DRAGON_ANIM_SIZE.scaledBy(0.5));
+    public static final Coord BIRD_ANIM_MID_COORD = BIRD_ANIM_COORD.add(BIRD_ANIM_SIZE.scaledBy(0.5));
+    public static final int THANKS_SLIDE_NO = 5;
+    public static final Coord CHROMATIC_SIZE = new Coord(993.0 / 960 * SCREEN_SIZE.y);
+    public static final Coord CHROMATIC_MID_COORD = new Coord(SCREEN_CENTER.x, 777.0 / 960 * SCREEN_SIZE.y);
+    public static final Coord CHROMATIC_COORD = CHROMATIC_MID_COORD.add(CHROMATIC_SIZE.scaledBy(-0.5));
+    public static final int CHROMATIC_ROT_LEN = MAX_TICK_RATE * 3;
 
     // Boss constants
     public static final int NUM_DIFFICULTY = 6;
@@ -457,6 +478,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
 
     // Slideshow images
     public static BufferedImage[] slides = new BufferedImage[NUM_SLIDES];
+    public static BufferedImage chromatic;
 
     // Menu stats
     public static int transCounter = DEV_MODE? 0: START_ANIM_LEN;
@@ -467,7 +489,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static HashSet<Letter> letters = new HashSet<>();
     public static int pressStartCounter = 0;
 
-    // Choose menu stats
+    // Battle end menu stats
     public static Battle battleDone;
     public static double flashRot;
 
@@ -482,6 +504,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
 
     // Slideshow stats
     public static int slideNo;
+    public static int slideCounter;
 
     // General game stats
     public static int screenShakeCounter = 0;
@@ -496,7 +519,6 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static Clip menuMusic;
     public static Clip endMusic;
     public static Clip superClick;
-    public static Clip boom;
     public static Clip boosh;
     public static Clip cheer;
     public static Clip shing;
@@ -598,8 +620,9 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
 
         // Slideshow image importing
         for (int i = 0; i != NUM_SLIDES; i++) {
-            slides[i] = ImageIO.read(new File(SLIDESHOW_DIR + "slide" + i + ".jpg"));
+            slides[i] = ImageIO.read(new File(SLIDESHOW_DIR + "slide" + i + (i == THANKS_SLIDE_NO? ".png": ".jpg")));
         }
+        chromatic = ImageIO.read(new File(SLIDESHOW_DIR + "chromatic.jpg"));
 
         // Smoke image importing
         for (int i = 0; i != Smoke.NUM_SMOKES; i++) {
@@ -761,6 +784,17 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
             Punk.punkSprite[i] = ImageIO.read(new File(PUNK_DIR + (i < Punk.STATE_NUM_SPRITES[Boss.DEAD] ? "dead" + i : "idle" + (i - Punk.STATE_NUM_SPRITES[Boss.DEAD])) + ".png"));
         }
 
+        // Boss state animation length calculation
+        for (int i = 0; i != Doctor.NUM_STATES; i++) {
+            Doctor.STATE_ANIM_LEN[i] = Doctor.STATE_NUM_SPRITES[i] * Doctor.STATE_SPRITE_HZ[i];
+        }
+        for (int i = 0; i != Dragon.NUM_STATES; i++) {
+            Dragon.STATE_ANIM_LEN[i] = Dragon.STATE_NUM_SPRITES[i] * Dragon.STATE_SPRITE_HZ[i];
+        }
+        for (int i = 0; i != Bird.NUM_STATES; i++) {
+            Bird.STATE_ANIM_LEN[i] = Bird.STATE_NUM_SPRITES[i] * Bird.STATE_SPRITE_HZ[i];
+        }
+
         // Doctor image importing
         for (int i = 1; i != Doctor.NUM_STATES; i++) {
             Doctor.STATE_SPRITE_START[i] = Doctor.STATE_SPRITE_START[i - 1] + Doctor.STATE_NUM_SPRITES[i - 1];
@@ -883,7 +917,9 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
             superClick = loadClip(SFX_DIR + "super click.wav");
             Button.click = loadClip(SFX_DIR + "click.wav");
             Button.hover = loadClip(SFX_DIR + "hover.wav");
-            boom = loadClip(SFX_DIR + "boom.wav");
+            for (int i = 0; i != Explosion.NUM_BOOMS; i++) {
+                Explosion.boom[i] = loadClip(SFX_DIR + i + "boom.wav");
+            }
             boosh = loadClip(SFX_DIR + "boosh.wav");
             cheer = loadClip(SFX_DIR + "cheer.wav");
             shing = loadClip(SFX_DIR + "shing.wav");
@@ -1309,8 +1345,55 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
 
         // Slideshow gamestate
         else if (gameState == SLIDESHOW_GS) {
+            if (slideNo == THANKS_SLIDE_NO) {
+                slideCounter = (slideCounter + 1) % CHROMATIC_ROT_LEN;
+                double rotAmt = Math.PI * 2 * slideCounter / CHROMATIC_ROT_LEN;
+                g2.rotate(rotAmt, CHROMATIC_MID_COORD.x, CHROMATIC_MID_COORD.y);
+                g.drawImage(chromatic, (int) CHROMATIC_COORD.x, (int) CHROMATIC_COORD.y, (int) CHROMATIC_SIZE.x, (int) CHROMATIC_SIZE.y, null);
+                g2.rotate(-rotAmt, CHROMATIC_MID_COORD.x, CHROMATIC_MID_COORD.y);
+            }
+            
             // Draw slide
             g.drawImage(slides[slideNo], 0, 0, (int) SCREEN_SIZE.x, (int) SCREEN_SIZE.y, null);
+
+            if (slideNo == BOSS_SLIDE_NO) {
+                boolean doctorHover = intersects(mouse, Coord.PT, DOCTOR_ANIM_MID_COORD, DOCTOR_ANIM_SIZE);
+                boolean dragonHover = intersects(mouse, Coord.PT, DRAGON_ANIM_MID_COORD, DRAGON_ANIM_SIZE);
+                boolean birdHover = intersects(mouse, Coord.PT, BIRD_ANIM_MID_COORD, BIRD_ANIM_SIZE);
+                int doctorSpriteNo, dragonSpriteNo, birdSpriteNo;
+
+                if (!doctorHover && !dragonHover && !birdHover && slideCounter != 0) {
+                    slideCounter = 0;
+                }
+
+                if (doctorHover) {
+                    doctorSpriteNo = Doctor.STATE_SPRITE_START[DOCTOR_ANIM_STATE] + (slideCounter % Doctor.STATE_ANIM_LEN[DOCTOR_ANIM_STATE]) / Doctor.STATE_SPRITE_HZ[DOCTOR_ANIM_STATE];
+                    slideCounter = (slideCounter + 1) % Doctor.STATE_ANIM_LEN[DOCTOR_ANIM_STATE];
+                }
+                else {
+                    doctorSpriteNo = Doctor.STATE_SPRITE_START[DOCTOR_ANIM_STATE] + DOCTOR_STILL_SPRITE_NO;
+                }
+
+                if (dragonHover) {
+                    dragonSpriteNo = Dragon.STATE_SPRITE_START[DRAGON_ANIM_STATE] + (slideCounter % Dragon.STATE_ANIM_LEN[DRAGON_ANIM_STATE]) / Dragon.STATE_SPRITE_HZ[DRAGON_ANIM_STATE];
+                    slideCounter = (slideCounter + 1) % Dragon.STATE_ANIM_LEN[DRAGON_ANIM_STATE];
+                }
+                else {
+                    dragonSpriteNo = Dragon.STATE_SPRITE_START[DRAGON_ANIM_STATE] + DRAGON_STILL_SPRITE_NO;
+                }
+
+                if (birdHover) {
+                    birdSpriteNo = Bird.STATE_SPRITE_START[BIRD_ANIM_STATE] + (slideCounter % Bird.STATE_ANIM_LEN[BIRD_ANIM_STATE]) / Bird.STATE_SPRITE_HZ[BIRD_ANIM_STATE];
+                    slideCounter = (slideCounter + 1) % Bird.STATE_ANIM_LEN[BIRD_ANIM_STATE];
+                }
+                else {
+                    birdSpriteNo = Bird.STATE_SPRITE_START[BIRD_ANIM_STATE] + BIRD_STILL_SPRITE_NO;
+                }
+
+                g.drawImage(Doctor.docSprite[doctorSpriteNo], (int) DOCTOR_ANIM_COORD.x, (int) DOCTOR_ANIM_COORD.y, (int) DOCTOR_ANIM_SIZE.x, (int) DOCTOR_ANIM_SIZE.y, null);
+                g.drawImage(Dragon.dragonSprite[dragonSpriteNo], (int) DRAGON_ANIM_COORD.x, (int) DRAGON_ANIM_COORD.y, (int) DRAGON_ANIM_SIZE.x, (int) DRAGON_ANIM_SIZE.y, null);
+                g.drawImage(Bird.birdSprite[birdSpriteNo], (int) BIRD_ANIM_COORD.x, (int) BIRD_ANIM_COORD.y, (int) BIRD_ANIM_SIZE.x, (int) BIRD_ANIM_SIZE.y, null);
+            }
 
             // Draw buttons
             drawButtons(slideshowButtons.values(), g);
@@ -2234,7 +2317,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                         }
                         Coord studioLogoCoord = SCREEN_CENTER.add(STUDIO_LOGO_SIZE.scaledBy(-0.5));
                         g2.drawImage(studioLogo, (int) (studioLogoCoord.x), (int) (studioLogoCoord.y), null);
-                        setOpacity(1.0, g2);
+                        resetOpacity(g2);
                     }
                 }
 
@@ -2255,7 +2338,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                 for (Letter letter: letters) {
                     letter.draw(g2);
                 }
-                setOpacity(1.0, g2);
+                resetOpacity(g2);
 
                 // Slam number
                 double progress = 1 - (double) (transCounter) / NUM_SLAM_LEN;
@@ -2761,11 +2844,13 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                 // Next button
                 else if (buttonPressed == SLIDE_NO_NEXT_BUTTONO) {
                     slideNo = (slideNo + 1) % NUM_SLIDES;
+                    slideCounter = 0;
                 }
 
                 // Prev button
                 else if (buttonPressed == SLIDE_NO_BACK_BUTTONO) {
                     slideNo = (slideNo - 1 + NUM_SLIDES) % NUM_SLIDES;
+                    slideCounter = 0;
                 }
             }
 

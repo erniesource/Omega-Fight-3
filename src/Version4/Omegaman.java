@@ -1150,6 +1150,7 @@ public class Omegaman extends Char {
             onPlatform = AIRBORNE;
             velocity.y = Math.min(velocity.y, maxVelocity.y);
             if (jumpState % 2 == 0) jumpState++;
+            if (jumpState == 1) jumpState = 3;
         }
 
         // Ground recovery

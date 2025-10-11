@@ -64,6 +64,10 @@ abstract class Char {
         }
     }
 
+    public void setFire(int newFire) {
+        fireCounter = Math.max(fireCounter, newFire);
+    }
+
     public void draw(Graphics g) {
         drawFire(g);
 

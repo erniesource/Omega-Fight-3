@@ -29,6 +29,7 @@ public class Bird extends Boss {
     public static int[] STATE_SPRITE_START = new int[NUM_STATES];
     public static final int[] STATE_SPRITE_SIGN = {OmegaFight3.RIT_SIGN, OmegaFight3.LFT_SIGN, OmegaFight3.RIT_SIGN, OmegaFight3.RIT_SIGN};
     public static final int[] STATE_NUM_SPRITES = {2, 4, 4, 3};
+    public static int[] STATE_ANIM_LEN = new int[NUM_STATES];
     public static final int TOT_NUM_SPRITES = 13;
     public static final double SIZE_TO_FIRE = 0.65;
 
@@ -88,7 +89,7 @@ public class Bird extends Boss {
         // Eagle Artillery splitting egg attack
         if (state == EAGLE_ART) {
             // Eagle Artillery splitting egg periodically Might add spriteSign to adding COORD_TO_EAGLE_ART if needed
-            if (frameCounter % (STATE_SPRITE_HZ[EAGLE_ART] * STATE_NUM_SPRITES[EAGLE_ART] * GAGS_TO_EAGLE_ART) == (int) (STATE_SPRITE_HZ[EAGLE_ART] * (STATE_NUM_SPRITES[EAGLE_ART] - EAGLE_ART_SPAWN_SPRITE_NO))) {
+            if (frameCounter % (STATE_ANIM_LEN[EAGLE_ART] * GAGS_TO_EAGLE_ART) == (int) (STATE_ANIM_LEN[EAGLE_ART] - STATE_SPRITE_HZ[EAGLE_ART] * EAGLE_ART_SPAWN_SPRITE_NO)) {
                 OmegaFight3.projectiles.add(new Egg(this, coord.add(COORD_TO_EAGLE_ART), EAGLE_ART_START_ANGLE + EAGLE_ART_SPREAD * Math.random()));
             }
         }

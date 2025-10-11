@@ -12,5 +12,6 @@
         "cpp": false,
         "java": false,
         "python": false
-    }
+    },
+    "python.REPL.enableREPLSmartSend": false
 }

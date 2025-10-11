@@ -357,8 +357,8 @@ class Spammer extends Projectile {
     public static final double SIZE_TO_HITBOX = 1.0;
 
     // Movement constants
-    public static final double VELOCITY = 19; 
-    public static final int LIFE = 20;
+    public static final double VELOCITY = 20; 
+    public static final int LIFE = 21;
 
     // Shot constants
     public static final double SPREAD = Math.PI / 9;
@@ -657,9 +657,9 @@ class Laser extends Projectile {
 
 class Boomer extends Projectile {
     // Damage constants
-    public static final double DMG = 2.5 * Omegaman.PERC_MULT;
+    public static final double DMG = 2 * Omegaman.PERC_MULT;
     public static final double DURA = 2;
-    public static final double KB = 10;
+    public static final double KB = 7.5;
     public static final double KB_SPREAD = Math.PI / 4;
 
     // Size constants
@@ -712,7 +712,7 @@ class Boomer extends Projectile {
 
     public boolean dieTo(Char enemy) {
         die();
-        double mult = velocity < 0? 2: 1;
+        int mult = velocity < 0? 2: 1;
         Omegaman omega = ((Omegaman) owner);
         double trueDmg = 0;
         if (enemy instanceof Omegaman) {
@@ -735,7 +735,7 @@ class Bouncer extends Projectile {
     public static final double SIZE_TO_HITBOX = 1.0;
 
     // Damage constants
-    public static final double DMG = 1 * Omegaman.PERC_MULT;
+    public static final double DMG = 0.75 * Omegaman.PERC_MULT;
     public static final double DURA = INF_DURA;
     public static final double KB = 10;
     public static final double KB_SPREAD = Math.PI / 4;
@@ -931,7 +931,7 @@ class Thorn extends Projectile {
     }
 
     public Thorn(Omegaman player, Coord coord, double dir, double damage, double knockback, double percentCharged, int frameCounter, boolean curved) {
-        this(player, coord, SIZE.scaledBy(percentCharged), SIZE.scaledBy(percentCharged * SIZE_TO_HITBOX), VELOCITY, dir, damage, knockback, KB_SPREAD, DURA, frameCounter, curved, CAN_HIT_PROJ, IS_ON_TOP);
+        this(player, coord, SIZE.scaledBy(percentCharged), SIZE.scaledBy(percentCharged * SIZE_TO_HITBOX), VELOCITY, dir, damage * percentCharged, knockback * percentCharged, KB_SPREAD, DURA, (int) (frameCounter * percentCharged), curved, CAN_HIT_PROJ, IS_ON_TOP);
     }
 
     // Draws the thorn projectile on the screen
@@ -1042,7 +1042,7 @@ class Splitter extends Projectile {
 
 class Fireball extends Projectile {
     // Damage constants
-    public static final double DMG = 2 * Omegaman.PERC_MULT;
+    public static final double DMG = 1 * Omegaman.PERC_MULT;
     public static final double DURA = 2;
     public static final double KB = 10;
     public static final double KB_SPREAD = Math.PI / 4;
@@ -1108,7 +1108,7 @@ class Fireball extends Projectile {
         }
         
         if (trueDmg != 0) {
-            enemy.fireCounter += FIRE_TIME;
+            enemy.setFire(FIRE_TIME);
             omega.addSkillPts(SKILL_PT_GAIN);
         }
 
@@ -1219,7 +1219,7 @@ class Phoenix extends Projectile {
             if (trueDmg != 0) omega.addToStat(Omegaman.DMG_TO_BOSS, FIRE_TIME / Char.FIRE_HURT_HZ * Char.FIRE_DMG);
         }
         
-        if (trueDmg != 0) enemy.fireCounter += FIRE_TIME;
+        if (trueDmg != 0) enemy.setFire(FIRE_TIME);
         OmegaFight3.screenShakeCounter += (int) (SCREENSHAKE * (size.x / SIZE.x));
         return true;
     }
@@ -1256,7 +1256,7 @@ class Star extends Projectile {
 
     // Constructor with default stats
     public Star(Omegaman player, Coord coord, double dir, double percentCharged) {
-        this(player, coord, SIZE.scaledBy(percentCharged), SIZE.scaledBy(percentCharged * SIZE_TO_HITBOX), VELOCITY, dir, DMG * percentCharged, KB * percentCharged, KB_SPREAD, DURA, LIFE, CAN_HIT_PROJ, IS_ON_TOP);
+        this(player, coord, SIZE.scaledBy(percentCharged), SIZE.scaledBy(percentCharged * SIZE_TO_HITBOX), VELOCITY, dir, DMG * percentCharged, KB * percentCharged, KB_SPREAD, DURA, (int) (LIFE * percentCharged), CAN_HIT_PROJ, IS_ON_TOP);
     }
 
     // Constructor with custom stats
@@ -1302,7 +1302,7 @@ class Star extends Projectile {
             if (trueDmg != 0) omega.addToStat(Omegaman.DMG_TO_BOSS, FIRE_TIME / Char.FIRE_HURT_HZ * Char.FIRE_DMG);
         }
         
-        if (trueDmg != 0) enemy.fireCounter += FIRE_TIME;
+        if (trueDmg != 0) enemy.setFire(FIRE_TIME);
         OmegaFight3.screenShakeCounter += (int) (SCREENSHAKE * (size.x / SIZE.x));
         return true;
     }
@@ -1321,7 +1321,7 @@ class GlueBomb extends Projectile {
     public static final Coord EXPLOSION_SIZE_MULT = new Coord(3, 2);
 
     // Movement constants
-    public static final double VELOCITY = 15; 
+    public static final double VELOCITY = 8; 
     public static final int LIFE = 120;
     public static final int MIN_BOMB_TIME = 30;
 
@@ -1422,7 +1422,7 @@ class Spark extends Projectile {
     public static final Coord EXPLOSION_SIZE_MULT = new Coord(3, 30.0 / 9);
 
     // Damage constants
-    public static final double DMG = 10 * Omegaman.PERC_MULT;
+    public static final double DMG = 8 * Omegaman.PERC_MULT;
     public static final double DURA = 3;
     public static final double KB = 15;
     public static final double KB_SPREAD = Math.PI / 4;

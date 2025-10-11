@@ -147,7 +147,7 @@ class Meteor extends Projectile {
     public boolean dieTo(Char enemy) {
         if (enemy instanceof Omegaman) {
             ((Omegaman) enemy).hurt(damage, knockback, coord, dir, kbSpread);
-            enemy.fireCounter += FIRE_TIME;
+            enemy.setFire(FIRE_TIME);
         }
         return false;
     }
@@ -252,7 +252,7 @@ class Bubble extends Projectile {
             ((Omegaman) enemy).hurt(damage, knockback, coord, dir, kbSpread);
             die();
             OmegaFight3.screenShakeCounter += (int) (SCREENSHAKE * (size.x / SIZE.x));
-            enemy.fireCounter += FIRE_TIME;
+            enemy.setFire(FIRE_TIME);
             return true;
         }
         return false;
@@ -335,7 +335,7 @@ class Fire extends Projectile {
     public boolean dieTo(Char enemy) {
         if (enemy instanceof Omegaman) {
             ((Omegaman) enemy).hurt(damage, knockback, coord, trueDir, kbSpread);
-            enemy.fireCounter += FIRE_TIME;
+            enemy.setFire(FIRE_TIME);
         }
         return false;
     }
