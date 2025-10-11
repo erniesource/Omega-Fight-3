@@ -35,7 +35,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static final int SCREEN_SHAKE_MAX = 60;
 
     // Cheat constants
-    public static final boolean DEV_MODE = false;
+    public static final boolean DEV_MODE = true;
     public static final boolean CHEATS = DEV_MODE;
     public static final int KILL_KEY = KeyEvent.VK_K;
     public static final double KILL_DMG = 2 * Omegaman.PERC_MULT;
@@ -519,7 +519,6 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static Clip menuMusic;
     public static Clip endMusic;
     public static Clip superClick;
-    public static Clip boom;
     public static Clip boosh;
     public static Clip cheer;
     public static Clip shing;
@@ -918,7 +917,9 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
             superClick = loadClip(SFX_DIR + "super click.wav");
             Button.click = loadClip(SFX_DIR + "click.wav");
             Button.hover = loadClip(SFX_DIR + "hover.wav");
-            boom = loadClip(SFX_DIR + "boom.wav");
+            for (int i = 0; i != Explosion.NUM_BOOMS; i++) {
+                Explosion.boom[i] = loadClip(SFX_DIR + i + "boom.wav");
+            }
             boosh = loadClip(SFX_DIR + "boosh.wav");
             cheer = loadClip(SFX_DIR + "cheer.wav");
             shing = loadClip(SFX_DIR + "shing.wav");

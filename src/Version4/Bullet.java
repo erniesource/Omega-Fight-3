@@ -931,7 +931,7 @@ class Thorn extends Projectile {
     }
 
     public Thorn(Omegaman player, Coord coord, double dir, double damage, double knockback, double percentCharged, int frameCounter, boolean curved) {
-        this(player, coord, SIZE.scaledBy(percentCharged), SIZE.scaledBy(percentCharged * SIZE_TO_HITBOX), VELOCITY, dir, damage, knockback, KB_SPREAD, DURA, frameCounter, curved, CAN_HIT_PROJ, IS_ON_TOP);
+        this(player, coord, SIZE.scaledBy(percentCharged), SIZE.scaledBy(percentCharged * SIZE_TO_HITBOX), VELOCITY, dir, damage * percentCharged, knockback * percentCharged, KB_SPREAD, DURA, (int) (frameCounter * percentCharged), curved, CAN_HIT_PROJ, IS_ON_TOP);
     }
 
     // Draws the thorn projectile on the screen
@@ -1108,7 +1108,7 @@ class Fireball extends Projectile {
         }
         
         if (trueDmg != 0) {
-            enemy.fireCounter += FIRE_TIME;
+            enemy.setFire(FIRE_TIME);
             omega.addSkillPts(SKILL_PT_GAIN);
         }
 
@@ -1219,7 +1219,7 @@ class Phoenix extends Projectile {
             if (trueDmg != 0) omega.addToStat(Omegaman.DMG_TO_BOSS, FIRE_TIME / Char.FIRE_HURT_HZ * Char.FIRE_DMG);
         }
         
-        if (trueDmg != 0) enemy.fireCounter += FIRE_TIME;
+        if (trueDmg != 0) enemy.setFire(FIRE_TIME);
         OmegaFight3.screenShakeCounter += (int) (SCREENSHAKE * (size.x / SIZE.x));
         return true;
     }
@@ -1256,7 +1256,7 @@ class Star extends Projectile {
 
     // Constructor with default stats
     public Star(Omegaman player, Coord coord, double dir, double percentCharged) {
-        this(player, coord, SIZE.scaledBy(percentCharged), SIZE.scaledBy(percentCharged * SIZE_TO_HITBOX), VELOCITY, dir, DMG * percentCharged, KB * percentCharged, KB_SPREAD, DURA, LIFE, CAN_HIT_PROJ, IS_ON_TOP);
+        this(player, coord, SIZE.scaledBy(percentCharged), SIZE.scaledBy(percentCharged * SIZE_TO_HITBOX), VELOCITY, dir, DMG * percentCharged, KB * percentCharged, KB_SPREAD, DURA, (int) (LIFE * percentCharged), CAN_HIT_PROJ, IS_ON_TOP);
     }
 
     // Constructor with custom stats
@@ -1302,7 +1302,7 @@ class Star extends Projectile {
             if (trueDmg != 0) omega.addToStat(Omegaman.DMG_TO_BOSS, FIRE_TIME / Char.FIRE_HURT_HZ * Char.FIRE_DMG);
         }
         
-        if (trueDmg != 0) enemy.fireCounter += FIRE_TIME;
+        if (trueDmg != 0) enemy.setFire(FIRE_TIME);
         OmegaFight3.screenShakeCounter += (int) (SCREENSHAKE * (size.x / SIZE.x));
         return true;
     }
