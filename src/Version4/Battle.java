@@ -213,7 +213,7 @@ public class Battle {
                 }
             }
         }
-        g.drawString(winnerStr, (int) (winnerTextCoord.x - g.getFontMetrics().stringWidth(winnerStr) / 2), (int) (winnerTextCoord.y + Math.pow(font.getSize(), Button.FONT_SIZE_TO_ACC_SIZE) / 2));
+        g.drawString(winnerStr, (int) (winnerTextCoord.x - g.getFontMetrics().stringWidth(winnerStr) / 2), (int) (winnerTextCoord.y + Button.getAccWordSize(font.getSize()) / 2));
     }
 
     private double roundStat(double stat) {

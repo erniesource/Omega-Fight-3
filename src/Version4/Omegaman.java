@@ -212,10 +212,10 @@ public class Omegaman extends Char {
         this.shtKeys = shtKeys;
 
         // Assign control keys
-        lftKey = controls[0];
-        ritKey = controls[1];
-        upKey = controls[2];
-        dwnKey = controls[3];
+        upKey = controls[0];
+        lftKey = controls[1];
+        dwnKey = controls[2];
+        ritKey = controls[3];
 
         // Percent related stuff
         percentDisplayX = PERC_DISPLAY_DIST + (int) (PERC_DISPLAY_SIZE.x + PERC_DISPLAY_DIST) * playerNo;
