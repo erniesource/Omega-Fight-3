@@ -17,7 +17,6 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.util.*;
 import javax.sound.sampled.*;
-import javafx.util.Pair;
 // Ernest Todo: ultimate, changing controls
 
 public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionListener, KeyListener, Runnable {
@@ -1286,7 +1285,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                 }
 
                 for (Pair<Integer, Boss> boss: babyBosses) {
-                    bosses.add(boss.getKey(), boss.getValue());
+                    bosses.add((int) clamp(boss.first, 0, bosses.size() - 1), boss.second);
                 }
                 babyBosses.clear();
 
