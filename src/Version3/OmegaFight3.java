@@ -87,7 +87,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static final int ARROW_BUTTON_SPACING = 10;
     public static final int HALF_BATTLE_NO_SIZE = 100;
     public static final int NO_SORTS = 2;
-    public static final String BATTLE_LOG_FILE_NAME = "battle log";
+    public static final String BATTLE_LOG_FILE_NAME = "old battle log";
 
     // Slideshow menu constants
     public static final int NUM_SLIDES = 5;
@@ -421,7 +421,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         pausedBg = ImageIO.read(new File("menus/paused.png"));
 
         // Choose Menu image importing
-        chooseMenu = ImageIO.read(new File("menus/choose.jpg"));
+        chooseMenu = ImageIO.read(new File("menus/choose fight.jpg"));
         buttonImg = ImageIO.read(new File("menus/button.jpg"));
         readyBar = ImageIO.read(new File("menus/ready.jpg"));
         countdownText[READY_TEXT] = ImageIO.read(new File("menus/ready text.png"));
@@ -458,7 +458,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
 
         // Smoke image importing
         for (int i = 0; i != Smoke.NUM_SMOKES; i++) {
-            Smoke.smokes[i] = ImageIO.read(new File("player sprites/smoke" + i + ".png"));
+            Smoke.smokes[i] = ImageIO.read(new File("explosions/smoke" + i + ".png"));
         }
         
         // Player Weapon image importing
@@ -662,7 +662,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
             Button.hover.setFramePosition(0);
 
             boom = AudioSystem.getClip();
-            boom.open(AudioSystem.getAudioInputStream(new File("SFX/boom.wav").toURI().toURL()));
+            boom.open(AudioSystem.getAudioInputStream(new File("SFX/0boom.wav").toURI().toURL()));
             boom.setFramePosition(0);
 
             cheer = AudioSystem.getClip();
