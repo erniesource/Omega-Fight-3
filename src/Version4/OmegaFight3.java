@@ -17,8 +17,7 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.util.*;
 import javax.sound.sampled.*;
-import javafx.util.Pair;
-// Ernest Todo: new player projs
+// Ernest Todo: ultimate, changing controls
 
 public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionListener, KeyListener, Runnable {
     // Screen Settings
@@ -60,7 +59,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static final int SLIDESHOW_GS = 4;
     public static final int BATTLE_LOG_GS = 5;
 
-    // Button Numbers (Next avail: 40)
+    // Button Numbers (Next avail: 52)
     public static final int NO_BUTTON_HIT = -1;
 
     // Choose your fight menu
@@ -99,6 +98,10 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static final int SLIDESHOW_BACK_BUTTONO = 28;
     public static final int SLIDE_NO_BACK_BUTTONO = 29;
     public static final int SLIDE_NO_NEXT_BUTTONO = 30;
+
+    // Controls
+    public static final int[][] CONTROLS_BUTTONO = {{40, 41, 42, 43}, {44, 45, 46, 47}};
+    public static final int[][] SHOOT_BUTTONO = {{48, 49}, {50, 51}};
 
     // Button constants
     public static final Font BUTTON_FONT = new Font("Consolas", Font.BOLD, 40); 
@@ -238,6 +241,16 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static final Coord CHROMATIC_MID_COORD = new Coord(SCREEN_CENTER.x, 777.0 / 960 * SCREEN_SIZE.y);
     public static final Coord CHROMATIC_COORD = CHROMATIC_MID_COORD.add(CHROMATIC_SIZE.scaledBy(-0.5));
     public static final int CHROMATIC_ROT_LEN = MAX_TICK_RATE * 3;
+    public static final int CONTROLS_SLIDE_NO = 0;
+
+    // Controls constants
+    public static final int CONTROLS_BUTTON_X_START = (int) SCREEN_CENTER.x;
+    public static final int CONTROLS_BUTTON_SPACING_X = 506;
+    public static final int[] CONTROLS_BUTTON_Y = {352, 473, 583, 691};
+    public static final int[] SHOOT_BUTTON_Y = {787, 870};
+    public static final Coord CONTROLS_BUTTON_SIZE = new Coord(482, 62);
+    public static final int CONTROLS_KEY = 0;
+    public static final int SHOOT_KEY = 1;
 
     // Boss constants
     public static final int NUM_DIFFICULTY = 6;
@@ -288,7 +301,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static final String MUSIC_DIR = "music/";
     public static final String SFX_DIR = "sfx/";
 
-    // Transition constants (Next avail: 11)
+    // Transition constants (Next avail: 12)
     public static final int NO_TRANS = -1;
     // Fade in
     public static final int FADE_IN = 0;
@@ -350,6 +363,10 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static final int RULES = 10;
     public static final int RULES_FADE_LEN = 6;
 
+    // Change key bind
+    public static final int CHANGE_KEY_BIND = 11;
+    public static final int CHANGE_KEY_BIND_FADE_LEN = 6;
+
     // Color constants
     public static final Color PURPLE = new Color(186, 122, 255);
 
@@ -366,7 +383,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     // Players
     public static Omegaman[] omegaman = new Omegaman[Omegaman.NUM_PLAYERS];
     public static int[][] loadouts = {{NO_WEAPON, NO_WEAPON}, {NO_WEAPON, NO_WEAPON}};
-    public static int[][] controls = {{KeyEvent.VK_A, KeyEvent.VK_D, KeyEvent.VK_W, KeyEvent.VK_S}, {KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_UP, KeyEvent.VK_DOWN}};
+    public static int[][] controls = {{KeyEvent.VK_W, KeyEvent.VK_A, KeyEvent.VK_S, KeyEvent.VK_D}, {KeyEvent.VK_UP, KeyEvent.VK_LEFT, KeyEvent.VK_DOWN, KeyEvent.VK_RIGHT}};
     public static int[][] shtKeys = {{KeyEvent.VK_C, KeyEvent.VK_V}, {KeyEvent.VK_NUMPAD1, KeyEvent.VK_NUMPAD2}};
     public static int[][] loadoutButtono = {{11, 12}, {13, 14}};
 
@@ -435,6 +452,14 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
 
     // Slideshow buttons
     public static HashMap<Integer, Button> slideshowButtons = new HashMap<>();
+
+    // Controls buttons
+    public static HashMap<Integer, Button> controlsButtons = new HashMap<>();
+    public static BufferedImage controlsButtonImg;
+    public static BufferedImage bindKeyOverlay;
+    public static int playerToChangeKey;
+    public static int typeToChangeKey;
+    public static int numToChangeKey;
 
     // Start menu images
     public static BufferedImage startBg;
@@ -623,6 +648,10 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
             slides[i] = ImageIO.read(new File(SLIDESHOW_DIR + "slide" + i + (i == THANKS_SLIDE_NO? ".png": ".jpg")));
         }
         chromatic = ImageIO.read(new File(SLIDESHOW_DIR + "chromatic.jpg"));
+
+        // Controls image importing
+        controlsButtonImg = ImageIO.read(new File(SLIDESHOW_DIR + "controls button.jpg"));
+        bindKeyOverlay = ImageIO.read(new File(SLIDESHOW_DIR + "bind key overlay.png"));
 
         // Smoke image importing
         for (int i = 0; i != Smoke.NUM_SMOKES; i++) {
@@ -884,6 +913,16 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         slideshowButtons.put(SLIDESHOW_BACK_BUTTONO, newBackButton(SLIDESHOW_BACK_BUTTONO));
         slideshowButtons.put(SLIDE_NO_BACK_BUTTONO, new Button(smlButtonImg, BUTTON_FONT, new Coord(SCREEN_SIZE.x - SPACING * 2 - SML_BUTTON_SIZE.x * 1.5, SPACING + SML_BUTTON_SIZE.y / 2), SML_BUTTON_SIZE.copy(), "<", SLIDE_NO_BACK_BUTTONO, Button.SHADOW));
         slideshowButtons.put(SLIDE_NO_NEXT_BUTTONO, new Button(smlButtonImg, BUTTON_FONT, new Coord(SCREEN_SIZE.x - SPACING - SML_BUTTON_SIZE.x / 2, SPACING + SML_BUTTON_SIZE.y / 2), SML_BUTTON_SIZE.copy(), ">", SLIDE_NO_NEXT_BUTTONO, Button.SHADOW));
+
+        // Controls buttons
+        for (int i = 0; i != Omegaman.NUM_PLAYERS; i++) {
+            for (int j = 0; j != 4; j++) {
+                controlsButtons.put(CONTROLS_BUTTONO[i][j], new Button(controlsButtonImg, BUTTON_FONT, new Coord(CONTROLS_BUTTON_X_START + i * CONTROLS_BUTTON_SPACING_X, CONTROLS_BUTTON_Y[j]), CONTROLS_BUTTON_SIZE.copy(), KeyEvent.getKeyText(controls[i][j]), CONTROLS_BUTTONO[i][j], Button.SHADOW));
+            }
+            for (int j = 0; j != Omegaman.LOADOUT_NUM_WEAPONS; j++) {
+                controlsButtons.put(SHOOT_BUTTONO[i][j], new Button(controlsButtonImg, BUTTON_FONT, new Coord(CONTROLS_BUTTON_X_START + i * CONTROLS_BUTTON_SPACING_X, SHOOT_BUTTON_Y[j]), CONTROLS_BUTTON_SIZE.copy(), KeyEvent.getKeyText(shtKeys[i][j]), SHOOT_BUTTONO[i][j], Button.SHADOW));
+            }
+        }
 
         // Battle log text file reading
         BufferedReader br = new BufferedReader(new FileReader(MENUS_DIR + BATTLE_LOG_FILE_NAME + ".txt"));
@@ -1246,7 +1285,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                 }
 
                 for (Pair<Integer, Boss> boss: babyBosses) {
-                    bosses.add(boss.getKey(), boss.getValue());
+                    bosses.add((int) clamp(boss.first, 0, bosses.size() - 1), boss.second);
                 }
                 babyBosses.clear();
 
@@ -1394,6 +1433,9 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                 g.drawImage(Dragon.dragonSprite[dragonSpriteNo], (int) DRAGON_ANIM_COORD.x, (int) DRAGON_ANIM_COORD.y, (int) DRAGON_ANIM_SIZE.x, (int) DRAGON_ANIM_SIZE.y, null);
                 g.drawImage(Bird.birdSprite[birdSpriteNo], (int) BIRD_ANIM_COORD.x, (int) BIRD_ANIM_COORD.y, (int) BIRD_ANIM_SIZE.x, (int) BIRD_ANIM_SIZE.y, null);
             }
+            else if (slideNo == CONTROLS_SLIDE_NO) {
+                drawButtons(controlsButtons.values(), g);
+            }
 
             // Draw buttons
             drawButtons(slideshowButtons.values(), g);
@@ -1411,8 +1453,13 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
 
                 // If still not transitioning, process stuff
                 if (transitiono == NO_TRANS) {
+                    ArrayList<Button> buttonsToProcess = new ArrayList<>(slideshowButtons.values());
+                    if (slideNo == CONTROLS_SLIDE_NO) {
+                        buttonsToProcess.addAll(controlsButtons.values());
+                    }
+
                     // Process buttons
-                    processButtons(slideshowButtons.values());
+                    processButtons(buttonsToProcess);
                 }
             }
         }
@@ -2161,6 +2208,34 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                 transCounter = 0;
             }
         }
+
+        else if (transitiono == CHANGE_KEY_BIND) {
+            if (transCounter == -1) {
+                transCounter++;
+            }
+            if (pressedKeys.size() == 1) {
+                for (int key: pressedKeys) {
+                    if (validKey(key)) {
+                        if (typeToChangeKey == CONTROLS_KEY) {
+                            controls[playerToChangeKey][numToChangeKey] = key;
+                            controlsButtons.get(CONTROLS_BUTTONO[playerToChangeKey][numToChangeKey]).text = KeyEvent.getKeyText(key);
+                        }
+                        else if (typeToChangeKey == SHOOT_KEY) {
+                            shtKeys[playerToChangeKey][numToChangeKey] = key;
+                            controlsButtons.get(SHOOT_BUTTONO[playerToChangeKey][numToChangeKey]).text = KeyEvent.getKeyText(key);
+                        }
+                    }
+                }
+                for (Button button: slideshowButtons.values()) {
+                    button.canUse = true;
+                }
+                for (Button button: controlsButtons.values()) {
+                    button.canUse = true;
+                }
+                transitiono = NO_TRANS;
+                transCounter = 0;
+            }
+        }
     }
 
     // Parameters:
@@ -2367,7 +2442,13 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
             int descBarCoordX = (int) SCREEN_SIZE.x - descBarSizeX;
             g2.drawImage(gameModeDescBar, descBarCoordX, GAMEMODE_DESC_BAR_Y, descBarSizeX, GAMEMODE_DESC_BAR_SIZE_Y, null);
             g2.drawImage(gameModeDescEnd, descBarCoordX - GAMEMODE_DESC_END_SIZE_X, GAMEMODE_DESC_BAR_Y, null);
-            g2.drawString(GAMEMODE_DESC[gameMode], descBarCoordX + SPACING, GAMEMODE_DESC_MID_Y + (int) Math.pow(GAMEMODE_DESC_FONT.getSize(), Button.FONT_SIZE_TO_ACC_SIZE) / 2);
+            g2.drawString(GAMEMODE_DESC[gameMode], descBarCoordX + SPACING, GAMEMODE_DESC_MID_Y + Button.getAccWordSize(GAMEMODE_DESC_FONT.getSize()) / 2);
+            resetOpacity(g2);
+        }
+
+        else if (transitiono == CHANGE_KEY_BIND) {
+            setOpacity(1 - (double) transCounter / CHANGE_KEY_BIND_FADE_LEN, g2);
+            g2.drawImage(bindKeyOverlay, 0, 0, (int) SCREEN_SIZE.x, (int) SCREEN_SIZE.y, null);
             resetOpacity(g2);
         }
     }
@@ -2480,6 +2561,19 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         for (Boss boss: bosses) {
             if (boss.health > 0 || boss.frameCounter < SURGE_FRAME_HZ * SURGE_SPRITE_WIN_CHECK) {
                 return false;
+            }
+        }
+        return true;
+    }
+
+    private static boolean validKey(int key) {
+        if (key == KeyEvent.VK_ESCAPE) return false;
+        for (int i = 0; i != Omegaman.NUM_PLAYERS; i++) {
+            for (int j = 0; j != 4; j++) {
+                if (controls[i][j] == key) return false;
+            }
+            for (int j = 0; j != Omegaman.LOADOUT_NUM_WEAPONS; j++) {
+                if (shtKeys[i][j] == key) return false;
             }
         }
         return true;
@@ -2839,18 +2933,62 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                     transCounter = FADE_IN_LEN;
                     transitiono = FADE_IN;
                     resetButtons(slideshowButtons.values());
+                    if (slideNo == CONTROLS_SLIDE_NO) {
+                        resetButtons(controlsButtons.values());
+                    }
                 }
 
                 // Next button
                 else if (buttonPressed == SLIDE_NO_NEXT_BUTTONO) {
+                    if (slideNo == CONTROLS_SLIDE_NO) {
+                        resetButtons(controlsButtons.values());
+                    }
                     slideNo = (slideNo + 1) % NUM_SLIDES;
                     slideCounter = 0;
                 }
 
                 // Prev button
                 else if (buttonPressed == SLIDE_NO_BACK_BUTTONO) {
+                    if (slideNo == CONTROLS_SLIDE_NO) {
+                        resetButtons(controlsButtons.values());
+                    }
                     slideNo = (slideNo - 1 + NUM_SLIDES) % NUM_SLIDES;
                     slideCounter = 0;
+                }
+
+                else if (slideNo == CONTROLS_SLIDE_NO) {
+                    for (int i = 0; i != Omegaman.NUM_PLAYERS; i++) {
+                        for (int j = 0; j != 4; j++) {
+                            if (buttonPressed == CONTROLS_BUTTONO[i][j]) {
+                                playerToChangeKey = i;
+                                typeToChangeKey = CONTROLS_KEY;
+                                numToChangeKey = j;
+                                for (Button button: slideshowButtons.values()) {
+                                    button.canUse = false;
+                                }
+                                for (Button button: controlsButtons.values()) {
+                                    button.canUse = false;
+                                }
+                                transitiono = CHANGE_KEY_BIND;
+                                transCounter = CHANGE_KEY_BIND_FADE_LEN;
+                            }
+                        }
+                        for (int j = 0; j != Omegaman.LOADOUT_NUM_WEAPONS; j++) {
+                            if (buttonPressed == SHOOT_BUTTONO[i][j]) {
+                                playerToChangeKey = i;
+                                typeToChangeKey = SHOOT_KEY;
+                                numToChangeKey = j;
+                                for (Button button: slideshowButtons.values()) {
+                                    button.canUse = false;
+                                }
+                                for (Button button: controlsButtons.values()) {
+                                    button.canUse = false;
+                                }
+                                transitiono = CHANGE_KEY_BIND;
+                                transCounter = CHANGE_KEY_BIND_FADE_LEN;
+                            }
+                        }
+                    }
                 }
             }
 

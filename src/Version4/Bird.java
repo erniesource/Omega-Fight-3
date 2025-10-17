@@ -4,8 +4,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import javax.sound.sampled.*;
 
-import javafx.util.Pair;
-
 public class Bird extends Boss {
     // Combat constants
     public static final double INIT_HEALTH = (OmegaFight3.DEV_MODE? 100: 600) * Omegaman.PERC_MULT;

@@ -76,7 +76,7 @@ public class Button {
             if (text != null) {
                 g.setFont(font[state]);
                 int strWidth = g.getFontMetrics().stringWidth(text);
-                double accFontSize = Math.pow(font[state].getSize(), FONT_SIZE_TO_ACC_SIZE);
+                int accFontSize = getAccWordSize(font[state].getSize());
                 if (style == SHADOW) {
                     g.setColor(Color.WHITE);
                     double shadowOffset = SHADOW_OFFSET * accFontSize;
@@ -124,6 +124,10 @@ public class Button {
         }
         return false;
     }
+
+    public static int getAccWordSize(int fontSize) {
+        return (int) Math.pow(fontSize, FONT_SIZE_TO_ACC_SIZE);
+    }
 }
 
 class TextBox extends Button {
@@ -154,7 +158,7 @@ class TextBox extends Button {
         if (canSee) {
             // Draw cursor
             if (typing && cursorCounter % (CURSOR_HZ * 2) < CURSOR_HZ) {;
-                g.drawString("|", (int) (coord.x + g.getFontMetrics().stringWidth(text) / 2) + CURSOR_SPACING, (int) (coord.y + Math.pow(font[state].getSize(), FONT_SIZE_TO_ACC_SIZE) / 2));
+                g.drawString("|", (int) (coord.x + g.getFontMetrics().stringWidth(text) / 2) + CURSOR_SPACING, (int) (coord.y + getAccWordSize(font[state].getSize()) / 2));
             }
         }
     }
