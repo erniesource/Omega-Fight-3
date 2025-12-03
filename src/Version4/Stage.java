@@ -35,7 +35,7 @@ public class Stage {
 
     // Description: This method draws the stage background
     public void drawStage(Graphics g) {
-        g.drawImage(image, 0, 0, null);
+        g.drawImage(image, OmegaFight3.coordToScreenX(0), OmegaFight3.coordToScreenY(0), OmegaFight3.sizeToScreenX(image.getWidth()), OmegaFight3.sizeToScreenY(image.getHeight()), null);
     }
 }
 

@@ -36,10 +36,10 @@ public class Smoke {
 
     // Description: This method draws the smoke
     public void draw(Graphics2D g2) {
-        g2.rotate(rotation, coord.x, coord.y);
+        g2.rotate(rotation, OmegaFight3.coordToScreenX(coord.x), OmegaFight3.coordToScreenY(coord.y));
         Coord drawCoord = coord.add(size.scaledBy(-0.5));
-        g2.drawImage(smokes[(SMOKE_LEN - frameCounter) / SMOKE_CHANGE_HZ], (int) (drawCoord.x), (int) (drawCoord.y), (int) size.x, (int) size.y, null);
-        g2.rotate(-rotation, coord.x, coord.y);
+        g2.drawImage(smokes[(SMOKE_LEN - frameCounter) / SMOKE_CHANGE_HZ], OmegaFight3.coordToScreenX(drawCoord.x), OmegaFight3.coordToScreenY(drawCoord.y), OmegaFight3.sizeToScreenX(size.x), OmegaFight3.sizeToScreenY(size.y), null);
+        g2.rotate(-rotation, OmegaFight3.coordToScreenX(coord.x), OmegaFight3.coordToScreenY(coord.y));
     }
 
     // Getters
@@ -104,7 +104,7 @@ class Explosion {
     // Description: This method draws the explosion
     public void draw(Graphics g) {
         Coord drawCoord = coord.add(size.scaledBy(-0.5));
-        g.drawImage(explosions[(EXPLOSION_LEN - frameCounter) / EXPLOSION_CHANGE_HZ], (int) (drawCoord.x), (int) (drawCoord.y), (int) size.x, (int) size.y, null);
+        g.drawImage(explosions[(EXPLOSION_LEN - frameCounter) / EXPLOSION_CHANGE_HZ], OmegaFight3.coordToScreenX(drawCoord.x), OmegaFight3.coordToScreenY(drawCoord.y), OmegaFight3.sizeToScreenX(size.x), OmegaFight3.sizeToScreenY(size.y), null);
     }
 }
 
@@ -132,7 +132,7 @@ class Wake{
         Coord drawSize = (new Coord(maxSizeX, maxSizeX * SIZE_X_TO_Y)).scaledBy(OmegaFight3.lerp(MIN_SIZE, 1, (double) frameCounter / WAKE_LEN));
         Coord drawCoord = coord.add(drawSize.scaledBy(-0.5));
         OmegaFight3.setOpacity(OmegaFight3.lerp(1, MIN_OPACITY, (double) frameCounter / WAKE_LEN), g2);
-        g2.drawImage(wakeImg, (int) (drawCoord.x), (int) (drawCoord.y), (int) drawSize.x, (int) drawSize.y, null);
+        g2.drawImage(wakeImg, OmegaFight3.coordToScreenX(drawCoord.x), OmegaFight3.coordToScreenY(drawCoord.y), OmegaFight3.sizeToScreenX(drawSize.x), OmegaFight3.sizeToScreenY(drawSize.y), null);
         OmegaFight3.resetOpacity(g2);
     }
 }

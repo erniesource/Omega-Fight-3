@@ -6,7 +6,7 @@ import javax.sound.sampled.*;
 
 public class Bird extends Boss {
     // Combat constants
-    public static final double INIT_HEALTH = (OmegaFight3.DEV_MODE? 100: 600) * Omegaman.PERC_MULT;
+    public static final double INIT_HEALTH = (OmegaFight3.DEV_MODE? 100: 700) * Omegaman.PERC_MULT;
     public static final double SIZE_TO_HITBOX = 0.5;
     public static final double SIZE_TO_HURTBOX = 0.6;
 
@@ -17,9 +17,9 @@ public class Bird extends Boss {
     public static final int TRANS_TIME = 120;
     public static final Coord[] STATE_SIZE = {new Coord(520, 530), new Coord(645, 425), new Coord(650, 685), new Coord(710, 670)};
     public static final int[] STATE_SPRITE_HZ = {10, 5, 5, 7};
-    public static final Coord[] STATE_COORD = {null, new Coord(OmegaFight3.SCREEN_SIZE.x - STATE_SIZE[IDLE].x / 2, OmegaFight3.SCREEN_CENTER.y),
-        new Coord((OmegaFight3.stage[OmegaFight3.NORTH_CAVE_NO].platforms[1].leftX + OmegaFight3.stage[OmegaFight3.NORTH_CAVE_NO].platforms[1].rightX) / 2, OmegaFight3.SCREEN_CENTER.y),
-        new Coord(OmegaFight3.SCREEN_CENTER.x, STATE_SIZE[TWEAK].y / 2)};
+    public static final Coord[] STATE_COORD = {null, new Coord(OmegaFight3.NORM_SCREEN_SIZE.x - STATE_SIZE[IDLE].x / 2, OmegaFight3.NORM_SCREEN_CENTER.y),
+        new Coord((OmegaFight3.stage[OmegaFight3.NORTH_CAVE_NO].platforms[1].leftX + OmegaFight3.stage[OmegaFight3.NORTH_CAVE_NO].platforms[1].rightX) / 2, OmegaFight3.NORM_SCREEN_CENTER.y),
+        new Coord(OmegaFight3.NORM_SCREEN_CENTER.x, STATE_SIZE[TWEAK].y / 2)};
     public static final int[] STATE_TIME = {0, 60, 320, 480};
     public static final String[] STATE_NAME = {"eagle artillery", "tweak"};
 
@@ -77,7 +77,7 @@ public class Bird extends Boss {
 
     // Constructor
     public Bird() {
-        super(birdSprite, STATE_COORD, STATE_SIZE, STATE_SPRITE_HZ, STATE_TIME, STATE_SPRITE_START, STATE_SPRITE_SIGN, STATE_NUM_SPRITES, INIT_HEALTH , SIZE_TO_HITBOX, SIZE_TO_HURTBOX, SIZE_TO_FIRE, IDLE, NUM_STATES, TRANS_TIME);
+        super(birdSprite, STATE_COORD, STATE_SIZE, STATE_SPRITE_HZ, STATE_TIME, STATE_SPRITE_START, STATE_SPRITE_SIGN, STATE_NUM_SPRITES, INIT_HEALTH * Math.pow(OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty], OmegaFight3.DIFFICULTY_MULT_TO_BOSS_HEALTH), SIZE_TO_HITBOX, SIZE_TO_HURTBOX, SIZE_TO_FIRE, IDLE, NUM_STATES, TRANS_TIME);
     }
 
     // Description: This method calculates the attacks of the bird
@@ -115,7 +115,7 @@ public class Bird extends Boss {
             waveCounter++;
             if (waving != NOT_WAVING) {
                 if (waveCounter % ((WAVE_TIME - WARN_TIME) / DIVER_PER_WAVE) == 0 && waveCounter > WARN_TIME) {
-                    OmegaFight3.projectiles.add(new Diver(this, new Coord(OmegaFight3.SCREEN_CENTER.x - (OmegaFight3.SCREEN_SIZE.x / 2 + Diver.SIZE.x / 2) * waving, DIVER_ALTITUDE), (waving == WAVING_RIT? 0: Math.PI), waving));
+                    OmegaFight3.projectiles.add(new Diver(this, new Coord(OmegaFight3.NORM_SCREEN_CENTER.x - (OmegaFight3.NORM_SCREEN_SIZE.x / 2 + Diver.SIZE.x / 2) * waving, DIVER_ALTITUDE), (waving == WAVING_RIT? 0: Math.PI), waving));
                 }
                 if (waveCounter == WAVE_TIME) {
                     waving = NOT_WAVING;
@@ -164,10 +164,10 @@ public class Bird extends Boss {
         super.draw(g);
         if (waveCounter <= WARN_TIME) {
             if (waving == WAVING_LFT) {
-                g.drawImage(sign, (int) (OmegaFight3.SCREEN_SIZE.x - SIGN_SPACING - SIGN_SIZE.y), (int) OmegaFight3.lerp(-SIGN_SIZE.y, 0, (double) Math.min(WARN_TIME / 2 - Math.abs(WARN_TIME / 2 - waveCounter), WARN_ANIM_LEN) / WARN_ANIM_LEN), null);
+                g.drawImage(sign, OmegaFight3.coordToScreenX(OmegaFight3.NORM_SCREEN_SIZE.x - SIGN_SPACING - SIGN_SIZE.y), OmegaFight3.coordToScreenY(OmegaFight3.lerp(-SIGN_SIZE.y, 0, (double) Math.min(WARN_TIME / 2 - Math.abs(WARN_TIME / 2 - waveCounter), WARN_ANIM_LEN) / WARN_ANIM_LEN)), OmegaFight3.sizeToScreenX(SIGN_SIZE.x), OmegaFight3.sizeToScreenX(SIGN_SIZE.y), null);
             }
             else if (waving == WAVING_RIT) {
-                g.drawImage(sign, SIGN_SPACING, (int) OmegaFight3.lerp(-SIGN_SIZE.y, 0, (double) Math.min(WARN_TIME / 2 - Math.abs(WARN_TIME / 2 - waveCounter), WARN_ANIM_LEN) / WARN_ANIM_LEN), null);
+                g.drawImage(sign, OmegaFight3.coordToScreenX(SIGN_SPACING), OmegaFight3.coordToScreenY(OmegaFight3.lerp(-SIGN_SIZE.y, 0, (double) Math.min(WARN_TIME / 2 - Math.abs(WARN_TIME / 2 - waveCounter), WARN_ANIM_LEN) / WARN_ANIM_LEN)), OmegaFight3.sizeToScreenX(SIGN_SIZE.x), OmegaFight3.sizeToScreenX(SIGN_SIZE.y), null);
             }
         }
     }
@@ -232,13 +232,13 @@ class Punk extends Boss {
         // Move and bounce punk
         coord.x += velocity.x;
         coord.y += velocity.y;
-        if (coord.x + circleRad >= OmegaFight3.SCREEN_SIZE.x) {
+        if (coord.x + circleRad >= OmegaFight3.NORM_SCREEN_SIZE.x) {
             setVelX(-getNewPunkVel());
         }
         else if (coord.x - circleRad <= 0) {
             setVelX(getNewPunkVel());
         }
-        if (coord.y + circleRad >= OmegaFight3.SCREEN_SIZE.y) {
+        if (coord.y + circleRad >= OmegaFight3.NORM_SCREEN_SIZE.y) {
             velocity.y = -getNewPunkVel();
         }
         else if (coord.y - circleRad <= 0) {

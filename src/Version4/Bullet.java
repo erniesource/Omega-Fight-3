@@ -49,7 +49,7 @@ public class Bullet extends Projectile {
     // Description: Draws the bullet on the screen
     public void draw(Graphics2D g2) {
         Coord drawCoord = coord.add(size.scaledBy(-0.5));
-        g2.drawImage(image, (int) (drawCoord.x), (int) (drawCoord.y), (int) size.x, (int) size.y, null);
+        g2.drawImage(image, OmegaFight3.coordToScreenX(drawCoord.x), OmegaFight3.coordToScreenY(drawCoord.y), OmegaFight3.sizeToScreenX(size.x), OmegaFight3.sizeToScreenY(size.y), null);
         super.draw(g2);
     }
 
@@ -173,7 +173,7 @@ class Rocket extends Projectile {
     // This overridden method draws the rocket or explosion image based on its state
     public void draw(Graphics2D g2) {
         Coord drawCoord = coord.add(size.scaledBy(-0.5));
-        g2.drawImage(image, (int) (drawCoord.x), (int) (drawCoord.y), (int) size.x, (int) size.y, null);
+        g2.drawImage(image, OmegaFight3.coordToScreenX(drawCoord.x), OmegaFight3.coordToScreenY(drawCoord.y), OmegaFight3.sizeToScreenX(size.x), OmegaFight3.sizeToScreenY(size.y), null);
         super.draw(g2);
     }
 
@@ -251,10 +251,10 @@ class Shotgun extends Projectile {
 
     // Description: Draws the shotgun bullet on the screen
     public void draw(Graphics2D g2) {
-        g2.rotate(dir, coord.x, coord.y);
+        g2.rotate(dir, OmegaFight3.coordToScreenX(coord.x), OmegaFight3.coordToScreenY(coord.y));
         Coord drawCoord = coord.add(size.scaledBy(-0.5));
-        g2.drawImage(image, (int) (drawCoord.x), (int) (drawCoord.y), (int) size.x, (int) size.y, null);
-        g2.rotate(-dir, coord.x, coord.y);
+        g2.drawImage(image, OmegaFight3.coordToScreenX(drawCoord.x), OmegaFight3.coordToScreenY(drawCoord.y), OmegaFight3.sizeToScreenX(size.x), OmegaFight3.sizeToScreenY(size.y), null);
+        g2.rotate(-dir, OmegaFight3.coordToScreenX(coord.x), OmegaFight3.coordToScreenY(coord.y));
         super.draw(g2);
     }
 
@@ -283,7 +283,7 @@ class Firework extends Projectile {
     public static final double SIZE_TO_HITBOX = 1.0;
 
     // Damage constants
-    public static final double DMG = 4 * Omegaman.PERC_MULT;
+    public static final double DMG = 3.5 * Omegaman.PERC_MULT;
     public static final double DURA = INF_DURA;
     public static final double KB = 20;
     public static final double KB_SPREAD = Math.PI / 4;
@@ -318,10 +318,10 @@ class Firework extends Projectile {
 
     // Description: Draws the firework projectile
     public void draw(Graphics2D g2) {
-        g2.rotate(dir, coord.x, coord.y);
+        g2.rotate(dir, OmegaFight3.coordToScreenX(coord.x), OmegaFight3.coordToScreenY(coord.y));
         Coord drawCoord = coord.add(size.scaledBy(-0.5));
-        g2.drawImage(image, (int) (drawCoord.x), (int) (drawCoord.y), (int) size.x, (int) size.y, null);
-        g2.rotate(-dir, coord.x, coord.y);
+        g2.drawImage(image, OmegaFight3.coordToScreenX(drawCoord.x), OmegaFight3.coordToScreenY(drawCoord.y), OmegaFight3.sizeToScreenX(size.x), OmegaFight3.sizeToScreenY(size.y), null);
+        g2.rotate(-dir, OmegaFight3.coordToScreenX(coord.x), OmegaFight3.coordToScreenY(coord.y));
         super.draw(g2);
     }
 
@@ -388,10 +388,10 @@ class Spammer extends Projectile {
 
     // Description: Draws the spammer bullet on the screen
     public void draw(Graphics2D g2) {
-        g2.rotate(dir, coord.x, coord.y);
+        g2.rotate(dir, OmegaFight3.coordToScreenX(coord.x), OmegaFight3.coordToScreenY(coord.y));
         Coord drawCoord = coord.add(size.scaledBy(-0.5));
-        g2.drawImage(image, (int) (drawCoord.x), (int) (drawCoord.y), (int) size.x, (int) size.y, null);
-        g2.rotate(-dir, coord.x, coord.y);
+        g2.drawImage(image, OmegaFight3.coordToScreenX(drawCoord.x), OmegaFight3.coordToScreenY(drawCoord.y), OmegaFight3.sizeToScreenX(size.x), OmegaFight3.sizeToScreenY(size.y), null);
+        g2.rotate(-dir, OmegaFight3.coordToScreenX(coord.x), OmegaFight3.coordToScreenY(coord.y));
         super.draw(g2);
     }
 
@@ -467,9 +467,9 @@ class Missile extends Projectile {
 
     // Description: This method draws the missile or explosion image based on its state
     public void draw(Graphics2D g2) {
-        g2.rotate(dir, coord.x, coord.y);
-        g2.drawImage(image, (int) (coord.x - size.x / 2), (int) (coord.y - size.y / 2 * sign), (int) size.x, (int) size.y * sign, null);
-        g2.rotate(-dir, coord.x, coord.y);
+        g2.rotate(dir, OmegaFight3.coordToScreenX(coord.x), OmegaFight3.coordToScreenY(coord.y));
+        g2.drawImage(image, OmegaFight3.coordToScreenX(coord.x - size.x / 2), OmegaFight3.coordToScreenY(coord.y - size.y / 2 * sign), OmegaFight3.sizeToScreenX(size.x), OmegaFight3.sizeToScreenY(size.y * sign), null);
+        g2.rotate(-dir, OmegaFight3.coordToScreenX(coord.x), OmegaFight3.coordToScreenY(coord.y));
         super.draw(g2);
     }
 
@@ -548,7 +548,7 @@ class Sniper extends Projectile {
 
     // Description: Draws the sniper bullet on the screen
     public void draw(Graphics2D g2) {
-        g2.drawImage(image, (int) (coord.x - size.x / 2 * Math.cos(dir)), (int) (coord.y - size.y / 2), (int) (size.x * Math.cos(dir)), (int) size.y, null);
+        g2.drawImage(image, OmegaFight3.coordToScreenX(coord.x - size.x / 2 * Math.cos(dir)), OmegaFight3.coordToScreenY(coord.y - size.y / 2), OmegaFight3.sizeToScreenX(size.x * Math.cos(dir)), OmegaFight3.sizeToScreenY(size.y), null);
         super.draw(g2);
     }
 
@@ -625,8 +625,8 @@ class Laser extends Projectile {
     public void draw(Graphics2D g2) {
         double sizeY = size.y * Math.min(Math.min(frameCounter, LIFE - frameCounter), RESIZE_LEN) / RESIZE_LEN;
         if (frameCounter % (PULSE_HZ * 2) < PULSE_HZ) sizeY *= SIZE_Y_TO_PULSE;
-        g2.drawImage(beam, (int) (coord.x - size.x / 2 * Math.cos(dir)), (int) (coord.y - sizeY / 2), (int) (size.x * Math.cos(dir)), (int) sizeY, null);
-        g2.drawImage(ball, (int) (coord.x - (size.x / 2 + size.y * BEAM_SIZE_Y_TO_BALL.x / 2) * Math.cos(dir)), (int) (coord.y - size.y * BEAM_SIZE_Y_TO_BALL.y / 2), (int) (size.y * BEAM_SIZE_Y_TO_BALL.x * Math.cos(dir)), (int) (size.y * BEAM_SIZE_Y_TO_BALL.y), null);
+        g2.drawImage(beam, OmegaFight3.coordToScreenX(coord.x - size.x / 2 * Math.cos(dir)), OmegaFight3.coordToScreenY(coord.y - sizeY / 2), OmegaFight3.sizeToScreenX(size.x * Math.cos(dir)), OmegaFight3.sizeToScreenY(sizeY), null);
+        g2.drawImage(ball, OmegaFight3.coordToScreenX(coord.x - (size.x / 2 + size.y * BEAM_SIZE_Y_TO_BALL.x / 2) * Math.cos(dir)), OmegaFight3.coordToScreenY(coord.y - size.y * BEAM_SIZE_Y_TO_BALL.y / 2), OmegaFight3.sizeToScreenX(size.y * BEAM_SIZE_Y_TO_BALL.x * Math.cos(dir)), OmegaFight3.sizeToScreenY(size.y * BEAM_SIZE_Y_TO_BALL.y), null);
         super.draw(g2);
     }
 
@@ -698,7 +698,7 @@ class Boomer extends Projectile {
     // Description: Draws the boomerang projectile on the screen
     public void draw(Graphics2D g2) {
         Coord drawCoord = coord.add(size.scaledBy(-0.5));
-        g2.drawImage(image, (int) (drawCoord.x), (int) (drawCoord.y), (int) size.x, (int) size.y, null);
+        g2.drawImage(image, OmegaFight3.coordToScreenX(drawCoord.x), OmegaFight3.coordToScreenY(drawCoord.y), OmegaFight3.sizeToScreenX(size.x), OmegaFight3.sizeToScreenY(size.y), null);
         super.draw(g2);
     }
 
@@ -772,10 +772,10 @@ class Bouncer extends Projectile {
 
     // Description: This method draws the bouncer projectile on the screen
     public void draw(Graphics2D g2) {
-        g2.rotate(rotation, coord.x, coord.y);
+        g2.rotate(rotation, OmegaFight3.coordToScreenX(coord.x), OmegaFight3.coordToScreenY(coord.y));
         Coord drawCoord = coord.add(size.scaledBy(-0.5));
-        g2.drawImage(image, (int) (drawCoord.x), (int) (drawCoord.y), (int) size.x, (int) size.y, null);
-        g2.rotate(-rotation, coord.x, coord.y);
+        g2.drawImage(image, OmegaFight3.coordToScreenX(drawCoord.x), OmegaFight3.coordToScreenY(drawCoord.y), OmegaFight3.sizeToScreenX(size.x), OmegaFight3.sizeToScreenY(size.y), null);
+        g2.rotate(-rotation, OmegaFight3.coordToScreenX(coord.x), OmegaFight3.coordToScreenY(coord.y));
         super.draw(g2);
     }
 
@@ -786,8 +786,8 @@ class Bouncer extends Projectile {
             coord.x = 0;
             dir = 0;
         }
-        else if (coord.x > OmegaFight3.SCREEN_SIZE.x) {
-            coord.x = OmegaFight3.SCREEN_SIZE.x;
+        else if (coord.x > OmegaFight3.NORM_SCREEN_SIZE.x) {
+            coord.x = OmegaFight3.NORM_SCREEN_SIZE.x;
             dir = Math.PI;
         }
         super.process();
@@ -858,10 +858,10 @@ class Spike extends Projectile {
 
     // Description: This method draws the spike projectile on the screen
     public void draw(Graphics2D g2) {
-        g2.rotate(rotation, coord.x, coord.y);
+        g2.rotate(rotation, OmegaFight3.coordToScreenX(coord.x), OmegaFight3.coordToScreenY(coord.y));
         Coord drawCoord = coord.add(size.scaledBy(-0.5));
-        g2.drawImage(image, (int) (drawCoord.x), (int) (drawCoord.y), (int) size.x, (int) size.y, null);
-        g2.rotate(-rotation, coord.x, coord.y);
+        g2.drawImage(image, OmegaFight3.coordToScreenX(drawCoord.x), OmegaFight3.coordToScreenY(drawCoord.y), OmegaFight3.sizeToScreenX(size.x), OmegaFight3.sizeToScreenY(size.y), null);
+        g2.rotate(-rotation, OmegaFight3.coordToScreenX(coord.x), OmegaFight3.coordToScreenY(coord.y));
         super.draw(g2);
     }
 
@@ -936,10 +936,10 @@ class Thorn extends Projectile {
 
     // Draws the thorn projectile on the screen
     public void draw(Graphics2D g2) {
-        g2.rotate(dir, coord.x, coord.y);
+        g2.rotate(dir, OmegaFight3.coordToScreenX(coord.x), OmegaFight3.coordToScreenY(coord.y));
         Coord drawCoord = coord.add(size.scaledBy(-0.5));
-        g2.drawImage(image, (int) (drawCoord.x), (int) (drawCoord.y), (int) size.x, (int) size.y, null);
-        g2.rotate(-dir, coord.x, coord.y);
+        g2.drawImage(image, OmegaFight3.coordToScreenX(drawCoord.x), OmegaFight3.coordToScreenY(drawCoord.y), OmegaFight3.sizeToScreenX(size.x), OmegaFight3.sizeToScreenY(size.y), null);
+        g2.rotate(-dir, OmegaFight3.coordToScreenX(coord.x), OmegaFight3.coordToScreenY(coord.y));
         super.draw(g2);
     }
 
@@ -1009,10 +1009,10 @@ class Splitter extends Projectile {
 
     // Description: Draws the splitter projectile on the screen
     public void draw(Graphics2D g2) {
-        g2.rotate(dir, coord.x, coord.y);
+        g2.rotate(dir, OmegaFight3.coordToScreenX(coord.x), OmegaFight3.coordToScreenY(coord.y));
         Coord drawCoord = coord.add(size.scaledBy(-0.5));
-        g2.drawImage(image, (int) (drawCoord.x), (int) (drawCoord.y), (int) size.x, (int) size.y, null);
-        g2.rotate(-dir, coord.x, coord.y);
+        g2.drawImage(image, OmegaFight3.coordToScreenX(drawCoord.x), OmegaFight3.coordToScreenY(drawCoord.y), OmegaFight3.sizeToScreenX(size.x), OmegaFight3.sizeToScreenY(size.y), null);
+        g2.rotate(-dir, OmegaFight3.coordToScreenX(coord.x), OmegaFight3.coordToScreenY(coord.y));
         super.draw(g2);
     }
 
@@ -1081,7 +1081,7 @@ class Fireball extends Projectile {
 
     // Description: Draws the bullet on the screen
     public void draw(Graphics2D g2) {
-        g2.drawImage(image[(frameCounter % (NUM_SPRITES * SPRITE_CHANGE_HZ)) / SPRITE_CHANGE_HZ], (int) (coord.x - size.x / 2 * Math.cos(dir)), (int) (coord.y - size.y / 2), (int) (size.x * Math.cos(dir)), (int) size.y, null);
+        g2.drawImage(image[(frameCounter % (NUM_SPRITES * SPRITE_CHANGE_HZ)) / SPRITE_CHANGE_HZ], OmegaFight3.coordToScreenX(coord.x - size.x / 2 * Math.cos(dir)), OmegaFight3.coordToScreenY(coord.y - size.y / 2), OmegaFight3.sizeToScreenX(size.x * Math.cos(dir)), OmegaFight3.sizeToScreenY(size.y), null);
         super.draw(g2);
     }
 
@@ -1200,7 +1200,7 @@ class Phoenix extends Projectile {
     // This overridden method draws the phoenix image based on its state
     public void draw(Graphics2D g2) {
         Coord drawCoord = coord.add(size.scaledBy(-0.5));
-        g2.drawImage(image[(frameCounter % (NUM_SPRITES * SPRITE_CHANGE_HZ)) / SPRITE_CHANGE_HZ], (int) (drawCoord.x), (int) (drawCoord.y), (int) size.x, (int) size.y, null);
+        g2.drawImage(image[(frameCounter % (NUM_SPRITES * SPRITE_CHANGE_HZ)) / SPRITE_CHANGE_HZ], OmegaFight3.coordToScreenX(drawCoord.x), OmegaFight3.coordToScreenY(drawCoord.y), OmegaFight3.sizeToScreenX(size.x), OmegaFight3.sizeToScreenY(size.y), null);
         super.draw(g2);
     }
 
@@ -1275,10 +1275,10 @@ class Star extends Projectile {
 
     // Description: Draws the star on the screen
     public void draw(Graphics2D g2) {
-        g2.rotate(rotation, coord.x, coord.y);
+        g2.rotate(rotation, OmegaFight3.coordToScreenX(coord.x), OmegaFight3.coordToScreenY(coord.y));
         Coord drawCoord = coord.add(size.scaledBy(-0.5));
-        g2.drawImage(image, (int) (drawCoord.x), (int) (drawCoord.y), (int) size.x, (int) size.y, null);
-        g2.rotate(-rotation, coord.x, coord.y);
+        g2.drawImage(image, OmegaFight3.coordToScreenX(drawCoord.x), OmegaFight3.coordToScreenY(drawCoord.y), OmegaFight3.sizeToScreenX(size.x), OmegaFight3.sizeToScreenY(size.y), null);
+        g2.rotate(-rotation, OmegaFight3.coordToScreenX(coord.x), OmegaFight3.coordToScreenY(coord.y));
         super.draw(g2);
     }
 
@@ -1356,10 +1356,10 @@ class GlueBomb extends Projectile {
 
     // Description: Draws the shotgun bullet on the screen
     public void draw(Graphics2D g2) {
-        g2.drawImage(glueImage[state], (int) (coord.x - size.x / 2 * Math.cos(dir)), (int) (coord.y - size.y / 2), (int) (size.x * Math.cos(dir)), (int) size.y, null);
+        g2.drawImage(glueImage[state], OmegaFight3.coordToScreenX(coord.x - size.x / 2 * Math.cos(dir)), OmegaFight3.coordToScreenY(coord.y - size.y / 2), OmegaFight3.sizeToScreenX(size.x * Math.cos(dir)), OmegaFight3.sizeToScreenY(size.y), null);
         Coord bombSize = new Coord(size.x * BOMB_SIZE.x / GLUE_SIZE[state].x, size.y * BOMB_SIZE.y / GLUE_SIZE[state].y);
         Coord bombCoord = coord.add(bombSize.scaledBy(-0.5));
-        g2.drawImage(bombImage[(int) (Math.sin(Math.PI * 2 * LIFE / frameCounter) / 2 + 1)], (int) (bombCoord.x), (int) (bombCoord.y), (int) (bombSize.x), (int) (bombSize.y), null);
+        g2.drawImage(bombImage[(int) (Math.sin(Math.PI * 2 * LIFE / frameCounter) / 2 + 1)], OmegaFight3.coordToScreenX(bombCoord.x), OmegaFight3.coordToScreenY(bombCoord.y), OmegaFight3.sizeToScreenX(bombSize.x), OmegaFight3.sizeToScreenY(bombSize.y), null);
         super.draw(g2);
     }
 
@@ -1499,10 +1499,10 @@ class Spark extends Projectile {
     // Description:
     // This overridden method draws the rocket or explosion image based on its state
     public void draw(Graphics2D g2) {
-        g2.rotate(dir, coord.x, coord.y);
+        g2.rotate(dir, OmegaFight3.coordToScreenX(coord.x), OmegaFight3.coordToScreenY(coord.y));
         Coord drawCoord = coord.add(size.scaledBy(-0.5));
-        g2.drawImage(image, (int) (drawCoord.x), (int) (drawCoord.y), (int) size.x, (int) size.y, null);
-        g2.rotate(-dir, coord.x, coord.y);
+        g2.drawImage(image, OmegaFight3.coordToScreenX(drawCoord.x), OmegaFight3.coordToScreenY(drawCoord.y), OmegaFight3.sizeToScreenX(size.x), OmegaFight3.sizeToScreenY(size.y), null);
+        g2.rotate(-dir, OmegaFight3.coordToScreenX(coord.x), OmegaFight3.coordToScreenY(coord.y));
         super.draw(g2);
     }
 

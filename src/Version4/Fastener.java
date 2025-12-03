@@ -55,7 +55,7 @@ public class Fastener extends Projectile {
     // Description: Draws the fastener object
     public void draw(Graphics2D g2) {
         Coord drawCoord = coord.add(size.scaledBy(-0.5));
-        g2.drawImage(images[type][frameCounter / SPRITE_CHANGE_HZ], (int) (drawCoord.x), (int) (drawCoord.y), (int) size.x, (int) size.y, null);
+        g2.drawImage(images[type][frameCounter / SPRITE_CHANGE_HZ], OmegaFight3.coordToScreenX(drawCoord.x), OmegaFight3.coordToScreenY(drawCoord.y), OmegaFight3.sizeToScreenX(size.x), OmegaFight3.sizeToScreenY(size.y), null);
         super.draw(g2);
     }
 
@@ -138,10 +138,10 @@ class Energy extends Projectile {
 
     // Description: THis method draws the pellet of energy on screen
     public void draw(Graphics2D g2) {
-        g2.rotate(rotation, coord.x, coord.y);
+        g2.rotate(rotation, OmegaFight3.coordToScreenX(coord.x), OmegaFight3.coordToScreenY(coord.y));
         Coord drawCoord = coord.add(size.scaledBy(-0.5));
-        g2.drawImage(images[-frameCounter / SPRITE_CHANGE_HZ], (int) (drawCoord.x), (int) (drawCoord.y), (int) size.x, (int) size.y, null);
-        g2.rotate(-rotation, coord.x, coord.y);
+        g2.drawImage(images[-frameCounter / SPRITE_CHANGE_HZ], OmegaFight3.coordToScreenX(drawCoord.x), OmegaFight3.coordToScreenY(drawCoord.y), OmegaFight3.sizeToScreenX(size.x), OmegaFight3.sizeToScreenY(size.y), null);
+        g2.rotate(-rotation, OmegaFight3.coordToScreenX(coord.x), OmegaFight3.coordToScreenY(coord.y));
         super.draw(g2);
     }
 
@@ -206,16 +206,16 @@ class Pincer extends Projectile {
 
     // General constructor
     public Pincer(Boss boss, Coord coord) {
-        this(boss, coord, SIZE.copy(), SIZE.scaledBy(SIZE_TO_HITBOX), VELOCITY, coord.x < OmegaFight3.SCREEN_SIZE.x / 2? 0: Math.PI,
+        this(boss, coord, SIZE.copy(), SIZE.scaledBy(SIZE_TO_HITBOX), VELOCITY, coord.x < OmegaFight3.NORM_SCREEN_SIZE.x / 2? 0: Math.PI,
         DMG * OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty], KB * OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty], KB_SPREAD, DURA, CAN_HIT_PROJ, IS_ON_TOP);
     }
 
     // Description: This method draws the pincer
     public void draw(Graphics2D g2) {
-        g2.rotate(dir, coord.x, coord.y);
+        g2.rotate(dir, OmegaFight3.coordToScreenX(coord.x), OmegaFight3.coordToScreenY(coord.y));
         Coord drawCoord = coord.add(size.scaledBy(-0.5));
-        g2.drawImage(images[frameCounter / SPRITE_CHANGE_HZ], (int) (drawCoord.x), (int) (drawCoord.y), (int) size.x, (int) size.y, null);
-        g2.rotate(-dir, coord.x, coord.y);
+        g2.drawImage(images[frameCounter / SPRITE_CHANGE_HZ], OmegaFight3.coordToScreenX(drawCoord.x), OmegaFight3.coordToScreenY(drawCoord.y), OmegaFight3.sizeToScreenX(size.x), OmegaFight3.sizeToScreenY(size.y), null);
+        g2.rotate(-dir, OmegaFight3.coordToScreenX(coord.x), OmegaFight3.coordToScreenY(coord.y));
         super.draw(g2);
     }
 
@@ -229,7 +229,7 @@ class Pincer extends Projectile {
             coord.x += velocity * Math.cos(dir);
             xMoveCounter--;
             if (xMoveCounter == 0) {
-                if (coord.y < OmegaFight3.SCREEN_SIZE.y / 2) {
+                if (coord.y < OmegaFight3.NORM_SCREEN_SIZE.y / 2) {
                     dir = Math.PI / 2; // down
                 } else {
                     dir = -Math.PI / 2; // up
@@ -239,7 +239,7 @@ class Pincer extends Projectile {
 
         // Y-movement
         else {
-            if (coord.y + velocity * Math.sin(dir) > OmegaFight3.SCREEN_SIZE.y || coord.y + velocity * Math.sin(dir) < 0) {
+            if (coord.y + velocity * Math.sin(dir) > OmegaFight3.NORM_SCREEN_SIZE.y || coord.y + velocity * Math.sin(dir) < 0) {
                 dir = trueDir;
                 xMoveCounter = X_MOVEMENT_LEN;
             }
@@ -247,7 +247,7 @@ class Pincer extends Projectile {
         }
 
         // Check if out of left-right sides of the screen
-        if (coord.x < 0 || coord.x > OmegaFight3.SCREEN_SIZE.x) {
+        if (coord.x < 0 || coord.x > OmegaFight3.NORM_SCREEN_SIZE.x) {
             die();
         }
     }
@@ -322,9 +322,9 @@ class Bombot extends Projectile {
 
     // Description: This method draws the bombot
     public void draw(Graphics2D g2) {
-        g2.rotate(dir, coord.x, coord.y);
-        g2.drawImage(images[frameCounter % (SPRITE_CHANGE_HZ * NUM_SPRITES) / SPRITE_CHANGE_HZ], (int) (coord.x - size.x / 2), (int) (coord.y - size.y / 2 * sign), (int) size.x, (int) size.y * sign, null);
-        g2.rotate(-dir, coord.x, coord.y);
+        g2.rotate(dir, OmegaFight3.coordToScreenX(coord.x), OmegaFight3.coordToScreenY(coord.y));
+        g2.drawImage(images[frameCounter % (SPRITE_CHANGE_HZ * NUM_SPRITES) / SPRITE_CHANGE_HZ], OmegaFight3.coordToScreenX(coord.x - size.x / 2), OmegaFight3.coordToScreenY(coord.y - size.y / 2 * sign), OmegaFight3.sizeToScreenX(size.x), OmegaFight3.sizeToScreenY(size.y * sign), null);
+        g2.rotate(-dir, OmegaFight3.coordToScreenX(coord.x), OmegaFight3.coordToScreenY(coord.y));
         super.draw(g2);
     }
 

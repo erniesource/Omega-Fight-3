@@ -5,7 +5,7 @@ import javax.sound.sampled.*;
 
 public class Doctor extends Boss {
     // Combat constants
-    public static final double INIT_HEALTH = (OmegaFight3.DEV_MODE? 100: 600) * Omegaman.PERC_MULT;
+    public static final double INIT_HEALTH = (OmegaFight3.DEV_MODE? 100: 700) * Omegaman.PERC_MULT;
     public static final double SIZE_TO_HITBOX = 0.4;
     public static final double SIZE_TO_HURTBOX = 0.8;
 
@@ -16,9 +16,9 @@ public class Doctor extends Boss {
     public static final int TRANS_TIME = 120;
     public static final Coord[] STATE_SIZE = {new Coord(220, 420), new Coord(280, 400), new Coord(280, 440), new Coord(400, 525)};
     public static final int[] STATE_SPRITE_HZ = {10, 10, 7, 5};
-    public static final Coord[] STATE_COORD = {null, new Coord(OmegaFight3.SCREEN_SIZE.x * 7 / 8, OmegaFight3.SCREEN_CENTER.y),
-        new Coord(OmegaFight3.SCREEN_SIZE.x * 7 / 8, OmegaFight3.stage[OmegaFight3.BATTLEFIELD_NO].platforms[1].y - (OmegaFight3.stage[OmegaFight3.BATTLEFIELD_NO].platforms[0].y - OmegaFight3.stage[OmegaFight3.BATTLEFIELD_NO].platforms[1].y)),
-        new Coord(OmegaFight3.SCREEN_SIZE.x / 8, OmegaFight3.SCREEN_CENTER.y)};
+    public static final Coord[] STATE_COORD = {null, new Coord(OmegaFight3.NORM_SCREEN_SIZE.x * 7 / 8, OmegaFight3.NORM_SCREEN_CENTER.y),
+        new Coord(OmegaFight3.NORM_SCREEN_SIZE.x * 7 / 8, OmegaFight3.stage[OmegaFight3.BATTLEFIELD_NO].platforms[1].y - (OmegaFight3.stage[OmegaFight3.BATTLEFIELD_NO].platforms[0].y - OmegaFight3.stage[OmegaFight3.BATTLEFIELD_NO].platforms[1].y)),
+        new Coord(OmegaFight3.NORM_SCREEN_SIZE.x / 8, OmegaFight3.NORM_SCREEN_CENTER.y)};
     public static final int[] STATE_TIME = {0, 60, 30, 300};
     public static final String[] STATE_NAME = {"spit", "laugh"};
 
@@ -64,7 +64,7 @@ public class Doctor extends Boss {
 
     // Constructor
     public Doctor() {
-        super(docSprite, STATE_COORD, STATE_SIZE, STATE_SPRITE_HZ, STATE_TIME, STATE_SPRITE_START, STATE_SPRITE_SIGN, STATE_NUM_SPRITES, INIT_HEALTH , SIZE_TO_HITBOX, SIZE_TO_HURTBOX, SIZE_TO_FIRE, IDLE, NUM_STATES, TRANS_TIME);
+        super(docSprite, STATE_COORD, STATE_SIZE, STATE_SPRITE_HZ, STATE_TIME, STATE_SPRITE_START, STATE_SPRITE_SIGN, STATE_NUM_SPRITES, INIT_HEALTH * Math.pow(OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty], OmegaFight3.DIFFICULTY_MULT_TO_BOSS_HEALTH), SIZE_TO_HITBOX, SIZE_TO_HURTBOX, SIZE_TO_FIRE, IDLE, NUM_STATES, TRANS_TIME);
     }
 
     // Description: This method calculates the attacks of the Doctor
@@ -118,7 +118,7 @@ public class Doctor extends Boss {
         if (health <= INIT_HEALTH  * PINCER_THRESHOLD) {
             pincerCounter++;
             if (pincerCounter >= Math.max(MIN_PINCER_HZ, PINCER_HZ * health / (INIT_HEALTH  * PINCER_THRESHOLD)) / difficultyMult) {
-                OmegaFight3.projectiles.add(new Pincer(this, new Coord((int) (Math.random() * 2) * OmegaFight3.SCREEN_SIZE.x, (int) (Math.random() * 2) * OmegaFight3.SCREEN_SIZE.y)));
+                OmegaFight3.projectiles.add(new Pincer(this, new Coord((int) (Math.random() * 2) * OmegaFight3.NORM_SCREEN_SIZE.x, (int) (Math.random() * 2) * OmegaFight3.NORM_SCREEN_SIZE.y)));
                 pincerCounter = 0;
                 OmegaFight3.play(Pincer.zzzClick);
             }
@@ -129,7 +129,7 @@ public class Doctor extends Boss {
             bombotCounter++;
             if (bombotCounter >= Math.max(MIN_BOMBOT_HZ, BOMBOT_HZ * health / (INIT_HEALTH  * BOMBOT_THRESHOLD)) / difficultyMult) {
                 int sign = OmegaFight3.randomSign();
-                OmegaFight3.projectiles.add(new Bombot(this, new Coord(OmegaFight3.SCREEN_CENTER.x - (OmegaFight3.SCREEN_CENTER.x + Bombot.SIZE.x / 2) * sign, OmegaFight3.SCREEN_SIZE.y * Math.random()), OmegaFight3.signToRadians(sign), sign));
+                OmegaFight3.projectiles.add(new Bombot(this, new Coord(OmegaFight3.NORM_SCREEN_CENTER.x - (OmegaFight3.NORM_SCREEN_CENTER.x + Bombot.SIZE.x / 2) * sign, OmegaFight3.NORM_SCREEN_SIZE.y * Math.random()), OmegaFight3.signToRadians(sign), sign));
                 bombotCounter = 0;
             }
         }

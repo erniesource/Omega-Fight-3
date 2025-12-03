@@ -74,11 +74,11 @@ abstract class Char {
         if (OmegaFight3.hitBoxVis) { // CHANGE THIS TO DIFF COLOR FOR HURT AND HTI BOX
             Coord hitBoxCoord = coord.add(hitBoxSize.scaledBy(-0.5));
             g.setColor(OmegaFight3.CHEAT_COLOR);
-            g.drawRect((int) (hitBoxCoord.x), (int) (hitBoxCoord.y), (int) (hitBoxSize.x), (int) (hitBoxSize.y));
+            g.drawRect(OmegaFight3.coordToScreenX(hitBoxCoord.x), OmegaFight3.coordToScreenY(hitBoxCoord.y), OmegaFight3.sizeToScreenX(hitBoxSize.x), OmegaFight3.sizeToScreenY(hitBoxSize.y));
 
             Coord hurtBoxCoord = coord.add(hurtBoxSize.scaledBy(-0.5));
             g.setColor(Color.RED);
-            g.drawRect((int) (hurtBoxCoord.x), (int) (hurtBoxCoord.y), (int) (hurtBoxSize.x), (int) (hurtBoxSize.y));
+            g.drawRect(OmegaFight3.coordToScreenX(hurtBoxCoord.x), OmegaFight3.coordToScreenY(hurtBoxCoord.y), OmegaFight3.sizeToScreenX(hurtBoxSize.x), OmegaFight3.sizeToScreenY(hurtBoxSize.y));
         }
     }
 
@@ -86,7 +86,7 @@ abstract class Char {
         if (fireCounter != 0) {
             Coord fireSize = size.scaledBy(sizeToFire);
             int sign = ((fireCounter % (2 * FIRE_SPRITE_CHANGE_HZ) < FIRE_SPRITE_CHANGE_HZ)? -1: 1);
-            g.drawImage(fireImg, (int) (coord.x - fireSize.x / 2 * sign), (int) (coord.y - fireSize.y / 2), (int) (fireSize.x * sign), (int) fireSize.y, null);
+            g.drawImage(fireImg, OmegaFight3.coordToScreenX(coord.x - fireSize.x / 2 * sign), OmegaFight3.coordToScreenY(coord.y - fireSize.y / 2), OmegaFight3.sizeToScreenX(fireSize.x * sign), OmegaFight3.sizeToScreenY(fireSize.y), null);
         }
     }
 
@@ -202,7 +202,7 @@ abstract class Boss extends Char {
         }
 
         // Start surge animation
-        if (coord.y > OmegaFight3.SCREEN_SIZE.y + size.y / 2) {
+        if (coord.y > OmegaFight3.NORM_SCREEN_SIZE.y + size.y / 2) {
             frameCounter = 0;
             spriteNo = 0;
             OmegaFight3.screenShakeCounter += DIE_SCREENSHAKE;
@@ -226,13 +226,13 @@ abstract class Boss extends Char {
     // Description: This method draws the surge sprites of the boss' death
     public void drawSurge(Graphics g) {
         if (frameCounter < OmegaFight3.SURGE_FRAME_HZ * OmegaFight3.NUM_SURGE_IMAGES) {
-            g.drawImage(surge[frameCounter / OmegaFight3.SURGE_FRAME_HZ], (int) (coord.x - OmegaFight3.SURGE_SIZE.x / 2), (int) (OmegaFight3.SCREEN_SIZE.y - OmegaFight3.SURGE_SIZE.y), null);
+            g.drawImage(surge[frameCounter / OmegaFight3.SURGE_FRAME_HZ], OmegaFight3.coordToScreenX(coord.x - OmegaFight3.SURGE_SIZE.x / 2), OmegaFight3.coordToScreenY(OmegaFight3.NORM_SCREEN_SIZE.y - OmegaFight3.SURGE_SIZE.y), OmegaFight3.sizeToScreenX(OmegaFight3.SURGE_SIZE.x), OmegaFight3.sizeToScreenY(OmegaFight3.SURGE_SIZE.y), null);
         }
     }
 
     public void draw(Graphics g) {
         if (!hurt || hurtCounter >= Boss.HURT_BLINK_HZ) {
-            g.drawImage(sprite[spriteNo], (int) (coord.x - size.x / 2 * spriteSign), (int) (coord.y - size.y / 2), (int) size.x * spriteSign, (int) size.y, null);
+            g.drawImage(sprite[spriteNo], OmegaFight3.coordToScreenX(coord.x - size.x / 2 * spriteSign), OmegaFight3.coordToScreenY(coord.y - size.y / 2), OmegaFight3.sizeToScreenX(size.x * spriteSign), OmegaFight3.sizeToScreenY(size.y), null);
         }
 
         super.draw(g);
