@@ -259,6 +259,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     // Boss constants
     public static final int NUM_DIFFICULTY = 6;
     public static final double[] DIFFICULTY_MULT = {0, 0.5, 0.65, 1.0, 1.35, 1.5, 2};
+    public static final double DIFFICULTY_MULT_TO_BOSS_HEALTH = 0.5;
     public static final String[] DIFFICULTY_NAME = {"WHAT BOSS?", "V. EZ", "EZ", "MED", "HARD", "V. HARD", "GOD ITSELF"};
     public static final int NO_DIFFICULTY = 0;
     public static final int DEFAULT_DIFFICULTY = 3;
@@ -1032,7 +1033,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                 screenCoord.y = randomSign() * Math.random();
                 screenCoord = screenCoord.scaledBy(screenShakeCounter * SCREEN_SHAKE_MULT);
             }
-            g.translate((int) screenCoord.x, (int) screenCoord.y);
+            g.translate(sizeToScreenX(screenCoord.x), sizeToScreenY(screenCoord.y));
         }
 
         // Start gamestate

@@ -6,7 +6,7 @@ import javax.sound.sampled.*;
 
 public class Bird extends Boss {
     // Combat constants
-    public static final double INIT_HEALTH = (OmegaFight3.DEV_MODE? 100: 600) * Omegaman.PERC_MULT;
+    public static final double INIT_HEALTH = (OmegaFight3.DEV_MODE? 100: 700) * Omegaman.PERC_MULT;
     public static final double SIZE_TO_HITBOX = 0.5;
     public static final double SIZE_TO_HURTBOX = 0.6;
 
@@ -77,7 +77,7 @@ public class Bird extends Boss {
 
     // Constructor
     public Bird() {
-        super(birdSprite, STATE_COORD, STATE_SIZE, STATE_SPRITE_HZ, STATE_TIME, STATE_SPRITE_START, STATE_SPRITE_SIGN, STATE_NUM_SPRITES, INIT_HEALTH , SIZE_TO_HITBOX, SIZE_TO_HURTBOX, SIZE_TO_FIRE, IDLE, NUM_STATES, TRANS_TIME);
+        super(birdSprite, STATE_COORD, STATE_SIZE, STATE_SPRITE_HZ, STATE_TIME, STATE_SPRITE_START, STATE_SPRITE_SIGN, STATE_NUM_SPRITES, INIT_HEALTH * Math.pow(OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty], OmegaFight3.DIFFICULTY_MULT_TO_BOSS_HEALTH), SIZE_TO_HITBOX, SIZE_TO_HURTBOX, SIZE_TO_FIRE, IDLE, NUM_STATES, TRANS_TIME);
     }
 
     // Description: This method calculates the attacks of the bird
@@ -164,10 +164,10 @@ public class Bird extends Boss {
         super.draw(g);
         if (waveCounter <= WARN_TIME) {
             if (waving == WAVING_LFT) {
-                g.drawImage(sign, OmegaFight3.coordToScreenX(OmegaFight3.NORM_SCREEN_SIZE.x - SIGN_SPACING - SIGN_SIZE.y), OmegaFight3.coordToScreenY(OmegaFight3.lerp(-SIGN_SIZE.y, 0, (double) Math.min(WARN_TIME / 2 - Math.abs(WARN_TIME / 2 - waveCounter), WARN_ANIM_LEN) / WARN_ANIM_LEN)), null);
+                g.drawImage(sign, OmegaFight3.coordToScreenX(OmegaFight3.NORM_SCREEN_SIZE.x - SIGN_SPACING - SIGN_SIZE.y), OmegaFight3.coordToScreenY(OmegaFight3.lerp(-SIGN_SIZE.y, 0, (double) Math.min(WARN_TIME / 2 - Math.abs(WARN_TIME / 2 - waveCounter), WARN_ANIM_LEN) / WARN_ANIM_LEN)), OmegaFight3.sizeToScreenX(SIGN_SIZE.x), OmegaFight3.sizeToScreenX(SIGN_SIZE.y), null);
             }
             else if (waving == WAVING_RIT) {
-                g.drawImage(sign, OmegaFight3.coordToScreenX(SIGN_SPACING), OmegaFight3.coordToScreenY(OmegaFight3.lerp(-SIGN_SIZE.y, 0, (double) Math.min(WARN_TIME / 2 - Math.abs(WARN_TIME / 2 - waveCounter), WARN_ANIM_LEN) / WARN_ANIM_LEN)), null);
+                g.drawImage(sign, OmegaFight3.coordToScreenX(SIGN_SPACING), OmegaFight3.coordToScreenY(OmegaFight3.lerp(-SIGN_SIZE.y, 0, (double) Math.min(WARN_TIME / 2 - Math.abs(WARN_TIME / 2 - waveCounter), WARN_ANIM_LEN) / WARN_ANIM_LEN)), OmegaFight3.sizeToScreenX(SIGN_SIZE.x), OmegaFight3.sizeToScreenX(SIGN_SIZE.y), null);
             }
         }
     }

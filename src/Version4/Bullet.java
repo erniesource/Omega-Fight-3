@@ -283,7 +283,7 @@ class Firework extends Projectile {
     public static final double SIZE_TO_HITBOX = 1.0;
 
     // Damage constants
-    public static final double DMG = 4 * Omegaman.PERC_MULT;
+    public static final double DMG = 3.5 * Omegaman.PERC_MULT;
     public static final double DURA = INF_DURA;
     public static final double KB = 20;
     public static final double KB_SPREAD = Math.PI / 4;

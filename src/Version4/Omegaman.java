@@ -921,7 +921,7 @@ public class Omegaman extends Char {
         else if (state == DIED_TOP) {
             rotCoord = new Coord(coord.x, OmegaFight3.SURGE_SIZE.y / 2);
             g2.rotate(rotation, OmegaFight3.coordToScreenX(rotCoord.x), OmegaFight3.coordToScreenY(rotCoord.y));
-            g2.drawImage(surgeImage, OmegaFight3.coordToScreenX(coord.x - OmegaFight3.SURGE_SIZE.x / 2), 0, OmegaFight3.sizeToScreenX(OmegaFight3.SURGE_SIZE.x), OmegaFight3.sizeToScreenY(OmegaFight3.SURGE_SIZE.y), null);
+            g2.drawImage(surgeImage, OmegaFight3.coordToScreenX(coord.x - OmegaFight3.SURGE_SIZE.x / 2), OmegaFight3.coordToScreenY(0), OmegaFight3.sizeToScreenX(OmegaFight3.SURGE_SIZE.x), OmegaFight3.sizeToScreenY(OmegaFight3.SURGE_SIZE.y), null);
             g2.rotate(-rotation, OmegaFight3.coordToScreenX(rotCoord.x), OmegaFight3.coordToScreenY(rotCoord.y));
         }
 
