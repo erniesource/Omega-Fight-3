@@ -90,7 +90,7 @@ public class Omegaman extends Char {
     public static final int PERC_SHAKE_HZ = 2;
     public static final int PERC_SHADOW_OFFSET = 3;
     public static final int NUM_PLAYERS = 2;
-    public static final int PERC_DISPLAY_DIST = (int) ((OmegaFight3.SCREEN_SIZE.x - PERC_DISPLAY_SIZE.x * NUM_PLAYERS) / (NUM_PLAYERS + 1));
+    public static final int PERC_DISPLAY_DIST = (int) ((OmegaFight3.NORM_SCREEN_SIZE.x - PERC_DISPLAY_SIZE.x * NUM_PLAYERS) / (NUM_PLAYERS + 1));
     public static final Coord PERC_DISPLAY_SIZE_TO_SKILL_PTS_COORD = PERC_DISPLAY_SIZE.scaledBy(new Coord(0.5, 19.0 / 30));
     public static final double SKILL_PTS_SPACE = 0.0125 * PERC_DISPLAY_SIZE.x;
     public static final Coord SKILL_PTS_SIZE = new Coord((0.475 * PERC_DISPLAY_SIZE.x - SKILL_PTS_SPACE * (MAX_SKILL_PTS / ONES_PER_SKILL_PT - 1)) / (MAX_SKILL_PTS / ONES_PER_SKILL_PT), (1.0 / 6.0) * PERC_DISPLAY_SIZE.y);
@@ -506,7 +506,7 @@ public class Omegaman extends Char {
                                 // Laser
                                 else if (loadout[i] == SNIPER_WEAPON_NO) {
                                     percentCharged = getPercentCharged(SNIPER_WEAPON_NO);
-                                    OmegaFight3.projectiles.add(new Laser(this, new Coord((newProjCoord.x + OmegaFight3.SCREEN_SIZE.x * (spriteSign + 1) / 2) / 2, newProjCoord.y), Math.abs(newProjCoord.x - OmegaFight3.SCREEN_SIZE.x * (spriteSign + 1) / 2), OmegaFight3.signToRadians(spriteSign), percentCharged));
+                                    OmegaFight3.projectiles.add(new Laser(this, new Coord((newProjCoord.x + OmegaFight3.NORM_SCREEN_SIZE.x * (spriteSign + 1) / 2) / 2, newProjCoord.y), Math.abs(newProjCoord.x - OmegaFight3.NORM_SCREEN_SIZE.x * (spriteSign + 1) / 2), OmegaFight3.signToRadians(spriteSign), percentCharged));
 
                                     // Recoil
                                     recoil(Laser.RECOIL * percentCharged);
@@ -612,58 +612,58 @@ public class Omegaman extends Char {
             if (loadout[chargingWeapon] == BULLET_WEAPON_NO) {
                 chargeSize = Rocket.SIZE.scaledBy(getPercentCharged(BULLET_WEAPON_NO));
                 chargeCoord = chargeCoord.add(chargeSize.scaledBy(-0.5));
-                g.drawImage(Rocket.images[playerNo], (int) (chargeCoord.x), (int) (chargeCoord.y), (int) chargeSize.x, (int) chargeSize.y, null);
+                g.drawImage(Rocket.images[playerNo], OmegaFight3.coordToScreenX(chargeCoord.x), OmegaFight3.coordToScreenY(chargeCoord.y), OmegaFight3.sizeToScreenX(chargeSize.x), OmegaFight3.sizeToScreenY(chargeSize.y), null);
             }
 
             // Firework
             else if (loadout[chargingWeapon] == SHOTGUN_WEAPON_NO) {
                 chargeSize = Firework.CHARGE_SIZE.scaledBy(getPercentCharged(SHOTGUN_WEAPON_NO));
                 chargeCoord = chargeCoord.add(chargeSize.scaledBy(-0.5));
-                g.drawImage(Firework.chargingImages[playerNo], (int) (chargeCoord.x), (int) (chargeCoord.y), (int) chargeSize.x, (int) chargeSize.y, null);
+                g.drawImage(Firework.chargingImages[playerNo], OmegaFight3.coordToScreenX(chargeCoord.x), OmegaFight3.coordToScreenY(chargeCoord.y), OmegaFight3.sizeToScreenX(chargeSize.x), OmegaFight3.sizeToScreenY(chargeSize.y), null);
             }
 
             // Missile
             else if (loadout[chargingWeapon] == SPAMMER_WEAPON_NO) {
                 chargeSize = Missile.SIZE.scaledBy(getPercentCharged(SPAMMER_WEAPON_NO));
-                g.drawImage(Missile.images[playerNo], (int) (chargeCoord.x - chargeSize.x / 2 * spriteSign), (int) (chargeCoord.y - chargeSize.y / 2), (int) chargeSize.x * spriteSign, (int) chargeSize.y, null);
+                g.drawImage(Missile.images[playerNo], OmegaFight3.coordToScreenX(chargeCoord.x - chargeSize.x / 2 * spriteSign), OmegaFight3.coordToScreenY(chargeCoord.y - chargeSize.y / 2), OmegaFight3.sizeToScreenX(chargeSize.x * spriteSign), OmegaFight3.sizeToScreenY(chargeSize.y), null);
             }
 
             // Laser
             else if (loadout[chargingWeapon] == SNIPER_WEAPON_NO) {
                 chargeSize = (new Coord(Laser.SIZE_Y * Laser.BEAM_SIZE_Y_TO_BALL.x, Laser.SIZE_Y * Laser.BEAM_SIZE_Y_TO_BALL.y)).scaledBy(getPercentCharged(SNIPER_WEAPON_NO));
-                g.drawImage(Laser.ball, (int) (chargeCoord.x - chargeSize.x / 2 * spriteSign), (int) (chargeCoord.y - chargeSize.y / 2), (int) chargeSize.x * spriteSign, (int) chargeSize.y, null);
+                g.drawImage(Laser.ball, OmegaFight3.coordToScreenX(chargeCoord.x - chargeSize.x / 2 * spriteSign), OmegaFight3.coordToScreenY(chargeCoord.y - chargeSize.y / 2), OmegaFight3.sizeToScreenX(chargeSize.x * spriteSign), OmegaFight3.sizeToScreenY(chargeSize.y), null);
             }
 
             // Bouncer
             else if (loadout[chargingWeapon] == BOOMER_WEAPON_NO) {
                 chargeSize = Bouncer.SIZE.scaledBy(getPercentCharged(BOOMER_WEAPON_NO));
                 chargeCoord = chargeCoord.add(chargeSize.scaledBy(-0.5));
-                g.drawImage(Bouncer.images[playerNo], (int) (chargeCoord.x), (int) (chargeCoord.y), (int) chargeSize.x, (int) chargeSize.y, null);
+                g.drawImage(Bouncer.images[playerNo], OmegaFight3.coordToScreenX(chargeCoord.x), OmegaFight3.coordToScreenY(chargeCoord.y), OmegaFight3.sizeToScreenX(chargeSize.x), OmegaFight3.sizeToScreenY(chargeSize.y), null);
             }
 
             // Splitter
             else if (loadout[chargingWeapon] == SPIKE_WEAPON_NO) {
                 chargeSize = Splitter.SIZE.scaledBy(getPercentCharged(SPIKE_WEAPON_NO));
-                g.drawImage(Splitter.images[playerNo], (int) (chargeCoord.x - chargeSize.x / 2 * spriteSign), (int) (chargeCoord.y - chargeSize.y / 2), (int) chargeSize.x * spriteSign, (int) chargeSize.y, null);
+                g.drawImage(Splitter.images[playerNo], OmegaFight3.coordToScreenX(chargeCoord.x - chargeSize.x / 2 * spriteSign), OmegaFight3.coordToScreenY(chargeCoord.y - chargeSize.y / 2), OmegaFight3.sizeToScreenX(chargeSize.x * spriteSign), OmegaFight3.sizeToScreenY(chargeSize.y), null);
             }
 
             // Phoenix
             else if (loadout[chargingWeapon] == FIREBALL_WEAPON_NO) {
                 chargeSize = Phoenix.CHARGE_SIZE.scaledBy(getPercentCharged(FIREBALL_WEAPON_NO));
                 chargeCoord = chargeCoord.add(chargeSize.scaledBy(-0.5));
-                g.drawImage(Phoenix.chargingImage, (int) (chargeCoord.x), (int) (chargeCoord.y), (int) chargeSize.x, (int) chargeSize.y, null);
+                g.drawImage(Phoenix.chargingImage, OmegaFight3.coordToScreenX(chargeCoord.x), OmegaFight3.coordToScreenY(chargeCoord.y), OmegaFight3.sizeToScreenX(chargeSize.x), OmegaFight3.sizeToScreenY(chargeSize.y), null);
             }
 
             // Spark (reticle?)
             else if (loadout[chargingWeapon] == GLUE_BOMB_WEAPON_NO) {
                 chargeSize = Spark.SIZE.scaledBy(getPercentCharged(GLUE_BOMB_WEAPON_NO)); // CHANGE GET PERCENT CHARGED TO DO ACTUALLY WHAT IT'S NAME IS
                 chargeCoord = chargeCoord.add(chargeSize.scaledBy(-0.5));
-                g.drawImage(Spark.image, (int) (chargeCoord.x), (int) (chargeCoord.y), (int) chargeSize.x, (int) chargeSize.y, null);
+                g.drawImage(Spark.image, OmegaFight3.coordToScreenX(chargeCoord.x), OmegaFight3.coordToScreenY(chargeCoord.y), OmegaFight3.sizeToScreenX(chargeSize.x), OmegaFight3.sizeToScreenY(chargeSize.y), null);
                 Coord reticleSize = chargeSize.scaledBy(Spark.EXPLOSION_SIZE_MULT);
                 Coord reticleCoord = chargeCoord.add(reticleSize.scaledBy(-0.5));
                 reticleCoord.x += (Spark.VELOCITY * (Spark.LIFE - 1) * getPercentCharged(GLUE_BOMB_WEAPON_NO) - PROJ_SPAWN_X_OFFSET) * spriteSign;
                 reticleCoord.y += chargeSize.y / 2;
-                g.drawImage(Spark.reticleImg, (int) (reticleCoord.x), (int) (reticleCoord.y), (int) reticleSize.x, (int) reticleSize.y, null);
+                g.drawImage(Spark.reticleImg, OmegaFight3.coordToScreenX(reticleCoord.x), OmegaFight3.coordToScreenY(reticleCoord.y), OmegaFight3.sizeToScreenX(reticleSize.x), OmegaFight3.sizeToScreenY(reticleSize.y), null);
             }
         }
     }
@@ -787,11 +787,11 @@ public class Omegaman extends Char {
     // Description: This method checks if the player has died and calculates in which direction they have died
     public void checkState() { // CHECK FOR DIAGONAL DEATHS
         // Bottom
-        if (coord.y > OmegaFight3.SCREEN_SIZE.y + size.y) {
+        if (coord.y > OmegaFight3.NORM_SCREEN_SIZE.y + size.y) {
             if (coord.x < MAX_DIST_TO_DIAGONAL) {
                 state = DIED_BOTLFT;
             }
-            else if (coord.x > OmegaFight3.SCREEN_SIZE.x - MAX_DIST_TO_DIAGONAL) {
+            else if (coord.x > OmegaFight3.NORM_SCREEN_SIZE.x - MAX_DIST_TO_DIAGONAL) {
                 state = DIED_BOTRIT;
             }
             else {
@@ -805,7 +805,7 @@ public class Omegaman extends Char {
             if (coord.y < MAX_DIST_TO_DIAGONAL) {
                 state = DIED_TOPLFT;
             }
-            else if (coord.y > OmegaFight3.SCREEN_SIZE.y - MAX_DIST_TO_DIAGONAL) {
+            else if (coord.y > OmegaFight3.NORM_SCREEN_SIZE.y - MAX_DIST_TO_DIAGONAL) {
                 state = DIED_BOTLFT;
             }
             else {
@@ -819,7 +819,7 @@ public class Omegaman extends Char {
             if (coord.x < MAX_DIST_TO_DIAGONAL) {
                 state = DIED_TOPLFT;
             }
-            else if (coord.x > OmegaFight3.SCREEN_SIZE.x - MAX_DIST_TO_DIAGONAL) {
+            else if (coord.x > OmegaFight3.NORM_SCREEN_SIZE.x - MAX_DIST_TO_DIAGONAL) {
                 state = DIED_TOPRIT;
             }
             else {
@@ -829,11 +829,11 @@ public class Omegaman extends Char {
         }
 
         // Right
-        else if (coord.x > OmegaFight3.SCREEN_SIZE.x + size.x) {
+        else if (coord.x > OmegaFight3.NORM_SCREEN_SIZE.x + size.x) {
             if (coord.y < MAX_DIST_TO_DIAGONAL) {
                 state = DIED_TOPRIT;
             }
-            else if (coord.y > OmegaFight3.SCREEN_SIZE.y - MAX_DIST_TO_DIAGONAL) {
+            else if (coord.y > OmegaFight3.NORM_SCREEN_SIZE.y - MAX_DIST_TO_DIAGONAL) {
                 state = DIED_BOTRIT;
             }
             else {
@@ -903,73 +903,73 @@ public class Omegaman extends Char {
 
         // Bottom death
         if (state == DIED_BOT) {
-            rotCoord = new Coord(coord.x, OmegaFight3.SCREEN_SIZE.y - OmegaFight3.SURGE_SIZE.y / 2);
-            g2.rotate(rotation, rotCoord.x, rotCoord.y);
-            g2.drawImage(surgeImage, (int) (coord.x - OmegaFight3.SURGE_SIZE.x / 2), (int) (OmegaFight3.SCREEN_SIZE.y - OmegaFight3.SURGE_SIZE.y), null);
-            g2.rotate(-rotation, rotCoord.x, rotCoord.y);
+            rotCoord = new Coord(coord.x, OmegaFight3.NORM_SCREEN_SIZE.y - OmegaFight3.SURGE_SIZE.y / 2);
+            g2.rotate(rotation, OmegaFight3.coordToScreenX(rotCoord.x), OmegaFight3.coordToScreenY(rotCoord.y));
+            g2.drawImage(surgeImage, OmegaFight3.coordToScreenX(coord.x - OmegaFight3.SURGE_SIZE.x / 2), OmegaFight3.coordToScreenY(OmegaFight3.NORM_SCREEN_SIZE.y - OmegaFight3.SURGE_SIZE.y), OmegaFight3.sizeToScreenX(OmegaFight3.SURGE_SIZE.x), OmegaFight3.sizeToScreenY(OmegaFight3.SURGE_SIZE.y), null);
+            g2.rotate(-rotation, OmegaFight3.coordToScreenX(rotCoord.x), OmegaFight3.coordToScreenY(rotCoord.y));
         }
 
         // Left death
         else if (state == DIED_LFT) {
             rotCoord = new Coord(OmegaFight3.SURGE_SIZE.y / 2, coord.y);
-            g2.rotate(rotation, rotCoord.x, rotCoord.y);
-            g2.drawImage(surgeImage, (int) ((OmegaFight3.SURGE_SIZE.y - OmegaFight3.SURGE_SIZE.x) / 2), (int) (coord.y - OmegaFight3.SURGE_SIZE.y / 2), null);
-            g2.rotate(-rotation, rotCoord.x, rotCoord.y);
+            g2.rotate(rotation, OmegaFight3.coordToScreenX(rotCoord.x), OmegaFight3.coordToScreenY(rotCoord.y));
+            g2.drawImage(surgeImage, OmegaFight3.coordToScreenX((OmegaFight3.SURGE_SIZE.y - OmegaFight3.SURGE_SIZE.x) / 2), OmegaFight3.coordToScreenY(coord.y - OmegaFight3.SURGE_SIZE.y / 2), OmegaFight3.sizeToScreenX(OmegaFight3.SURGE_SIZE.x), OmegaFight3.sizeToScreenY(OmegaFight3.SURGE_SIZE.y), null);
+            g2.rotate(-rotation, OmegaFight3.coordToScreenX(rotCoord.x), OmegaFight3.coordToScreenY(rotCoord.y));
         }
 
         // Top death
         else if (state == DIED_TOP) {
             rotCoord = new Coord(coord.x, OmegaFight3.SURGE_SIZE.y / 2);
-            g2.rotate(rotation, rotCoord.x, rotCoord.y);
-            g2.drawImage(surgeImage, (int) (coord.x - OmegaFight3.SURGE_SIZE.x / 2), 0, null);
-            g2.rotate(-rotation, rotCoord.x, rotCoord.y);
+            g2.rotate(rotation, OmegaFight3.coordToScreenX(rotCoord.x), OmegaFight3.coordToScreenY(rotCoord.y));
+            g2.drawImage(surgeImage, OmegaFight3.coordToScreenX(coord.x - OmegaFight3.SURGE_SIZE.x / 2), 0, OmegaFight3.sizeToScreenX(OmegaFight3.SURGE_SIZE.x), OmegaFight3.sizeToScreenY(OmegaFight3.SURGE_SIZE.y), null);
+            g2.rotate(-rotation, OmegaFight3.coordToScreenX(rotCoord.x), OmegaFight3.coordToScreenY(rotCoord.y));
         }
 
         // Right death
         else if (state == DIED_RIT) {
-            rotCoord = new Coord(OmegaFight3.SCREEN_SIZE.x - OmegaFight3.SURGE_SIZE.y / 2, coord.y);
-            g2.rotate(rotation, rotCoord.x, rotCoord.y);
-            g2.drawImage(surgeImage, (int) (OmegaFight3.SCREEN_SIZE.x - (OmegaFight3.SURGE_SIZE.x + OmegaFight3.SURGE_SIZE.y) / 2), (int) (coord.y - OmegaFight3.SURGE_SIZE.y / 2), null);
-            g2.rotate(-rotation, rotCoord.x, rotCoord.y);
+            rotCoord = new Coord(OmegaFight3.NORM_SCREEN_SIZE.x - OmegaFight3.SURGE_SIZE.y / 2, coord.y);
+            g2.rotate(rotation, OmegaFight3.coordToScreenX(rotCoord.x), OmegaFight3.coordToScreenY(rotCoord.y));
+            g2.drawImage(surgeImage, OmegaFight3.coordToScreenX(OmegaFight3.NORM_SCREEN_SIZE.x - (OmegaFight3.SURGE_SIZE.x + OmegaFight3.SURGE_SIZE.y) / 2), OmegaFight3.coordToScreenY(coord.y - OmegaFight3.SURGE_SIZE.y / 2), OmegaFight3.sizeToScreenX(OmegaFight3.SURGE_SIZE.x), OmegaFight3.sizeToScreenY(OmegaFight3.SURGE_SIZE.y), null);
+            g2.rotate(-rotation, OmegaFight3.coordToScreenX(rotCoord.x), OmegaFight3.coordToScreenY(rotCoord.y));
         }
 
         else if (state == DIED_BOTLFT) {
-            rotCoord = new Coord(0, OmegaFight3.SCREEN_SIZE.y);
-            g2.rotate(rotation, rotCoord.x, rotCoord.y);
-            g2.drawImage(surgeImage, (int) (-OmegaFight3.SURGE_SIZE.x / 2), (int) (OmegaFight3.SCREEN_SIZE.y - OmegaFight3.SURGE_SIZE.y), null);
-            g2.rotate(-rotation, rotCoord.x, rotCoord.y);
+            rotCoord = new Coord(0, OmegaFight3.NORM_SCREEN_SIZE.y);
+            g2.rotate(rotation, OmegaFight3.coordToScreenX(rotCoord.x), OmegaFight3.coordToScreenY(rotCoord.y));
+            g2.drawImage(surgeImage, OmegaFight3.coordToScreenX(-OmegaFight3.SURGE_SIZE.x / 2), OmegaFight3.coordToScreenY(OmegaFight3.NORM_SCREEN_SIZE.y - OmegaFight3.SURGE_SIZE.y), OmegaFight3.sizeToScreenX(OmegaFight3.SURGE_SIZE.x), OmegaFight3.sizeToScreenY(OmegaFight3.SURGE_SIZE.y), null);
+            g2.rotate(-rotation, OmegaFight3.coordToScreenX(rotCoord.x), OmegaFight3.coordToScreenY(rotCoord.y));
         }
         
         else if (state == DIED_TOPLFT) {
             rotCoord = new Coord();
-            g2.rotate(rotation, rotCoord.x, rotCoord.y);
-            g2.drawImage(surgeImage, (int) (-OmegaFight3.SURGE_SIZE.x / 2), (int) (-OmegaFight3.SURGE_SIZE.y), null);
-            g2.rotate(-rotation, rotCoord.x, rotCoord.y);
+            g2.rotate(rotation, OmegaFight3.coordToScreenX(rotCoord.x), OmegaFight3.coordToScreenY(rotCoord.y));
+            g2.drawImage(surgeImage, OmegaFight3.coordToScreenX(-OmegaFight3.SURGE_SIZE.x / 2), OmegaFight3.coordToScreenY(-OmegaFight3.SURGE_SIZE.y), OmegaFight3.sizeToScreenX(OmegaFight3.SURGE_SIZE.x), OmegaFight3.sizeToScreenY(OmegaFight3.SURGE_SIZE.y), null);
+            g2.rotate(-rotation, OmegaFight3.coordToScreenX(rotCoord.x), OmegaFight3.coordToScreenY(rotCoord.y));
         }
 
         else if (state == DIED_TOPRIT) {
-            rotCoord = new Coord(OmegaFight3.SCREEN_SIZE.x, 0);
-            g2.rotate(rotation, rotCoord.x, rotCoord.y);
-            g2.drawImage(surgeImage, (int) (OmegaFight3.SCREEN_SIZE.x - OmegaFight3.SURGE_SIZE.x / 2), (int) (-OmegaFight3.SURGE_SIZE.y), null);
-            g2.rotate(-rotation, rotCoord.x, rotCoord.y);
+            rotCoord = new Coord(OmegaFight3.NORM_SCREEN_SIZE.x, 0);
+            g2.rotate(rotation, OmegaFight3.coordToScreenX(rotCoord.x), OmegaFight3.coordToScreenY(rotCoord.y));
+            g2.drawImage(surgeImage, OmegaFight3.coordToScreenX(OmegaFight3.NORM_SCREEN_SIZE.x - OmegaFight3.SURGE_SIZE.x / 2), OmegaFight3.coordToScreenY(-OmegaFight3.SURGE_SIZE.y), OmegaFight3.sizeToScreenX(OmegaFight3.SURGE_SIZE.x), OmegaFight3.sizeToScreenY(OmegaFight3.SURGE_SIZE.y), null);
+            g2.rotate(-rotation, OmegaFight3.coordToScreenX(rotCoord.x), OmegaFight3.coordToScreenY(rotCoord.y));
         }
 
         else if (state == DIED_BOTRIT) {
-            rotCoord = new Coord(OmegaFight3.SCREEN_SIZE.x, OmegaFight3.SCREEN_SIZE.y);
-            g2.rotate(rotation, rotCoord.x, rotCoord.y);
-            g2.drawImage(surgeImage, (int) (OmegaFight3.SCREEN_SIZE.x - OmegaFight3.SURGE_SIZE.x / 2), (int) (OmegaFight3.SCREEN_SIZE.y - OmegaFight3.SURGE_SIZE.y), null);
-            g2.rotate(-rotation, rotCoord.x, rotCoord.y);
+            rotCoord = new Coord(OmegaFight3.NORM_SCREEN_SIZE.x, OmegaFight3.NORM_SCREEN_SIZE.y);
+            g2.rotate(rotation, OmegaFight3.coordToScreenX(rotCoord.x), OmegaFight3.coordToScreenY(rotCoord.y));
+            g2.drawImage(surgeImage, OmegaFight3.coordToScreenX(OmegaFight3.NORM_SCREEN_SIZE.x - OmegaFight3.SURGE_SIZE.x / 2), OmegaFight3.coordToScreenY(OmegaFight3.NORM_SCREEN_SIZE.y - OmegaFight3.SURGE_SIZE.y), OmegaFight3.sizeToScreenX(OmegaFight3.SURGE_SIZE.x), OmegaFight3.sizeToScreenY(OmegaFight3.SURGE_SIZE.y), null);
+            g2.rotate(-rotation, OmegaFight3.coordToScreenX(rotCoord.x), OmegaFight3.coordToScreenY(rotCoord.y));
         }
     }
 
     // Description: This method draws the dying/falling percent of the player
     public void drawDiePercent(Graphics g) {
-        drawStillPercent((int) OmegaFight3.lerp(PERC_DISPLAY_Y_COORD + (int) PERC_DISPLAY_SIZE_TO_PERC_COORD.y, OmegaFight3.SCREEN_SIZE.y + BIG_PERC_FONT.getSize(), (double) frameCounter / OmegaFight3.SURGE_TIME), g);
+        drawStillPercent((int) OmegaFight3.lerp(PERC_DISPLAY_Y_COORD + (int) PERC_DISPLAY_SIZE_TO_PERC_COORD.y, OmegaFight3.NORM_SCREEN_SIZE.y + BIG_PERC_FONT.getSize(), (double) frameCounter / OmegaFight3.SURGE_TIME), g);
     }
 
     // Description: This method draws teh respawning/rising percent of the player
     public void drawRespawnPercent(Graphics g) {
-        drawStillPercent((int) OmegaFight3.lerp(PERC_DISPLAY_Y_COORD + (int) PERC_DISPLAY_SIZE_TO_PERC_COORD.y, OmegaFight3.SCREEN_SIZE.y + BIG_PERC_FONT.getSize(), velocity.y / RESPAWN_INIT_VELOCITY), g);
+        drawStillPercent((int) OmegaFight3.lerp(PERC_DISPLAY_Y_COORD + (int) PERC_DISPLAY_SIZE_TO_PERC_COORD.y, OmegaFight3.NORM_SCREEN_SIZE.y + BIG_PERC_FONT.getSize(), velocity.y / RESPAWN_INIT_VELOCITY), g);
     }
 
     // Description: This method calculates teh respawn of the player
@@ -1199,21 +1199,22 @@ public class Omegaman extends Char {
 
     // Description: This method draws a skill point for the player
     public void drawSkillPt(int skillPtNo, double amt, Graphics g) {
-        g.fillRect(percentDisplayX + (int) (PERC_DISPLAY_SIZE_TO_SKILL_PTS_COORD.x + skillPtNo * (SKILL_PTS_SPACE + SKILL_PTS_SIZE.x)),
-            PERC_DISPLAY_Y_COORD + (int) (PERC_DISPLAY_SIZE_TO_SKILL_PTS_COORD.y), (int) (SKILL_PTS_SIZE.x * amt), (int) (SKILL_PTS_SIZE.y));
+        g.fillRect(OmegaFight3.coordToScreenX(percentDisplayX + (PERC_DISPLAY_SIZE_TO_SKILL_PTS_COORD.x + skillPtNo * (SKILL_PTS_SPACE + SKILL_PTS_SIZE.x))),
+            OmegaFight3.coordToScreenY(PERC_DISPLAY_Y_COORD + (PERC_DISPLAY_SIZE_TO_SKILL_PTS_COORD.y)), OmegaFight3.sizeToScreenX(SKILL_PTS_SIZE.x * amt), OmegaFight3.sizeToScreenY(SKILL_PTS_SIZE.y));
     }
 
     // Description: This method draws the bigger text portion of the player's still percent
     public int drawBigPercent(int offSet, int y, Graphics g) {
+        g.setFont(OmegaFight3.fontToScreen(BIG_PERC_FONT));
+        g.drawString((percent / PERC_MULT) + "", OmegaFight3.coordToScreenX(percentDisplayX + (PERC_DISPLAY_SIZE_TO_PERC_COORD.x + offSet)), OmegaFight3.coordToScreenY(y + offSet));
         g.setFont(BIG_PERC_FONT);
-        g.drawString((percent / PERC_MULT) + "", percentDisplayX + (int) PERC_DISPLAY_SIZE_TO_PERC_COORD.x + offSet, y + offSet);
         return g.getFontMetrics().stringWidth((percent / PERC_MULT) + "");
     }
 
     // Description: This method draws the smaller text portion of the player's still percent
     public void drawSmlPercent(int offSet, int bigPercentWidth, int y, Graphics g) {
-        g.setFont(SML_PERC_FONT);
-        g.drawString("." + (percent % PERC_MULT) + "%", percentDisplayX + (int) PERC_DISPLAY_SIZE_TO_PERC_COORD.x + offSet + bigPercentWidth, y + offSet);
+        g.setFont(OmegaFight3.fontToScreen(SML_PERC_FONT));
+        g.drawString("." + (percent % PERC_MULT) + "%", OmegaFight3.coordToScreenX(percentDisplayX + (PERC_DISPLAY_SIZE_TO_PERC_COORD.x + offSet + bigPercentWidth)), OmegaFight3.coordToScreenY(y + offSet));
     }
 
     // Description: This method draws the entire still percent of the player
@@ -1238,22 +1239,24 @@ public class Omegaman extends Char {
         int percentWidth = 0;
 
         // Big text part of percent
-        g.setFont(BIG_PERC_FONT);
         for (int i = 0; i != bigPercent.length(); i++) {
             Coord digitCoord = PERC_DISPLAY_SIZE_TO_PERC_COORD.add(percentDigitShake[i]);
             String digitStr = bigPercent.substring(i, i + 1);
-            g.drawString(digitStr, percentDisplayX + (int) (digitCoord.x) + percentWidth,
-            PERC_DISPLAY_Y_COORD + (int) (digitCoord.y));
+            g.setFont(OmegaFight3.fontToScreen(BIG_PERC_FONT));
+            g.drawString(digitStr, OmegaFight3.coordToScreenX(percentDisplayX + (digitCoord.x) + percentWidth),
+            OmegaFight3.coordToScreenY(PERC_DISPLAY_Y_COORD + (digitCoord.y)));
+            g.setFont(BIG_PERC_FONT);
             percentWidth += g.getFontMetrics().stringWidth(digitStr);
         }
 
         // Small text part of percent
-        g.setFont(SML_PERC_FONT);
         for (int i = bigPercent.length(); i != bigPercent.length() + smlPercent.length(); i++) {
             Coord digitCoord = PERC_DISPLAY_SIZE_TO_PERC_COORD.add(percentDigitShake[i]);
             String digitStr = smlPercent.substring(i - bigPercent.length(), i + 1 - bigPercent.length());
-            g.drawString(digitStr, percentDisplayX + (int) (digitCoord.x) + percentWidth,
-            PERC_DISPLAY_Y_COORD + (int) (digitCoord.y));
+            g.setFont(OmegaFight3.fontToScreen(SML_PERC_FONT));
+            g.drawString(digitStr, OmegaFight3.coordToScreenX(percentDisplayX + (digitCoord.x) + percentWidth),
+            OmegaFight3.coordToScreenY(PERC_DISPLAY_Y_COORD + (digitCoord.y)));
+            g.setFont(SML_PERC_FONT);
             percentWidth += g.getFontMetrics().stringWidth(digitStr);
         }
     }
@@ -1261,7 +1264,7 @@ public class Omegaman extends Char {
     // Description: This method draws the HUD that displays all of the player's information at the bottom of the screen
     public void drawHUD(Graphics g) {
         // HUD
-        g.drawImage(percentDisplay[playerNo], percentDisplayX, PERC_DISPLAY_Y_COORD, null);
+        g.drawImage(percentDisplay[playerNo], OmegaFight3.coordToScreenX(percentDisplayX), OmegaFight3.coordToScreenY(PERC_DISPLAY_Y_COORD), OmegaFight3.sizeToScreenX(PERC_DISPLAY_SIZE.x), OmegaFight3.sizeToScreenY(PERC_DISPLAY_SIZE.y), null);
         
         // Full skill points
         g.setColor(Color.WHITE);
@@ -1275,7 +1278,7 @@ public class Omegaman extends Char {
         // Lives
         if (livesLeft != OmegaFight3.INF_LIVES) {
             for (int i = 0; i != livesLeft; i++) {
-                g.drawImage(face[playerNo], percentDisplayX + (i * (int) (FACE_SIZE.x + FACE_SPACING)), PERC_DISPLAY_Y_COORD - FACE_SPACING - (int) FACE_SIZE.y, null);
+                g.drawImage(face[playerNo], OmegaFight3.coordToScreenX(percentDisplayX + (i * (int) (FACE_SIZE.x + FACE_SPACING))), OmegaFight3.coordToScreenY(PERC_DISPLAY_Y_COORD - FACE_SPACING - (int) FACE_SIZE.y), OmegaFight3.sizeToScreenX(FACE_SIZE.x), OmegaFight3.sizeToScreenY(FACE_SIZE.y), null);
             }
         }
     }
@@ -1293,7 +1296,7 @@ public class Omegaman extends Char {
     // Description: This method draws the player
     public void draw(Graphics g) {
         if ((invCounter % INV_BLINK_CYCLE_LEN < INV_BLINK_CYCLE_LEN - INV_BLINK_LEN) || dashing != NOT_DASHING) {
-            g.drawImage(sprite[playerNo][spriteNo], (int) (coord.x - size.x / 2 * spriteSign), (int) (coord.y - size.y / 2), (int) (size.x * spriteSign), (int) (size.y), null);
+            g.drawImage(sprite[playerNo][spriteNo], OmegaFight3.coordToScreenX(coord.x - size.x / 2 * spriteSign), OmegaFight3.coordToScreenY(coord.y - size.y / 2), OmegaFight3.sizeToScreenX(size.x * spriteSign), OmegaFight3.sizeToScreenY(size.y), null);
         }
         super.draw(g);
     }

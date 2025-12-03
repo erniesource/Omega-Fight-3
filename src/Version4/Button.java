@@ -70,28 +70,28 @@ public class Button {
         if (canSee) {
             // Draw image
             Coord imageCoord = coord.add(size[state].scaledBy(-0.5));
-            g.drawImage(image, (int) Math.round(imageCoord.x), (int) Math.round(imageCoord.y), (int) size[state].x, (int) size[state].y, null);
+            g.drawImage(image, OmegaFight3.coordToScreenX(Math.round(imageCoord.x)), OmegaFight3.coordToScreenY(Math.round(imageCoord.y)), OmegaFight3.sizeToScreenX(size[state].x), OmegaFight3.sizeToScreenY(size[state].y), null);
 
             // Draw text
             if (text != null) {
-                g.setFont(font[state]);
+                g.setFont(OmegaFight3.fontToScreen(font[state]));
                 int strWidth = g.getFontMetrics().stringWidth(text);
-                int accFontSize = getAccWordSize(font[state].getSize());
+                int accFontSize = OmegaFight3.sizeToScreenY(getAccWordSize(font[state].getSize()));
                 if (style == SHADOW) {
                     g.setColor(Color.WHITE);
                     double shadowOffset = SHADOW_OFFSET * accFontSize;
-                    Coord textCoord = new Coord(coord.x - strWidth / 2, coord.y + accFontSize / 2);
+                    Coord textCoord = new Coord(OmegaFight3.coordToScreenX(coord.x) - strWidth / 2, OmegaFight3.coordToScreenY(coord.y) + accFontSize / 2);
                     g.drawString(text, (int) (textCoord.x + shadowOffset), (int) (textCoord.y + shadowOffset));
                     g.setColor(Color.BLACK);
                     g.drawString(text, (int) (textCoord.x), (int) (textCoord.y));
                 }
                 else if (style == HIGHLIGHT) {
                     g.setColor(Color.WHITE);
-                    double highlightSizeX = strWidth + font[state].getSize() * FONT_SIZE_TO_HIGHLIGHT_BUFFER_X;
+                    double highlightSizeX = strWidth + OmegaFight3.sizeToScreenX(font[state].getSize() * FONT_SIZE_TO_HIGHLIGHT_BUFFER_X);
                     double buttonBottom = coord.y + size[state].y / 2;
-                    g.fillRect((int) (coord.x - highlightSizeX / 2), (int) (buttonBottom - font[state].getSize() - HIGHLIGHT_SPACING_Y), (int) (highlightSizeX), font[state].getSize());
+                    g.fillRect((int) (OmegaFight3.coordToScreenX(coord.x) - highlightSizeX / 2), OmegaFight3.coordToScreenY(buttonBottom - font[state].getSize() - HIGHLIGHT_SPACING_Y), (int) highlightSizeX, OmegaFight3.sizeToScreenY(font[state].getSize()));
                     g.setColor(Color.BLACK);
-                    g.drawString(text, (int) (coord.x - strWidth / 2), (int) (buttonBottom + (-font[state].getSize() + accFontSize) / 2 - HIGHLIGHT_SPACING_Y));
+                    g.drawString(text, OmegaFight3.coordToScreenX(coord.x) - strWidth / 2, OmegaFight3.coordToScreenY(buttonBottom - font[state].getSize() / 2 - HIGHLIGHT_SPACING_Y) + accFontSize / 2);
                 }
             }
         }
@@ -100,7 +100,7 @@ public class Button {
     // Description: This method processes mouse input to determine it's state and also plays sound
     public boolean process(Coord mouse, boolean clicked) {
         if (canUse) {
-            if (OmegaFight3.intersects(mouse, Coord.PT, coord, size[NOPRESSED], LEEWAY)) {
+            if (OmegaFight3.intersects(mouse, Coord.PT, new Coord(OmegaFight3.coordToScreenX(coord.x), OmegaFight3.coordToScreenY(coord.y)), new Coord(OmegaFight3.sizeToScreenX(size[NOPRESSED].x), OmegaFight3.sizeToScreenY(size[NOPRESSED].y)), LEEWAY)) {
                 // Clicked
                 if (clicked) {
                     if (state != PRESSED) {
@@ -158,7 +158,7 @@ class TextBox extends Button {
         if (canSee) {
             // Draw cursor
             if (typing && cursorCounter % (CURSOR_HZ * 2) < CURSOR_HZ) {;
-                g.drawString("|", (int) (coord.x + g.getFontMetrics().stringWidth(text) / 2) + CURSOR_SPACING, (int) (coord.y + getAccWordSize(font[state].getSize()) / 2));
+                g.drawString("|", OmegaFight3.coordToScreenX(coord.x + CURSOR_SPACING) + g.getFontMetrics().stringWidth(text) / 2, OmegaFight3.coordToScreenY(coord.y + getAccWordSize(font[state].getSize()) / 2));
             }
         }
     }
@@ -166,7 +166,7 @@ class TextBox extends Button {
     // Description: This method processes mouse input to determine the text box's state, plays sound, and handles the cursor blinking
     public void process(Coord mouse, boolean clicked, Graphics g) {
         if (canUse) {
-            if (OmegaFight3.intersects(mouse, Coord.PT, coord, size[NOPRESSED], LEEWAY)) {
+            if (OmegaFight3.intersects(mouse, Coord.PT, new Coord(OmegaFight3.coordToScreenX(coord.x), OmegaFight3.coordToScreenY(coord.y)), new Coord(OmegaFight3.sizeToScreenX(size[NOPRESSED].x), OmegaFight3.sizeToScreenY(size[NOPRESSED].y)), LEEWAY)) {
                 // Clicked
                 if (clicked) {
                     if (state != PRESSED) {

@@ -105,8 +105,8 @@ public class Battle {
     // This method draws the scoreboard for the battle.
     public void drawScoreBoard(Coord coord, double progress, Graphics g) {
         // Draw board
-        g.drawImage(scoreBoard[gameMode], (int) coord.x, (int) coord.y, null);
-        g.setFont(STATS_FONT);
+        g.drawImage(scoreBoard[gameMode], OmegaFight3.coordToScreenX(coord.x), OmegaFight3.coordToScreenY(coord.y), OmegaFight3.sizeToScreenX(SCOREBOARD_SIZE.x), OmegaFight3.sizeToScreenX(SCOREBOARD_SIZE.y), null);
+        g.setFont(OmegaFight3.fontToScreen(STATS_FONT));
 
         // Draw each stat (truncate it if needed)
         for (int i = 0; i != Omegaman.NUM_PLAYERS; i++) {
@@ -132,7 +132,7 @@ public class Battle {
             drawBossHealth(coord.add(SCOREBOARD_TO_BOSS_HEALTH_COORD), progress, g);
 
             // Set grade color
-            g.setFont(GRADE_FONT);
+            g.setFont(OmegaFight3.fontToScreen(GRADE_FONT));
             if (grade * progress == 100) {
                 hundFlashCounter = (hundFlashCounter + 1) % (HUND_FLASH_HZ * 2);
                 if (hundFlashCounter < HUND_FLASH_HZ) {
@@ -148,7 +148,7 @@ public class Battle {
             
             // Draw result
             Coord gradeCoord = coord.add(SCOREBOARD_TO_GRADE_COORD);
-            g.drawString((roundStat(grade * progress) + "%"), (int) (gradeCoord.x), (int) (gradeCoord.y));
+            g.drawString((roundStat(grade * progress) + "%"), OmegaFight3.coordToScreenX(gradeCoord.x), OmegaFight3.coordToScreenY(gradeCoord.y));
         }
         else if (gameMode == OmegaFight3.PVP) {
             drawWinnerStr(coord.add(PVP_SCOREBOARD_TO_WINNER_STR_COORD), PVP_WINNER_FONT, g);
@@ -165,8 +165,8 @@ public class Battle {
                 Coord dmgBarCoord = coord.add(SCOREBOARD_TO_DMG_BAR_COORD);
                 for (int i = 0; i != Omegaman.NUM_PLAYERS; i++) {
                     g.setColor(PLAYER_COLOR[i]);
-                    g.fillRect((int) (dmgBarCoord.x + curBossDmg / totBossDmg * DMG_BAR_SIZE.x * progress), (int) dmgBarCoord.y,
-                    (int) (playerStats[i][Omegaman.DMG_TO_BOSS] / totBossDmg * DMG_BAR_SIZE.x * progress + 1), (int) DMG_BAR_SIZE.y);
+                    g.fillRect(OmegaFight3.coordToScreenX(dmgBarCoord.x + curBossDmg / totBossDmg * DMG_BAR_SIZE.x * progress), OmegaFight3.coordToScreenY(dmgBarCoord.y),
+                    OmegaFight3.sizeToScreenX(playerStats[i][Omegaman.DMG_TO_BOSS] / totBossDmg * DMG_BAR_SIZE.x * progress + 1), OmegaFight3.sizeToScreenY(DMG_BAR_SIZE.y));
                     curBossDmg += playerStats[i][Omegaman.DMG_TO_BOSS];
                 }
             }
@@ -176,10 +176,10 @@ public class Battle {
     }
 
     private void drawBossHealth(Coord bossHealthStrCoord, double progress, Graphics g) {
-        g.setFont(STATS_FONT);
+        g.setFont(OmegaFight3.fontToScreen(STATS_FONT));
         g.setColor(GOLD); // Change color if didn't kill?
         String bossHealthStr = bossHealth == 0? "BOSSES DEFEATED!!": String.format("%.1f BOSS HEALTH REMAINED...", bossHealth * progress);
-        g.drawString(bossHealthStr, (int) (bossHealthStrCoord.x - g.getFontMetrics().stringWidth(bossHealthStr) / 2), (int) bossHealthStrCoord.y);
+        g.drawString(bossHealthStr, OmegaFight3.coordToScreenX(bossHealthStrCoord.x) - g.getFontMetrics().stringWidth(bossHealthStr) / 2, OmegaFight3.coordToScreenY(bossHealthStrCoord.y));
     }
 
     private void drawStat(Coord firstStatCoord, int rowNum, int playerNo, int statNo, double progress, Graphics g) {
@@ -191,11 +191,11 @@ public class Battle {
         else {
             stringStat = roundStat(progresstat) + "";
         }
-        g.drawString(stringStat, (int) (firstStatCoord.x), (int) (firstStatCoord.y + rowNum * SCORE_SPACING));
+        g.drawString(stringStat, OmegaFight3.coordToScreenX(firstStatCoord.x), OmegaFight3.coordToScreenY(firstStatCoord.y + rowNum * SCORE_SPACING));
     }
 
     private void drawWinnerStr(Coord winnerTextCoord, Font font, Graphics g) {
-        g.setFont(font);
+        g.setFont(OmegaFight3.fontToScreen(font));
         String winnerStr = "";
         if (winner == BOTH_WIN) {
             winnerStr = "ALL WIN!!";
@@ -213,7 +213,7 @@ public class Battle {
                 }
             }
         }
-        g.drawString(winnerStr, (int) (winnerTextCoord.x - g.getFontMetrics().stringWidth(winnerStr) / 2), (int) (winnerTextCoord.y + Button.getAccWordSize(font.getSize()) / 2));
+        g.drawString(winnerStr, OmegaFight3.coordToScreenX(winnerTextCoord.x) - g.getFontMetrics().stringWidth(winnerStr) / 2, OmegaFight3.coordToScreenY(winnerTextCoord.y + Button.getAccWordSize(font.getSize()) / 2));
     }
 
     private double roundStat(double stat) {
@@ -228,32 +228,32 @@ public class Battle {
     // This method draws the emotional Omegamen on the two sides of the screen
     public void drawEmoMan(Graphics g) {
         // Both win
-        Coord[] premoManCoord = {new Coord(EMO_MAN_EDGE_OFFSET, OmegaFight3.SCREEN_SIZE.y), OmegaFight3.SCREEN_SIZE.copy()}; premoManCoord[1].x -= EMO_MAN_EDGE_OFFSET;
+        Coord[] premoManCoord = {new Coord(EMO_MAN_EDGE_OFFSET, OmegaFight3.NORM_SCREEN_SIZE.y), OmegaFight3.NORM_SCREEN_SIZE.copy()}; premoManCoord[1].x -= EMO_MAN_EDGE_OFFSET;
         if (winner == BOTH_WIN) {
-            g.drawImage(happyMan[0], (int) premoManCoord[0].x, (int) (premoManCoord[0].y - HAPPY_MAN_SIZE.y), null);
+            g.drawImage(happyMan[0], OmegaFight3.coordToScreenX(premoManCoord[0].x), OmegaFight3.coordToScreenY(premoManCoord[0].y - HAPPY_MAN_SIZE.y), OmegaFight3.sizeToScreenX(HAPPY_MAN_SIZE.x), OmegaFight3.sizeToScreenY(HAPPY_MAN_SIZE.y), null);
             premoManCoord[1] = premoManCoord[1].add(HAPPY_MAN_SIZE.scaledBy(-1));
-            g.drawImage(happyMan[1], (int) (premoManCoord[1].x), (int) (premoManCoord[1].y), null);
+            g.drawImage(happyMan[1], OmegaFight3.coordToScreenX(premoManCoord[1].x), OmegaFight3.coordToScreenY(premoManCoord[1].y), OmegaFight3.sizeToScreenX(HAPPY_MAN_SIZE.x), OmegaFight3.sizeToScreenY(HAPPY_MAN_SIZE.y), null);
         }
         
         // Boss win
         else if (winner == BOTH_LOSE) {
-            g.drawImage(sadMan[0], (int) premoManCoord[0].x, (int) (premoManCoord[0].y - SAD_MAN_SIZE.y), null);
+            g.drawImage(sadMan[0], OmegaFight3.coordToScreenX(premoManCoord[0].x), OmegaFight3.coordToScreenY(premoManCoord[0].y - SAD_MAN_SIZE.y), OmegaFight3.sizeToScreenX(SAD_MAN_SIZE.x), OmegaFight3.sizeToScreenY(SAD_MAN_SIZE.y), null);
             premoManCoord[1] = premoManCoord[1].add(SAD_MAN_SIZE.scaledBy(-1));
-            g.drawImage(sadMan[1], (int) (premoManCoord[1].x), (int) (premoManCoord[1].y), null);
+            g.drawImage(sadMan[1], OmegaFight3.coordToScreenX(premoManCoord[1].x), OmegaFight3.coordToScreenY(premoManCoord[1].y), OmegaFight3.sizeToScreenX(SAD_MAN_SIZE.x), OmegaFight3.sizeToScreenY(SAD_MAN_SIZE.y), null);
         }
 
         // P0 win
         else if (winner == 0) {
-            g.drawImage(happyMan[0], (int) premoManCoord[0].x, (int) (premoManCoord[0].y - HAPPY_MAN_SIZE.y), null);
+            g.drawImage(happyMan[0], OmegaFight3.coordToScreenX(premoManCoord[0].x), OmegaFight3.coordToScreenY(premoManCoord[0].y - HAPPY_MAN_SIZE.y), OmegaFight3.sizeToScreenX(HAPPY_MAN_SIZE.x), OmegaFight3.sizeToScreenY(HAPPY_MAN_SIZE.y), null);
             premoManCoord[1] = premoManCoord[1].add(SAD_MAN_SIZE.scaledBy(-1));
-            g.drawImage(sadMan[1], (int) (premoManCoord[1].x), (int) (premoManCoord[1].y), null);
+            g.drawImage(sadMan[1], OmegaFight3.coordToScreenX(premoManCoord[1].x), OmegaFight3.coordToScreenY(premoManCoord[1].y), OmegaFight3.sizeToScreenX(SAD_MAN_SIZE.x), OmegaFight3.sizeToScreenY(SAD_MAN_SIZE.y), null);
         }
 
         // P1 win
         else if (winner == 1) {
-            g.drawImage(sadMan[0], (int) premoManCoord[0].x, (int) (premoManCoord[0].y - SAD_MAN_SIZE.y), null);
+            g.drawImage(sadMan[0], OmegaFight3.coordToScreenX(premoManCoord[0].x), OmegaFight3.coordToScreenY(premoManCoord[0].y - SAD_MAN_SIZE.y), OmegaFight3.sizeToScreenX(SAD_MAN_SIZE.x), OmegaFight3.sizeToScreenY(SAD_MAN_SIZE.y), null);
             premoManCoord[1] = premoManCoord[1].add(HAPPY_MAN_SIZE.scaledBy(-1));
-            g.drawImage(happyMan[1], (int) (premoManCoord[1].x), (int) (premoManCoord[1].y), null);
+            g.drawImage(happyMan[1], OmegaFight3.coordToScreenX(premoManCoord[1].x), OmegaFight3.coordToScreenY(premoManCoord[1].y), OmegaFight3.sizeToScreenX(HAPPY_MAN_SIZE.x), OmegaFight3.sizeToScreenY(HAPPY_MAN_SIZE.y), null);
         }
     }
 
@@ -261,9 +261,9 @@ public class Battle {
     // This method draws the battle information (name, stage, mode, and settings) at the specified coordinates using the provided Graphics object.
     public void drawBattleInfo(Coord coord, Graphics g) {
         g.setColor(Color.WHITE);
-        g.setFont(STATS_FONT);
-        g.drawString(name, (int) coord.x, (int) coord.y);
-        g.drawString(String.format("ON %s IN %s MODE", stageName.toUpperCase(), OmegaFight3.GAMEMODE_NAME[gameMode]), (int) coord.x, (int) coord.y + BATTLE_INFO_SPACING);
+        g.setFont(OmegaFight3.fontToScreen(STATS_FONT));
+        g.drawString(name, OmegaFight3.coordToScreenX(coord.x), OmegaFight3.coordToScreenY(coord.y));
+        g.drawString(String.format("ON %s IN %s MODE", stageName.toUpperCase(), OmegaFight3.GAMEMODE_NAME[gameMode]), OmegaFight3.coordToScreenX(coord.x), OmegaFight3.coordToScreenY(coord.y + BATTLE_INFO_SPACING));
         String thirdStr = "";
         if (gameMode == OmegaFight3.ALLPVE) {
             thirdStr = String.format("WITH %d " + (lives == 1? "LIFE": "LIVES") + " AND BOSSES THAT WERE %s", lives, OmegaFight3.DIFFICULTY_NAME[difficulty]);
@@ -274,6 +274,6 @@ public class Battle {
         else if (gameMode == OmegaFight3.PVPVE) {
             thirdStr = String.format("WITH BOSSES THAT WERE %s", OmegaFight3.DIFFICULTY_NAME[difficulty]);
         }
-        g.drawString(thirdStr, (int) coord.x, (int) coord.y + BATTLE_INFO_SPACING * 2);
+        g.drawString(thirdStr, OmegaFight3.coordToScreenX(coord.x), OmegaFight3.coordToScreenY(coord.y + BATTLE_INFO_SPACING * 2));
     }
 }

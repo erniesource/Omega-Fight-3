@@ -21,8 +21,11 @@ import javax.sound.sampled.*;
 
 public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionListener, KeyListener, Runnable {
     // Screen Settings
-    public static final Coord SCREEN_SIZE = new Coord(1920, 960);
-    public static final Coord SCREEN_CENTER = SCREEN_SIZE.scaledBy(0.5);
+    public static final Coord NORM_SCREEN_SIZE = new Coord(1920, 960);
+    public static final Coord NORM_SCREEN_CENTER = NORM_SCREEN_SIZE.scaledBy(0.5);
+    public static final double NORM_ASPECT_RATIO = NORM_SCREEN_SIZE.x / NORM_SCREEN_SIZE.y;
+    public static final Coord MIN_SCREEN_SIZE = new Coord(320, 240);
+    public static final Coord DEFAULT_SCREEN_SIZE = new Coord(1280, 640);
     public static final int SPACING = 25;
 
     // Frame Settings
@@ -35,7 +38,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
 
     // Cheat constants
     public static final boolean DEV_MODE = false;
-    public static final boolean CHEATS = DEV_MODE;
+    public static final boolean CHEATS = false;
     public static final int KILL_KEY = KeyEvent.VK_K;
     public static final double KILL_DMG = 2 * Omegaman.PERC_MULT;
     public static final int FPS_CNT_KEY = KeyEvent.VK_F;
@@ -130,7 +133,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static final int MENU_MAN_ANIM_LEN = 120;
     public static final int MENU_MAN_ANIM_DIST = 40;
     public static final Coord HOME_BUTTON_SIZE = new Coord(960, 100);
-    public static final double HOME_BUTTON_X = SCREEN_SIZE.x - HOME_BUTTON_SIZE.x / 2;
+    public static final double HOME_BUTTON_X = NORM_SCREEN_SIZE.x - HOME_BUTTON_SIZE.x / 2;
     public static final Font HOME_BUTTON_FONT = new Font("Consolas", Font.BOLD, 66);
     public static final int HOME_BUTTON_FIRST_Y = 570;
     public static final int HOME_BUTTON_SPACING = 150;
@@ -177,7 +180,8 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     // Game end menu constants
     public static final double FLASH_ROTS_PER_S = 1.0 / 6;
     public static final double FLASH_ROTATE_SPD = Math.PI * 2 / MAX_TICK_RATE * FLASH_ROTS_PER_S;
-    public static final Coord FLASH_COORD = SCREEN_CENTER.add(-Math.hypot(SCREEN_CENTER.x, SCREEN_CENTER.y));
+    public static final Coord FLASH_COORD = NORM_SCREEN_CENTER.add(-Math.hypot(NORM_SCREEN_CENTER.x, NORM_SCREEN_CENTER.y));
+    public static final double FLASH_SQUARE_SIZE = Math.hypot(NORM_SCREEN_SIZE.x, NORM_SCREEN_SIZE.y);
     public static final Coord RESULTS_TITLE_SIZE = new Coord(1494, 134); 
     public static final int RESULTS_EDGE_SPACING = 100;
     public static final int RESULTS_SPACING = 40;
@@ -237,14 +241,14 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static final Coord DRAGON_ANIM_MID_COORD = DRAGON_ANIM_COORD.add(DRAGON_ANIM_SIZE.scaledBy(0.5));
     public static final Coord BIRD_ANIM_MID_COORD = BIRD_ANIM_COORD.add(BIRD_ANIM_SIZE.scaledBy(0.5));
     public static final int THANKS_SLIDE_NO = 5;
-    public static final Coord CHROMATIC_SIZE = new Coord(993.0 / 960 * SCREEN_SIZE.y);
-    public static final Coord CHROMATIC_MID_COORD = new Coord(SCREEN_CENTER.x, 777.0 / 960 * SCREEN_SIZE.y);
+    public static final Coord CHROMATIC_SIZE = new Coord(993.0 / 960 * NORM_SCREEN_SIZE.y);
+    public static final Coord CHROMATIC_MID_COORD = new Coord(NORM_SCREEN_CENTER.x, 777.0 / 960 * NORM_SCREEN_SIZE.y);
     public static final Coord CHROMATIC_COORD = CHROMATIC_MID_COORD.add(CHROMATIC_SIZE.scaledBy(-0.5));
     public static final int CHROMATIC_ROT_LEN = MAX_TICK_RATE * 3;
     public static final int CONTROLS_SLIDE_NO = 0;
 
     // Controls constants
-    public static final int CONTROLS_BUTTON_X_START = (int) SCREEN_CENTER.x;
+    public static final int CONTROLS_BUTTON_X_START = (int) NORM_SCREEN_CENTER.x;
     public static final int CONTROLS_BUTTON_SPACING_X = 506;
     public static final int[] CONTROLS_BUTTON_Y = {352, 473, 583, 691};
     public static final int[] SHOOT_BUTTON_Y = {787, 870};
@@ -534,6 +538,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     // General game stats
     public static int screenShakeCounter = 0;
     public static Coord screenCoord = new Coord();
+    public static Rectangle screenSize;
 
     // Frame stats
     public static int frameCounter;
@@ -567,7 +572,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     // Return: None
     // Description: THis is the constructor for the driver that sets up all the inputs and starts the thread
     public OmegaFight3(){
-        setPreferredSize(new Dimension((int) SCREEN_SIZE.x, (int) SCREEN_SIZE.y));
+        setPreferredSize(new Dimension((int) DEFAULT_SCREEN_SIZE.x, (int) DEFAULT_SCREEN_SIZE.y));
         // Adding  KeyListener, MouseListener, and MouseMotionListener
         this.setFocusable(true);
         addKeyListener(this);
@@ -881,38 +886,38 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                 chooseButtons.put(loadoutButtono[i][j], new Button(addWeaponIcon, new Coord(LOADOUT_ICON_X[i] + WEAPON_ICON_SIZE.x * (0.5 + j) + SPACING * j, LOADOUT_ICON_Y + WEAPON_ICON_SIZE.y / 2), WEAPON_ICON_SIZE.copy(), loadoutButtono[i][j]));
             }
         }
-        chooseButtons.put(READY_BUTTONO, new Button(readyBar, new Coord(0, SCREEN_CENTER.y), READY_BAR_SIZE, READY_BUTTONO, false, false));
-        Coord rulesAndBackButtonCoord = new Coord(SCREEN_SIZE.x - BUTTON_SIZE.x / 2 - SPACING, SPACING + BUTTON_SIZE.y / 2);
+        chooseButtons.put(READY_BUTTONO, new Button(readyBar, new Coord(0, NORM_SCREEN_CENTER.y), READY_BAR_SIZE, READY_BUTTONO, false, false));
+        Coord rulesAndBackButtonCoord = new Coord(NORM_SCREEN_SIZE.x - BUTTON_SIZE.x / 2 - SPACING, SPACING + BUTTON_SIZE.y / 2);
         chooseButtons.put(RULES_BUTTONO, new Button(buttonImg, BUTTON_FONT, rulesAndBackButtonCoord.copy(), BUTTON_SIZE.copy(), "RULES", RULES_BUTTONO, Button.SHADOW));
 
         // Rules buttons
         rulesButtons.put(RULES_BACK_BUTTONO, newBackButton(rulesAndBackButtonCoord.copy(), RULES_BACK_BUTTONO));
-        rulesButtons.put(LIVES_BUTTONO, new Button(rulesButtonImg, RULES_BUTTON_FONT, new Coord(SCREEN_CENTER.x + RULES_BUTTON_SPACING.x * 1, RULES_BUTTON_START_Y + (RULES_BUTTON_DIST_Y) * 0), RULES_BUTTON_SIZE.copy(), "LIVES: " + (lives == INF_LIVES? "INFINITY": lives), LIVES_BUTTONO, Button.SHADOW));
-        rulesButtons.put(BOSS_BUTTONO, new Button(rulesButtonImg, RULES_BUTTON_FONT, new Coord(SCREEN_CENTER.x + RULES_BUTTON_SPACING.x * 0, RULES_BUTTON_START_Y + (RULES_BUTTON_DIST_Y) * 1), RULES_BUTTON_SIZE.copy(), "BOSS: " + DIFFICULTY_NAME[difficulty], BOSS_BUTTONO, Button.SHADOW));
-        rulesButtons.put(GAMEMODE_BUTTONO, new Button(rulesButtonImg, RULES_BUTTON_FONT, new Coord(SCREEN_CENTER.x + RULES_BUTTON_SPACING.x * -1, RULES_BUTTON_START_Y + (RULES_BUTTON_DIST_Y) * 2), RULES_BUTTON_SIZE.copy(), "GAMEMODE: " + GAMEMODE_NAME[gameMode], GAMEMODE_BUTTONO, Button.SHADOW));
+        rulesButtons.put(LIVES_BUTTONO, new Button(rulesButtonImg, RULES_BUTTON_FONT, new Coord(NORM_SCREEN_CENTER.x + RULES_BUTTON_SPACING.x * 1, RULES_BUTTON_START_Y + (RULES_BUTTON_DIST_Y) * 0), RULES_BUTTON_SIZE.copy(), "LIVES: " + (lives == INF_LIVES? "INFINITY": lives), LIVES_BUTTONO, Button.SHADOW));
+        rulesButtons.put(BOSS_BUTTONO, new Button(rulesButtonImg, RULES_BUTTON_FONT, new Coord(NORM_SCREEN_CENTER.x + RULES_BUTTON_SPACING.x * 0, RULES_BUTTON_START_Y + (RULES_BUTTON_DIST_Y) * 1), RULES_BUTTON_SIZE.copy(), "BOSS: " + DIFFICULTY_NAME[difficulty], BOSS_BUTTONO, Button.SHADOW));
+        rulesButtons.put(GAMEMODE_BUTTONO, new Button(rulesButtonImg, RULES_BUTTON_FONT, new Coord(NORM_SCREEN_CENTER.x + RULES_BUTTON_SPACING.x * -1, RULES_BUTTON_START_Y + (RULES_BUTTON_DIST_Y) * 2), RULES_BUTTON_SIZE.copy(), "GAMEMODE: " + GAMEMODE_NAME[gameMode], GAMEMODE_BUTTONO, Button.SHADOW));
 
         // Pause buttons
         for (int i = 0; i != PAUSE_NUM_BUTTONS; i++) {
-            pauseButtons.put(PAUSE_BUTTONO[i], new Button(buttonImg, BUTTON_FONT, new Coord(SCREEN_CENTER.x, SCREEN_CENTER.y + BUTTON_SIZE.y * (i + 0.5) + SPACING * (i + 1)), BUTTON_SIZE.copy(), PAUSE_BUTTON_TEXT[i], PAUSE_BUTTONO[i], Button.SHADOW));
+            pauseButtons.put(PAUSE_BUTTONO[i], new Button(buttonImg, BUTTON_FONT, new Coord(NORM_SCREEN_CENTER.x, NORM_SCREEN_CENTER.y + BUTTON_SIZE.y * (i + 0.5) + SPACING * (i + 1)), BUTTON_SIZE.copy(), PAUSE_BUTTON_TEXT[i], PAUSE_BUTTONO[i], Button.SHADOW));
         }
 
         // Game end buttons
-        gameEndTextBoxes.add(new TextBox(battleNameBoxImg, BUTTON_FONT, new Coord(SCREEN_CENTER.x - (BATTLE_NAME_BOX_SIZE.x + RESULTS_SPACING) / 2, GAME_END_BUTTON_Y), BATTLE_NAME_BOX_SIZE.copy(), Button.SHADOW, TextBox.TEXT_BUFFER_X, false, false));
-        gameEndButtons.put(NEXT_BATTLE_BUTTONO, new Button(buttonImg, BUTTON_FONT, new Coord(SCREEN_CENTER.x + (BUTTON_SIZE.x + RESULTS_SPACING) / 2, GAME_END_BUTTON_Y), BUTTON_SIZE.copy(), "NEXT BATTLE!", NEXT_BATTLE_BUTTONO, Button.SHADOW, false, false));
+        gameEndTextBoxes.add(new TextBox(battleNameBoxImg, BUTTON_FONT, new Coord(NORM_SCREEN_CENTER.x - (BATTLE_NAME_BOX_SIZE.x + RESULTS_SPACING) / 2, GAME_END_BUTTON_Y), BATTLE_NAME_BOX_SIZE.copy(), Button.SHADOW, TextBox.TEXT_BUFFER_X, false, false));
+        gameEndButtons.put(NEXT_BATTLE_BUTTONO, new Button(buttonImg, BUTTON_FONT, new Coord(NORM_SCREEN_CENTER.x + (BUTTON_SIZE.x + RESULTS_SPACING) / 2, GAME_END_BUTTON_Y), BUTTON_SIZE.copy(), "NEXT BATTLE!", NEXT_BATTLE_BUTTONO, Button.SHADOW, false, false));
         
         // Battle log buttons
         battleLogButtons.put(BATTLE_LOG_BACK_BUTTONO, newBackButton(BATTLE_LOG_BACK_BUTTONO));
-        battleLogButtons.put(BATTLE_NO_BACK_BUTTONO, new Button(smlButtonImg, BUTTON_FONT, new Coord(SCREEN_CENTER.x - HALF_BATTLE_NO_SIZE - ARROW_BUTTON_SPACING - SML_BUTTON_SIZE.x / 2, BATTLE_LOG_SCOREBOARD_COORD.y + Battle.SCOREBOARD_SIZE.y + ARROW_BUTTON_SPACING + SML_BUTTON_SIZE.y / 2), SML_BUTTON_SIZE.copy(), "<", BATTLE_NO_BACK_BUTTONO, Button.SHADOW));
-        battleLogButtons.put(BATTLE_NO_ALL_BACK_BUTTONO, new Button(medButtonImg, BUTTON_FONT, new Coord(SCREEN_CENTER.x - HALF_BATTLE_NO_SIZE - ARROW_BUTTON_SPACING * 2 - SML_BUTTON_SIZE.x - MED_BUTTON_SIZE.x / 2, BATTLE_LOG_SCOREBOARD_COORD.y + Battle.SCOREBOARD_SIZE.y + ARROW_BUTTON_SPACING + SML_BUTTON_SIZE.y / 2), MED_BUTTON_SIZE.copy(), "<<", BATTLE_NO_ALL_BACK_BUTTONO, Button.SHADOW));
-        battleLogButtons.put(BATTLE_NO_NEXT_BUTTONO, new Button(smlButtonImg, BUTTON_FONT, new Coord(SCREEN_CENTER.x + HALF_BATTLE_NO_SIZE + ARROW_BUTTON_SPACING + SML_BUTTON_SIZE.x / 2, BATTLE_LOG_SCOREBOARD_COORD.y + Battle.SCOREBOARD_SIZE.y + ARROW_BUTTON_SPACING + SML_BUTTON_SIZE.y / 2), SML_BUTTON_SIZE.copy(), ">", BATTLE_NO_NEXT_BUTTONO, Button.SHADOW));
-        battleLogButtons.put(BATTLE_NO_ALL_NEXT_BUTTONO, new Button(medButtonImg, BUTTON_FONT, new Coord(SCREEN_CENTER.x + HALF_BATTLE_NO_SIZE + ARROW_BUTTON_SPACING * 2 + SML_BUTTON_SIZE.x + MED_BUTTON_SIZE.x / 2, BATTLE_LOG_SCOREBOARD_COORD.y + Battle.SCOREBOARD_SIZE.y + ARROW_BUTTON_SPACING + SML_BUTTON_SIZE.y / 2), MED_BUTTON_SIZE.copy(), ">>", BATTLE_NO_ALL_NEXT_BUTTONO, Button.SHADOW));
-        battleLogButtons.put(BATTLE_NO_SORT_BUTTONO, new Button(buttonImg, BUTTON_FONT, new Coord(SCREEN_SIZE.x - SPACING - BUTTON_SIZE.x / 2, SPACING + BUTTON_SIZE.y / 2), BUTTON_SIZE.copy(), "SORT BY: " + BATTLE_LOG_SORT_NAME[sortNum], BATTLE_NO_SORT_BUTTONO, Button.SHADOW));
-        battleLogButtons.put(BATTLE_NO_ORDER_BUTTONO, new Button(buttonImg, BUTTON_FONT, new Coord(SCREEN_SIZE.x - SPACING - BUTTON_SIZE.x / 2, SPACING * 2 + BUTTON_SIZE.y * 1.5), BUTTON_SIZE.copy(), "ORDER BY: " + getOrderName(), BATTLE_NO_ORDER_BUTTONO, Button.SHADOW));
+        battleLogButtons.put(BATTLE_NO_BACK_BUTTONO, new Button(smlButtonImg, BUTTON_FONT, new Coord(NORM_SCREEN_CENTER.x - HALF_BATTLE_NO_SIZE - ARROW_BUTTON_SPACING - SML_BUTTON_SIZE.x / 2, BATTLE_LOG_SCOREBOARD_COORD.y + Battle.SCOREBOARD_SIZE.y + ARROW_BUTTON_SPACING + SML_BUTTON_SIZE.y / 2), SML_BUTTON_SIZE.copy(), "<", BATTLE_NO_BACK_BUTTONO, Button.SHADOW));
+        battleLogButtons.put(BATTLE_NO_ALL_BACK_BUTTONO, new Button(medButtonImg, BUTTON_FONT, new Coord(NORM_SCREEN_CENTER.x - HALF_BATTLE_NO_SIZE - ARROW_BUTTON_SPACING * 2 - SML_BUTTON_SIZE.x - MED_BUTTON_SIZE.x / 2, BATTLE_LOG_SCOREBOARD_COORD.y + Battle.SCOREBOARD_SIZE.y + ARROW_BUTTON_SPACING + SML_BUTTON_SIZE.y / 2), MED_BUTTON_SIZE.copy(), "<<", BATTLE_NO_ALL_BACK_BUTTONO, Button.SHADOW));
+        battleLogButtons.put(BATTLE_NO_NEXT_BUTTONO, new Button(smlButtonImg, BUTTON_FONT, new Coord(NORM_SCREEN_CENTER.x + HALF_BATTLE_NO_SIZE + ARROW_BUTTON_SPACING + SML_BUTTON_SIZE.x / 2, BATTLE_LOG_SCOREBOARD_COORD.y + Battle.SCOREBOARD_SIZE.y + ARROW_BUTTON_SPACING + SML_BUTTON_SIZE.y / 2), SML_BUTTON_SIZE.copy(), ">", BATTLE_NO_NEXT_BUTTONO, Button.SHADOW));
+        battleLogButtons.put(BATTLE_NO_ALL_NEXT_BUTTONO, new Button(medButtonImg, BUTTON_FONT, new Coord(NORM_SCREEN_CENTER.x + HALF_BATTLE_NO_SIZE + ARROW_BUTTON_SPACING * 2 + SML_BUTTON_SIZE.x + MED_BUTTON_SIZE.x / 2, BATTLE_LOG_SCOREBOARD_COORD.y + Battle.SCOREBOARD_SIZE.y + ARROW_BUTTON_SPACING + SML_BUTTON_SIZE.y / 2), MED_BUTTON_SIZE.copy(), ">>", BATTLE_NO_ALL_NEXT_BUTTONO, Button.SHADOW));
+        battleLogButtons.put(BATTLE_NO_SORT_BUTTONO, new Button(buttonImg, BUTTON_FONT, new Coord(NORM_SCREEN_SIZE.x - SPACING - BUTTON_SIZE.x / 2, SPACING + BUTTON_SIZE.y / 2), BUTTON_SIZE.copy(), "SORT BY: " + BATTLE_LOG_SORT_NAME[sortNum], BATTLE_NO_SORT_BUTTONO, Button.SHADOW));
+        battleLogButtons.put(BATTLE_NO_ORDER_BUTTONO, new Button(buttonImg, BUTTON_FONT, new Coord(NORM_SCREEN_SIZE.x - SPACING - BUTTON_SIZE.x / 2, SPACING * 2 + BUTTON_SIZE.y * 1.5), BUTTON_SIZE.copy(), "ORDER BY: " + getOrderName(), BATTLE_NO_ORDER_BUTTONO, Button.SHADOW));
 
         // SLideshow buttons
         slideshowButtons.put(SLIDESHOW_BACK_BUTTONO, newBackButton(SLIDESHOW_BACK_BUTTONO));
-        slideshowButtons.put(SLIDE_NO_BACK_BUTTONO, new Button(smlButtonImg, BUTTON_FONT, new Coord(SCREEN_SIZE.x - SPACING * 2 - SML_BUTTON_SIZE.x * 1.5, SPACING + SML_BUTTON_SIZE.y / 2), SML_BUTTON_SIZE.copy(), "<", SLIDE_NO_BACK_BUTTONO, Button.SHADOW));
-        slideshowButtons.put(SLIDE_NO_NEXT_BUTTONO, new Button(smlButtonImg, BUTTON_FONT, new Coord(SCREEN_SIZE.x - SPACING - SML_BUTTON_SIZE.x / 2, SPACING + SML_BUTTON_SIZE.y / 2), SML_BUTTON_SIZE.copy(), ">", SLIDE_NO_NEXT_BUTTONO, Button.SHADOW));
+        slideshowButtons.put(SLIDE_NO_BACK_BUTTONO, new Button(smlButtonImg, BUTTON_FONT, new Coord(NORM_SCREEN_SIZE.x - SPACING * 2 - SML_BUTTON_SIZE.x * 1.5, SPACING + SML_BUTTON_SIZE.y / 2), SML_BUTTON_SIZE.copy(), "<", SLIDE_NO_BACK_BUTTONO, Button.SHADOW));
+        slideshowButtons.put(SLIDE_NO_NEXT_BUTTONO, new Button(smlButtonImg, BUTTON_FONT, new Coord(NORM_SCREEN_SIZE.x - SPACING - SML_BUTTON_SIZE.x / 2, SPACING + SML_BUTTON_SIZE.y / 2), SML_BUTTON_SIZE.copy(), ">", SLIDE_NO_NEXT_BUTTONO, Button.SHADOW));
 
         // Controls buttons
         for (int i = 0; i != Omegaman.NUM_PLAYERS; i++) {
@@ -996,10 +1001,11 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         // JFrame and JPanel
         JFrame frame = new JFrame("Omega Fight 3");
         OmegaFight3 panel = new OmegaFight3();
+        panel.setBackground(Color.BLACK);
         frame.add(panel);
         frame.pack();
         frame.setVisible(true);
-        frame.setResizable(false);
+        frame.setMinimumSize(new Dimension((int) MIN_SCREEN_SIZE.x, (int) MIN_SCREEN_SIZE.y));
         frame.setLocationRelativeTo(null);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setIconImage(Toolkit.getDefaultToolkit().getImage(MISC_DIR + "icon.png"));
@@ -1015,6 +1021,8 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public void paintComponent(Graphics g){
         Graphics2D g2 = (Graphics2D) g;
         super.paintComponent(g);
+        screenSize = g.getClipBounds();
+
         // Screen shake
         if (screenShakeCounter != 0) {
             screenShakeCounter = Math.min(SCREEN_SHAKE_MAX, screenShakeCounter);
@@ -1030,12 +1038,12 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         // Start gamestate
         if (gameState == STUDIO_ANIM_GS) {
             // Background
-            g.drawImage(startBg, 0, 0, (int) SCREEN_SIZE.x, (int) SCREEN_SIZE.y, null);
-            if (transitiono != START_ANIM) g.drawImage(titleNum, (int) (SCREEN_CENTER.x - TITLE_NUM_SIZE.x / 2), TITLE_NUM_Y, null);
+            drawFullScreen(startBg, g);
+            if (transitiono != START_ANIM) g.drawImage(titleNum, coordToScreenX(NORM_SCREEN_CENTER.x - TITLE_NUM_SIZE.x / 2), coordToScreenY(TITLE_NUM_Y), sizeToScreenX(TITLE_NUM_SIZE.x), sizeToScreenY(TITLE_NUM_SIZE.y), null);
 
             // Flash Press any button to start
             setOpacity((Math.sin(Math.PI * 2 / (PRESS_START_BLINK_HZ * 2) * (pressStartCounter - PRESS_START_BLINK_HZ / 2)) + 1) / 2, g2);
-            g.drawImage(pressAnyText, (int) (SCREEN_CENTER.x - PRESS_START_SIZE.x / 2), PRESS_START_Y, null);
+            g.drawImage(pressAnyText, coordToScreenX(NORM_SCREEN_CENTER.x - PRESS_START_SIZE.x / 2), coordToScreenY(PRESS_START_Y), sizeToScreenX(PRESS_START_SIZE.x), sizeToScreenY(PRESS_START_SIZE.y), null);
             resetOpacity(g2);
 
             // Transition
@@ -1062,8 +1070,8 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         // Home gamestate
         else if(gameState == HOME_GS) {
             // Background
-            g.drawImage(home, 0, 0, (int) SCREEN_SIZE.x, (int) SCREEN_SIZE.y, null);
-            g.drawImage(menuMan, (int) (SCREEN_SIZE.x / 4 - MENU_MAN_SIZE.x / 2), (int) (SCREEN_SIZE.y - MENU_MAN_SIZE.y + Math.round((-Math.cos(Math.PI * 2 / MENU_MAN_ANIM_LEN * menuManCounter) + 1) / 2 * MENU_MAN_ANIM_DIST)), null);
+            drawFullScreen(home, g);
+            g.drawImage(menuMan, coordToScreenX(NORM_SCREEN_SIZE.x / 4 - MENU_MAN_SIZE.x / 2), coordToScreenY(NORM_SCREEN_SIZE.y - MENU_MAN_SIZE.y + Math.round((-Math.cos(Math.PI * 2 / MENU_MAN_ANIM_LEN * menuManCounter) + 1) / 2 * MENU_MAN_ANIM_DIST)), sizeToScreenX(MENU_MAN_SIZE.x), sizeToScreenY(MENU_MAN_SIZE.y), null);
 
             // Buttons
             drawButtons(homeButtons.values(), g);
@@ -1093,7 +1101,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         // Choose your fight gamestate
         else if(gameState == CHOOSE_FIGHT_GS) {
             // Background
-            g.drawImage(chooseMenu, 0, 0, (int) SCREEN_SIZE.x, (int) SCREEN_SIZE.y, null);
+            drawFullScreen(chooseMenu, g);
 
             // Flashing of selected stage
             stageFlashCounter = (stageFlashCounter + 1) % (FLASH_HZ * 2);
@@ -1109,7 +1117,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
             Coord stageButtonSize = stageButton.size[stageButton.state];
             Coord selectCoord = stageButton.coord.add(stageButtonSize.scaledBy(-0.5)).add(-FLASH_SIZE);
             Coord selectSize = stageButtonSize.add(FLASH_SIZE * 2);
-            g.fillRect((int) (selectCoord.x), (int) (selectCoord.y), (int) (selectSize.x), (int) (selectSize.y));
+            g.fillRect(coordToScreenX(selectCoord.x), coordToScreenY(selectCoord.y), sizeToScreenX(selectSize.x), sizeToScreenY(selectSize.y));
 
             // If user has selected loadout or weapon icon, flash icon
             if (selectedIcon != null) {
@@ -1119,7 +1127,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                 Coord selectedIconSize = selectedIcon.size[selectedIcon.state];
                 selectCoord = selectedIcon.coord.add(selectedIconSize.scaledBy(-0.5)).add(-FLASH_SIZE);
                 selectSize = selectedIconSize.add(FLASH_SIZE * 2);
-                g.fillOval((int) (selectCoord.x), (int) (selectCoord.y), (int) (selectSize.x), (int) (selectSize.y));
+                g.fillOval(coordToScreenX(selectCoord.x), coordToScreenY(selectCoord.y), sizeToScreenX(selectSize.x), sizeToScreenY(selectSize.y));
             }
 
             // Draw buttons
@@ -1190,7 +1198,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
             // Draw boss
             for (Boss boss: bosses) {
                 boss.drawSmokes(g2);
-                if (boss.state != Boss.DEAD || boss.coord.y <= SCREEN_SIZE.y + boss.size.y / 2) boss.draw(g);
+                if (boss.state != Boss.DEAD || boss.coord.y <= NORM_SCREEN_SIZE.y + boss.size.y / 2) boss.draw(g);
                 else boss.drawSurge(g);
             }
 
@@ -1303,7 +1311,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                     }
                     // Process dead bosses
                     else {
-                        if (boss.coord.y <= SCREEN_SIZE.y + boss.size.y / 2) {
+                        if (boss.coord.y <= NORM_SCREEN_SIZE.y + boss.size.y / 2) {
                             boss.fall();
                         }
                         else {
@@ -1345,18 +1353,17 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         else if(gameState == GAME_END_GS) {
             // Calculate and draw rotating background
             flashRot = (flashRot + FLASH_ROTATE_SPD) % (Math.PI * 2);
-            g2.rotate(flashRot, SCREEN_CENTER.x, SCREEN_CENTER.y);
-            g2.drawImage(flash[battleDone.winner + 2], (int) (FLASH_COORD.x), (int) (FLASH_COORD.y), null);
-            g2.rotate(-flashRot, SCREEN_CENTER.x, SCREEN_CENTER.y);
+            g2.rotate(flashRot, coordToScreenX(NORM_SCREEN_CENTER.x), coordToScreenY(NORM_SCREEN_CENTER.y));
+            g2.drawImage(flash[battleDone.winner + 2], coordToScreenX(FLASH_COORD.x), coordToScreenY(FLASH_COORD.y), sizeToScreenX(FLASH_SQUARE_SIZE), sizeToScreenY(FLASH_SQUARE_SIZE), null);
+            g2.rotate(-flashRot, coordToScreenX(NORM_SCREEN_CENTER.x), coordToScreenY(NORM_SCREEN_CENTER.y));
 
             // Draw Header
-            g.drawImage(resultsTitle, (int) (SCREEN_CENTER.x - RESULTS_TITLE_SIZE.x / 2), RESULTS_EDGE_SPACING, null);
-
+            g.drawImage(resultsTitle, coordToScreenX(NORM_SCREEN_CENTER.x - RESULTS_TITLE_SIZE.x / 2), coordToScreenY(RESULTS_EDGE_SPACING), sizeToScreenX(RESULTS_TITLE_SIZE.x), sizeToScreenY(RESULTS_TITLE_SIZE.y), null);
             // Draw emotional Omegamen
             battleDone.drawEmoMan(g);
 
             // Draw stats
-            if (transitiono != RESULTS_COUNTING) battleDone.drawScoreBoard(new Coord((SCREEN_CENTER.x - Battle.SCOREBOARD_SIZE.x / 2), RESULTS_EDGE_SPACING + RESULTS_TITLE_SIZE.y + RESULTS_SPACING), g);
+            if (transitiono != RESULTS_COUNTING) battleDone.drawScoreBoard(new Coord((NORM_SCREEN_CENTER.x - Battle.SCOREBOARD_SIZE.x / 2), RESULTS_EDGE_SPACING + RESULTS_TITLE_SIZE.y + RESULTS_SPACING), g);
 
             // Draw buttons and textBoxes
             drawButtons(gameEndButtons.values(), g);
@@ -1387,18 +1394,18 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
             if (slideNo == THANKS_SLIDE_NO) {
                 slideCounter = (slideCounter + 1) % CHROMATIC_ROT_LEN;
                 double rotAmt = Math.PI * 2 * slideCounter / CHROMATIC_ROT_LEN;
-                g2.rotate(rotAmt, CHROMATIC_MID_COORD.x, CHROMATIC_MID_COORD.y);
-                g.drawImage(chromatic, (int) CHROMATIC_COORD.x, (int) CHROMATIC_COORD.y, (int) CHROMATIC_SIZE.x, (int) CHROMATIC_SIZE.y, null);
-                g2.rotate(-rotAmt, CHROMATIC_MID_COORD.x, CHROMATIC_MID_COORD.y);
+                g2.rotate(rotAmt, coordToScreenX(CHROMATIC_MID_COORD.x), coordToScreenY(CHROMATIC_MID_COORD.y));
+                g.drawImage(chromatic, coordToScreenX(CHROMATIC_COORD.x), coordToScreenY(CHROMATIC_COORD.y), sizeToScreenX(CHROMATIC_SIZE.x), sizeToScreenY(CHROMATIC_SIZE.y), null);
+                g2.rotate(-rotAmt, coordToScreenX(CHROMATIC_MID_COORD.x), coordToScreenY(CHROMATIC_MID_COORD.y));
             }
             
             // Draw slide
-            g.drawImage(slides[slideNo], 0, 0, (int) SCREEN_SIZE.x, (int) SCREEN_SIZE.y, null);
+            drawFullScreen(slides[slideNo], g);
 
             if (slideNo == BOSS_SLIDE_NO) {
-                boolean doctorHover = intersects(mouse, Coord.PT, DOCTOR_ANIM_MID_COORD, DOCTOR_ANIM_SIZE);
-                boolean dragonHover = intersects(mouse, Coord.PT, DRAGON_ANIM_MID_COORD, DRAGON_ANIM_SIZE);
-                boolean birdHover = intersects(mouse, Coord.PT, BIRD_ANIM_MID_COORD, BIRD_ANIM_SIZE);
+                boolean doctorHover = intersects(mouse, Coord.PT, new Coord(coordToScreenX(DOCTOR_ANIM_MID_COORD.x), coordToScreenY(DOCTOR_ANIM_MID_COORD.y)), new Coord(sizeToScreenX(DOCTOR_ANIM_SIZE.x), sizeToScreenY(DOCTOR_ANIM_SIZE.y)));
+                boolean dragonHover = intersects(mouse, Coord.PT, new Coord(coordToScreenX(DRAGON_ANIM_MID_COORD.x), coordToScreenY(DRAGON_ANIM_MID_COORD.y)), new Coord(sizeToScreenX(DRAGON_ANIM_SIZE.x), sizeToScreenY(DRAGON_ANIM_SIZE.y)));
+                boolean birdHover = intersects(mouse, Coord.PT, new Coord(coordToScreenX(BIRD_ANIM_MID_COORD.x), coordToScreenY(BIRD_ANIM_MID_COORD.y)), new Coord(sizeToScreenX(BIRD_ANIM_SIZE.x), sizeToScreenY(BIRD_ANIM_SIZE.y)));
                 int doctorSpriteNo, dragonSpriteNo, birdSpriteNo;
 
                 if (!doctorHover && !dragonHover && !birdHover && slideCounter != 0) {
@@ -1429,9 +1436,9 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                     birdSpriteNo = Bird.STATE_SPRITE_START[BIRD_ANIM_STATE] + BIRD_STILL_SPRITE_NO;
                 }
 
-                g.drawImage(Doctor.docSprite[doctorSpriteNo], (int) DOCTOR_ANIM_COORD.x, (int) DOCTOR_ANIM_COORD.y, (int) DOCTOR_ANIM_SIZE.x, (int) DOCTOR_ANIM_SIZE.y, null);
-                g.drawImage(Dragon.dragonSprite[dragonSpriteNo], (int) DRAGON_ANIM_COORD.x, (int) DRAGON_ANIM_COORD.y, (int) DRAGON_ANIM_SIZE.x, (int) DRAGON_ANIM_SIZE.y, null);
-                g.drawImage(Bird.birdSprite[birdSpriteNo], (int) BIRD_ANIM_COORD.x, (int) BIRD_ANIM_COORD.y, (int) BIRD_ANIM_SIZE.x, (int) BIRD_ANIM_SIZE.y, null);
+                g.drawImage(Doctor.docSprite[doctorSpriteNo], coordToScreenX(DOCTOR_ANIM_COORD.x), coordToScreenY(DOCTOR_ANIM_COORD.y), sizeToScreenX(DOCTOR_ANIM_SIZE.x), sizeToScreenY(DOCTOR_ANIM_SIZE.y), null);
+                g.drawImage(Dragon.dragonSprite[dragonSpriteNo], coordToScreenX(DRAGON_ANIM_COORD.x), coordToScreenY(DRAGON_ANIM_COORD.y), sizeToScreenX(DRAGON_ANIM_SIZE.x), sizeToScreenY(DRAGON_ANIM_SIZE.y), null);
+                g.drawImage(Bird.birdSprite[birdSpriteNo], coordToScreenX(BIRD_ANIM_COORD.x), coordToScreenY(BIRD_ANIM_COORD.y), sizeToScreenX(BIRD_ANIM_SIZE.x), sizeToScreenY(BIRD_ANIM_SIZE.y), null);
             }
             else if (slideNo == CONTROLS_SLIDE_NO) {
                 drawButtons(controlsButtons.values(), g);
@@ -1465,11 +1472,11 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         }
         else if (gameState == BATTLE_LOG_GS) {
             // Draw background
-            g.drawImage(battleLogBg, 0, 0, (int) SCREEN_SIZE.x, (int) SCREEN_SIZE.y, null);
+            drawFullScreen(battleLogBg, g);
 
             // Draw battle stats board
             if (battleLog.size() == 0) {
-                g.drawImage(noBattle, (int) BATTLE_LOG_SCOREBOARD_COORD.x, (int) BATTLE_LOG_SCOREBOARD_COORD.y, null);
+                g.drawImage(noBattle, coordToScreenX(BATTLE_LOG_SCOREBOARD_COORD.x), coordToScreenY(BATTLE_LOG_SCOREBOARD_COORD.y), null);
             }
             else {
                 battleLog.get(battleNo).drawScoreBoard(BATTLE_LOG_SCOREBOARD_COORD, g);
@@ -1479,8 +1486,9 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
 
             // Draw Battle number
             g.setColor(Color.WHITE);
-            g.setFont(Battle.STATS_FONT);
-            g.drawString((battleNo + 1) + "/" + battleLog.size(), (int) (SCREEN_SIZE.x - g.getFontMetrics().stringWidth((battleNo + 1) + "/" + battleLog.size())) / 2, BATTLE_NO_Y_COORD);
+            g.setFont(fontToScreen(Battle.STATS_FONT));
+            String battleNoText = (battleNo + 1) + "/" + battleLog.size();
+            g.drawString(battleNoText, coordToScreenX(NORM_SCREEN_CENTER.x) - g.getFontMetrics().stringWidth(battleNoText) / 2, coordToScreenY(BATTLE_NO_Y_COORD));
 
             // Draw buttons
             drawButtons(battleLogButtons.values(), g);
@@ -1505,6 +1513,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         }
 
         if (CHEATS) cheatGame(g);
+        if (!DEV_MODE) hideBackrooms(g);
     }
 
     // ASK ABOUT METHODS AND DATA ENCAPSULATION
@@ -1586,7 +1595,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     // Return: Whether or not the object is out of the screen
     // Description: This method returns whether or not an object is completely out of the screen given it's center coordinate and size
     public static boolean outOfScreen(Coord coord, Coord size) {
-        return !intersects(SCREEN_CENTER, SCREEN_SIZE, coord, size, 0);
+        return !intersects(NORM_SCREEN_CENTER, NORM_SCREEN_SIZE, coord, size, 0);
     }
 
     public static Clip loadClip(String dir) throws Exception {
@@ -1614,6 +1623,46 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         } catch (Exception e) {}
     }
 
+    public static int coordToScreenX(double x) {
+        if ((double) screenSize.width / screenSize.height > NORM_ASPECT_RATIO) {
+            return (int) ((screenSize.width - screenSize.height * NORM_ASPECT_RATIO) / 2 + x * screenSize.height / NORM_SCREEN_SIZE.y);
+        }
+        else {
+            return (int) ((screenSize.width - screenSize.width) / 2 + x * screenSize.width / NORM_SCREEN_SIZE.x);
+        }
+    }
+
+    public static int coordToScreenY(double y) {
+        if ((double) screenSize.width / screenSize.height > NORM_ASPECT_RATIO) {
+            return (int) ((screenSize.height - screenSize.height) / 2 + y * screenSize.height / NORM_SCREEN_SIZE.y);
+        }
+        else {
+            return (int) ((screenSize.height - screenSize.width / NORM_ASPECT_RATIO) / 2 + y * screenSize.width / NORM_SCREEN_SIZE.x);
+        }
+    }
+
+    public static int sizeToScreenX(double sizeX) {
+        if ((double) screenSize.width / screenSize.height > NORM_ASPECT_RATIO) {
+            return (int) (screenSize.height * NORM_ASPECT_RATIO / NORM_SCREEN_SIZE.x * sizeX);
+        }
+        else {
+            return (int) (screenSize.width / NORM_SCREEN_SIZE.x * sizeX);
+        }
+    }
+
+    public static int sizeToScreenY(double sizeY) {
+        if ((double) screenSize.width / screenSize.height > NORM_ASPECT_RATIO) {
+            return (int) (screenSize.height / NORM_SCREEN_SIZE.y * sizeY);
+        }
+        else {
+            return (int) (screenSize.width / NORM_ASPECT_RATIO / NORM_SCREEN_SIZE.y * sizeY);
+        }
+    }
+
+    public static Font fontToScreen(Font font) {
+        return new Font(font.getName(), font.getStyle(), sizeToScreenY(font.getSize()));
+    }
+
     // Parameters: None
     // Return: None
     // Description:
@@ -1628,7 +1677,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                 }
 
                 if (pressedKeys.contains(RANDOM_READY_KEY) && gameState == CHOOSE_FIGHT_GS) {
-                    chooseButtons.get(READY_BUTTONO).coord = SCREEN_CENTER.copy();
+                    chooseButtons.get(READY_BUTTONO).coord = NORM_SCREEN_CENTER.copy();
                     chooseButtons.get(READY_BUTTONO).canSee = true;
                     for (int i = 0; i != Omegaman.NUM_PLAYERS; i++) {
                         for (int j = 0; j != Omegaman.LOADOUT_NUM_WEAPONS; j++) {
@@ -1666,12 +1715,12 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         }
 
         if (fpsCntVis) {
-            g.setFont(FPS_FONT);
+            g.setFont(fontToScreen(FPS_FONT));
             g.setColor(Color.BLACK);
             String fpsStr = "FPS: " + curFPS;
-            g.fillRect(0, (int) (SCREEN_SIZE.y - FPS_FONT.getSize() - FPS_TEXT_SPACING * 2), g.getFontMetrics().stringWidth(fpsStr) + FPS_TEXT_SPACING * 2, FPS_FONT.getSize() + FPS_TEXT_SPACING * 2);
+            g.fillRect(coordToScreenX(0), coordToScreenY(NORM_SCREEN_SIZE.y - FPS_FONT.getSize() - FPS_TEXT_SPACING * 2), g.getFontMetrics().stringWidth(fpsStr) + sizeToScreenX(FPS_TEXT_SPACING * 2), sizeToScreenY(FPS_FONT.getSize() + FPS_TEXT_SPACING * 2));
             g.setColor(CHEAT_COLOR);
-            g.drawString(fpsStr, FPS_TEXT_SPACING, (int) (SCREEN_SIZE.y - FPS_TEXT_SPACING));
+            g.drawString(fpsStr, coordToScreenX(FPS_TEXT_SPACING), coordToScreenY(NORM_SCREEN_SIZE.y - FPS_TEXT_SPACING));
 
             frameCounter++;
             if (System.currentTimeMillis() - lastFPSReset > 1000) {
@@ -1679,6 +1728,20 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                 frameCounter = 0;
                 lastFPSReset = System.currentTimeMillis();
             }
+        }
+    }
+
+    public static void hideBackrooms(Graphics g) {
+        g.setColor(Color.BLACK);
+        if ((double) screenSize.width / screenSize.height > NORM_ASPECT_RATIO) {
+            int sideWidth = (int) (screenSize.width - screenSize.height * NORM_ASPECT_RATIO) / 2;
+            g.fillRect(0, 0, sideWidth, screenSize.height);
+            g.fillRect(screenSize.width - sideWidth, 0, sideWidth, screenSize.height);
+        }
+        else {
+            int topHeight = (int) (screenSize.height - screenSize.width / NORM_ASPECT_RATIO) / 2;
+            g.fillRect(0, 0, screenSize.width, topHeight);
+            g.fillRect(0, screenSize.height - topHeight, screenSize.width, topHeight);
         }
     }
 
@@ -2262,54 +2325,54 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
             // Draw ready?
             if (transCounter >= FIGHT_TEXT_LEN) {
                 Coord curReadySize = READY_SIZE.scaledBy(Math.log(COUNTDOWN_LEN - transCounter + 1) / Math.log(COUNTDOWN_LEN - FIGHT_TEXT_LEN + 1));
-                Coord readyCoord = SCREEN_CENTER.add(curReadySize.scaledBy(-0.5));
-                g2.drawImage(countdownText[READY_TEXT], (int) (readyCoord.x), (int) (readyCoord.y), (int) (curReadySize.x), (int) (curReadySize.y), null);
+                Coord readyCoord = NORM_SCREEN_CENTER.add(curReadySize.scaledBy(-0.5));
+                g2.drawImage(countdownText[READY_TEXT], coordToScreenX(readyCoord.x), coordToScreenY(readyCoord.y), sizeToScreenX(curReadySize.x), sizeToScreenY(curReadySize.y), null);
             }
 
             // Draw FIGHT! slam
             else if (transCounter >= FIGHT_TEXT_LEN - FIGHT_TRANS_LEN) {
-                Coord curFightSize = new Coord(lerp(FIGHT_SIZE.y, SCREEN_SIZE.y, (double) (transCounter - (FIGHT_TEXT_LEN - FIGHT_TRANS_LEN)) / FIGHT_TRANS_LEN)); curFightSize.x *= FIGHT_SIZE.x / FIGHT_SIZE.y;
-                Coord fightCoord = SCREEN_CENTER.add(curFightSize.scaledBy(-0.5));
-                g2.drawImage(countdownText[FIGHT_TEXT_START], (int) (fightCoord.x), (int) (fightCoord.y), (int) (curFightSize.x), (int) (curFightSize.y), null);
+                Coord curFightSize = new Coord(lerp(FIGHT_SIZE.y, NORM_SCREEN_SIZE.y, (double) (transCounter - (FIGHT_TEXT_LEN - FIGHT_TRANS_LEN)) / FIGHT_TRANS_LEN)); curFightSize.x *= FIGHT_SIZE.x / FIGHT_SIZE.y;
+                Coord fightCoord = NORM_SCREEN_CENTER.add(curFightSize.scaledBy(-0.5));
+                g2.drawImage(countdownText[FIGHT_TEXT_START], coordToScreenX(fightCoord.x), coordToScreenY(fightCoord.y), sizeToScreenX(curFightSize.x), sizeToScreenY(curFightSize.y), null);
             }
 
             // Draw FIGHT! flashing
             else if (transCounter >= FIGHT_TRANS_LEN) {
-                Coord fightCoord = SCREEN_CENTER.add(FIGHT_SIZE.scaledBy(-0.5));
-                g2.drawImage(countdownText[FIGHT_TEXT_START + transCounter % (FIGHT_FLASH_HZ * 2) / FIGHT_FLASH_HZ], (int) (fightCoord.x), (int) (fightCoord.y),
-                (int) (FIGHT_SIZE.x), (int) (FIGHT_SIZE.y), null);
+                Coord fightCoord = NORM_SCREEN_CENTER.add(FIGHT_SIZE.scaledBy(-0.5));
+                g2.drawImage(countdownText[FIGHT_TEXT_START + transCounter % (FIGHT_FLASH_HZ * 2) / FIGHT_FLASH_HZ], coordToScreenX(fightCoord.x), coordToScreenY(fightCoord.y),
+                sizeToScreenX(FIGHT_SIZE.x), sizeToScreenY(FIGHT_SIZE.y), null);
             }
 
             // Draw FIGHT! slamming out
             else {
-                Coord curFightSize = new Coord(lerp(SCREEN_SIZE.y, FIGHT_SIZE.y, (double) (transCounter) / FIGHT_TRANS_LEN)); curFightSize.x *= FIGHT_SIZE.x / FIGHT_SIZE.y;
-                Coord fightCoord = SCREEN_CENTER.add(curFightSize.scaledBy(-0.5));
-                g2.drawImage(countdownText[FIGHT_TEXT_START], (int) (fightCoord.x), (int) (fightCoord.y), (int) (curFightSize.x), (int) (curFightSize.y), null);
+                Coord curFightSize = new Coord(lerp(NORM_SCREEN_SIZE.y, FIGHT_SIZE.y, (double) (transCounter) / FIGHT_TRANS_LEN)); curFightSize.x *= FIGHT_SIZE.x / FIGHT_SIZE.y;
+                Coord fightCoord = NORM_SCREEN_CENTER.add(curFightSize.scaledBy(-0.5));
+                g2.drawImage(countdownText[FIGHT_TEXT_START], coordToScreenX(fightCoord.x), coordToScreenY(fightCoord.y), sizeToScreenX(curFightSize.x), sizeToScreenY(curFightSize.y), null);
             }
         }
 
         // Game over transition
         else if (transitiono == GAME_OVER) {
-            Coord gameOverCoord = SCREEN_CENTER.add(GAME_OVER_SIZE.scaledBy(-1)); gameOverCoord.y += GAME_OVER_SIZE.y / 2; 
+            Coord gameOverCoord = NORM_SCREEN_CENTER.add(GAME_OVER_SIZE.scaledBy(-1)); gameOverCoord.y += GAME_OVER_SIZE.y / 2; 
 
             // Draw game over text coming in from the sides
             if (transCounter >= GAME_END_LEN - GAME_END_TEXT_TRANS_LEN) {
                 double progress = (double) (transCounter - (GAME_END_LEN - GAME_END_TEXT_TRANS_LEN)) / GAME_END_TEXT_TRANS_LEN;
-                g2.drawImage(gameOver[0], (int) lerp(gameOverCoord.x, -GAME_OVER_SIZE.x, progress), (int) (gameOverCoord.y), null);
-                g2.drawImage(gameOver[1], (int) lerp(SCREEN_CENTER.x, SCREEN_SIZE.x, progress), (int) (gameOverCoord.y), null);
+                g2.drawImage(gameOver[0], coordToScreenX(lerp(gameOverCoord.x, -GAME_OVER_SIZE.x, progress)), coordToScreenY(gameOverCoord.y), sizeToScreenX(GAME_OVER_SIZE.x), sizeToScreenY(GAME_OVER_SIZE.y), null);
+                g2.drawImage(gameOver[1], coordToScreenX(lerp(NORM_SCREEN_CENTER.x, NORM_SCREEN_SIZE.x, progress)), coordToScreenY(gameOverCoord.y), sizeToScreenX(GAME_OVER_SIZE.x), sizeToScreenY(GAME_OVER_SIZE.y), null);
             }
 
             // Draw game over text staying in the middle
             else if (transCounter >= GAME_END_LEN - GAME_END_TEXT_TRANS_LEN - GAME_END_TEXT_LEN) {
-                g2.drawImage(gameOver[0], (int) (gameOverCoord.x), (int) (gameOverCoord.y), null);
-                g2.drawImage(gameOver[1], (int) (SCREEN_CENTER.x), (int) (gameOverCoord.y), null);
+                g2.drawImage(gameOver[0], coordToScreenX(gameOverCoord.x), coordToScreenY(gameOverCoord.y), sizeToScreenX(GAME_OVER_SIZE.x), sizeToScreenY(GAME_OVER_SIZE.y), null);
+                g2.drawImage(gameOver[1], coordToScreenX(NORM_SCREEN_CENTER.x), coordToScreenY(gameOverCoord.y), sizeToScreenX(GAME_OVER_SIZE.x), sizeToScreenY(GAME_OVER_SIZE.y), null);
             }
 
             // Draw game over text fading out
             else if (transCounter >= GAME_END_LEN - GAME_END_TEXT_TRANS_LEN * 2 - GAME_END_TEXT_LEN) {
                 setOpacity((double) (transCounter - (GAME_END_LEN - GAME_END_TEXT_TRANS_LEN * 2 - GAME_END_TEXT_LEN)) / GAME_END_TEXT_TRANS_LEN, g2);
-                g2.drawImage(gameOver[0], (int) (gameOverCoord.x), (int) (gameOverCoord.y), null);
-                g2.drawImage(gameOver[1], (int) (SCREEN_CENTER.x), (int) (gameOverCoord.y), null);
+                g2.drawImage(gameOver[0], coordToScreenX(gameOverCoord.x), coordToScreenY(gameOverCoord.y), sizeToScreenX(GAME_OVER_SIZE.x), sizeToScreenY(GAME_OVER_SIZE.y), null);
+                g2.drawImage(gameOver[1], coordToScreenX(NORM_SCREEN_CENTER.x), coordToScreenY(gameOverCoord.y), sizeToScreenX(GAME_OVER_SIZE.x), sizeToScreenY(GAME_OVER_SIZE.y), null);
                 resetOpacity(g2);
             }
 
@@ -2321,25 +2384,25 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
 
         // Game set transition
         else if (transitiono == GAME_SET) {
-            Coord gameSetCoord = SCREEN_CENTER.add(GAME_SET_SIZE.scaledBy(-1)); gameSetCoord.y += GAME_SET_SIZE.y / 2;
+            Coord gameSetCoord = NORM_SCREEN_CENTER.add(GAME_SET_SIZE.scaledBy(-1)); gameSetCoord.y += GAME_SET_SIZE.y / 2;
             // Draw game set text coming in from the sides
             if (transCounter >= GAME_END_LEN - GAME_END_TEXT_TRANS_LEN) {
                 double progress = (double) (transCounter - (GAME_END_LEN - GAME_END_TEXT_TRANS_LEN)) / GAME_END_TEXT_TRANS_LEN;
-                g2.drawImage(gameSet[0], (int) lerp(gameSetCoord.x, -GAME_SET_SIZE.x, progress), (int) (gameSetCoord.y), null);
-                g2.drawImage(gameSet[1], (int) lerp(SCREEN_CENTER.x, SCREEN_SIZE.x, progress), (int) (gameSetCoord.y), null);
+                g2.drawImage(gameSet[0], coordToScreenX(lerp(gameSetCoord.x, -GAME_SET_SIZE.x, progress)), coordToScreenY(gameSetCoord.y), sizeToScreenX(GAME_SET_SIZE.x), sizeToScreenY(GAME_SET_SIZE.y), null);
+                g2.drawImage(gameSet[1], coordToScreenX(lerp(NORM_SCREEN_CENTER.x, NORM_SCREEN_SIZE.x, progress)), coordToScreenY(gameSetCoord.y), sizeToScreenX(GAME_SET_SIZE.x), sizeToScreenY(GAME_SET_SIZE.y), null);
             }
 
             // Draw game set text staying in the middle
             else if (transCounter >= GAME_END_LEN - GAME_END_TEXT_TRANS_LEN - GAME_END_TEXT_LEN) {
-                g2.drawImage(gameSet[0], (int) (gameSetCoord.x), (int) (gameSetCoord.y), null);
-                g2.drawImage(gameSet[1], (int) (SCREEN_CENTER.x), (int) (gameSetCoord.y), null);
+                g2.drawImage(gameSet[0], coordToScreenX(gameSetCoord.x), coordToScreenY(gameSetCoord.y), sizeToScreenX(GAME_SET_SIZE.x), sizeToScreenY(GAME_SET_SIZE.y), null);
+                g2.drawImage(gameSet[1], coordToScreenX(NORM_SCREEN_CENTER.x), coordToScreenY(gameSetCoord.y), sizeToScreenX(GAME_SET_SIZE.x), sizeToScreenY(GAME_SET_SIZE.y), null);
             }
 
             // Draw game set text fading out
             else if (transCounter >= GAME_END_LEN - GAME_END_TEXT_TRANS_LEN * 2 - GAME_END_TEXT_LEN) {
                 setOpacity((double) (transCounter - (GAME_END_LEN - GAME_END_TEXT_TRANS_LEN * 2 - GAME_END_TEXT_LEN)) / GAME_END_TEXT_TRANS_LEN, g2);
-                g2.drawImage(gameSet[0], (int) (gameSetCoord.x), (int) (gameSetCoord.y), null);
-                g2.drawImage(gameSet[1], (int) (SCREEN_CENTER.x), (int) (gameSetCoord.y), null);
+                g2.drawImage(gameSet[0], coordToScreenX(gameSetCoord.x), coordToScreenY(gameSetCoord.y), sizeToScreenX(GAME_SET_SIZE.x), sizeToScreenY(GAME_SET_SIZE.y), null);
+                g2.drawImage(gameSet[1], coordToScreenX(NORM_SCREEN_CENTER.x), coordToScreenY(gameSetCoord.y), sizeToScreenX(GAME_SET_SIZE.x), sizeToScreenY(GAME_SET_SIZE.y), null);
                 resetOpacity(g2);
             }
 
@@ -2352,7 +2415,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         // Results counting up transition
         else if (transitiono == RESULTS_COUNTING) {
             // Draw stats
-            battleDone.drawScoreBoard(new Coord(SCREEN_CENTER.x - Battle.SCOREBOARD_SIZE.x / 2, RESULTS_EDGE_SPACING + RESULTS_TITLE_SIZE.y + RESULTS_SPACING), 1 - (double) transCounter / RESULTS_COUNTING_LEN, g2);
+            battleDone.drawScoreBoard(new Coord(NORM_SCREEN_CENTER.x - Battle.SCOREBOARD_SIZE.x / 2, RESULTS_EDGE_SPACING + RESULTS_TITLE_SIZE.y + RESULTS_SPACING), 1 - (double) transCounter / RESULTS_COUNTING_LEN, g2);
             
             // Fade in
             if (transCounter >= RESULTS_COUNTING_LEN - RESULTS_FADE_LEN) {
@@ -2364,7 +2427,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         else if (transitiono == PAUSE) {
             // Draw paused background and paused buttons
             setOpacity(1 - (double) transCounter / PAUSE_FADE_LEN, g2);
-            g2.drawImage(pausedBg, 0, 0, (int) SCREEN_SIZE.x, (int) SCREEN_SIZE.y, null);
+            drawFullScreen(pausedBg, g2);
             drawButtons(pauseButtons.values(), g2);
             resetOpacity(g2);
             
@@ -2390,8 +2453,8 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
                         else if (transCounter < studioNameEndDrawTime + STUDIO_FADE_LEN) {
                             setOpacity((double) (transCounter - (studioNameEndDrawTime)) / STUDIO_FADE_LEN, g2);
                         }
-                        Coord studioLogoCoord = SCREEN_CENTER.add(STUDIO_LOGO_SIZE.scaledBy(-0.5));
-                        g2.drawImage(studioLogo, (int) (studioLogoCoord.x), (int) (studioLogoCoord.y), null);
+                        Coord studioLogoCoord = NORM_SCREEN_CENTER.add(STUDIO_LOGO_SIZE.scaledBy(-0.5));
+                        g2.drawImage(studioLogo, coordToScreenX(studioLogoCoord.x), coordToScreenY(studioLogoCoord.y), sizeToScreenX(STUDIO_LOGO_SIZE.x), sizeToScreenY(STUDIO_LOGO_SIZE.y), null);
                         resetOpacity(g2);
                     }
                 }
@@ -2417,8 +2480,8 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
 
                 // Slam number
                 double progress = 1 - (double) (transCounter) / NUM_SLAM_LEN;
-                Coord curSize = new Coord(lerp(TITLE_NUM_SIZE.x * SCREEN_SIZE.y / TITLE_NUM_SIZE.y, TITLE_NUM_SIZE.x, progress), lerp(SCREEN_SIZE.y, TITLE_NUM_SIZE.y, progress));
-                g2.drawImage(titleNum, (int) (SCREEN_CENTER.x - curSize.x / 2), (int) (TITLE_NUM_CENTRE_Y - curSize.y / 2), (int) curSize.x, (int) curSize.y, null);
+                Coord curSize = new Coord(lerp(TITLE_NUM_SIZE.x * NORM_SCREEN_SIZE.y / TITLE_NUM_SIZE.y, TITLE_NUM_SIZE.x, progress), lerp(NORM_SCREEN_SIZE.y, TITLE_NUM_SIZE.y, progress));
+                g2.drawImage(titleNum, coordToScreenX(NORM_SCREEN_CENTER.x - curSize.x / 2), coordToScreenY(TITLE_NUM_CENTRE_Y - curSize.y / 2), sizeToScreenX(curSize.x), sizeToScreenY(curSize.y), null);
             }
         }
 
@@ -2435,22 +2498,26 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         else if (transitiono == RULES) {
             setOpacity(1 - (double) Math.abs(transCounter) / RULES_FADE_LEN, g2);
 
-            g2.drawImage(rulesBg, 0, 0, (int) SCREEN_SIZE.x, (int) SCREEN_SIZE.y, null);
+            drawFullScreen(rulesBg, g2);
             drawButtons(rulesButtons.values(), g2);
-            g2.setFont(GAMEMODE_DESC_FONT);
-            int descBarSizeX = SPACING * 2 + g2.getFontMetrics().stringWidth(GAMEMODE_DESC[gameMode]);
-            int descBarCoordX = (int) SCREEN_SIZE.x - descBarSizeX;
-            g2.drawImage(gameModeDescBar, descBarCoordX, GAMEMODE_DESC_BAR_Y, descBarSizeX, GAMEMODE_DESC_BAR_SIZE_Y, null);
-            g2.drawImage(gameModeDescEnd, descBarCoordX - GAMEMODE_DESC_END_SIZE_X, GAMEMODE_DESC_BAR_Y, null);
-            g2.drawString(GAMEMODE_DESC[gameMode], descBarCoordX + SPACING, GAMEMODE_DESC_MID_Y + Button.getAccWordSize(GAMEMODE_DESC_FONT.getSize()) / 2);
+            g2.setFont(fontToScreen(GAMEMODE_DESC_FONT));
+            int descBarSizeX = sizeToScreenX(SPACING * 2) + g2.getFontMetrics().stringWidth(GAMEMODE_DESC[gameMode]);
+            int descBarCoordX = coordToScreenX(NORM_SCREEN_SIZE.x) - descBarSizeX;
+            g2.drawImage(gameModeDescBar, descBarCoordX, coordToScreenY(GAMEMODE_DESC_BAR_Y), descBarSizeX, sizeToScreenY(GAMEMODE_DESC_BAR_SIZE_Y), null);
+            g2.drawImage(gameModeDescEnd, descBarCoordX - sizeToScreenX(GAMEMODE_DESC_END_SIZE_X), coordToScreenY(GAMEMODE_DESC_BAR_Y), sizeToScreenX(GAMEMODE_DESC_END_SIZE_X), sizeToScreenY(GAMEMODE_DESC_BAR_SIZE_Y), null);
+            g2.drawString(GAMEMODE_DESC[gameMode], descBarCoordX + sizeToScreenX(SPACING), coordToScreenY(GAMEMODE_DESC_MID_Y + Button.getAccWordSize(fontToScreen(GAMEMODE_DESC_FONT).getSize()) / 2));
             resetOpacity(g2);
         }
 
         else if (transitiono == CHANGE_KEY_BIND) {
             setOpacity(1 - (double) transCounter / CHANGE_KEY_BIND_FADE_LEN, g2);
-            g2.drawImage(bindKeyOverlay, 0, 0, (int) SCREEN_SIZE.x, (int) SCREEN_SIZE.y, null);
+            drawFullScreen(bindKeyOverlay, g2);
             resetOpacity(g2);
         }
+    }
+
+    public static void drawFullScreen(BufferedImage img, Graphics g) {
+        g.drawImage(img, coordToScreenX(0), coordToScreenY(0), sizeToScreenX(NORM_SCREEN_SIZE.x), sizeToScreenY(NORM_SCREEN_SIZE.y), null);
     }
 
     // Parameters:
@@ -2461,7 +2528,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     // This method draws a black fade effect on the entire screen using the given Graphics object
     public static void drawFade(double amt, Graphics g) {
         g.setColor(new Color(0, 0, 0, (int) (MAX_RGB_VAL * amt)));
-        g.fillRect(0, 0, (int) SCREEN_SIZE.x, (int) SCREEN_SIZE.y);
+        g.fillRect(coordToScreenX(0), coordToScreenY(0), sizeToScreenX(NORM_SCREEN_SIZE.x), sizeToScreenY(NORM_SCREEN_SIZE.y));
     }
 
     // Parameters:
@@ -2472,7 +2539,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     // This method draws a white flash effect on the entire screen using the given Graphics object
     public static void drawFlash(double amt, Graphics g) {
         g.setColor(new Color(255, 255, 255, (int) (MAX_RGB_VAL * amt)));
-        g.fillRect(0, 0, (int) SCREEN_SIZE.x, (int) SCREEN_SIZE.y);
+        g.fillRect(coordToScreenX(0), coordToScreenY(0), sizeToScreenX(NORM_SCREEN_SIZE.x), sizeToScreenY(NORM_SCREEN_SIZE.y));
     }
 
     // Parameters: None

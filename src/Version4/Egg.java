@@ -63,10 +63,10 @@ public class Egg extends Projectile{
 
     // Description: Draws the egg object
     public void draw(Graphics2D g2) {
-        g2.rotate(rotation, coord.x, coord.y);
+        g2.rotate(rotation, OmegaFight3.coordToScreenX(coord.x), OmegaFight3.coordToScreenY(coord.y));
         Coord drawCoord = coord.add(size.scaledBy(-0.5));
-        g2.drawImage(images[state][type][frameCounter / SPRITE_CHANGE_HZ], (int) (drawCoord.x), (int) (drawCoord.y), (int) size.x, (int) size.y, null);
-        g2.rotate(-rotation, coord.x, coord.y);
+        g2.drawImage(images[state][type][frameCounter / SPRITE_CHANGE_HZ], OmegaFight3.coordToScreenX(drawCoord.x), OmegaFight3.coordToScreenY(drawCoord.y), OmegaFight3.sizeToScreenX(size.x), OmegaFight3.sizeToScreenY(size.y), null);
+        g2.rotate(-rotation, OmegaFight3.coordToScreenX(coord.x), OmegaFight3.coordToScreenY(coord.y));
         super.draw(g2);
     }
 
@@ -85,7 +85,7 @@ public class Egg extends Projectile{
         owner.smokeQ.add(new Smoke(coord.copy(), new Coord(Math.max(size.x, size.y) * SIZE_TO_SMOKE)));
 
         // Check if out of screen
-        if (coord.x < -size.x / 2 || coord.x > OmegaFight3.SCREEN_SIZE.x + size.x / 2 || coord.y > OmegaFight3.SCREEN_SIZE.y + size.y / 2) {
+        if (coord.x < -size.x / 2 || coord.x > OmegaFight3.NORM_SCREEN_SIZE.x + size.x / 2 || coord.y > OmegaFight3.NORM_SCREEN_SIZE.y + size.y / 2) {
             die();
         }
         else {
@@ -157,10 +157,10 @@ class Feather extends Projectile {
 
     // Description: THis method draws the pellet of energy on screen
     public void draw(Graphics2D g2) {
-        g2.rotate(dir, coord.x, coord.y);
+        g2.rotate(dir, OmegaFight3.coordToScreenX(coord.x), OmegaFight3.coordToScreenY(coord.y));
         Coord drawCoord = coord.add(size.scaledBy(-0.5));
-        g2.drawImage(images[-frameCounter / SPRITE_CHANGE_HZ], (int) (drawCoord.x), (int) (drawCoord.y), (int) size.x, (int) size.y, null);
-        g2.rotate(-dir, coord.x, coord.y);
+        g2.drawImage(images[-frameCounter / SPRITE_CHANGE_HZ], OmegaFight3.coordToScreenX(drawCoord.x), OmegaFight3.coordToScreenY(drawCoord.y), OmegaFight3.sizeToScreenX(size.x), OmegaFight3.sizeToScreenY(size.y), null);
+        g2.rotate(-dir, OmegaFight3.coordToScreenX(coord.x), OmegaFight3.coordToScreenY(coord.y));
         super.draw(g2);
     }
 
@@ -248,9 +248,9 @@ class Diver extends Projectile {
 
     // Description: This method draws the bombot
     public void draw(Graphics2D g2) {
-        g2.rotate(dir, coord.x, coord.y);
-        g2.drawImage(images[-frameCounter / SPRITE_CHANGE_HZ], (int) (coord.x - size.x / 2), (int) (coord.y - size.y / 2 * sign), (int) size.x, (int) size.y * sign, null);
-        g2.rotate(-dir, coord.x, coord.y);
+        g2.rotate(dir, OmegaFight3.coordToScreenX(coord.x), OmegaFight3.coordToScreenY(coord.y));
+        g2.drawImage(images[-frameCounter / SPRITE_CHANGE_HZ], OmegaFight3.coordToScreenX(coord.x - size.x / 2), OmegaFight3.coordToScreenY(coord.y - size.y / 2 * sign), OmegaFight3.sizeToScreenX(size.x), OmegaFight3.sizeToScreenY(size.y) * sign, null);
+        g2.rotate(-dir, OmegaFight3.coordToScreenX(coord.x), OmegaFight3.coordToScreenY(coord.y));
         super.draw(g2);
     }
 
@@ -348,10 +348,10 @@ class Plush extends Projectile {
     // Description: THis method draws the plush on screen
     public void draw(Graphics2D g2) {
         if (state != DEAD) {
-            g2.rotate(dir, coord.x, coord.y);
+            g2.rotate(dir, OmegaFight3.coordToScreenX(coord.x), OmegaFight3.coordToScreenY(coord.y));
             Coord drawCoord = coord.add(size.scaledBy(-0.5));
-            g2.drawImage(images[state][frameCounter / SPRITE_CHANGE_HZ], (int) (drawCoord.x), (int) (drawCoord.y), (int) size.x, (int) size.y, null);
-            g2.rotate(-dir, coord.x, coord.y);
+            g2.drawImage(images[state][frameCounter / SPRITE_CHANGE_HZ], OmegaFight3.coordToScreenX(drawCoord.x), OmegaFight3.coordToScreenY(drawCoord.y), OmegaFight3.sizeToScreenX(size.x), OmegaFight3.sizeToScreenY(size.y), null);
+            g2.rotate(-dir, OmegaFight3.coordToScreenX(coord.x), OmegaFight3.coordToScreenY(coord.y));
             super.draw(g2);
         }
     }

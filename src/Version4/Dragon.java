@@ -16,9 +16,9 @@ public class Dragon extends Boss{
     public static final int TRANS_TIME = 120;
     public static final Coord[] STATE_SIZE = {new Coord(880, 700), new Coord(660, 835), new Coord(530, 900), new Coord(690, 850)};
     public static final int[] STATE_SPRITE_HZ = {5, 5, 5, 7};
-    public static final Coord[] STATE_COORD = {null, new Coord(OmegaFight3.SCREEN_SIZE.x / 8, OmegaFight3.SCREEN_SIZE.y * 5 / 8),
-        new Coord(OmegaFight3.SCREEN_SIZE.x / 8, OmegaFight3.SCREEN_SIZE.y * 5 / 8),
-        new Coord(OmegaFight3.SCREEN_SIZE.x * 7 / 8, STATE_SIZE[BARF].y / 2)};
+    public static final Coord[] STATE_COORD = {null, new Coord(OmegaFight3.NORM_SCREEN_SIZE.x / 8, OmegaFight3.NORM_SCREEN_SIZE.y * 5 / 8),
+        new Coord(OmegaFight3.NORM_SCREEN_SIZE.x / 8, OmegaFight3.NORM_SCREEN_SIZE.y * 5 / 8),
+        new Coord(OmegaFight3.NORM_SCREEN_SIZE.x * 7 / 8, STATE_SIZE[BARF].y / 2)};
     public static final int[] STATE_TIME = {0, 60, 375, 336};
     public static final String[] STATE_NAME = {"dizzy", "barf"};
 
@@ -111,7 +111,7 @@ public class Dragon extends Boss{
         if (health <= INIT_HEALTH  * BUBBLE_THRESHOLD) {
             bubbleCounter++;
             if (bubbleCounter >= Math.max(MIN_BUBBLE_HZ, BUBBLE_HZ * health / (INIT_HEALTH  * BUBBLE_THRESHOLD) / difficultyMult)) {
-                OmegaFight3.projectiles.add(new Bubble(this, new Coord(OmegaFight3.randomSign() * (OmegaFight3.SCREEN_CENTER.x + Bubble.SIZE.x / 2) + OmegaFight3.SCREEN_CENTER.x, OmegaFight3.SCREEN_SIZE.y - Bubble.SIZE.y / 2)));
+                OmegaFight3.projectiles.add(new Bubble(this, new Coord(OmegaFight3.randomSign() * (OmegaFight3.NORM_SCREEN_CENTER.x + Bubble.SIZE.x / 2) + OmegaFight3.NORM_SCREEN_CENTER.x, OmegaFight3.NORM_SCREEN_SIZE.y - Bubble.SIZE.y / 2)));
                 bubbleCounter = 0;
                 OmegaFight3.play(Bubble.bububup);
             }
@@ -121,7 +121,7 @@ public class Dragon extends Boss{
         if (health <= INIT_HEALTH  * FIRE_THRESHOLD) {
             fireCounter++;
             if (fireCounter >= Math.max(MIN_FIRE_HZ, FIRE_HZ * health / (INIT_HEALTH  * FIRE_THRESHOLD) / difficultyMult)) {
-                OmegaFight3.projectiles.add(new Fire(this, new Coord(Math.random() * (OmegaFight3.SCREEN_SIZE.x - Fire.SIZE.x) + Fire.SIZE.x / 2, 0), Math.PI / 2));
+                OmegaFight3.projectiles.add(new Fire(this, new Coord(Math.random() * (OmegaFight3.NORM_SCREEN_SIZE.x - Fire.SIZE.x) + Fire.SIZE.x / 2, 0), Math.PI / 2));
                 fireCounter = 0;
                 OmegaFight3.play(Fire.foosh);
             }
