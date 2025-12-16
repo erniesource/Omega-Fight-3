@@ -973,7 +973,7 @@ public class Omegaman extends Char {
     }
 
     // Description: This method calculates teh respawn of the player
-    public void respawn(boolean dwnPressed)  {
+    public void respawn(HashSet<Integer> pressedKeys)  {
         // Bring down player from bottom of screen
         if (velocity.y != 0) {
             velocity.y--;
@@ -981,7 +981,7 @@ public class Omegaman extends Char {
         }
 
         // Check for respawn button press and respawn if so
-        else if (dwnPressed || frameCounter == OmegaFight3.SURGE_TIME + RESPAWN_PAUSE + RESPAWN_INIT_VELOCITY + RESPAWN_TIME_LIMIT) {
+        else if (pressedKeys.contains(upKey) || pressedKeys.contains(lftKey) || pressedKeys.contains(dwnKey) || pressedKeys.contains(ritKey) || frameCounter == OmegaFight3.SURGE_TIME + RESPAWN_PAUSE + RESPAWN_INIT_VELOCITY + RESPAWN_TIME_LIMIT) {
             state = ALIVE_STATE;
             frameCounter = 0;
             spriteNo = JUMP_SPRITE;

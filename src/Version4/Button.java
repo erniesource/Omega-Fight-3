@@ -19,6 +19,8 @@ public class Button {
     public static final double SHADOW_OFFSET = 0.05;
     public static final int NO_BUTTON_NUM = -1;
     public static final double FONT_SIZE_TO_ACC_SIZE = 0.9;
+    public static final Font HOVER_FONT = new Font("Consolas", Font.PLAIN, 20);
+    public static final Color HOVER_COLOR = new Color(183, 183, 183);
 
     // Sounds
     public static Clip hover;
@@ -35,6 +37,7 @@ public class Button {
     public int style;
     public boolean canSee;
     public boolean canUse;
+    public String hoverText;
 
     // Constructors order from most customized to most general
     public Button(BufferedImage image, Font font, Coord coord, Coord size, String text, int num, int style, boolean canSee, boolean canUse) {
@@ -59,6 +62,11 @@ public class Button {
         this.num = num;
         this.canSee = canSee;
         this.canUse = canUse;
+    }
+
+    public Button(BufferedImage image, Coord coord, Coord size, String hoverText, int num) {
+        this(image, coord, size, num);
+        this.hoverText = hoverText;
     }
 
     public Button(BufferedImage image, Coord coord, Coord size, int num) {
@@ -94,6 +102,22 @@ public class Button {
                     g.drawString(text, OmegaFight3.coordToScreenX(coord.x) - strWidth / 2, OmegaFight3.coordToScreenY(buttonBottom - font[state].getSize() / 2 - HIGHLIGHT_SPACING_Y) + accFontSize / 2);
                 }
             }
+        }
+    }
+
+    public void drawHoverText(Coord mouse, Graphics g) {
+        if (state == HOVERED && hoverText != null) {
+            g.setFont(OmegaFight3.fontToScreen(HOVER_FONT));
+            g.setColor(HOVER_COLOR);
+            int strWidth = g.getFontMetrics().stringWidth(hoverText);
+            int accFontSize = OmegaFight3.sizeToScreenY(getAccWordSize(HOVER_FONT.getSize()));;
+            double highlightSizeX = strWidth + OmegaFight3.sizeToScreenX(HOVER_FONT.getSize() * FONT_SIZE_TO_HIGHLIGHT_BUFFER_X);
+            Coord botRitMouse = mouse.add(OmegaFight3.MOUSE_SIZE);
+            botRitMouse.x = OmegaFight3.clamp(botRitMouse.x, 0, OmegaFight3.screenSize.width - highlightSizeX);
+            botRitMouse.y = OmegaFight3.clamp(botRitMouse.y, 0, OmegaFight3.screenSize.height - OmegaFight3.sizeToScreenY(HOVER_FONT.getSize()));
+            g.fillRect((int) (botRitMouse.x), (int) (botRitMouse.y), (int) highlightSizeX, OmegaFight3.sizeToScreenY(HOVER_FONT.getSize()));
+            g.setColor(Color.BLACK);
+            g.drawString(hoverText, (int) (botRitMouse.x + highlightSizeX / 2 - strWidth / 2), (int) (botRitMouse.y + OmegaFight3.sizeToScreenY(HOVER_FONT.getSize()) / 2 + accFontSize / 2));
         }
     }
 
