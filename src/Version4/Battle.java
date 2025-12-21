@@ -178,8 +178,17 @@ public class Battle {
     private void drawBossHealth(Coord bossHealthStrCoord, double progress, Graphics g) {
         g.setFont(OmegaFight3.fontToScreen(STATS_FONT));
         g.setColor(GOLD); // Change color if didn't kill?
-        String bossHealthStr = bossHealth == 0? "BOSSES DEFEATED!!": String.format("%.1f BOSS HEALTH REMAINED...", bossHealth * progress);
+        String bossHealthStr = bossHealth == 0? "BOSSES DEFEATED!!": String.format("%.1f/%.1f BOSS HEALTH LEFT...", bossHealth * progress, OmegaFight3.BOSS_INIT_HEALTH[getStageNo()] / Omegaman.PERC_MULT * Math.pow(OmegaFight3.DIFFICULTY_MULT[difficulty], OmegaFight3.DIFFICULTY_MULT_TO_BOSS_HEALTH));
         g.drawString(bossHealthStr, OmegaFight3.coordToScreenX(bossHealthStrCoord.x) - g.getFontMetrics().stringWidth(bossHealthStr) / 2, OmegaFight3.coordToScreenY(bossHealthStrCoord.y));
+    }
+
+    private int getStageNo() {
+        for (int i = 0; i != OmegaFight3.NUM_STAGES; i++) {
+            if (OmegaFight3.STAGE_NAME[i].equals(stageName)) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     private void drawStat(Coord firstStatCoord, int rowNum, int playerNo, int statNo, double progress, Graphics g) {
@@ -208,7 +217,7 @@ public class Battle {
         else {
             for (int i = 0; i != Omegaman.NUM_PLAYERS; i++) {
                 if (winner == i) {
-                    winnerStr = "P" + i + " WINS!!";
+                    winnerStr = "P" + (i + 1) + " WINS!!";
                     g.setColor(PLAYER_COLOR[i]);
                 }
             }

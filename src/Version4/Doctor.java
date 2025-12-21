@@ -5,7 +5,6 @@ import javax.sound.sampled.*;
 
 public class Doctor extends Boss {
     // Combat constants
-    public static final double INIT_HEALTH = (OmegaFight3.DEV_MODE? 100: 700) * Omegaman.PERC_MULT;
     public static final double SIZE_TO_HITBOX = 0.4;
     public static final double SIZE_TO_HURTBOX = 0.8;
 
@@ -64,7 +63,7 @@ public class Doctor extends Boss {
 
     // Constructor
     public Doctor() {
-        super(docSprite, STATE_COORD, STATE_SIZE, STATE_SPRITE_HZ, STATE_TIME, STATE_SPRITE_START, STATE_SPRITE_SIGN, STATE_NUM_SPRITES, INIT_HEALTH * Math.pow(OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty], OmegaFight3.DIFFICULTY_MULT_TO_BOSS_HEALTH), SIZE_TO_HITBOX, SIZE_TO_HURTBOX, SIZE_TO_FIRE, IDLE, NUM_STATES, TRANS_TIME);
+        super(docSprite, STATE_COORD, STATE_SIZE, STATE_SPRITE_HZ, STATE_TIME, STATE_SPRITE_START, STATE_SPRITE_SIGN, STATE_NUM_SPRITES, OmegaFight3.BOSS_INIT_HEALTH[OmegaFight3.BATTLEFIELD_NO] * Math.pow(OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty], OmegaFight3.DIFFICULTY_MULT_TO_BOSS_HEALTH), SIZE_TO_HITBOX, SIZE_TO_HURTBOX, SIZE_TO_FIRE, IDLE, NUM_STATES, TRANS_TIME);
     }
 
     // Description: This method calculates the attacks of the Doctor
@@ -115,9 +114,9 @@ public class Doctor extends Boss {
     public void backgroundAttack() {
         double difficultyMult = OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty];
         // Pincer attack
-        if (health <= INIT_HEALTH  * PINCER_THRESHOLD) {
+        if (health <= OmegaFight3.BOSS_INIT_HEALTH[OmegaFight3.BATTLEFIELD_NO]  * PINCER_THRESHOLD) {
             pincerCounter++;
-            if (pincerCounter >= Math.max(MIN_PINCER_HZ, PINCER_HZ * health / (INIT_HEALTH  * PINCER_THRESHOLD)) / difficultyMult) {
+            if (pincerCounter >= Math.max(MIN_PINCER_HZ, PINCER_HZ * health / (OmegaFight3.BOSS_INIT_HEALTH[OmegaFight3.BATTLEFIELD_NO]  * PINCER_THRESHOLD)) / difficultyMult) {
                 OmegaFight3.projectiles.add(new Pincer(this, new Coord((int) (Math.random() * 2) * OmegaFight3.NORM_SCREEN_SIZE.x, (int) (Math.random() * 2) * OmegaFight3.NORM_SCREEN_SIZE.y)));
                 pincerCounter = 0;
                 OmegaFight3.play(Pincer.zzzClick);
@@ -125,9 +124,9 @@ public class Doctor extends Boss {
         }
 
         // Homing missile attack
-        if (health <= INIT_HEALTH  * BOMBOT_THRESHOLD) {
+        if (health <= OmegaFight3.BOSS_INIT_HEALTH[OmegaFight3.BATTLEFIELD_NO]  * BOMBOT_THRESHOLD) {
             bombotCounter++;
-            if (bombotCounter >= Math.max(MIN_BOMBOT_HZ, BOMBOT_HZ * health / (INIT_HEALTH  * BOMBOT_THRESHOLD)) / difficultyMult) {
+            if (bombotCounter >= Math.max(MIN_BOMBOT_HZ, BOMBOT_HZ * health / (OmegaFight3.BOSS_INIT_HEALTH[OmegaFight3.BATTLEFIELD_NO]  * BOMBOT_THRESHOLD)) / difficultyMult) {
                 int sign = OmegaFight3.randomSign();
                 OmegaFight3.projectiles.add(new Bombot(this, new Coord(OmegaFight3.NORM_SCREEN_CENTER.x - (OmegaFight3.NORM_SCREEN_CENTER.x + Bombot.SIZE.x / 2) * sign, OmegaFight3.NORM_SCREEN_SIZE.y * Math.random()), OmegaFight3.signToRadians(sign), sign));
                 bombotCounter = 0;

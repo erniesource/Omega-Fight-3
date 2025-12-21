@@ -7,6 +7,10 @@ import javax.imageio.ImageIO;
 import javax.sound.sampled.*;
 
 public class Stage {
+    // Constants
+    public static final String STAGE_DIR = "stages/";
+    public static final String MUSIC_DIR = "music/";
+
     // Instance variables
     public BufferedImage image;
     public Platform[] platforms; // Make an arraylist? not yet
@@ -19,7 +23,7 @@ public class Stage {
 
     // Constructor (Also imports music and background)
     public Stage(String stageName, Platform[] platforms, Coord[] spawnCoords, int[] spawnSpriteSign, int[] spawnPlatformNo, int buttono) throws IOException {
-        image = ImageIO.read(new File("stages/" + stageName + ".jpg"));
+        image = ImageIO.read(new File(STAGE_DIR + stageName + ".jpg"));
         this.stageName = stageName;
         this.platforms = platforms;
         this.spawnCoords = spawnCoords;
@@ -28,7 +32,7 @@ public class Stage {
         this.buttono = buttono;
 
         try {
-            music = OmegaFight3.loadClip("music/" + stageName + " music.wav");
+            music = OmegaFight3.loadClip(MUSIC_DIR + stageName + " music.wav");
         }
         catch (Exception e) {}
     }

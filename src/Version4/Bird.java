@@ -6,7 +6,6 @@ import javax.sound.sampled.*;
 
 public class Bird extends Boss {
     // Combat constants
-    public static final double INIT_HEALTH = (OmegaFight3.DEV_MODE? 100: 700) * Omegaman.PERC_MULT;
     public static final double SIZE_TO_HITBOX = 0.5;
     public static final double SIZE_TO_HURTBOX = 0.6;
 
@@ -77,7 +76,7 @@ public class Bird extends Boss {
 
     // Constructor
     public Bird() {
-        super(birdSprite, STATE_COORD, STATE_SIZE, STATE_SPRITE_HZ, STATE_TIME, STATE_SPRITE_START, STATE_SPRITE_SIGN, STATE_NUM_SPRITES, INIT_HEALTH * Math.pow(OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty], OmegaFight3.DIFFICULTY_MULT_TO_BOSS_HEALTH), SIZE_TO_HITBOX, SIZE_TO_HURTBOX, SIZE_TO_FIRE, IDLE, NUM_STATES, TRANS_TIME);
+        super(birdSprite, STATE_COORD, STATE_SIZE, STATE_SPRITE_HZ, STATE_TIME, STATE_SPRITE_START, STATE_SPRITE_SIGN, STATE_NUM_SPRITES, OmegaFight3.BOSS_INIT_HEALTH[OmegaFight3.NORTH_CAVE_NO] * Math.pow(OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty], OmegaFight3.DIFFICULTY_MULT_TO_BOSS_HEALTH), SIZE_TO_HITBOX, SIZE_TO_HURTBOX, SIZE_TO_FIRE, IDLE, NUM_STATES, TRANS_TIME);
     }
 
     // Description: This method calculates the attacks of the bird
@@ -111,7 +110,7 @@ public class Bird extends Boss {
     public void backgroundAttack() {
         double difficultyMult = OmegaFight3.DIFFICULTY_MULT[OmegaFight3.difficulty];
         // Diver attack
-        if (health <= INIT_HEALTH  * WAVE_THRESHOLD) {
+        if (health <= OmegaFight3.BOSS_INIT_HEALTH[OmegaFight3.NORTH_CAVE_NO]  * WAVE_THRESHOLD) {
             waveCounter++;
             if (waving != NOT_WAVING) {
                 if (waveCounter % ((WAVE_TIME - WARN_TIME) / DIVER_PER_WAVE) == 0 && waveCounter > WARN_TIME) {
@@ -122,7 +121,7 @@ public class Bird extends Boss {
                     waveCounter = 0;
                 }
             }
-            else if (waveCounter >= Math.max(MIN_WAVE_HZ, WAVE_HZ * health / (INIT_HEALTH  * WAVE_THRESHOLD) / difficultyMult)) {
+            else if (waveCounter >= Math.max(MIN_WAVE_HZ, WAVE_HZ * health / (OmegaFight3.BOSS_INIT_HEALTH[OmegaFight3.NORTH_CAVE_NO]  * WAVE_THRESHOLD) / difficultyMult)) {
                 waving = OmegaFight3.randomSign();
                 waveCounter = 0;
                 OmegaFight3.play(Diver.fwoot);
@@ -130,9 +129,9 @@ public class Bird extends Boss {
         }
 
         // Punk attack
-        if (health <= INIT_HEALTH  * PUNK_THRESHOLD && numPunks != MAX_PUNK) {
+        if (health <= OmegaFight3.BOSS_INIT_HEALTH[OmegaFight3.NORTH_CAVE_NO]  * PUNK_THRESHOLD && numPunks != MAX_PUNK) {
             punkCounter++;
-            if (punkCounter >= Math.max(MIN_PUNK_HZ, PUNK_HZ * health / (INIT_HEALTH  * PUNK_THRESHOLD) / difficultyMult)) {
+            if (punkCounter >= Math.max(MIN_PUNK_HZ, PUNK_HZ * health / (OmegaFight3.BOSS_INIT_HEALTH[OmegaFight3.NORTH_CAVE_NO]  * PUNK_THRESHOLD) / difficultyMult)) {
                 OmegaFight3.babyBosses.addLast(new Pair<>(0, new Punk(this, coord.copy(), -spriteSign)));
                 punkCounter = 0;
                 numPunks++;
