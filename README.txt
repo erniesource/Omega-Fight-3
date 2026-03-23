@@ -1,4 +1,20 @@
-(Sorry for the long read)
+INSTALL INSTRUCTIONS:
+
+1) Install Java if you haven't yet (www.java.com/en/download/)
+
+2) Download game files
+
+3) Unzip files wherever you want
+
+4) Open "Omega Fight 3 Release Version" Folder
+
+5) Double click "Omega Fight 3 Release Version.jar"
+
+6) Read Slideshow in game up to slide "Stats for Nerds" if you haven't played (and also to change controls if you don't have a numpad)
+
+7) Fight!!!
+
+STUFF FOR NERDS (Don't need to read if you just want to play and have some fun)
 HOW TO PLAY:
 1) Select your weapons
     - Players may not have duplicate weapons (even between players there cannot be duplicates)

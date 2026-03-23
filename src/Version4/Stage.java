@@ -75,9 +75,9 @@ class Coord { // Note: Coord is actually more of a Vector, but Vector has alread
     // Constructor that initializes origin
     public Coord() {}
 
-    public Coord(double xy) {
-        x = xy;
-        y = xy;
+    public Coord(double xAndY) {
+        x = xAndY;
+        y = xAndY;
     }
 
     // More specifid constructor

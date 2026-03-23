@@ -113,8 +113,8 @@ public class Button {
             int accFontSize = OmegaFight3.sizeToScreenY(getAccWordSize(HOVER_FONT.getSize()));;
             double highlightSizeX = strWidth + OmegaFight3.sizeToScreenX(HOVER_FONT.getSize() * FONT_SIZE_TO_HIGHLIGHT_BUFFER_X);
             Coord botRitMouse = mouse.add(OmegaFight3.MOUSE_SIZE);
-            botRitMouse.x = OmegaFight3.clamp(botRitMouse.x, 0, OmegaFight3.screenSize.width - highlightSizeX);
-            botRitMouse.y = OmegaFight3.clamp(botRitMouse.y, 0, OmegaFight3.screenSize.height - OmegaFight3.sizeToScreenY(HOVER_FONT.getSize()));
+            botRitMouse.x = OmegaFight3.clamp(botRitMouse.x, OmegaFight3.coordToScreenX(0), OmegaFight3.coordToScreenX(OmegaFight3.NORM_SCREEN_SIZE.x) - highlightSizeX);
+            botRitMouse.y = OmegaFight3.clamp(botRitMouse.y, OmegaFight3.coordToScreenY(0), OmegaFight3.coordToScreenY(OmegaFight3.NORM_SCREEN_SIZE.y - HOVER_FONT.getSize()));
             g.fillRect((int) (botRitMouse.x), (int) (botRitMouse.y), (int) highlightSizeX, OmegaFight3.sizeToScreenY(HOVER_FONT.getSize()));
             g.setColor(Color.BLACK);
             g.drawString(hoverText, (int) (botRitMouse.x + highlightSizeX / 2 - strWidth / 2), (int) (botRitMouse.y + OmegaFight3.sizeToScreenY(HOVER_FONT.getSize()) / 2 + accFontSize / 2));
