@@ -292,29 +292,30 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     public static final int SURGE_SPRITE_WIN_CHECK = 2;
 
     // Directory constants
-    public static final String MISC_DIR = "misc/";
-    public static final String MENUS_DIR = "menus/";
-    public static final String SLIDESHOW_DIR = "slideshow/";
-    public static final String PLAYER_SPRITES_DIR = "player sprites/";
-    public static final String PLAYER_PROJS_DIR = "player projectiles/";
-    public static final String EXPLOSIONS_DIR = "explosions/";
-    public static final String DOCTOR_PROJS_DIR = "doctor projectiles/";
-    public static final String DRAGON_PROJS_DIR = "dragon projectiles/";
-    public static final String BIRD_PROJS_DIR = "bird projectiles/";
-    public static final String PUNK_PROJS_DIR = "punk projectiles/";
-    public static final String DOCTOR_DIR = "doctor/";
-    public static final String DRAGON_DIR = "dragon/";
-    public static final String BIRD_DIR = "bird/";
-    public static final String PUNK_DIR = "punk/";
-    public static final String MUSIC_DIR = "music/";
-    public static final String SFX_DIR = "sfx/";
-    public static final String BG_DIR = "backgrounds/";
-    public static final String INTRO_DIR = "intro stuff/";
-    public static final String GAME_TXT_DIR = "in-game text/";
-    public static final String MOUSE_DIR = "mouse/";
-    public static final String RES_DIR = "results stuff/";
-    public static final String RULES_DIR = "rules stuff/";
-    public static final String WEAPON_ICONS_DIR = "weapon icons/";
+    public static final String PATH_SEP = File.separator;
+    public static final String MISC_DIR = "misc" + PATH_SEP;
+    public static final String MENUS_DIR = "menus" + PATH_SEP;
+    public static final String SLIDESHOW_DIR = "slideshow" + PATH_SEP;
+    public static final String PLAYER_SPRITES_DIR = "player sprites" + PATH_SEP;
+    public static final String PLAYER_PROJS_DIR = "player projectiles" + PATH_SEP;
+    public static final String EXPLOSIONS_DIR = "explosions" + PATH_SEP;
+    public static final String DOCTOR_PROJS_DIR = "doctor projectiles" + PATH_SEP;
+    public static final String DRAGON_PROJS_DIR = "dragon projectiles" + PATH_SEP;
+    public static final String BIRD_PROJS_DIR = "bird projectiles" + PATH_SEP;
+    public static final String PUNK_PROJS_DIR = "punk projectiles" + PATH_SEP;
+    public static final String DOCTOR_DIR = "doctor" + PATH_SEP;
+    public static final String DRAGON_DIR = "dragon" + PATH_SEP;
+    public static final String BIRD_DIR = "bird" + PATH_SEP;
+    public static final String PUNK_DIR = "punk" + PATH_SEP;
+    public static final String MUSIC_DIR = "music" + PATH_SEP;
+    public static final String SFX_DIR = "SFX" + PATH_SEP;
+    public static final String BG_DIR = "backgrounds" + PATH_SEP;
+    public static final String INTRO_DIR = "intro stuff" + PATH_SEP;
+    public static final String GAME_TXT_DIR = "in-game text" + PATH_SEP;
+    public static final String MOUSE_DIR = "mouse" + PATH_SEP;
+    public static final String RES_DIR = "results stuff" + PATH_SEP;
+    public static final String RULES_DIR = "rules stuff" + PATH_SEP;
+    public static final String WEAPON_ICONS_DIR = "weapon icons" + PATH_SEP;
 
     // Transition constants (Next avail: 12)
     public static final int NO_TRANS = -1;
