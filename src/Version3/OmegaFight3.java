@@ -404,49 +404,49 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         placeHolder = ImageIO.read(new File("misc/placeholder.jpg"));
 
         // Start menu importing
-        startBg = ImageIO.read(new File("menus/start.jpg"));
-        titleNum = ImageIO.read(new File("menus/number.png"));
-        pressAnyText = ImageIO.read(new File("menus/press start.png"));
+        startBg = ImageIO.read(new File("backgrounds/start.jpg"));
+        titleNum = ImageIO.read(new File("intro stuff/number.png"));
+        pressAnyText = ImageIO.read(new File("intro stuff/press start.png"));
         for (int i = 0; i != Letter.NUM_LETTERS; i++) {
-            Letter.letters[i] = ImageIO.read(new File("menus/letter" + i + ".png"));
+            Letter.letters[i] = ImageIO.read(new File("intro stuff/letter" + i + ".png"));
         }
-        studioLogo = ImageIO.read(new File("menus/studio.png"));
+        studioLogo = ImageIO.read(new File("intro stuff/studio.png"));
 
         // Home menu image importing
-        home = ImageIO.read(new File("menus/home.jpg"));
+        home = ImageIO.read(new File("backgrounds/home.jpg"));
         homeButtonImg = ImageIO.read(new File("menus/home button.png"));
         menuMan = ImageIO.read(new File("menus/menuman.png"));
 
         // Paused images importing
-        pausedBg = ImageIO.read(new File("menus/paused.png"));
+        pausedBg = ImageIO.read(new File("backgrounds/paused.png"));
 
         // Choose Menu image importing
-        chooseMenu = ImageIO.read(new File("menus/choose fight.jpg"));
+        chooseMenu = ImageIO.read(new File("backgrounds/choose fight.jpg"));
         buttonImg = ImageIO.read(new File("menus/button.jpg"));
         readyBar = ImageIO.read(new File("menus/ready.jpg"));
-        countdownText[READY_TEXT] = ImageIO.read(new File("menus/ready text.png"));
+        countdownText[READY_TEXT] = ImageIO.read(new File("in-game text/ready text.png"));
         for (int i = 0; i != 2; i++) {
-            countdownText[FIGHT_TEXT_START + i] = ImageIO.read(new File("menus/fight" + i + ".png"));
-            gameOver[i] = ImageIO.read(new File("menus/game over" + i + ".png"));
-            gameSet[i] = ImageIO.read(new File("menus/game set" + i + ".png"));
+            countdownText[FIGHT_TEXT_START + i] = ImageIO.read(new File("in-game text/fight" + i + ".png"));
+            gameOver[i] = ImageIO.read(new File("in-game text/game over" + i + ".png"));
+            gameSet[i] = ImageIO.read(new File("in-game text/game set" + i + ".png"));
         }
 
         // Game end image importing
         for (int i = 0; i != 2 + Omegaman.NUM_PLAYERS; i++) {
-            flash[i] = ImageIO.read(new File("menus/" + (i - 2) + "flash.jpg"));
+            flash[i] = ImageIO.read(new File("backgrounds/" + (i - 2) + "flash.jpg"));
         }
         for (int i = 0; i != Omegaman.NUM_PLAYERS; i++) {
-            Battle.happyMan[i] = ImageIO.read(new File("menus/" + i + "happyMan.png"));
-            Battle.sadMan[i] = ImageIO.read(new File("menus/" + i + "sadMan.png"));
+            Battle.happyMan[i] = ImageIO.read(new File("results stuff/" + i + "happyMan.png"));
+            Battle.sadMan[i] = ImageIO.read(new File("results stuff/" + i + "sadMan.png"));
         }
-        resultsTitle = ImageIO.read(new File("menus/results title.png"));
+        resultsTitle = ImageIO.read(new File("results stuff/results title.png"));
         for (int i = 0; i != NUM_GAMEMODES; i++) {
-            Battle.scoreBoard[i] = ImageIO.read(new File("menus/" + i + "scoreboard.jpg"));
+            Battle.scoreBoard[i] = ImageIO.read(new File("results stuff/" + i + "scoreboard.jpg"));
         }
-        battleNameBoxImg = ImageIO.read(new File("menus/battle name box.png"));
+        battleNameBoxImg = ImageIO.read(new File("results stuff/battle name box.png"));
 
         // Battle log image importing
-        battleLogBg = ImageIO.read(new File("menus/battle.jpg"));
+        battleLogBg = ImageIO.read(new File("backgrounds/battle.jpg"));
         noBattle = ImageIO.read(new File("menus/no battle.jpg"));
         smlButtonImg = ImageIO.read(new File("menus/sml button.jpg"));
         medButtonImg = ImageIO.read(new File("menus/med button.jpg"));
@@ -462,20 +462,20 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         }
         
         // Player Weapon image importing
-        addWeaponIcon = ImageIO.read(new File("menus/no weapon.png"));
+        addWeaponIcon = ImageIO.read(new File("weapon icons/no weapon.png"));
         Bullet.image = ImageIO.read(new File("player projectiles/bullet.png"));
-        icon[Omegaman.BULLET_WEAPON_NO] = ImageIO.read(new File("menus/bullet icon.png"));
+        icon[Omegaman.BULLET_WEAPON_NO] = ImageIO.read(new File("weapon icons/bullet icon.png"));
         Shotgun.image = ImageIO.read(new File("player projectiles/shotgun.png"));
-        icon[Omegaman.SHOTGUN_WEAPON_NO] = ImageIO.read(new File("menus/shotgun icon.png"));
+        icon[Omegaman.SHOTGUN_WEAPON_NO] = ImageIO.read(new File("weapon icons/shotgun icon.png"));
         Spammer.image = ImageIO.read(new File("player projectiles/spammer.png"));
-        icon[Omegaman.SPAMMER_WEAPON_NO] = ImageIO.read(new File("menus/spammer icon.png"));
+        icon[Omegaman.SPAMMER_WEAPON_NO] = ImageIO.read(new File("weapon icons/spammer icon.png"));
         Sniper.image = ImageIO.read(new File("player projectiles/sniper.png"));
-        icon[Omegaman.SNIPER_WEAPON_NO] = ImageIO.read(new File("menus/sniper icon.png"));
+        icon[Omegaman.SNIPER_WEAPON_NO] = ImageIO.read(new File("weapon icons/sniper icon.png"));
         Laser.ball = ImageIO.read(new File("player projectiles/ball.png"));
         Laser.beam = ImageIO.read(new File("player projectiles/beam.png"));
-        icon[Omegaman.BOOMER_WEAPON_NO] = ImageIO.read(new File("menus/boomer icon.png"));
+        icon[Omegaman.BOOMER_WEAPON_NO] = ImageIO.read(new File("weapon icons/boomer icon.png"));
         Spike.image = ImageIO.read(new File("player projectiles/spike.png"));
-        icon[Omegaman.SPIKE_WEAPON_NO] = ImageIO.read(new File("menus/spike icon.png"));
+        icon[Omegaman.SPIKE_WEAPON_NO] = ImageIO.read(new File("weapon icons/spike icon.png"));
         Thorn.image = ImageIO.read(new File("player projectiles/thorn.png"));
         for (int i = 0; i != Omegaman.NUM_PLAYERS; i++) {
             Rocket.images[i] = ImageIO.read(new File("player projectiles/" + i + "rocket.png"));
