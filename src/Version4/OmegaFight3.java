@@ -8,6 +8,7 @@ package Version4;
 // Omega Fight 3 is a 2D platform fighting game where players can choose their owners, weapons, and stages to battle against against AI bosses.
 // The game features various menus for navigation, a home screen, a choose fight screen, an in-game screen, a game end screen, and a battle log screen.
 // Players can also view a slideshow of the how to play the game and view credits.
+// To do: Make mouse disappear when out of screen
 
 import java.awt.*;
 import javax.imageio.ImageIO;
@@ -423,6 +424,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
 
     // Mouse/Keyboard
     public static Coord mouse = new Coord();
+    public static boolean mouseInScreen = false;
     public static boolean clicked;
     public static HashSet<Integer> pressedKeys = new HashSet<>();
     public static BufferedImage cursor;
@@ -1545,8 +1547,10 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
     }
 
     private void drawMouse(BufferedImage image, Graphics g) {
-        Coord drawCoord = mouse.add(MOUSE_SIZE.scaledBy(MOUSE_SIZE_TO_PT));
-        g.drawImage(image, (int) drawCoord.x, (int) drawCoord.y, (int) MOUSE_SIZE.x, (int) MOUSE_SIZE.y, null);
+        if (mouseInScreen) {
+            Coord drawCoord = mouse.add(MOUSE_SIZE.scaledBy(MOUSE_SIZE_TO_PT));
+            g.drawImage(image, (int) drawCoord.x, (int) drawCoord.y, (int) MOUSE_SIZE.x, (int) MOUSE_SIZE.y, null);
+        }
     }
 
     // ASK ABOUT METHODS AND DATA ENCAPSULATION
@@ -3171,8 +3175,13 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         clicked = false;
     }
 
-    public void mouseEntered(MouseEvent e) {}
-    public void mouseExited(MouseEvent e) {}
+    public void mouseEntered(MouseEvent e) {
+        mouseInScreen = true;
+    }
+
+    public void mouseExited(MouseEvent e) {
+        mouseInScreen = false;
+    }
 
     // Parameters:
     // e: The mouse dragged event
