@@ -8,7 +8,6 @@ package Version4;
 // Omega Fight 3 is a 2D platform fighting game where players can choose their owners, weapons, and stages to battle against against AI bosses.
 // The game features various menus for navigation, a home screen, a choose fight screen, an in-game screen, a game end screen, and a battle log screen.
 // Players can also view a slideshow of the how to play the game and view credits.
-// To do: Make mouse disappear when out of screen
 
 import java.awt.*;
 import javax.imageio.ImageIO;
@@ -37,7 +36,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
 
     // Cheat constants
     public static final boolean DEV_MODE = false;
-    public static final boolean CHEATS = DEV_MODE;
+    public static final boolean CHEATS = true;
     public static final int KILL_KEY = KeyEvent.VK_K;
     public static final double KILL_DMG = 2 * Omegaman.PERC_MULT;
     public static final int FPS_CNT_KEY = KeyEvent.VK_F;

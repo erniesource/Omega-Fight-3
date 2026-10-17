@@ -1,3 +1,6 @@
+2 MINUTE GAMEPLAY PREVIEW:
+https://drive.google.com/file/d/1fYcH8w874Ricm_in85UNwrAmkcXJSLAq/view?usp=sharing
+
 INSTALL INSTRUCTIONS:
 
 1) Install Java if you haven't yet (www.java.com/en/download/)
@@ -45,14 +48,8 @@ HOW TO PLAY:
     - If you don't name your battle, it will be called "THE UNKNOWN BATTLE"
 
 NOTES:
-- Version 4 is the latest version of the game. You should run that one. I keep versions in case I want to look at or copy old code that I changed.
+- Version 4 is the latest version of the game. You should run that one.
 - If you don't have a number pad, change your controls in the slideshow
-- I fulfilled the HashMap requirement with button numbers
-- I fulfilled the Sorting requirement with the battle log (Try sorting by title or grade in the battle log)
-- I did all of the stuff I promised to do in the initial proposal (except the stuff I listed I would do if I had extra time) and also:
-    - Music (You should turn up your volume before you run the game, I think the music is pretty fire)
-    - SFX
-    - Smoke trails when you get knocked back
 - Sometimes you'll walk off a platform, immediately jump but notice that that jump didn't count as a double jump even though you were airborne.
   This is intentional.
     - This is done in order to make the game feel more forgiving with platforming (and also because I suck at platforming)
@@ -63,7 +60,7 @@ NOTES:
   is the jumping physics. If you quickly tap and release jump, you'll do a quick, small jump. But the longer you hold your jump button,
   the higher you will jump. This is why your jump height varies sometimes.
 - Another major difference from Omega Fight 2 is projectile to projectile collision. Certain projectiles can collide with other projectiles and some can't.
-    - Which projectile(s) die is determine by their shouldDieTo methods and their durability
+    - Which projectile(s) die is determine by their dieTo methods and their durability
 - Because I didn't want to make 38-ish java files, I have consolidated similar classes into java files in order to reduce the amount of scrolling and control-f ing I have to do.
 - There are some similarities in code in projectile processing, but I did that because there were a lot of variations and tweaks between each projectile's processing and I felt it was less of a pain and A LOT easier
   to work with copy pasted solitary methods with a TON of helper methods that I can individually customize to my liking rather  than to have one or two general methods with a kajillion parameters for all of the
@@ -84,9 +81,9 @@ BUGS:
     - This should be a problem for all games if you have a not-so-great keyboard
         - Although it is more noticeable on my game since so many keys are pressed on one keyboard.
 
-CHEAT KEYS (Must have CHEATS final variable (line 31) in OmegaFight3 set to true to use):
+CHEAT KEYS (Must have CHEATS final variable at the top of OmegaFight3 set to true to use):
 In-game gamestate:
-    - Ctrl + K - Hurt the boss (Hold it for 4 seconds-ish to kill the boss)
+    - Ctrl + K - Hurt the boss (Hold it to kill the boss)
     - And a couple more...
 
 Class with thorough method comments:
