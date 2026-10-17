@@ -36,7 +36,7 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
 
     // Cheat constants
     public static final boolean DEV_MODE = false;
-    public static final boolean CHEATS = DEV_MODE;
+    public static final boolean CHEATS = true;
     public static final int KILL_KEY = KeyEvent.VK_K;
     public static final double KILL_DMG = 2 * Omegaman.PERC_MULT;
     public static final int FPS_CNT_KEY = KeyEvent.VK_F;
@@ -3174,8 +3174,13 @@ public class OmegaFight3 extends JPanel implements MouseListener, MouseMotionLis
         clicked = false;
     }
 
-    public void mouseEntered(MouseEvent e) {}
-    public void mouseExited(MouseEvent e) {}
+    public void mouseEntered(MouseEvent e) {
+        mouseInScreen = true;
+    }
+
+    public void mouseExited(MouseEvent e) {
+        mouseInScreen = false;
+    }
 
     // Parameters:
     // e: The mouse dragged event
