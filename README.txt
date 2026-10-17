@@ -1,3 +1,6 @@
+2 MINUTE GAMEPLAY PREVIEW:
+https://drive.google.com/file/d/1fYcH8w874Ricm_in85UNwrAmkcXJSLAq/view?usp=sharing
+
 INSTALL INSTRUCTIONS:
 
 1) Install Java if you haven't yet (www.java.com/en/download/)
